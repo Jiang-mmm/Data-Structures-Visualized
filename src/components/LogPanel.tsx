@@ -37,8 +37,8 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
   }
 
   return (
-    <div className="bg-ink text-paper flex flex-col log-panel" style={{ maxHeight }}>
-      <div className="flex items-center justify-between px-4 py-2.5 bg-slate border-b border-slate-light/30">
+    <div className="bg-ink/95 dark:bg-dark-paper/95 backdrop-blur-sm text-paper flex flex-col log-panel" style={{ maxHeight }}>
+      <div className="flex items-center justify-between px-4 py-2.5 bg-slate/80 border-b border-slate-light/20">
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs font-bold tracking-widest uppercase opacity-80">
             ▸ {t('logPanel.title')}

@@ -98,32 +98,35 @@ export default function KeyboardHelp() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 dark:bg-dark-ink/50 animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 dark:bg-dark-ink/60 backdrop-blur-sm animate-fade-in"
       onClick={close}
       role="dialog"
       aria-modal="true"
       aria-label={t('shortcuts.title')}
     >
-      <div ref={dialogRef} className="bg-paper dark:bg-slate border-2 border-ink dark:border-dark-border shadow-[4px_4px_0px_#1a1a2e] dark:shadow-[4px_4px_0px_#334155] p-6 max-w-sm w-full mx-4 animate-pop" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-ink dark:text-dark-ink">{t('shortcuts.title')}</h3>
+      <div ref={dialogRef} className="bg-paper dark:bg-slate border-2 border-ink dark:border-dark-border shadow-[6px_6px_0px_#1a1a2e] dark:shadow-[6px_6px_0px_#334155] p-7 max-w-sm w-full mx-4 animate-pop" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-lg font-bold text-ink dark:text-dark-ink flex items-center gap-2">
+            <span className="w-8 h-8 bg-accent-blue flex items-center justify-center text-paper text-sm shadow-[2px_2px_0px_#1a1a2e]">⌨</span>
+            {t('shortcuts.title')}
+          </h3>
           <button
             onClick={close}
-            className="w-8 h-8 flex items-center justify-center border-2 border-ink/30 dark:border-dark-border text-ink-light dark:text-dark-ink-light hover:bg-accent-rose hover:text-paper hover:border-accent-rose transition-all duration-200"
+            className="w-8 h-8 flex items-center justify-center border-2 border-ink/20 dark:border-dark-border text-ink-light dark:text-dark-ink-light hover:bg-accent-rose hover:text-paper hover:border-accent-rose transition-all duration-200"
             aria-label={t('common.close')}
           >
             ✕
           </button>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {shortcuts.map((s) => (
-            <div key={s.key} className="flex items-center justify-between py-2 border-b border-border dark:border-dark-border">
-              <kbd className="px-2 py-1 bg-white dark:bg-slate border border-ink dark:border-dark-border text-xs font-mono font-bold text-ink dark:text-dark-ink">{s.key}</kbd>
+            <div key={s.key} className="flex items-center justify-between py-2.5 px-3 border border-border/50 dark:border-dark-border/50 hover:bg-paper-warm/50 dark:hover:bg-slate-light/30 transition-colors">
+              <kbd className="px-2.5 py-1 bg-white dark:bg-slate border-2 border-ink/20 dark:border-dark-border text-xs font-mono font-bold text-ink dark:text-dark-ink shadow-[1px_1px_0px_rgba(26,26,46,0.1)]">{s.key}</kbd>
               <span className="text-sm text-ink-light dark:text-dark-ink-light">{t(s.descKey)}</span>
             </div>
           ))}
         </div>
-        <p className="mt-4 text-xs text-ink-light dark:text-dark-ink-light text-center">{t('shortcuts.close')}</p>
+        <p className="mt-5 text-xs text-ink-light/50 dark:text-dark-ink-light/50 text-center">{t('shortcuts.close')}</p>
       </div>
     </div>
   )

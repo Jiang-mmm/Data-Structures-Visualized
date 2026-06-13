@@ -33,10 +33,10 @@ const STRUCTURE_KEYS: StructureItem[] = [
 
 const ICONS: string[] = ['⌂', '▦', '☰', '→', '∞', '❖', '⬡', '⇅', '#', '▲', '🌳', '⚔', '🔀']
 
-const SIDEBAR_CONTAINER_BASE = 'bg-white dark:bg-slate border-r-2 border-ink dark:border-dark-border flex flex-col h-screen transition-all duration-300 ease-out'
-const NAV_ITEM_BASE = 'flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-sm font-medium transition-all duration-200 border-2'
-const NAV_ITEM_ACTIVE = 'border-ink dark:border-dark-border bg-accent-blue text-paper shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]'
-const NAV_ITEM_INACTIVE = 'border-transparent text-ink-light dark:text-dark-ink-light hover:border-ink/30 dark:hover:border-dark-border hover:bg-paper-warm dark:hover:bg-slate-light hover:translate-x-0.5 hover:shadow-[1px_1px_0px_rgba(26,26,46,0.1)] dark:hover:shadow-[1px_1px_0px_rgba(51,65,85,0.2)]'
+const SIDEBAR_CONTAINER_BASE = 'bg-white/95 dark:bg-slate/95 backdrop-blur-sm border-r-2 border-ink dark:border-dark-border flex flex-col h-screen transition-all duration-300 ease-out'
+const NAV_ITEM_BASE = 'flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-sm font-medium transition-all duration-200 ease-out border-2'
+const NAV_ITEM_ACTIVE = 'border-ink dark:border-dark-border bg-accent-blue text-paper shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155] scale-[1.02]'
+const NAV_ITEM_INACTIVE = 'border-transparent text-ink-light dark:text-dark-ink-light hover:border-ink/20 dark:hover:border-dark-border/50 hover:bg-paper-warm/50 dark:hover:bg-slate-light/50 hover:translate-x-1 hover:text-ink dark:hover:text-dark-ink'
 
 export default function Sidebar() {
   const location = useLocation()

@@ -18,11 +18,14 @@ export default function EmptyState({ icon = '📭', titleKey = 'emptyState.defau
   const label = t(fillKey)
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-paper/80 dark:bg-dark-paper/80 backdrop-blur-sm z-10 pointer-events-none animate-fade-in">
-      <div className="text-center p-8 pointer-events-auto animate-pop">
-        <div className="text-5xl mb-4 opacity-60" aria-hidden="true">{icon}</div>
-        <h3 className="text-lg font-bold text-ink dark:text-dark-ink mb-2">{displayTitle}</h3>
-        <p className="text-sm text-ink-light dark:text-dark-ink-light mb-6">{displayDesc}</p>
+    <div className="absolute inset-0 flex items-center justify-center bg-paper/70 dark:bg-dark-paper/70 backdrop-blur-md z-10 pointer-events-none animate-fade-in">
+      <div className="text-center p-10 pointer-events-auto animate-pop max-w-sm">
+        <div className="relative inline-block mb-6">
+          <div className="text-6xl opacity-50 animate-float" aria-hidden="true">{icon}</div>
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-ink/10 dark:bg-dark-ink/10 rounded-full blur-sm" />
+        </div>
+        <h3 className="text-xl font-bold text-ink dark:text-dark-ink mb-3">{displayTitle}</h3>
+        <p className="text-sm text-ink-light dark:text-dark-ink-light mb-8 leading-relaxed">{displayDesc}</p>
         {onFill && (
           <OperationButton variant="primary" onClick={onFill} popAnimation>
             {label}

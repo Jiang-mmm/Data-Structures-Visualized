@@ -128,7 +128,7 @@ describe('OperationButton', () => {
     it('应有响应式内边距', () => {
       render(<OperationButton>按钮</OperationButton>)
       const btn = screen.getByText('按钮')
-      expect(btn.className).toContain('px-2.5')
+      expect(btn.className).toContain('px-3')
       expect(btn.className).toContain('sm:px-4')
       expect(btn.className).toContain('py-1.5')
       expect(btn.className).toContain('py-2')

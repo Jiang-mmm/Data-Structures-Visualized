@@ -43,10 +43,10 @@ export default function ExportImport({ dataType, data, onImport, disabled }: Exp
       <button
         onClick={handleExport}
         disabled={disabled}
-        className="px-2.5 py-1 font-mono text-xs font-bold border-2 border-ink/30 dark:border-dark-border
+        className="px-3 py-1.5 font-mono text-xs font-bold border-2 border-ink/30 dark:border-dark-border
           bg-white dark:bg-slate text-ink-light dark:text-dark-ink-light
-          hover:bg-ink/5 dark:hover:bg-dark-ink/5 hover:border-ink dark:hover:border-dark-ink
-          hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_#1a1a2e] dark:hover:shadow-[2px_2px_0px_#334155]
+          hover:bg-accent-emerald/10 hover:border-accent-emerald hover:text-accent-emerald
+          hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_#059669]
           active:translate-y-0 active:shadow-none
           disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         title={t('exportImport.exportTooltip')}
@@ -57,10 +57,10 @@ export default function ExportImport({ dataType, data, onImport, disabled }: Exp
       <button
         onClick={handleImportClick}
         disabled={disabled}
-        className="px-2.5 py-1 font-mono text-xs font-bold border-2 border-ink/30 dark:border-dark-border
+        className="px-3 py-1.5 font-mono text-xs font-bold border-2 border-ink/30 dark:border-dark-border
           bg-white dark:bg-slate text-ink-light dark:text-dark-ink-light
-          hover:bg-ink/5 dark:hover:bg-dark-ink/5 hover:border-ink dark:hover:border-dark-ink
-          hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_#1a1a2e] dark:hover:shadow-[2px_2px_0px_#334155]
+          hover:bg-accent-blue/10 hover:border-accent-blue hover:text-accent-blue
+          hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_#2563eb]
           active:translate-y-0 active:shadow-none
           disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         title={t('exportImport.importTooltip')}

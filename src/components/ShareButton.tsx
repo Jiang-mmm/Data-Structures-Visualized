@@ -66,7 +66,7 @@ export default memo(function ShareButton({ data, dataType, disabled = false }: S
         `}
       >
         <span className="flex items-center gap-1.5">
-          <span>🔗</span>
+          <span className="text-sm">🔗</span>
           <span className="hidden sm:inline">{t('share.label')}</span>
         </span>
       </button>
