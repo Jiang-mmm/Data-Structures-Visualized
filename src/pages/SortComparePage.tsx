@@ -124,6 +124,7 @@ export default function SortComparePage() {
   const stoppedRef = useRef(false)
   const [logs, setLogs] = useState<Log[]>([])
   const [showExportMenu, setShowExportMenu] = useState<boolean>(false)
+  const exportMenuRef = useRef<HTMLDivElement>(null)
   const { t, lang } = useGlobalSettings()
 
   const svgRefs = useRef<Record<string, SVGSVGElement | null>>({})
@@ -133,8 +134,19 @@ export default function SortComparePage() {
     dimensionsMap.current[key] = dims
   }, [])
 
+  useEffect(() => {
+    if (!showExportMenu) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target as Node)) {
+        setShowExportMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showExportMenu])
+
   const addLog = useCallback((type: string, message: string) => {
-    const time = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+    const time = new Date().toLocaleTimeString(undefined, { hour12: false })
     setLogs(prev => [...prev, { time, type, message }])
   }, [])
 
@@ -299,7 +311,7 @@ export default function SortComparePage() {
           {t('compare.randomize')}
         </OperationButton>
         {allDone && (
-          <div className="relative">
+          <div className="relative" ref={exportMenuRef}>
             <OperationButton variant="outline" onClick={() => setShowExportMenu(!showExportMenu)}>
               {t('compare.exportResults')}
             </OperationButton>
@@ -392,7 +404,7 @@ export default function SortComparePage() {
                 {selectedAlgos.length} {t('page.algorithms')}
               </span>
             </div>
-            <PerformanceChart results={algoResults} lang={lang} />
+            <PerformanceChart results={algoResults} />
           </div>
         )}
       </div>

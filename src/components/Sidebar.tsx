@@ -98,6 +98,15 @@ export default function Sidebar() {
     }
   }, [location.pathname, isMobile])
 
+  useEffect(() => {
+    if (!mobileOpen) return
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileOpen(false)
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [mobileOpen])
+
   const themeIcon = mode === 'light' ? '☀' : mode === 'dark' ? '☾' : '◐'
 
   const handleColorThemeChange = (themeKey: string) => {

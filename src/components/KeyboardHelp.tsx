@@ -94,6 +94,13 @@ export default function KeyboardHelp() {
     return () => document.removeEventListener('keydown', handleTab)
   }, [visible])
 
+  useEffect(() => {
+    if (!visible) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [visible])
+
   if (!visible) return null
 
   return (
