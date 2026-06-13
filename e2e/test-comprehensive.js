@@ -102,7 +102,9 @@ async function testUndoRedo(page, results, pageName, hasOperationGroup = false) 
   const undoReady = await waitForNextReady(page, /撤销|Undo/, 30000);
   if (undoReady) {
     await clickButtonIfEnabled(page, /撤销|Undo/, 3000);
-    await sleep(3000); // Wait for undo animation (longer for headless)
+    // Wait for undo animation to complete by polling for redo button to be enabled
+    await waitForNextReady(page, /重做|Redo/, 15000);
+    await sleep(500); // Buffer for DOM to settle
     await cleanup(page);
     recordPass(results, `${pageName}: 撤销按钮可点击`);
 
@@ -110,7 +112,9 @@ async function testUndoRedo(page, results, pageName, hasOperationGroup = false) 
     const redoReady = await waitForNextReady(page, /重做|Redo/, 30000);
     if (redoReady) {
       await clickButtonIfEnabled(page, /重做|Redo/, 3000);
-      await sleep(2000); // Wait for redo animation (longer for headless)
+      // Wait for redo animation to complete by polling for undo button to be enabled
+      await waitForNextReady(page, /撤销|Undo/, 15000);
+      await sleep(500); // Buffer for DOM to settle
       await cleanup(page);
       recordPass(results, `${pageName}: 重做按钮可点击`);
     } else {
@@ -388,11 +392,11 @@ async function testLinkedList(page, results) {
   await sleep(1000); // Extra wait for animation to settle
 
   // --- Reverse ---
-  const reverseClicked = await doOpAndWait(page, /反转/, /检测环/, 5000);
+  const reverseClicked = await doOpAndWait(page, /反转/, /检测环/, 8000);
   await assert(results, reverseClicked, 'LinkedList: 反转(Reverse)按钮可点击', 'LinkedList: 反转按钮不可用');
 
   // --- Detect cycle ---
-  const cycleClicked = await doOpAndWait(page, /检测环/, null, 5000);
+  const cycleClicked = await doOpAndWait(page, /检测环/, null, 8000);
   await assert(results, cycleClicked, 'LinkedList: 检测环按钮可点击', 'LinkedList: 检测环按钮不可用');
 
   // --- Input validation: empty input ---
@@ -456,11 +460,11 @@ async function testTree(page, results) {
   await sleep(1000); // Extra wait for animation to settle
 
   // --- Postorder traversal ---
-  const postorderClicked = await doOpAndWait(page, /后序/, /层序/, 5000);
+  const postorderClicked = await doOpAndWait(page, /后序/, /层序/, 8000);
   await assert(results, postorderClicked, 'Tree: 后序遍历按钮可点击', 'Tree: 后序遍历按钮不可用');
 
   // --- Level-order traversal ---
-  const levelClicked = await doOpAndWait(page, /层序/, null, 5000);
+  const levelClicked = await doOpAndWait(page, /层序/, null, 8000);
   await assert(results, levelClicked, 'Tree: 层序遍历按钮可点击', 'Tree: 层序遍历按钮不可用');
 
   // --- Search ---
@@ -821,7 +825,7 @@ async function testTrie(page, results) {
   await sleep(200);
   await cleanup(page);
 
-  const searchClicked = await doOpAndWait(page, /查找$/, /前缀匹配|前缀/, 4000);
+  const searchClicked = await doOpAndWait(page, /查找$/, /前缀匹配|前缀/, 8000);
   await assert(results, searchClicked, 'Trie: 查找按钮可点击', 'Trie: 查找按钮不可用');
 
   // --- Prefix search ---

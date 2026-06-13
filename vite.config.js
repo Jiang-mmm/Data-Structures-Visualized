@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => ({
     include: ['d3', 'd3-selection', 'd3-transition', 'd3-drag', 'd3-force', 'd3-ease'],
   },
   build: {
+    chunkSizeWarningLimit: 80,
     commonjsOptions: {
       transformMixedEsModules: true,
     },
