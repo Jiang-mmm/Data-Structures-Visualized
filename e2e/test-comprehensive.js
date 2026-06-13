@@ -54,6 +54,7 @@ async function doOperation(page, btnRegex, waitTime = 2000) {
 }
 
 // Perform operation and then wait for a specific next button to be ready
+// When nextBtnRegex is null, waits for the clicked button to re-enable (animation done)
 async function doOpAndWait(page, btnRegex, nextBtnRegex, waitTime = 2000) {
   const clicked = await clickButtonIfEnabled(page, btnRegex);
   if (clicked) {
@@ -61,7 +62,11 @@ async function doOpAndWait(page, btnRegex, nextBtnRegex, waitTime = 2000) {
     await closeModalIfOpen(page);
     if (nextBtnRegex) {
       await waitForNextReady(page, nextBtnRegex, 15000);
+    } else {
+      // No next button to wait for — wait for the clicked button to re-enable (animation done)
+      await waitForNextReady(page, btnRegex, 15000);
     }
+    await sleep(500); // Buffer for DOM to settle after animation
     await closeModalIfOpen(page);
   }
   return clicked;

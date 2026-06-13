@@ -192,7 +192,7 @@ export default function GraphPage() {
 
       {viewMode === 'force' ? (
         <>
-          <Visualizer data={nodes} renderFn={handleGraphRender} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel="图可视化" />
+          <Visualizer data={nodes} renderFn={handleGraphRender} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.graphLabel")} />
           {nodes.length === 0 && (
             <EmptyState icon="⬡" titleKey="emptyState.emptyGraph" descriptionKey="emptyState.emptyGraphDesc" onFill={reset} />
           )}

@@ -64,11 +64,17 @@ async function runTest() {
     // ==================== Sort Page ====================
     console.log('[Sort] 页面加载与排序操作...');
     await page.goto(BASE_URL + 'sort', { waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(800);
+    await sleep(1500);
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, 'sort-loaded.png'), fullPage: false });
     await verifyScreenshot(path.join(SCREENSHOTS_DIR, 'sort-loaded.png'));
 
-    const sortTitle = await page.locator('text=排序').first().count();
+    // Use retry to handle Firefox lazy-load timing
+    let sortTitle = 0;
+    for (let i = 0; i < 5; i++) {
+      sortTitle = await page.locator('text=排序').first().count();
+      if (sortTitle > 0) break;
+      await sleep(500);
+    }
     assert(sortTitle > 0, 'Sort: 页面标题正确', 'Sort: 页面标题错误');
 
     await clickButtonIfEnabled(page, /随机/);

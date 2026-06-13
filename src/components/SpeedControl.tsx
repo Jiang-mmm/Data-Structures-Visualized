@@ -20,12 +20,16 @@ const PRESET_KEYS = Object.keys(ANIMATION_PRESETS)
 export default memo(function SpeedControl() {
   const { animationSpeed, setAnimationSpeed, currentPreset, applyPreset, t } = useGlobalSettings()
   const [showPresets, setShowPresets] = useState<boolean>(false)
+  const [focusedIndex, setFocusedIndex] = useState<number>(-1)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!showPresets) return
+    if (!showPresets) { setFocusedIndex(-1); return }
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setShowPresets(false)
+      if (e.key === 'ArrowDown') { e.preventDefault(); setFocusedIndex(i => Math.min(i + 1, PRESET_KEYS.length - 1)) }
+      if (e.key === 'ArrowUp') { e.preventDefault(); setFocusedIndex(i => Math.max(i - 1, 0)) }
+      if (e.key === 'Enter' && focusedIndex >= 0) { applyPreset(PRESET_KEYS[focusedIndex]); setShowPresets(false) }
     }
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setShowPresets(false)
@@ -36,7 +40,7 @@ export default memo(function SpeedControl() {
       document.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [showPresets])
+  }, [showPresets, focusedIndex, applyPreset])
 
   return (
     <div className="flex items-center gap-2">
@@ -52,16 +56,19 @@ export default memo(function SpeedControl() {
         </button>
         {showPresets && (
           <div className="absolute top-full left-0 mt-1 z-50 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border shadow-[3px_3px_0px_#1a1a2e] dark:shadow-[3px_3px_0px_#334155] min-w-[140px] animate-slide-down">
-            {PRESET_KEYS.map(key => {
+            {PRESET_KEYS.map((key, index) => {
               const preset = ANIMATION_PRESETS[key]
               return (
                 <button
                   key={key}
                   onClick={() => { applyPreset(key); setShowPresets(false) }}
+                  aria-current={currentPreset === key ? 'true' : undefined}
                   className={`flex items-center gap-2 w-full px-3 py-2 text-xs font-mono text-left transition-colors
                     ${currentPreset === key
                       ? 'bg-accent-blue text-paper'
-                      : 'hover:bg-ink/5 dark:hover:bg-dark-ink/5 text-ink-light dark:text-dark-ink-light'
+                      : focusedIndex === index
+                        ? 'bg-ink/10 dark:bg-dark-ink/10 text-ink dark:text-dark-ink'
+                        : 'hover:bg-ink/5 dark:hover:bg-dark-ink/5 text-ink-light dark:text-dark-ink-light'
                     }`}
                 >
                   <span className="w-4 text-center">{preset.icon}</span>

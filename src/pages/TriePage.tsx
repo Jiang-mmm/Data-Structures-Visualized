@@ -146,7 +146,7 @@ export default function TriePage() {
         <OperationInfo><span className="font-mono text-xs text-ink-light">WORDS: {count}</span></OperationInfo>
       </OperationBar>
 
-      <Visualizer data={flatData} renderFn={renderTrie} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel="字典树可视化" />
+      <Visualizer data={flatData} renderFn={renderTrie} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.trieLabel")} />
       {flatData.nodes.length === 0 && (
         <EmptyState icon="🌳" titleKey="emptyState.emptyTrie" descriptionKey="emptyState.emptyTrieDesc" onFill={reset} />
       )}

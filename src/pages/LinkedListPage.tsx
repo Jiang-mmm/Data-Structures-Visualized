@@ -224,7 +224,7 @@ export default function LinkedListPage() {
         {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <OperationInfo><span className="font-mono text-xs text-ink-light">LEN: {length}</span></OperationInfo>
       </OperationBar>
-      <Visualizer data={data} renderFn={renderLinkedList} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel="链表可视化" />
+      <Visualizer data={data} renderFn={renderLinkedList} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.linkedlistLabel")} />
       {data.length === 0 && (
         <EmptyState icon="∞" titleKey="emptyState.emptyLinkedList" descriptionKey="emptyState.emptyLinkedListDesc" onFill={reset} />
       )}

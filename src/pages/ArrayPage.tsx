@@ -163,7 +163,7 @@ export default function ArrayPage() {
         </OperationInfo>
       </OperationBar>
       <div className="relative flex flex-col flex-1 min-h-0">
-        <Visualizer data={data} renderFn={renderArray} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel="数组可视化" />
+        <Visualizer data={data} renderFn={renderArray} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.arrayLabel")} />
         {data.length === 0 && (
           <EmptyState icon="▦" titleKey="emptyState.emptyArray" descriptionKey="emptyState.emptyArrayDesc" onFill={randomize} />
         )}

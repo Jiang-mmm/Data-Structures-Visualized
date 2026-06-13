@@ -4,12 +4,18 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const testFiles = [
+const coreTestFiles = [
   'test-home.js',
   'test-core.js',
   'test-advanced.js',
   'test-edge.js',
   'test-v5-features.js',
+];
+
+const comprehensiveTestFiles = [
+  'test-comprehensive.js',
+  'test-interactions.js',
+  'test-persistence.js',
 ];
 
 function runTest(file, browser) {
@@ -50,6 +56,15 @@ function runTest(file, browser) {
   });
 }
 
+async function runTestsSequential(files, browser) {
+  const results = [];
+  for (const file of files) {
+    const result = await runTest(file, browser);
+    results.push(result);
+  }
+  return results;
+}
+
 const browsers = ['chromium', 'firefox'];
 let grandTotalPassed = 0;
 let grandTotalFailed = 0;
@@ -60,12 +75,20 @@ for (const browser of browsers) {
   console.log('#'.repeat(60));
 
   console.log(`\n${'='.repeat(60)}`);
-  console.log(`Running ${testFiles.length} test files in parallel [${browser}]...`);
+  console.log(`Phase 1: Running ${coreTestFiles.length} core test files in parallel [${browser}]...`);
   console.log('='.repeat(60));
 
   const startTime = Date.now();
-  const allResults = await Promise.all(testFiles.map(f => runTest(f, browser)));
+  const coreResults = await Promise.all(coreTestFiles.map(f => runTest(f, browser)));
+
+  console.log(`\n${'='.repeat(60)}`);
+  console.log(`Phase 2: Running ${comprehensiveTestFiles.length} comprehensive test files sequentially [${browser}]...`);
+  console.log('='.repeat(60));
+
+  const comprehensiveResults = await runTestsSequential(comprehensiveTestFiles, browser);
+
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+  const allResults = [...coreResults, ...comprehensiveResults];
 
   let totalPassed = 0;
   let totalFailed = 0;

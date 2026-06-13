@@ -160,7 +160,7 @@ export default function TreePage() {
         </OperationGroup>
         <OperationInfo><span className="font-mono text-xs text-ink-light">NODES: {nodeCount}</span></OperationInfo>
       </OperationBar>
-      <Visualizer data={data} renderFn={renderTree} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel="二叉树可视化" />
+      <Visualizer data={data} renderFn={renderTree} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.treeLabel")} />
       {data.length === 0 && (
         <EmptyState icon="❖" titleKey="emptyState.emptyTree" descriptionKey="emptyState.emptyTreeDesc" onFill={reset} />
       )}

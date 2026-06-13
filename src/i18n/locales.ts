@@ -251,6 +251,16 @@ export interface Locale {
     empty: string
     zoomIn: string
     zoomOut: string
+    arrayLabel: string
+    stackLabel: string
+    queueLabel: string
+    linkedlistLabel: string
+    treeLabel: string
+    graphLabel: string
+    sortLabel: string
+    hashLabel: string
+    heapLabel: string
+    trieLabel: string
   }
   shortcuts: {
     title: string
@@ -648,6 +658,16 @@ export const zh: Locale = {
     empty: '数据结构可视化',
     zoomIn: '放大',
     zoomOut: '缩小',
+    arrayLabel: '数组可视化',
+    stackLabel: '栈可视化',
+    queueLabel: '队列可视化',
+    linkedlistLabel: '链表可视化',
+    treeLabel: '二叉树可视化',
+    graphLabel: '图可视化',
+    sortLabel: '排序可视化',
+    hashLabel: '哈希表可视化',
+    heapLabel: '堆可视化',
+    trieLabel: '字典树可视化',
   },
   shortcuts: {
     title: '键盘快捷键',
@@ -1089,6 +1109,16 @@ export const en: Locale = {
     empty: 'Data structure visualization',
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out',
+    arrayLabel: 'Array visualization',
+    stackLabel: 'Stack visualization',
+    queueLabel: 'Queue visualization',
+    linkedlistLabel: 'Linked list visualization',
+    treeLabel: 'Binary tree visualization',
+    graphLabel: 'Graph visualization',
+    sortLabel: 'Sorting visualization',
+    hashLabel: 'Hash table visualization',
+    heapLabel: 'Heap visualization',
+    trieLabel: 'Trie visualization',
   },
   shortcuts: {
     title: 'Keyboard Shortcuts',

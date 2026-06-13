@@ -18,7 +18,7 @@ export function useKeyboard(shortcuts: ShortcutMap, enabled: boolean = true): vo
     if (!enabledRef.current) return
 
     const tag = (e.target as HTMLElement).tagName
-    const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable
+    const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON' || (e.target as HTMLElement).isContentEditable
     const key = e.key.toLowerCase()
     const isCtrl = e.ctrlKey || e.metaKey
     const isShift = e.shiftKey

@@ -139,7 +139,7 @@ export default function HashPage() {
         svgRef={svgRef}
         dimensions={dimensions}
         containerRef={containerRef}
-        ariaLabel="哈希表可视化"
+        ariaLabel={t("visualizer.hashLabel")}
       />
       {data.length === 0 && (
         <EmptyState icon="#" titleKey="emptyState.emptyHash" descriptionKey="emptyState.emptyHashDesc" onFill={reset} />
