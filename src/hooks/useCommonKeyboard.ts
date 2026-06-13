@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useKeyboard } from './useKeyboard'
 
 interface UseCommonKeyboardOptions {
@@ -8,9 +9,11 @@ interface UseCommonKeyboardOptions {
 }
 
 export function useCommonKeyboard({ undo, redo, reset, isAnimating }: UseCommonKeyboardOptions) {
-  useKeyboard({
+  const shortcuts = useMemo(() => ({
     'ctrl+z': undo,
     'ctrl+shift+z': redo,
     'r': reset,
-  }, !isAnimating)
+  }), [undo, redo, reset])
+
+  useKeyboard(shortcuts, !isAnimating)
 }

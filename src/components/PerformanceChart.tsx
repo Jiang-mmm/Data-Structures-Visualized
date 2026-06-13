@@ -14,7 +14,6 @@ interface AlgorithmResult {
 
 interface PerformanceChartProps {
   results: Record<string, AlgorithmResult>
-  lang?: string
 }
 
 const METRIC_COLORS: Record<string, string> = {

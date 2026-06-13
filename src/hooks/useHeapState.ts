@@ -28,15 +28,14 @@ function siftDown(arr: number[], index: number): number[] {
 }
 
 function siftUp(arr: number[], index: number): number[] {
-  const newArr = [...arr]
   let i = index
   while (i > 0) {
     const parent = Math.floor((i - 1) / 2)
-    if (newArr[parent] >= newArr[i]) break
-    ;[newArr[parent], newArr[i]] = [newArr[i], newArr[parent]]
+    if (arr[parent] >= arr[i]) break
+    ;[arr[parent], arr[i]] = [arr[i], arr[parent]]
     i = parent
   }
-  return newArr
+  return arr
 }
 
 export function useHeapState() {

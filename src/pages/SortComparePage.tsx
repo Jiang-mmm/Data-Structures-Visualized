@@ -125,7 +125,7 @@ export default function SortComparePage() {
   const [logs, setLogs] = useState<Log[]>([])
   const [showExportMenu, setShowExportMenu] = useState<boolean>(false)
   const exportMenuRef = useRef<HTMLDivElement>(null)
-  const { t, lang } = useGlobalSettings()
+  const { t } = useGlobalSettings()
 
   const svgRefs = useRef<Record<string, SVGSVGElement | null>>({})
   const dimensionsMap = useRef<Record<string, { width: number; height: number }>>({})
