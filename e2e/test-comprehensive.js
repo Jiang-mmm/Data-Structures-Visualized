@@ -1,9 +1,7 @@
 import { chromium, firefox } from 'playwright';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { sleep, clickButtonIfEnabled, closeModalIfOpen, getVisibleInputs, fillInput, verifyScreenshot, SCREENSHOTS_DIR } from './test-helpers.js';
+import { sleep, clickButtonIfEnabled, closeModalIfOpen, getVisibleInputs, fillInput, SCREENSHOTS_DIR } from './test-helpers.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BASE_URL = 'http://localhost:3000/ds-visualizer/';
 
 // ============================================================

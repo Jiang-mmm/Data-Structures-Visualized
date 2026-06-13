@@ -64,19 +64,6 @@ async function runTest() {
     await closeModalIfOpen(page);
   }
 
-  // Helper: insert a word into trie (animation takes ~500ms per node)
-  async function insertTrieWord(page, word) {
-    await closeModalIfOpen(page);
-    const triInp = await getVisibleInputs(page);
-    if (triInp.length > 0) await fillInput(page, triInp[0], word);
-    await sleep(300);
-    await closeModalIfOpen(page);
-    const clicked = await clickButtonIfEnabled(page, /插入/);
-    // Trie animation iterates ALL nodes (~450ms each), needs long wait
-    if (clicked) await sleep(8000);
-    await closeModalIfOpen(page);
-  }
-
   // Helper: perform a stack push
   async function pushStack(page, value) {
     await closeModalIfOpen(page);
@@ -142,7 +129,6 @@ async function runTest() {
     console.log('  [Stack] 测试持久化...');
     await clearAndReload('stack', 'stack');
 
-    const stackInitialSize = await getSizeValue();
     await pushStack(page, 99);
     const stackSizeAfterPush = await getSizeValue();
 
@@ -163,7 +149,7 @@ async function runTest() {
     console.log('  [Queue] 测试持久化...');
     await clearAndReload('queue', 'queue');
 
-    const queueInitialSize = await getSizeValue();
+    await getSizeValue();
     await enqueueQueue(page, 55);
     const queueSizeAfterEnqueue = await getSizeValue();
 

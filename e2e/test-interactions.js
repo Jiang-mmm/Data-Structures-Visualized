@@ -1,21 +1,7 @@
 import { chromium } from 'playwright';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import {
-  sleep,
-  retry,
-  waitForText,
-  waitForElement,
-  clickButtonIfEnabled,
-  closeModalIfOpen,
-  getVisibleInputs,
-  fillInput,
-  assertWithRetry,
-  SCREENSHOTS_DIR,
-  verifyScreenshot,
-} from './test-helpers.js';
+import { sleep, clickButtonIfEnabled, closeModalIfOpen, getVisibleInputs, fillInput, SCREENSHOTS_DIR } from './test-helpers.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BASE_URL = 'http://localhost:3000/ds-visualizer/';
 
 async function runTest() {
@@ -434,8 +420,6 @@ async function runTest() {
       await page.screenshot({ path: path.join(SCREENSHOTS_DIR, 'mobile-sidebar-open.png'), fullPage: false });
 
       // Sidebar should now be visible
-      const sidebarNowOpen = await page.locator('aside.open, aside.sidebar.open').count() > 0 ||
-        await page.locator('aside').first().evaluate(el => el.classList.contains('open')).catch(() => false);
       results.passed.push('Responsive: 汉堡菜单可展开侧边栏');
 
       // Close sidebar by clicking close button
