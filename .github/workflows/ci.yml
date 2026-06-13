@@ -32,12 +32,13 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Run tests
+      - name: Run unit tests
         run: npm run test:run
 
   e2e:
     runs-on: ubuntu-latest
     needs: build
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -57,15 +58,19 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium
 
-      - name: Start dev server
+      - name: Start dev server in background
         run: npm run dev &
-        timeout: 30
 
       - name: Wait for server
         run: npx wait-on http://localhost:3000/ds-visualizer/ --timeout 30000
 
       - name: Run E2E tests
         run: node e2e/run-all-tests.js
+        timeout-minutes: 10
+
+      - name: Stop dev server
+        if: always()
+        run: pkill -f "vite" || true
 
       - name: Upload screenshots
         if: always()

@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { exec } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -12,62 +12,58 @@ const testFiles = [
   'test-v5-features.js',
 ];
 
-let totalPassed = 0;
-let totalFailed = 0;
-const allResults = [];
+function runTest(file) {
+  return new Promise((resolve) => {
+    const filePath = path.join(__dirname, file);
 
-for (const file of testFiles) {
-  const filePath = path.join(__dirname, file);
-  console.log(`\n${'='.repeat(60)}`);
-  console.log(`Running: ${file}`);
-  console.log('='.repeat(60));
-
-  try {
-    const output = execSync(`node "${filePath}"`, {
+    const child = exec(`node "${filePath}"`, {
       encoding: 'utf-8',
       timeout: 300000,
-      stdio: ['pipe', 'pipe', 'pipe'],
+    }, (error, stdout, stderr) => {
+      const output = stdout || '';
+      const errOutput = stderr || '';
+
+      const passedMatch = output.match(/通过:\s*(\d+)/);
+      const failedMatch = output.match(/失败:\s*(\d+)/);
+
+      const passed = passedMatch ? parseInt(passedMatch[1], 10) : 0;
+      const failed = failedMatch ? parseInt(failedMatch[1], 10) : 0;
+
+      resolve({
+        file,
+        status: failed === 0 && !error ? 'PASS' : 'FAIL',
+        passed,
+        failed,
+        output,
+        errOutput,
+      });
     });
 
-    console.log(output);
-
-    const passedMatch = output.match(/通过:\s*(\d+)/);
-    const failedMatch = output.match(/失败:\s*(\d+)/);
-
-    const passed = passedMatch ? parseInt(passedMatch[1], 10) : 0;
-    const failed = failedMatch ? parseInt(failedMatch[1], 10) : 0;
-
-    totalPassed += passed;
-    totalFailed += failed;
-
-    allResults.push({
-      file,
-      status: failed === 0 ? 'PASS' : 'FAIL',
-      passed,
-      failed,
+    // Stream output in real-time with prefix
+    child.stdout?.on('data', (data) => {
+      process.stdout.write(`[${file}] ${data}`);
     });
-  } catch (error) {
-    console.log(error.stdout || '');
-    console.error(error.stderr || '');
-
-    const output = error.stdout || '';
-    const passedMatch = output.match(/通过:\s*(\d+)/);
-    const failedMatch = output.match(/失败:\s*(\d+)/);
-
-    const passed = passedMatch ? parseInt(passedMatch[1], 10) : 0;
-    const failed = failedMatch ? parseInt(failedMatch[1], 10) : 0;
-
-    totalPassed += passed;
-    totalFailed += failed;
-
-    allResults.push({
-      file,
-      status: 'FAIL',
-      passed,
-      failed,
+    child.stderr?.on('data', (data) => {
+      process.stderr.write(`[${file}] ${data}`);
     });
-  }
+  });
 }
+
+console.log(`\n${'='.repeat(60)}`);
+console.log(`Running ${testFiles.length} test files in parallel...`);
+console.log('='.repeat(60));
+
+const startTime = Date.now();
+const allResults = await Promise.all(testFiles.map(runTest));
+const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+
+let totalPassed = 0;
+let totalFailed = 0;
+
+allResults.forEach((r) => {
+  totalPassed += r.passed;
+  totalFailed += r.failed;
+});
 
 console.log('\n' + '='.repeat(60));
 console.log('E2E 测试汇总报告');
@@ -76,9 +72,10 @@ console.log(`总测试用例: ${totalPassed + totalFailed}`);
 console.log(`通过: ${totalPassed}`);
 console.log(`失败: ${totalFailed}`);
 console.log(`通过率: ${((totalPassed / (totalPassed + totalFailed)) * 100).toFixed(1)}%`);
+console.log(`总耗时: ${elapsed}s`);
 console.log('');
 
-allResults.forEach(r => {
+allResults.forEach((r) => {
   const icon = r.status === 'PASS' ? '✅' : '❌';
   console.log(`${icon} ${r.file}: ${r.passed} passed, ${r.failed} failed`);
 });
