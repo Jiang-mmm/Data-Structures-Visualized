@@ -20,7 +20,7 @@ export default function ToastContainer() {
   }
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2" aria-live="polite">
+    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2" aria-live={toasts.some(t => t.type === 'error') ? 'assertive' : 'polite'}>
       {toasts.map((toast: Toast) => (
         <div
           key={toast.id}

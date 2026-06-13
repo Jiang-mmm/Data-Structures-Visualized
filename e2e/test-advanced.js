@@ -1,4 +1,4 @@
-import { chromium } from 'playwright';
+import { chromium, firefox } from 'playwright';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { verifyScreenshot } from './test-helpers.js';
@@ -44,7 +44,9 @@ async function fillInputAndTrigger(page, input, value) {
 
 async function runTest() {
   const results = { name: '高级功能页面测试', passed: [], failed: [] };
-  const browser = await chromium.launch();
+  const browserType = process.env.BROWSER || 'chromium';
+  const launchBrowser = browserType === 'firefox' ? firefox : chromium;
+  const browser = await launchBrowser.launch();
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
   const page = await context.newPage();
 

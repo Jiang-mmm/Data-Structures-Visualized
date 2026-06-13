@@ -73,9 +73,9 @@ export default function Home() {
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold mb-2 group-hover:text-accent-blue transition-colors text-ink dark:text-dark-ink">
+              <h2 className="text-xl font-bold mb-2 group-hover:text-accent-blue transition-colors text-ink dark:text-dark-ink">
                 {item.name}
-              </h3>
+              </h2>
               <p className="text-sm text-ink-light dark:text-dark-ink-light mb-5 leading-relaxed">
                 {item.desc}
               </p>

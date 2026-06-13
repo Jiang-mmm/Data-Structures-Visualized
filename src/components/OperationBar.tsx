@@ -33,6 +33,8 @@ interface OperationInfoProps {
 function OperationBar({ children, className = '' }: OperationBarProps) {
   return (
     <div
+      role="toolbar"
+      aria-label="操作栏"
       className={`
         bg-white dark:bg-slate border-b-2 border-ink dark:border-dark-border
         px-3 sm:px-6 py-2 sm:py-3

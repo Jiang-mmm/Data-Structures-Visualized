@@ -171,7 +171,7 @@ export default function SortPage() {
         </div>
       </div>
 
-      <Visualizer data={data} renderFn={renderSortBars} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} />
+      <Visualizer data={data} renderFn={renderSortBars} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel="排序可视化" />
       {data.length === 0 && (
         <EmptyState icon="⇅" titleKey="emptyState.emptySort" descriptionKey="emptyState.emptySortDesc" onFill={randomize} />
       )}

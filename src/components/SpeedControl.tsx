@@ -82,6 +82,7 @@ export default memo(function SpeedControl() {
           <button
             key={opt.value}
             onClick={() => setAnimationSpeed(opt.value)}
+            aria-pressed={animationSpeed === opt.value}
             className={`px-2 py-0.5 font-mono text-xs transition-all border-2
               ${animationSpeed === opt.value
                 ? 'bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper border-ink dark:border-dark-ink shadow-[1px_1px_0px_#1a1a2e] dark:shadow-[1px_1px_0px_#334155]'

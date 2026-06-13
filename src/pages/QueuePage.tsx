@@ -112,7 +112,7 @@ export default function QueuePage() {
         </UndoPreviewButton>
         <OperationInfo><span className="font-mono text-xs text-ink-light">SIZE: {size}</span></OperationInfo>
       </OperationBar>
-      <Visualizer data={data} renderFn={renderQueue} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} />
+      <Visualizer data={data} renderFn={renderQueue} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel="队列可视化" />
       {data.length === 0 && (
         <EmptyState icon="→" titleKey="emptyState.emptyQueue" descriptionKey="emptyState.emptyQueueDesc" onFill={reset} />
       )}
