@@ -52,8 +52,8 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 
 ## Testing
 
-- **Unit tests:** Vitest + React Testing Library. 999 tests across 64 files in `src/__tests__/`. Test files mirror source: `useArrayState.test.ts`, `arrayVisualizer.test.ts`, etc.
-- **Known failures:** 0 unit test failures. All 999 pass.
+- **Unit tests:** Vitest + React Testing Library. 1133 tests across 86 files in `src/__tests__/`. Test files mirror source: `useArrayState.test.ts`, `arrayVisualizer.test.ts`, etc.
+- **Known failures:** 0 unit test failures. All 1133 pass.
 - **Test setup:** `src/__tests__/setup.js` (jsdom environment, jest-dom matchers, SVG mocks).
 - **E2E:** Playwright in `e2e/` directory. Run with `node e2e/run-all-tests.js` (requires dev server at `http://localhost:3000/ds-visualizer/`). Uses `domcontentloaded` wait strategy.
 - **Cross-browser:** E2E supports `BROWSER=firefox` env var. Run with `BROWSER=firefox node e2e/test-home.js`.
@@ -73,6 +73,6 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 - **Page animation pattern**: Always animate FIRST, then mutate state. Use try/finally for `setIsAnimating(false)` to prevent page lockup on errors.
 - **D3 imports**: Always import from `src/utils/d3Imports.ts`, never directly from `'d3'`. Direct imports cause dual-instance issues with transition prototype patching.
 - **Heap/Tree inserts**: Must maintain data structure invariants (siftUp for heap, BST position for tree). Don't just append to array.
-- **Graph state**: `nodeCounter` is a useRef inside the hook (not module-level). `links` are separate state, not persisted or undo-able.
+- **Graph state**: `nodeCounter` is a useRef inside the hook (not module-level). Both `nodes` and `links` are stored as a single `GraphData` object in `useDataStructureState`, so both are persisted to localStorage and included in undo/redo.
 - **Accessibility**: SVG visualizations must have `role="img"` and `aria-label` (via `Visualizer` component's `ariaLabel` prop). All interactive elements need `aria-label` or visible text. Use `t()` for all user-facing strings. Error toasts use `aria-live="assertive"`.
 - **Bundle optimization**: Vendor chunks are split via `manualChunks` in `vite.config.js` (vendor-react, vendor-d3). `scripts/check-bundle.js` enforces size budgets (index < 80KB, vendor-react < 250KB, vendor-d3 < 60KB).
