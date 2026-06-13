@@ -7,6 +7,7 @@ const RECT_WIDTH = 70
 const RECT_HEIGHT = 50
 const GAP = 10
 const BASE_DURATION = 400
+const LARGE_DATA_THRESHOLD = 30
 
 interface QueueVisualizerOptions {
   width: number
@@ -68,6 +69,7 @@ export function renderQueue(svg: SVGSVGElement, data: number[], options: QueueVi
 }
 
 export async function animateEnqueue(svg: SVGSVGElement, value: number, data: number[], options: QueueVisualizerOptions = { width: 800, height: 400 }, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
@@ -105,6 +107,7 @@ export async function animateEnqueue(svg: SVGSVGElement, value: number, data: nu
 }
 
 export async function animateDequeue(svg: SVGSVGElement, data: number[], options?: QueueVisualizerOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
@@ -131,6 +134,7 @@ export async function animateDequeue(svg: SVGSVGElement, data: number[], options
 }
 
 export async function animateFront(svg: SVGSVGElement, data: number[], options?: QueueVisualizerOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)

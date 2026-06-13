@@ -4,6 +4,7 @@ import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils
 import { tStatic } from '../i18n/useI18n'
 
 const NODE_RADIUS = 22
+const LARGE_DATA_THRESHOLD = 30
 
 interface HeapOptions {
   width: number
@@ -142,6 +143,7 @@ export function renderHeap(svg: SVGSVGElement, data: number[], options: HeapOpti
  * @param {Object} [anim] - 动画上下文
  */
 export async function animateInsertHeap(svg: SVGSVGElement, value: number, data: number[], anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const container = select(svg)
 
   // Find the newly inserted node (last heap-node in DOM)

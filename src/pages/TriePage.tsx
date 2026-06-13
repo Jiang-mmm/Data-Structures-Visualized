@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
@@ -10,6 +10,7 @@ import { useTrieState } from '../hooks/useTrieState'
 import { useVisualizer } from '../hooks/useVisualizer'
 import { useKeyboard } from '../hooks/useKeyboard'
 import SpeedControl from '../components/SpeedControl'
+import ExportImport from '../components/ExportImport'
 import UndoPreviewButton from '../components/UndoPreviewButton'
 import ShareButton from '../components/ShareButton'
 import { showToast } from '../components/toastStore'
@@ -20,7 +21,7 @@ import { useLearningMode } from '../hooks/useLearningMode'
 
 export default function TriePage() {
   const { t } = useGlobalSettings()
-  const { logs, isAnimating, setIsAnimating, insert, remove, search, searchPrefix, getFlattened, wordCount, reset, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useTrieState()
+  const { logs, isAnimating, setIsAnimating, insert, remove, search, searchPrefix, getFlattened, wordCount, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useTrieState()
   const { containerRef, svgRef, dimensions } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
@@ -32,87 +33,96 @@ export default function TriePage() {
     'r': reset,
   }, !isAnimating)
 
-  const handleInsert = async () => {
+  const handleInsert = useCallback(async () => {
     if (isAnimating) return
     if (!inputValue || inputValue.trim().length === 0) {
       showToast({ type: 'error', message: t('errors.enterWord') })
       return
     }
+    const word = inputValue.trim().toLowerCase()
     setIsAnimating(true)
     try {
-      if (svgRef.current) await animateInsertTrie(svgRef.current)
-      insert(inputValue.trim().toLowerCase())
+      if (svgRef.current) await animateInsertTrie(svgRef.current, word)
+      insert(word)
     } catch (e) {
       handleAnimationError(e, t('trie.insert'))
     } finally {
       setIsAnimating(false)
     }
     setInputValue('')
-  }
+  }, [isAnimating, inputValue, insert, setIsAnimating, svgRef])
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (isAnimating) return
     if (!inputValue || inputValue.trim().length === 0) {
       showToast({ type: 'error', message: t('errors.enterDeleteWord') })
       return
     }
+    const word = inputValue.trim().toLowerCase()
     setIsAnimating(true)
     try {
-      if (svgRef.current) await animateDeleteTrie(svgRef.current)
-      remove(inputValue.trim().toLowerCase())
+      if (svgRef.current) await animateDeleteTrie(svgRef.current, word)
+      remove(word)
     } catch (e) {
       handleAnimationError(e, t('trie.delete'))
     } finally {
       setIsAnimating(false)
     }
     setInputValue('')
-  }
+  }, [isAnimating, inputValue, remove, setIsAnimating, svgRef])
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (isAnimating) return
     if (!inputValue || inputValue.trim().length === 0) {
       showToast({ type: 'error', message: t('errors.enterSearchWord') })
       return
     }
+    const word = inputValue.trim().toLowerCase()
     setIsAnimating(true)
     try {
-      const result = search(inputValue.trim().toLowerCase())
-      if (svgRef.current) await animateSearchTrie(svgRef.current, result.found)
+      const result = search(word)
+      if (svgRef.current) await animateSearchTrie(svgRef.current, result.found, word)
     } catch (e) {
       handleAnimationError(e, t('trie.search'))
     } finally {
       setIsAnimating(false)
     }
-  }
+  }, [isAnimating, inputValue, search, setIsAnimating, svgRef])
 
-  const handlePrefixSearch = async () => {
+  const handlePrefixSearch = useCallback(async () => {
     if (isAnimating) return
     if (!inputValue || inputValue.trim().length === 0) {
       showToast({ type: 'error', message: t('errors.enterPrefix') })
       return
     }
+    const prefix = inputValue.trim().toLowerCase()
     setIsAnimating(true)
     try {
-      const result = searchPrefix(inputValue.trim().toLowerCase())
+      const result = searchPrefix(prefix)
       if (result.found && result.words.length > 0) {
         showToast({ type: 'success', message: `${t('errors.prefixMatch')}: ${result.words.join(', ')}` })
       } else {
         showToast({ type: 'info', message: t('errors.noPrefixMatch') })
       }
-      if (svgRef.current) await animateSearchTrie(svgRef.current, result.words.length > 0)
+      if (svgRef.current) await animateSearchTrie(svgRef.current, result.words.length > 0, prefix)
     } catch (e) {
       handleAnimationError(e, t('trie.prefixSearch'))
     } finally {
       setIsAnimating(false)
     }
-  }
+  }, [isAnimating, inputValue, searchPrefix, setIsAnimating, svgRef])
 
   const flatData = getFlattened()
   const count = wordCount()
 
   return (
     <div className="flex flex-col h-screen">
-      <PageHeader title={t('trie.title') + ' Trie'} subtitle={t('trie.subtitle')} icon="🌳">
+      <PageHeader title={t('trie.title')} subtitle={t('trie.subtitle')} icon="🌳">
+        <ExportImport dataType="trie" data={flatData} disabled={isAnimating} onImport={({ data: imported }) => {
+          if (imported && typeof imported === 'object' && 'nodes' in (imported as object)) {
+            loadData(imported as Parameters<typeof loadData>[0])
+          }
+        }} />
         <ShareButton data={flatData} dataType="trie" disabled={isAnimating} />
         <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
       </PageHeader>

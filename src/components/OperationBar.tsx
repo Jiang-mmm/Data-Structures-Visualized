@@ -1,4 +1,5 @@
 import { memo, ReactNode, ButtonHTMLAttributes } from 'react'
+import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
 interface OperationBarProps {
   label?: string
@@ -31,10 +32,11 @@ interface OperationInfoProps {
 }
 
 function OperationBar({ children, className = '' }: OperationBarProps) {
+  const { t } = useGlobalSettings()
   return (
     <div
       role="toolbar"
-      aria-label="操作栏"
+      aria-label={t('page.operations')}
       className={`
         bg-white dark:bg-slate border-b-2 border-ink dark:border-dark-border
         px-3 sm:px-6 py-2 sm:py-3

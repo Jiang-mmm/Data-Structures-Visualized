@@ -21,7 +21,7 @@ export async function runWithTimeSlicing<T, R>(items: T[], processItem: (item: T
   const results: R[] = []
   for (let i = 0; i < items.length; i++) {
     results.push(await processItem(items[i], i))
-    if (i % batchSize === 0 && i > 0) {
+    if ((i + 1) % batchSize === 0 && i < items.length - 1) {
       await yieldToMain()
     }
   }

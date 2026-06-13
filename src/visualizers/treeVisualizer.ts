@@ -547,21 +547,4 @@ export async function animateDeleteNode(svg: SVGSVGElement, value: number, data:
       .attr('opacity', 0)
   )
 
-  if (anim?.isAborted?.()) return
-
-  // Phase 3: Reset for next render
-  await transitionEnd(
-    nodeGroup.select('circle')
-      .transition().duration(duration(250)).ease(EASING.easeOutCubic)
-      .attr('r', NODE_RADIUS)
-      .attr('opacity', 1)
-      .attr('fill', (d: TreeNodeData) => d.dataIndex === 0 ? C.nodeRoot : C.nodeDefault)
-      .attr('stroke', (d: TreeNodeData) => d.dataIndex === 0 ? C.nodeRootStroke : C.nodeDefaultStroke)
-  )
-  nodeGroup.attr('opacity', 1).attr('transform', function() {
-    const current = select(this).attr('transform')
-    const match = current?.match(/translate\(([^,]+),\s*([^)]+)\)/)
-    if (!match) return current
-    return `translate(${match[1]}, ${match[2]})`
-  })
 }

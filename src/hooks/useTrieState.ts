@@ -50,11 +50,13 @@ function deleteWord(root: TrieNode, word: string): TrieNode {
 
 function searchWord(root: TrieNode, word: string): { found: boolean; path: string[] } {
   let current = root
+  const path: string[] = []
   for (const ch of word) {
-    if (!current.children[ch]) return { found: false, path: [] }
+    if (!current.children[ch]) return { found: false, path }
+    path.push(ch)
     current = current.children[ch]
   }
-  return { found: current.isEndOfWord, path: [] }
+  return { found: current.isEndOfWord, path }
 }
 
 function startsWith(root: TrieNode, prefix: string): { found: boolean; words: string[]; path: string[] } {

@@ -164,7 +164,7 @@ export default function Sidebar() {
       <nav className="flex-1 p-2 space-y-1 overflow-y-auto scrollbar-thin">
         {(!collapsed || isMobile) && (
           <div className="px-3 pt-3 pb-2 font-mono text-[10px] text-ink-light dark:text-dark-ink-light tracking-[0.2em] uppercase">
-            MODULES
+            {t('home.modules')}
           </div>
         )}
         {structures.map((item) => {
@@ -174,6 +174,7 @@ export default function Sidebar() {
               key={item.path}
               to={item.path}
               title={collapsed && !isMobile ? item.name : undefined}
+              aria-current={isActive ? 'page' : undefined}
               className={`
                 ${NAV_ITEM_BASE}
                 ${isActive ? NAV_ITEM_ACTIVE : NAV_ITEM_INACTIVE}

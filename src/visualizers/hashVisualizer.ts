@@ -8,6 +8,7 @@ const BUCKET_WIDTH = 52
 const ENTRY_RADIUS = 16
 const GAP_Y = 48
 const BUCKET_GROUP_GAP = 24
+const LARGE_DATA_THRESHOLD = 50
 
 interface HashEntry {
   key: number | string
@@ -181,6 +182,7 @@ export async function animateInsertHash(svg: SVGSVGElement, key: number | string
 }
 
 export async function animateSearchHash(svg: SVGSVGElement, key: number | string, found: boolean, data: HashEntry[], options: HashVisualizerOptions = {} as HashVisualizerOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   if (anim?.isAborted?.()) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
@@ -222,6 +224,7 @@ export async function animateSearchHash(svg: SVGSVGElement, key: number | string
 }
 
 export async function animateDeleteHash(svg: SVGSVGElement, key: number | string, data: HashEntry[], options: HashVisualizerOptions = {} as HashVisualizerOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   if (anim?.isAborted?.()) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)

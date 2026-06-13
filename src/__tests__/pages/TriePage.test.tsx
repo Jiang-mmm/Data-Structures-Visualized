@@ -56,7 +56,7 @@ describe('TriePage', () => {
     mockedUseTrieState.mockReturnValue(createMockTrieState() as any)
     renderWithRouter(<TriePage />)
 
-    expect(screen.getByText('trie.title Trie')).toBeInTheDocument()
+    expect(screen.getByText('trie.title')).toBeInTheDocument()
     expect(screen.getByText('trie.insert')).toBeInTheDocument()
     expect(screen.getByText('trie.delete')).toBeInTheDocument()
     expect(screen.getByText('trie.search')).toBeInTheDocument()

@@ -7,12 +7,17 @@ export default function Home() {
 
   const structures = useMemo(() => [
     { path: '/array', name: t('array.title'), en: 'Array', icon: '▦', desc: t('array.subtitle'), ops: [t('array.insert'), t('array.delete'), t('array.search')], accent: 'border-l-accent-blue bg-accent-blue/5', badge: 'bg-accent-blue/10 text-accent-blue' },
-    { path: '/stack', name: t('stack.title'), en: 'Stack', icon: '☰', desc: t('stack.subtitle'), ops: ['Push', 'Pop', 'Peek'], accent: 'border-l-accent-violet bg-accent-violet/5', badge: 'bg-accent-violet/10 text-accent-violet' },
-    { path: '/queue', name: t('queue.title'), en: 'Queue', icon: '→', desc: t('queue.subtitle'), ops: ['Enqueue', 'Dequeue', 'Front'], accent: 'border-l-accent-teal bg-accent-teal/5', badge: 'bg-accent-teal/10 text-accent-teal' },
+    { path: '/stack', name: t('stack.title'), en: 'Stack', icon: '☰', desc: t('stack.subtitle'), ops: [t('stack.push'), t('stack.pop'), t('stack.peek')], accent: 'border-l-accent-violet bg-accent-violet/5', badge: 'bg-accent-violet/10 text-accent-violet' },
+    { path: '/queue', name: t('queue.title'), en: 'Queue', icon: '→', desc: t('queue.subtitle'), ops: [t('queue.enqueue'), t('queue.dequeue'), t('queue.peek')], accent: 'border-l-accent-teal bg-accent-teal/5', badge: 'bg-accent-teal/10 text-accent-teal' },
     { path: '/linkedlist', name: t('linkedlist.title'), en: 'LinkedList', icon: '∞', desc: t('linkedlist.subtitle'), ops: [t('linkedlist.pushFront'), t('linkedlist.pushBack'), t('linkedlist.find')], accent: 'border-l-accent-amber bg-accent-amber/5', badge: 'bg-accent-amber/10 text-accent-amber' },
     { path: '/tree', name: t('tree.title'), en: 'BinaryTree', icon: '❖', desc: t('tree.subtitle'), ops: [t('tree.preorder'), t('tree.inorder'), t('tree.postorder')], accent: 'border-l-accent-rose bg-accent-rose/5', badge: 'bg-accent-rose/10 text-accent-rose' },
-    { path: '/graph', name: t('graph.title'), en: 'Graph', icon: '⬡', desc: t('graph.subtitle'), ops: ['BFS', 'DFS', 'Dijkstra'], accent: 'border-l-accent-emerald bg-accent-emerald/5', badge: 'bg-accent-emerald/10 text-accent-emerald' },
+    { path: '/graph', name: t('graph.title'), en: 'Graph', icon: '⬡', desc: t('graph.subtitle'), ops: [t('graph.bfs'), t('graph.dfs'), t('graph.dijkstra')], accent: 'border-l-accent-emerald bg-accent-emerald/5', badge: 'bg-accent-emerald/10 text-accent-emerald' },
+    { path: '/hash', name: t('hash.title'), en: 'HashTable', icon: '#', desc: t('hash.subtitle'), ops: [t('hash.insert'), t('hash.remove'), t('hash.search')], accent: 'border-l-accent-amber bg-accent-amber/5', badge: 'bg-accent-amber/10 text-accent-amber' },
+    { path: '/heap', name: t('heap.title'), en: 'Heap', icon: '▲', desc: t('heap.subtitle'), ops: [t('heap.insert'), t('heap.extractMax'), t('heap.peek')], accent: 'border-l-accent-violet bg-accent-violet/5', badge: 'bg-accent-violet/10 text-accent-violet' },
+    { path: '/trie', name: t('trie.title'), en: 'Trie', icon: '🌳', desc: t('trie.subtitle'), ops: [t('trie.insert'), t('trie.search'), t('trie.prefixSearch')], accent: 'border-l-accent-emerald bg-accent-emerald/5', badge: 'bg-accent-emerald/10 text-accent-emerald' },
     { path: '/sort', name: t('sort.title'), en: 'Sorting', icon: '⇅', desc: t('sort.subtitle'), ops: [t('sortLegend.unsorted'), t('sortLegend.comparing'), t('sortLegend.swapping')], accent: 'border-l-accent-cyan bg-accent-cyan/5', badge: 'bg-accent-cyan/10 text-accent-cyan' },
+    { path: '/compare', name: t('compare.title'), en: 'Compare', icon: '⚖', desc: t('compare.subtitle'), ops: [t('compare.runAll'), t('compare.stop'), t('compare.exportCSV')], accent: 'border-l-accent-rose bg-accent-rose/5', badge: 'bg-accent-rose/10 text-accent-rose' },
+    { path: '/graph-algorithm', name: t('graphAlgorithm.title'), en: 'GraphAlgo', icon: '🔬', desc: t('graphAlgorithm.subtitle'), ops: [t('graph.bfs'), t('graph.dfs'), t('graph.dijkstra')], accent: 'border-l-accent-blue bg-accent-blue/5', badge: 'bg-accent-blue/10 text-accent-blue' },
   ], [t])
 
   return (
@@ -46,7 +51,7 @@ export default function Home() {
               {t('home.selectStructure')}
             </span>
             <span className="font-mono text-xs text-ink-light dark:text-dark-ink-light">
-              {structures.length} MODULES
+              {structures.length} {t('home.modules')}
             </span>
           </div>
         </div>

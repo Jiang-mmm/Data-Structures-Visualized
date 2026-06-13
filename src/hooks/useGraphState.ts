@@ -17,6 +17,16 @@ export interface GraphLink {
   weight?: number
 }
 
+export interface GraphData {
+  nodes: GraphNode[]
+  links: GraphLink[]
+}
+
+const INITIAL_DATA: GraphData = {
+  nodes: INITIAL_NODES.map(n => ({ ...n })),
+  links: INITIAL_LINKS.map(l => ({ ...l, source: String(l.source), target: String(l.target) })),
+}
+
 export function useGraphState() {
   const nodeCounterRef = useRef(0)
 
@@ -27,18 +37,20 @@ export function useGraphState() {
     nodeCounterRef.current++
     return `N${nodeCounterRef.current}`
   }
-  const {
-    data: nodes, logs, isAnimating, setIsAnimating,
-    push: pushNodes, addLog, reset: resetDataStructure, loadData,
-    undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<GraphNode[]>(INITIAL_NODES.map(n => ({ ...n })), { storageKey: 'graph' })
 
-  const [links, setLinks] = useState<GraphLink[]>(INITIAL_LINKS.map(l => ({ ...l, source: String(l.source), target: String(l.target) })))
+  const {
+    data: graphData, logs, isAnimating, setIsAnimating,
+    push: pushGraph, addLog, reset: resetDataStructure, loadData: loadGraphData,
+    undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
+  } = useDataStructureState<GraphData>(INITIAL_DATA, { storageKey: 'graph' })
+
+  const nodes = graphData.nodes
+  const links = graphData.links
+
   const [viewMode, setViewMode] = useState<string>('force')
 
   const reset = useCallback(() => {
     resetDataStructure()
-    setLinks(INITIAL_LINKS.map(l => ({ ...l, source: String(l.source), target: String(l.target) })))
     nodeCounterRef.current = 0
     showToast({ type: 'info', message: tStatic('toast.reset') })
   }, [resetDataStructure])
@@ -47,10 +59,10 @@ export function useGraphState() {
     const id = nextNodeId(nodes)
     const group = Math.floor(Math.random() * 3)
     const newNodes = [...nodes, { id, group }]
-    pushNodes(newNodes)
+    pushGraph({ nodes: newNodes, links })
     addLog('oper', tStatic('hooks.graphLogAddNode').replace('{id}', id).replace('{count}', String(newNodes.length)))
     showToast({ type: 'success', message: tStatic('hooks.graphNodeAdded').replace('{id}', id) })
-  }, [nodes, pushNodes, addLog])
+  }, [nodes, links, pushGraph, addLog])
 
   const addEdge = useCallback((sourceId: string, targetId: string, weight?: number): boolean => {
     if (sourceId === targetId) {
@@ -65,31 +77,33 @@ export function useGraphState() {
       showToast({ type: 'warning', message: tStatic('hooks.graphEdgeExists') })
       return false
     }
-    setLinks(prev => [...prev, { source: sourceId, target: targetId, weight: weight || 1 }])
-    addLog('oper', tStatic('hooks.graphLogAddEdge').replace('{source}', sourceId).replace('{target}', targetId).replace('{weight}', String(weight || 1)).replace('{count}', String(links.length + 1)))
+    const newLinks = [...links, { source: sourceId, target: targetId, weight: weight || 1 }]
+    pushGraph({ nodes, links: newLinks })
+    addLog('oper', tStatic('hooks.graphLogAddEdge').replace('{source}', sourceId).replace('{target}', targetId).replace('{weight}', String(weight || 1)).replace('{count}', String(newLinks.length)))
     showToast({ type: 'success', message: tStatic('hooks.graphEdgeAdded').replace('{source}', sourceId).replace('{target}', targetId) })
     return true
-  }, [links, addLog])
+  }, [nodes, links, pushGraph, addLog])
 
   const deleteNode = useCallback((nodeId: string) => {
     const newNodes = nodes.filter(n => n.id !== nodeId)
-    pushNodes(newNodes)
-    setLinks(prev => prev.filter(l => {
+    const newLinks = links.filter(l => {
       const s = l.source; const t = l.target
       return s !== nodeId && t !== nodeId
-    }))
+    })
+    pushGraph({ nodes: newNodes, links: newLinks })
     addLog('oper', tStatic('hooks.graphNodeDeleted').replace('{id}', nodeId))
     showToast({ type: 'info', message: tStatic('hooks.graphNodeDeleted').replace('{id}', nodeId) })
-  }, [nodes, pushNodes, addLog])
+  }, [nodes, links, pushGraph, addLog])
 
   const deleteEdge = useCallback((sourceId: string, targetId: string) => {
-    setLinks(prev => prev.filter(l => {
+    const newLinks = links.filter(l => {
       const s = l.source; const t = l.target
       return !(s === sourceId && t === targetId) && !(s === targetId && t === sourceId)
-    }))
+    })
+    pushGraph({ nodes, links: newLinks })
     addLog('oper', tStatic('hooks.graphEdgeDeleted').replace('{source}', sourceId).replace('{target}', targetId))
     showToast({ type: 'info', message: tStatic('hooks.graphEdgeDeleted').replace('{source}', sourceId).replace('{target}', targetId) })
-  }, [addLog])
+  }, [nodes, links, pushGraph, addLog])
 
   const bfs = useCallback((startId: string) => {
     addLog('info', tStatic('hooks.graphLogBfsStart').replace('{id}', startId))
@@ -124,6 +138,14 @@ export function useGraphState() {
     })
     return Object.fromEntries(adj)
   }, [nodes, links])
+
+  const loadData = useCallback((data: GraphNode[] | { nodes: GraphNode[] }) => {
+    if (Array.isArray(data)) {
+      loadGraphData({ nodes: data, links: [] })
+    } else {
+      loadGraphData({ nodes: data.nodes, links: [] })
+    }
+  }, [loadGraphData])
 
   return {
     nodes, links, logs, isAnimating, setIsAnimating, viewMode, setViewMode,

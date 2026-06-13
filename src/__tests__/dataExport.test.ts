@@ -215,7 +215,7 @@ describe('dataExport.js', () => {
     it('应该正确处理包含逗号的算法名', () => {
       const data = [{ algorithm: 'sort, v2', comparisons: 1, swaps: 0, steps: 1 }]
       const csv = exportPerformanceCSV(data)
-      expect(csv).toContain('sort, v2,1,0,1')
+      expect(csv).toContain('"sort, v2",1,0,1')
     })
   })
 

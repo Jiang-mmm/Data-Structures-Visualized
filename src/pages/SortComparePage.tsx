@@ -121,6 +121,7 @@ export default function SortComparePage() {
   const [algoResults, setAlgoResults] = useState<Record<string, AlgoResult>>({})
   const abortControllerRef = useRef<{ abort: () => void } | null>(null)
   const animationRefs = useRef<Record<string, { abort: () => void }>>({})
+  const stoppedRef = useRef(false)
   const [logs, setLogs] = useState<Log[]>([])
   const [showExportMenu, setShowExportMenu] = useState<boolean>(false)
   const { t, lang } = useGlobalSettings()
@@ -163,6 +164,7 @@ export default function SortComparePage() {
   const handleRunAll = async () => {
     if (isRunning || selectedAlgos.length === 0) return
     setIsRunning(true)
+    stoppedRef.current = false
 
     setAlgoResults({})
     setLogs([])
@@ -242,13 +244,16 @@ export default function SortComparePage() {
 
     await Promise.all(promises)
 
-    const doneCount = selectedAlgos.length
     setIsRunning(false)
-    addLog('info', `${t('page.compareDone')}: ${doneCount}/${selectedAlgos.length} ${t('page.algorithms')}`)
-    showToast({ type: 'success', message: `${t('page.compareDone')}: ${doneCount} ${t('page.algorithms')}` })
+    if (!stoppedRef.current) {
+      const doneCount = selectedAlgos.length
+      addLog('info', `${t('page.compareDone')}: ${doneCount}/${selectedAlgos.length} ${t('page.algorithms')}`)
+      showToast({ type: 'success', message: `${t('page.compareDone')}: ${doneCount} ${t('page.algorithms')}` })
+    }
   }
 
   const handleStop = () => {
+    stoppedRef.current = true
     setIsRunning(false)
     Object.values(animationRefs.current).forEach(anim => anim?.abort?.())
     addLog('warning', t('errors.compareStopped'))

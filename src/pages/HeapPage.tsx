@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
@@ -14,7 +14,7 @@ import ExportImport from '../components/ExportImport'
 import UndoPreviewButton from '../components/UndoPreviewButton'
 import ShareButton from '../components/ShareButton'
 import { showToast } from '../components/toastStore'
-import { getValidationError } from '../utils/validate'
+import { getValidationError, validateImportData } from '../utils/validate'
 import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import StepExplainer from '../components/StepExplainer'
@@ -34,7 +34,7 @@ export default function HeapPage() {
     'r': reset,
   }, !isAnimating)
 
-  const handleInsert = async () => {
+  const handleInsert = useCallback(async () => {
     if (isAnimating) return
     const error = getValidationError(inputValue)
     if (error) { showToast({ type: 'error', message: error }); return }
@@ -52,9 +52,9 @@ export default function HeapPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }
+  }, [isAnimating, inputValue, data, insert, setIsAnimating, getAnimationContext, svgRef])
 
-  const handleExtract = async () => {
+  const handleExtract = useCallback(async () => {
     if (isAnimating || data.length === 0) return
     setIsAnimating(true)
     const anim = getAnimationContext()
@@ -66,9 +66,9 @@ export default function HeapPage() {
     } finally {
       setIsAnimating(false)
     }
-  }
+  }, [isAnimating, data.length, extractMax, setIsAnimating, getAnimationContext, svgRef])
 
-  const handlePeek = async () => {
+  const handlePeek = useCallback(async () => {
     if (isAnimating || data.length === 0) return
     setIsAnimating(true)
     const anim = getAnimationContext()
@@ -80,13 +80,14 @@ export default function HeapPage() {
     } finally {
       setIsAnimating(false)
     }
-  }
+  }, [isAnimating, data.length, peek, setIsAnimating, getAnimationContext, svgRef])
 
   return (
     <div className="flex flex-col h-screen">
       <PageHeader title={t('heap.title')} subtitle={t('heap.subtitle')} icon="▲">
         <ExportImport dataType="heap" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
-          if (Array.isArray(imported)) loadData(imported)
+          const result = validateImportData(imported, 'heap')
+          if (result.valid && result.data) loadData(result.data)
         }} />
         <ShareButton data={data} dataType="heap" disabled={isAnimating} />
         <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>

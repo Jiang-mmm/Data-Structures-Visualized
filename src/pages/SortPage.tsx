@@ -207,7 +207,7 @@ export default function SortPage() {
                     : 'hover:bg-ink hover:text-white dark:hover:bg-dark-ink dark:hover:text-dark-paper'
                   }`}
               >
-                {algo.icon} {algo.name}
+                {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
               </button>
             ))}
           </div>

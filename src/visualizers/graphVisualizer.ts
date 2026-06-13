@@ -4,6 +4,7 @@ import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils
 import { tStatic } from '../i18n/useI18n'
 
 const NODE_RADIUS = 20
+const LARGE_DATA_THRESHOLD = 50
 
 interface GraphNode {
   id: string
@@ -205,6 +206,7 @@ function drag(sim: ReturnType<typeof forceSimulation>) {
 }
 
 export async function animateBFS(svg: SVGWithSimulation, startId: string, nodes: GraphNode[], links: GraphLink[], options: GraphOptions, anim?: Animation): Promise<string[]> {
+  if (nodes.length >= LARGE_DATA_THRESHOLD) return []
   const adj = buildAdjacencyList(nodes, links)
   const visited = new Set<string>()
   const queue = [startId]
@@ -225,6 +227,7 @@ export async function animateBFS(svg: SVGWithSimulation, startId: string, nodes:
 }
 
 export async function animateDFS(svg: SVGWithSimulation, startId: string, nodes: GraphNode[], links: GraphLink[], options: GraphOptions, anim?: Animation): Promise<string[]> {
+  if (nodes.length >= LARGE_DATA_THRESHOLD) return []
   const adj = buildAdjacencyList(nodes, links)
   const visited = new Set<string>()
   const order: string[] = []
@@ -242,6 +245,7 @@ export async function animateDFS(svg: SVGWithSimulation, startId: string, nodes:
 }
 
 export async function animateDijkstra(svg: SVGWithSimulation, startId: string, targetId: string, nodes: GraphNode[], links: GraphLink[], options: GraphOptions, anim?: Animation): Promise<string[]> {
+  if (nodes.length >= LARGE_DATA_THRESHOLD) return []
   const adj = buildWeightedAdjacency(nodes, links)
   const dist = new Map<string, number>()
   const prev = new Map<string, string | null>()

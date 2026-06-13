@@ -5,13 +5,13 @@ interface UndoPreviewButtonProps {
   onClick: () => void
   disabled?: boolean
   variant?: 'primary' | 'success' | 'danger' | 'outline'
-  previewData?: any
+  previewData?: unknown
   previewLabel?: string
   children: ReactNode
   className?: string
 }
 
-function formatPreviewData(data: any, t: (key: string) => string): string {
+function formatPreviewData(data: unknown, t: (key: string) => string): string {
   if (data === null || data === undefined) return t('undoPreview.noData')
   if (Array.isArray(data)) {
     if (data.length === 0) return t('undoPreview.emptyArray')

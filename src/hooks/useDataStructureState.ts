@@ -4,6 +4,7 @@ import { useHistory } from './useHistory'
 import { tStatic } from '../i18n/useI18n'
 
 const STORAGE_PREFIX = 'ds-visualizer-data-'
+const MAX_LOGS = 100
 
 function getStorageKey(key: string): string {
   return `${STORAGE_PREFIX}${key}`
@@ -11,8 +12,17 @@ function getStorageKey(key: string): string {
 
 function isValidStoredData(data: unknown): boolean {
   if (data === null || data === undefined) return false
-  if (Array.isArray(data)) return true
-  if (typeof data === 'object') return true
+  if (Array.isArray(data)) {
+    return data.length > 0 && data.every(item => {
+      if (typeof item === 'number') return Number.isFinite(item)
+      if (typeof item === 'object' && item !== null) return true
+      return false
+    })
+  }
+  if (typeof data === 'object') {
+    const keys = Object.keys(data as Record<string, unknown>)
+    return keys.length > 0
+  }
   return false
 }
 
@@ -95,8 +105,11 @@ export function useDataStructureState<T>(initialData: T, options: DataStructureS
   }, [])
 
   const addLog = useCallback((type: string, message: string) => {
-    const time = new Date().toLocaleTimeString('zh-CN', { hour12: false })
-    setLogs(prev => [...prev, { time, type, message }])
+    const time = new Date().toLocaleTimeString(undefined, { hour12: false })
+    setLogs(prev => {
+      const newLogs = [...prev, { time, type, message }]
+      return newLogs.length > MAX_LOGS ? newLogs.slice(-MAX_LOGS) : newLogs
+    })
   }, [])
 
   const push = useCallback((newState: T) => {

@@ -1,7 +1,11 @@
+const MAX_ENCODED_LENGTH = 4000
+
 export function encodeData(data: unknown): string | null {
   try {
     const json = JSON.stringify(data)
-    return btoa(encodeURIComponent(json))
+    const encoded = btoa(encodeURIComponent(json))
+    if (encoded.length > MAX_ENCODED_LENGTH) return null
+    return encoded
   } catch {
     return null
   }

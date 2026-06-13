@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render } from '@testing-library/react'
 import ComplexityChart from '../components/ComplexityChart'
 
+vi.mock('../hooks/useGlobalSettings', () => ({
+  useGlobalSettings: () => ({ t: (key: string) => key }),
+}))
+
 const mockObserve = vi.fn()
 const mockDisconnect = vi.fn()
 

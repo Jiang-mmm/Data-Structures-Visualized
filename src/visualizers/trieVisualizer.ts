@@ -1,103 +1,101 @@
 import { select } from '../utils/d3Imports'
-import { tStatic } from '../i18n/useI18n'
-import { duration, EASING, type Animation } from '../utils/animationEngine'
-import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
+import { getColors, detectDarkMode, ensureGradientDefs, gradUrl, type ThemeColors } from '../utils/themeColors'
+import { duration, EASING } from '../utils/animationEngine'
+import type { TrieFlattened } from '../hooks/useTrieState'
 
-const NODE_RADIUS = 20
-const LEVEL_HEIGHT = 70
-
-interface TrieVisualizerOptions {
-  width: number
-  height: number
+export interface TrieVisualizerOptions {
   isDark?: boolean
-}
-
-interface TrieNodeData {
-  id: string
-  depth: number
-  prefix: string
-  isEndOfWord: boolean
-}
-
-interface TrieEdgeData {
-  from: string
-  to: string
-  char: string
-}
-
-interface TrieFlatData {
-  nodes: TrieNodeData[]
-  edges: TrieEdgeData[]
 }
 
 interface TriePosition {
   id: string
   x: number
   y: number
-  depth: number
   prefix: string
   isEndOfWord: boolean
 }
 
-function layout(flatData: TrieFlatData, width: number): { positions: TriePosition[]; nodes: TrieNodeData[]; edges: TrieEdgeData[] } {
-  if (!flatData.nodes || flatData.nodes.length === 0) return { positions: [], nodes: [], edges: [] }
-
-  const { nodes, edges } = flatData
-
-  const levels: TrieNodeData[][] = []
-  for (const node of nodes) {
-    if (!levels[node.depth]) levels[node.depth] = []
-    levels[node.depth].push(node)
-  }
-
-  const startY = 40
-  const positions: TriePosition[] = []
-
-  for (let l = 0; l < levels.length; l++) {
-    const levelNodes = levels[l]
-    const y = startY + l * LEVEL_HEIGHT
-    const count = levelNodes.length
-    const spacing = Math.max(50, (width - 80) / (count + 1))
-    const startX = (width - spacing * (count - 1)) / 2
-
-    for (let i = 0; i < count; i++) {
-      positions.push({
-        id: levelNodes[i].id,
-        x: startX + i * spacing,
-        y,
-        depth: l,
-        prefix: levelNodes[i].prefix,
-        isEndOfWord: levelNodes[i].isEndOfWord,
-      })
-    }
-  }
-
-  return { positions, nodes, edges }
+interface TrieEdge {
+  from: string
+  to: string
+  char: string
 }
 
-/**
- * 渲染字典树可视化
- * @param {SVGElement} svg - SVG 容器
- * @param {Object} flatData - 字典树数据 { nodes, edges }
- * @param {Object} options - 配置项 { width, height }
- */
-export function renderTrie(svg: SVGSVGElement, flatData: TrieFlatData, options: TrieVisualizerOptions = {} as TrieVisualizerOptions) {
-  const { width, height, isDark = detectDarkMode() } = options
+const NODE_RADIUS = 18
+const LEVEL_HEIGHT = 60
+const MIN_NODE_SPACING = 50
+
+function layout(data: TrieFlattened, width: number): { positions: TriePosition[]; edges: TrieEdge[] } {
+  const positions: TriePosition[] = []
+  const edges: TrieEdge[] = []
+
+  if (!data.nodes || data.nodes.length === 0) return { positions, edges }
+
+  const root: TriePosition = { id: 'root', x: width / 2, y: 40, prefix: '', isEndOfWord: false }
+  positions.push(root)
+
+  const nodesByParent = new Map<string, typeof data.nodes>()
+  for (const node of data.nodes) {
+    const parentId = node.parent === '' ? 'root' : `root-${node.parent}`
+    if (!nodesByParent.has(parentId)) nodesByParent.set(parentId, [])
+    nodesByParent.get(parentId)!.push(node)
+  }
+
+  function layoutLevel(parentId: string, parentX: number, level: number, minX: number, maxX: number) {
+    const children = nodesByParent.get(parentId) || []
+    if (children.length === 0) return
+
+    const totalWidth = maxX - minX
+    const childWidth = totalWidth / children.length
+
+    children.forEach((child, i) => {
+      const childId = `root-${child.char}`
+      const x = minX + childWidth * i + childWidth / 2
+      const y = 40 + level * LEVEL_HEIGHT
+
+      positions.push({
+        id: childId,
+        x,
+        y,
+        prefix: child.char,
+        isEndOfWord: child.isEndOfWord,
+      })
+
+      edges.push({
+        from: parentId,
+        to: childId,
+        char: child.char[child.char.length - 1],
+      })
+
+      layoutLevel(childId, x, level + 1, minX + childWidth * i, minX + childWidth * (i + 1))
+    })
+  }
+
+  layoutLevel('root', width / 2, 1, 0, width)
+
+  return { positions, edges }
+}
+
+export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: TrieVisualizerOptions = {}) {
+  const isDark = options.isDark ?? detectDarkMode()
   const C = getColors(isDark)
-  const container = select(svg)
-  container.selectAll('*').interrupt()
-  container.selectAll('*').remove()
   ensureGradientDefs(svg, isDark)
 
-  if (!flatData.nodes || flatData.nodes.length === 0) {
+  const container = select(svg)
+  container.selectAll('*').interrupt().remove()
+
+  if (!data || !data.nodes || data.nodes.length === 0) {
+    const width = svg.getBoundingClientRect().width || 600
+    const height = svg.getBoundingClientRect().height || 300
     container.append('text')
       .attr('x', width / 2).attr('y', height / 2)
-      .attr('text-anchor', 'middle').attr('fill', C.textMuted)
-      .attr('font-size', '14px').text(tStatic('emptyState.emptyTrieShort'))
+      .attr('text-anchor', 'middle').attr('fill', C.textLight)
+      .text('Empty Trie - Insert a word to start')
     return
   }
 
-  const { positions, edges } = layout(flatData, width)
+  const width = svg.getBoundingClientRect().width || 600
+  const { positions, edges } = layout(data, width)
 
   const posMap: Record<string, TriePosition> = {}
   for (const pos of positions) {
@@ -173,23 +171,60 @@ export function renderTrie(svg: SVGSVGElement, flatData: TrieFlatData, options: 
   }
 }
 
+function buildPath(word: string): string[] {
+  const path = ['root']
+  let current = ''
+  for (const char of word) {
+    current += char
+    path.push(`root-${current}`)
+  }
+  return path
+}
+
+function getPathNodes(container: ReturnType<typeof select>, word: string) {
+  const path = buildPath(word)
+  return path
+    .map(id => container.select(`.node-${id}`))
+    .filter(sel => !sel.empty())
+}
+
 /**
- * 插入字典树动画
- * @param {SVGElement} svg - SVG 容器
+ * 插入字典树动画 - only animates the path from root to the new node
  */
-export async function animateInsertTrie(svg: SVGSVGElement) {
+export async function animateInsertTrie(svg: SVGSVGElement, word?: string) {
   const container = select(svg)
-  const nodeElements = container.selectAll('.trie-node').nodes()
 
-  if (nodeElements.length === 0) return
+  if (!word) {
+    const nodeElements = container.selectAll('.trie-node').nodes()
+    if (nodeElements.length === 0) return
+    for (let i = 0; i < nodeElements.length; i++) {
+      const node = select(nodeElements[i] as SVGGElement)
+      const circle = node.select('circle')
+      if (circle.empty()) continue
+      const originalFill = circle.attr('fill') || gradUrl('node-default')
+      await new Promise<void>((resolve) => {
+        circle
+          .transition().duration(duration(250)).ease(EASING.easeOutBack)
+          .attr('r', NODE_RADIUS + 5)
+          .attr('fill', gradUrl('node-active'))
+          .transition().duration(duration(200)).ease(EASING.easeOutCubic)
+          .attr('r', NODE_RADIUS)
+          .attr('fill', i === nodeElements.length - 1 ? gradUrl('node-leaf') : originalFill)
+          .on('end interrupt', resolve)
+      })
+    }
+    return
+  }
 
-  // Animate nodes sequentially from root to deepest
-  for (let i = 0; i < nodeElements.length; i++) {
-    const node = select(nodeElements[i] as SVGGElement)
+  const pathNodes = getPathNodes(container, word)
+  if (pathNodes.length === 0) return
+
+  for (let i = 0; i < pathNodes.length; i++) {
+    const node = pathNodes[i]
     const circle = node.select('circle')
     if (circle.empty()) continue
-
     const originalFill = circle.attr('fill') || gradUrl('node-default')
+    const isLast = i === pathNodes.length - 1
 
     await new Promise<void>((resolve) => {
       circle
@@ -198,30 +233,49 @@ export async function animateInsertTrie(svg: SVGSVGElement) {
         .attr('fill', gradUrl('node-active'))
         .transition().duration(duration(200)).ease(EASING.easeOutCubic)
         .attr('r', NODE_RADIUS)
-        .attr('fill', i === nodeElements.length - 1 ? gradUrl('node-leaf') : originalFill)
+        .attr('fill', isLast ? gradUrl('node-leaf') : originalFill)
         .on('end interrupt', resolve)
     })
   }
 }
 
 /**
- * 搜索字典树动画
- * @param {SVGElement} svg - SVG 容器
- * @param {boolean} found - 是否找到
+ * 搜索字典树动画 - only animates the search path
  */
-export async function animateSearchTrie(svg: SVGSVGElement, found: boolean) {
+export async function animateSearchTrie(svg: SVGSVGElement, found: boolean, word?: string) {
   const container = select(svg)
-  const nodeElements = container.selectAll('.trie-node').nodes()
 
-  if (nodeElements.length === 0) return
+  if (!word) {
+    const nodeElements = container.selectAll('.trie-node').nodes()
+    if (nodeElements.length === 0) return
+    for (let i = 0; i < nodeElements.length; i++) {
+      const node = select(nodeElements[i] as SVGGElement)
+      const circle = node.select('circle')
+      if (circle.empty()) continue
+      const isLast = i === nodeElements.length - 1
+      const originalFill = circle.attr('fill') || gradUrl('node-default')
+      await new Promise<void>((resolve) => {
+        circle
+          .transition().duration(duration(250)).ease(EASING.easeOutBack)
+          .attr('r', NODE_RADIUS + (isLast ? 8 : 5))
+          .attr('fill', gradUrl('node-active'))
+          .transition().duration(duration(isLast ? 350 : 200)).ease(isLast ? EASING.easeOutElastic : EASING.easeOutCubic)
+          .attr('r', NODE_RADIUS)
+          .attr('fill', isLast ? (found ? gradUrl('node-leaf') : gradUrl('node-error')) : originalFill)
+          .on('end interrupt', resolve)
+      })
+    }
+    return
+  }
 
-  // Animate each node along the search path sequentially
-  for (let i = 0; i < nodeElements.length; i++) {
-    const node = select(nodeElements[i] as SVGGElement)
+  const pathNodes = getPathNodes(container, word)
+  if (pathNodes.length === 0) return
+
+  for (let i = 0; i < pathNodes.length; i++) {
+    const node = pathNodes[i]
     const circle = node.select('circle')
     if (circle.empty()) continue
-
-    const isLast = i === nodeElements.length - 1
+    const isLast = i === pathNodes.length - 1
     const originalFill = circle.attr('fill') || gradUrl('node-default')
 
     await new Promise<void>((resolve) => {
@@ -238,18 +292,37 @@ export async function animateSearchTrie(svg: SVGSVGElement, found: boolean) {
 }
 
 /**
- * 删除字典树动画
- * @param {SVGElement} svg - SVG 容器
+ * 删除字典树动画 - only animates the path in reverse
  */
-export async function animateDeleteTrie(svg: SVGSVGElement) {
+export async function animateDeleteTrie(svg: SVGSVGElement, word?: string) {
   const container = select(svg)
-  const nodeElements = container.selectAll('.trie-node').nodes()
 
-  if (nodeElements.length === 0) return
+  if (!word) {
+    const nodeElements = container.selectAll('.trie-node').nodes()
+    if (nodeElements.length === 0) return
+    for (let i = nodeElements.length - 1; i >= 0; i--) {
+      const node = select(nodeElements[i] as SVGGElement)
+      const circle = node.select('circle')
+      if (circle.empty()) continue
+      await new Promise<void>((resolve) => {
+        circle
+          .transition().duration(duration(200)).ease(EASING.easeOutCubic)
+          .attr('fill', gradUrl('node-error'))
+          .attr('r', NODE_RADIUS + 3)
+          .transition().duration(duration(250)).ease(EASING.easeInCubic)
+          .attr('r', NODE_RADIUS)
+          .attr('fill', gradUrl('node-default'))
+          .on('end interrupt', resolve)
+      })
+    }
+    return
+  }
 
-  // Animate nodes in reverse order (leaf to root) with shrink+fade
-  for (let i = nodeElements.length - 1; i >= 0; i--) {
-    const node = select(nodeElements[i] as SVGGElement)
+  const pathNodes = getPathNodes(container, word)
+  if (pathNodes.length === 0) return
+
+  for (let i = pathNodes.length - 1; i >= 0; i--) {
+    const node = pathNodes[i]
     const circle = node.select('circle')
     if (circle.empty()) continue
 

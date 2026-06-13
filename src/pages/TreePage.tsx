@@ -15,7 +15,7 @@ import UndoPreviewButton from '../components/UndoPreviewButton'
 import OperationGroup from '../components/OperationGroup'
 import ShareButton from '../components/ShareButton'
 import { showToast } from '../components/toastStore'
-import { getValidationError } from '../utils/validate'
+import { getValidationError, validateImportData } from '../utils/validate'
 import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import StepExplainer from '../components/StepExplainer'
@@ -59,9 +59,10 @@ export default function TreePage() {
     if (isAnimating) return
     setIsAnimating(true)
     const anim = getAnimationContext()
-    const order = fn()
-    try { if (svgRef.current) await animateTraversal(svgRef.current, order, data, dimensions, anim) }
-    catch (e) { handleAnimationError(e, t('tree.preorder')) }
+    try {
+      const order = fn()
+      if (svgRef.current) await animateTraversal(svgRef.current, order, data, dimensions, anim)
+    } catch (e) { handleAnimationError(e, t('tree.preorder')) }
     finally { setIsAnimating(false) }
   }, [isAnimating, data, dimensions, setIsAnimating, getAnimationContext, svgRef])
 
@@ -119,8 +120,9 @@ export default function TreePage() {
     <div className="flex flex-col h-screen">
       <PageHeader title={t('tree.title')} subtitle={t('tree.subtitle')} icon="❖">
         <ExportImport dataType="tree" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
-          if (Array.isArray(imported)) {
-            loadData(imported)
+          const result = validateImportData(imported, 'tree')
+          if (result.valid && result.data) {
+            loadData(result.data)
           }
         }} />
         <ShareButton data={data} dataType="tree" disabled={isAnimating} />

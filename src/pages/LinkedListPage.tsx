@@ -15,7 +15,7 @@ import ExportImport from '../components/ExportImport'
 import UndoPreviewButton from '../components/UndoPreviewButton'
 import ShareButton from '../components/ShareButton'
 import { showToast } from '../components/toastStore'
-import { getValidationError } from '../utils/validate'
+import { getValidationError, validateImportData } from '../utils/validate'
 import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import StepExplainer from '../components/StepExplainer'
@@ -182,8 +182,9 @@ export default function LinkedListPage() {
     <div className="flex flex-col h-screen">
       <PageHeader title={t('linkedlist.title')} subtitle={t('linkedlist.subtitle')} icon="∞">
         <ExportImport dataType="linkedlist" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
-          if (Array.isArray(imported)) {
-            loadData(imported)
+          const result = validateImportData(imported, 'linkedlist')
+          if (result.valid && result.data) {
+            loadData(result.data)
           }
         }} />
         <ShareButton data={data} dataType="linkedlist" disabled={isAnimating} />

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
@@ -35,7 +35,7 @@ export default function HashPage() {
     'r': reset,
   }, !isAnimating)
 
-  const handleInsert = async (): Promise<void> => {
+  const handleInsert = useCallback(async (): Promise<void> => {
     if (isAnimating) return
     const keyError = getValidationError(keyValue)
     if (keyError) { showToast({ type: 'error', message: keyError }); return }
@@ -48,7 +48,6 @@ export default function HashPage() {
     const anim = getAnimationContext()
     try {
       insert(key, value)
-      // Wait for React re-render then animate the new entry
       await new Promise(r => setTimeout(r, 50))
       if (svgRef.current) await animateInsertHash(svgRef.current, key, value, { hashFn }, anim)
     } catch (e) {
@@ -58,9 +57,9 @@ export default function HashPage() {
     }
     setKeyValue('')
     setValueInput('')
-  }
+  }, [isAnimating, keyValue, valueInput, insert, setIsAnimating, getAnimationContext, svgRef, hashFn])
 
-  const handleSearch = async (): Promise<void> => {
+  const handleSearch = useCallback(async (): Promise<void> => {
     if (isAnimating) return
     const keyError = getValidationError(keyValue)
     if (keyError) { showToast({ type: 'error', message: keyError }); return }
@@ -72,9 +71,9 @@ export default function HashPage() {
     try { if (svgRef.current) await animateSearchHash(svgRef.current, key, !!found, data, { hashFn }, anim) }
     catch (e) { handleAnimationError(e, t('hash.search')) }
     finally { setIsAnimating(false) }
-  }
+  }, [isAnimating, keyValue, search, data, setIsAnimating, getAnimationContext, svgRef, hashFn])
 
-  const handleDelete = async (): Promise<void> => {
+  const handleDelete = useCallback(async (): Promise<void> => {
     if (isAnimating) return
     const keyError = getValidationError(keyValue)
     if (keyError) { showToast({ type: 'error', message: keyError }); return }
@@ -92,7 +91,7 @@ export default function HashPage() {
     }
     setKeyValue('')
     setValueInput('')
-  }
+  }, [isAnimating, keyValue, data, remove, setIsAnimating, getAnimationContext, svgRef, hashFn])
 
   return (
     <div className="flex flex-col h-screen">
@@ -135,7 +134,7 @@ export default function HashPage() {
 
       <Visualizer
         data={data}
-        renderFn={(svg: SVGSVGElement, d: unknown, dims: { width: number; height: number }) => renderHash(svg, d as any, { ...dims, hashFn })}
+        renderFn={(svg: SVGSVGElement, d: unknown, dims: { width: number; height: number }) => renderHash(svg, d as Parameters<typeof renderHash>[1], { ...dims, hashFn })}
         svgRef={svgRef}
         dimensions={dimensions}
         containerRef={containerRef}

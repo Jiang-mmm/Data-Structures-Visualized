@@ -2,6 +2,10 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import OperationBar, { OperationButton, OperationInput, OperationLabel, OperationInfo } from '../components/OperationBar'
 
+vi.mock('../hooks/useGlobalSettings', () => ({
+  useGlobalSettings: () => ({ t: (key: string) => key }),
+}))
+
 describe('OperationBar', () => {
   describe('基础渲染', () => {
     it('应渲染子元素', () => {

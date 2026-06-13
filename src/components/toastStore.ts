@@ -20,6 +20,7 @@ interface ToastCleanup {
 type Listener = (toasts: Toast[]) => void
 
 let toastId = 0
+const MAX_TOASTS = 5
 
 const toastStore = {
   listeners: new Set<Listener>(),
@@ -28,6 +29,10 @@ const toastStore = {
     const id = ++toastId
     const duration = toast.duration || 3000
     this.toasts.push({ ...toast, id })
+    while (this.toasts.length > MAX_TOASTS) {
+      const oldest = this.toasts[0]
+      this.toasts.shift()
+    }
     this.notify()
     const timerId = setTimeout(() => this.remove(id), duration)
     return { id, cleanup: () => { clearTimeout(timerId); this.remove(id) } }

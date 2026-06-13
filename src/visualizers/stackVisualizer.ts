@@ -7,6 +7,7 @@ const RECT_WIDTH = 80
 const RECT_HEIGHT = 50
 const GAP = 8
 const BASE_DURATION = 400
+const LARGE_DATA_THRESHOLD = 30
 
 interface StackVisualizerOptions {
   width: number
@@ -97,6 +98,7 @@ export function renderStack(svg: SVGSVGElement, data: number[], options: StackVi
 }
 
 export async function animatePush(svg: SVGSVGElement, value: number, data: number[], options: StackVisualizerOptions = { width: 800, height: 400 }, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
@@ -152,6 +154,7 @@ export async function animatePush(svg: SVGSVGElement, value: number, data: numbe
 }
 
 export async function animatePop(svg: SVGSVGElement, data: number[], options?: StackVisualizerOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
@@ -172,14 +175,14 @@ export async function animatePop(svg: SVGSVGElement, data: number[], options?: S
       .attr('transform', function(this: SVGGElement) {
         const current = select(this).attr('transform') || ''
         const matchX = current.match(/translate\(([^,]+)/)
-        return `translate(${matchX ? matchX[1] : 0}, ${-50})`
+        return `translate(${matchX ? matchX[1] : 0}, ${-50}) scale(0.3)`
       })
       .attr('opacity', 0)
-      .style('transform', 'scale(0.3)')
   )
 }
 
 export async function animatePeek(svg: SVGSVGElement, data: number[], options?: StackVisualizerOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)

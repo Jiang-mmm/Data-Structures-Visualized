@@ -39,7 +39,7 @@ export interface ImportValidationResult {
   error?: string
 }
 
-export function validateImportData(data: unknown, dataType: string, maxSize: number = 200, minValue: number = -999, maxValue: number = 999): ImportValidationResult {
+export function validateImportData(data: unknown, _dataType: string, maxSize: number = 200, minValue: number = -999, maxValue: number = 999): ImportValidationResult {
   if (!data) {
     return { valid: false, error: tStatic('errors.importFailed') }
   }

@@ -15,6 +15,7 @@ import UndoPreviewButton from '../components/UndoPreviewButton'
 import ShareButton from '../components/ShareButton'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { showToast } from '../components/toastStore'
+import { handleAnimationError } from '../utils/errorHandler'
 import StepExplainer from '../components/StepExplainer'
 import { useLearningMode } from '../hooks/useLearningMode'
 import OperationGroup from '../components/OperationGroup'
@@ -78,7 +79,7 @@ export default function GraphPage() {
         await animateBFS(svgRef.current, algorithmStart.toUpperCase(), nodes, links, dimensions, anim)
       }
     } catch (e) {
-      showToast({ type: 'error', message: `BFS ${t('errors.animationError').replace('{action}', '')}` })
+      handleAnimationError(e, 'BFS')
     } finally {
       setIsAnimating(false)
     }
@@ -93,7 +94,7 @@ export default function GraphPage() {
         await animateDFS(svgRef.current, algorithmStart.toUpperCase(), nodes, links, dimensions, anim)
       }
     } catch (e) {
-      showToast({ type: 'error', message: `DFS ${t('errors.animationError').replace('{action}', '')}` })
+      handleAnimationError(e, 'DFS')
     } finally {
       setIsAnimating(false)
     }
@@ -108,7 +109,7 @@ export default function GraphPage() {
         await animateDijkstra(svgRef.current, algorithmStart.toUpperCase(), algorithmEnd.toUpperCase(), nodes, links, dimensions, anim)
       }
     } catch (e) {
-      showToast({ type: 'error', message: `Dijkstra ${t('errors.animationError').replace('{action}', '')}` })
+      handleAnimationError(e, 'Dijkstra')
     } finally {
       setIsAnimating(false)
     }
@@ -127,7 +128,7 @@ export default function GraphPage() {
       <PageHeader title={t('graph.title')} subtitle={t('graph.subtitle')} icon="⬡">
         <ExportImport dataType="graph" data={{ nodes, links }} disabled={isAnimating} onImport={({ data: imported }) => {
           if (imported && typeof imported === 'object' && 'nodes' in imported) {
-            loadData((imported as { nodes: typeof nodes }).nodes)
+            loadData(imported as { nodes: typeof nodes })
           } else if (Array.isArray(imported)) {
             loadData(imported)
           }
@@ -199,7 +200,7 @@ export default function GraphPage() {
         </>
       ) : viewMode === 'matrix' ? (
         <div className="flex-1 overflow-auto p-6 border-b-2 border-ink dark:border-dark-border bg-white dark:bg-slate">
-          <h3 className="font-bold text-sm mb-4 text-ink dark:text-dark-ink">{t('graph.adjacencyMatrix')} Adjacency Matrix</h3>
+          <h3 className="font-bold text-sm mb-4 text-ink dark:text-dark-ink">{t('graph.adjacencyMatrix')}</h3>
           <table className="border-collapse font-mono text-sm">
             <thead>
               <tr>
@@ -223,7 +224,7 @@ export default function GraphPage() {
         </div>
       ) : (
         <div className="flex-1 overflow-auto p-6 border-b-2 border-ink dark:border-dark-border bg-white dark:bg-slate">
-          <h3 className="font-bold text-sm mb-4 text-ink dark:text-dark-ink">{t('graph.adjacencyList')} Adjacency List</h3>
+          <h3 className="font-bold text-sm mb-4 text-ink dark:text-dark-ink">{t('graph.adjacencyList')}</h3>
           <div className="space-y-2">
             {Object.entries(adjList).map(([node, neighbors]) => (
               <div key={node} className="flex items-start gap-3">

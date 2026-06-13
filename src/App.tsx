@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { GlobalSettingsProvider } from './hooks/useGlobalSettings'
+import { GlobalSettingsProvider, useGlobalSettings } from './hooks/useGlobalSettings'
 import Layout from './components/Layout'
 import ErrorBoundary from './components/ErrorBoundary'
 
@@ -19,11 +19,12 @@ const SortComparePage = lazy(() => import('./pages/SortComparePage'))
 const GraphAlgorithmPage = lazy(() => import('./pages/GraphAlgorithmPage'))
 
 function PageLoader() {
+  const { t } = useGlobalSettings()
   return (
     <div className="flex-1 flex items-center justify-center bg-paper dark:bg-slate">
       <div className="flex flex-col items-center gap-3">
         <div className="w-8 h-8 border-2 border-ink dark:border-dark-border border-t-accent-blue rounded-full animate-spin" />
-        <span className="font-mono text-xs text-ink-light dark:text-dark-ink-light">Loading...</span>
+        <span className="font-mono text-xs text-ink-light dark:text-dark-ink-light">{t('common.running')}</span>
       </div>
     </div>
   )

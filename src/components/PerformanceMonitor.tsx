@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, memo } from 'react'
 import { getCurrentFPS, startFPSMonitoring, stopFPSMonitoring } from '../utils/animationEngine'
 import { perfLogger } from '../utils/performanceLogger'
+import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
 interface MemoryInfo {
   used: number
@@ -25,6 +26,7 @@ function getFPSBg(fps: number): string {
 }
 
 export default memo(function PerformanceMonitor() {
+  const { t } = useGlobalSettings()
   const [fps, setFps] = useState<number>(60)
   const [memory, setMemory] = useState<MemoryInfo | null>(null)
   const [expanded, setExpanded] = useState<boolean>(false)
@@ -58,7 +60,7 @@ export default memo(function PerformanceMonitor() {
       <div className="fixed bottom-4 right-4 z-40">
         <button
           onClick={() => setVisible(true)}
-          aria-label="Show performance monitor"
+          aria-label={t('performanceMonitor.show')}
           className="px-2 py-1 bg-ink/80 dark:bg-dark-ink/80 backdrop-blur-sm border border-white/10 text-xs font-mono text-white/50 hover:text-white/80 transition-colors"
         >
           FPS
@@ -72,7 +74,7 @@ export default memo(function PerformanceMonitor() {
       <button
         onClick={() => setExpanded(!expanded)}
         onContextMenu={(e) => { e.preventDefault(); setVisible(false) }}
-        aria-label="Toggle performance details"
+        aria-label={t('performanceMonitor.toggle')}
         aria-expanded={expanded}
         className="flex items-center gap-1.5 px-2 py-1 bg-ink/80 dark:bg-dark-ink/80 backdrop-blur-sm border border-white/10 text-xs font-mono hover:bg-ink/90 dark:hover:bg-dark-ink/90 transition-colors"
       >
@@ -100,7 +102,7 @@ export default memo(function PerformanceMonitor() {
             {memory && (
               <>
                 <div className="flex items-center justify-between">
-                  <span className="text-white/50">JS Heap</span>
+                  <span className="text-white/50">{t('performanceMonitor.jsHeap')}</span>
                   <span className="text-blue-400">{memory.used} MB</span>
                 </div>
                 <div className="w-full bg-white/10 h-1">
@@ -110,11 +112,11 @@ export default memo(function PerformanceMonitor() {
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-white/50">Total</span>
+                  <span className="text-white/50">{t('performanceMonitor.total')}</span>
                   <span className="text-white/70">{memory.total} MB</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-white/50">Limit</span>
+                  <span className="text-white/50">{t('performanceMonitor.limit')}</span>
                   <span className="text-white/70">{memory.limit} MB</span>
                 </div>
               </>
@@ -122,9 +124,9 @@ export default memo(function PerformanceMonitor() {
 
             <div className="pt-1 border-t border-white/10">
               <div className="flex items-center justify-between">
-                <span className="text-white/50">Status</span>
+                <span className="text-white/50">{t('performanceMonitor.status')}</span>
                 <span className={fps >= 50 ? 'text-emerald-400' : fps >= 30 ? 'text-amber-400' : 'text-red-400'}>
-                  {fps >= 50 ? 'Smooth' : fps >= 30 ? 'Fair' : 'Low'}
+                  {fps >= 50 ? t('performanceMonitor.smooth') : fps >= 30 ? t('performanceMonitor.fair') : t('performanceMonitor.low')}
                 </span>
               </div>
             </div>

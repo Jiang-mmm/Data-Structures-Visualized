@@ -4,8 +4,8 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { startFPSMonitoring, stopFPSMonitoring, measureRender } from '../utils/animationEngine'
 
 interface VisualizerProps {
-  data: any
-  renderFn: (svg: SVGSVGElement, data: any, dimensions: { width: number; height: number; isDark?: boolean }) => void
+  data: unknown
+  renderFn: (svg: SVGSVGElement, data: unknown, dimensions: { width: number; height: number; isDark?: boolean }) => void
   svgRef: React.RefObject<SVGSVGElement>
   dimensions: { width: number; height: number }
   containerRef: React.RefObject<HTMLDivElement>

@@ -46,7 +46,7 @@ export default function GraphAlgorithmPage() {
   ])
   
   const addLog = useCallback((type: string, message: string) => {
-    const time = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+    const time = new Date().toLocaleTimeString(undefined, { hour12: false })
     setLogs(prev => [...prev, { time, type, message }])
   }, [])
   

@@ -20,7 +20,7 @@ export default function EmptyState({ icon = '📭', titleKey = 'emptyState.defau
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-paper/80 dark:bg-dark-paper/80 backdrop-blur-sm z-10 pointer-events-none animate-fade-in">
       <div className="text-center p-8 pointer-events-auto animate-pop">
-        <div className="text-5xl mb-4 opacity-60">{icon}</div>
+        <div className="text-5xl mb-4 opacity-60" aria-hidden="true">{icon}</div>
         <h3 className="text-lg font-bold text-ink dark:text-dark-ink mb-2">{displayTitle}</h3>
         <p className="text-sm text-ink-light dark:text-dark-ink-light mb-6">{displayDesc}</p>
         {onFill && (

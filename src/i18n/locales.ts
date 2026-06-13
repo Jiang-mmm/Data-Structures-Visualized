@@ -12,6 +12,7 @@ export interface Locale {
     more: string
     close: string
     running: string
+    skipToContent: string
   }
   array: {
     title: string
@@ -164,6 +165,7 @@ export interface Locale {
     heroDescription: string
     selectStructure: string
     enterModule: string
+    modules: string
   }
   settings: {
     animationSpeed: string
@@ -194,6 +196,10 @@ export interface Locale {
     autoScroll: string
     freeze: string
     type: {
+      oper: string
+      info: string
+      error: string
+      code: string
     }
   }
   stepExplainer: {
@@ -267,6 +273,9 @@ export interface Locale {
     close: string
     undo: string
     redo: string
+    reset: string
+    pause: string
+    toggleHelp: string
   }
   page: {
     operations: string
@@ -283,6 +292,17 @@ export interface Locale {
     comparisons: string
     swaps: string
     steps: string
+  }
+  performanceMonitor: {
+    show: string
+    toggle: string
+    jsHeap: string
+    total: string
+    limit: string
+    status: string
+    smooth: string
+    fair: string
+    low: string
   }
   timeline: {
     title: string
@@ -463,6 +483,7 @@ export const zh: Locale = {
     more: '更多',
     close: '关闭',
     running: '运行中',
+    skipToContent: '跳转到内容',
   },
   array: {
     title: '数组',
@@ -615,6 +636,7 @@ export const zh: Locale = {
     heroDescription: '通过交互式可视化动画，直观理解6种核心数据结构的原理与操作。Neo-Brutalism 风格 · 工程图纸质感 · 实时动画反馈。',
     selectStructure: '选择数据结构开始探索',
     enterModule: '进入模块',
+    modules: '个模块',
   },
   settings: {
     animationSpeed: '动画速度',
@@ -674,6 +696,9 @@ export const zh: Locale = {
     close: '按 Esc 或点击外部关闭',
     undo: '撤销上一步操作',
     redo: '重做被撤销的操作',
+    reset: '重置数据结构',
+    pause: '暂停动画',
+    toggleHelp: '显示/隐藏快捷键帮助',
   },
   page: {
     operations: '操作',
@@ -691,6 +716,17 @@ export const zh: Locale = {
     swaps: '交换次数',
     steps: '总步数',
   },
+  performanceMonitor: {
+    show: '显示性能监控',
+    toggle: '切换性能详情',
+    jsHeap: 'JS 堆内存',
+    total: '总计',
+    limit: '上限',
+    status: '状态',
+    smooth: '流畅',
+    fair: '一般',
+    low: '低',
+  },
   timeline: {
     title: '操作历史',
     noHistory: '暂无操作历史',
@@ -701,6 +737,10 @@ export const zh: Locale = {
     autoScroll: 'AUTO↓',
     freeze: 'FREEZE',
     type: {
+      oper: '操作',
+      info: '信息',
+      error: '错误',
+      code: '代码',
     },
   },
   stepExplainer: {
@@ -914,6 +954,7 @@ export const en: Locale = {
     more: 'More',
     close: 'Close',
     running: 'Running',
+    skipToContent: 'Skip to content',
   },
   array: {
     title: 'Array',
@@ -1066,6 +1107,7 @@ export const en: Locale = {
     heroDescription: 'Learn 6 core data structures through interactive visualization animations. Neo-Brutalist style · Engineering blueprint feel · Real-time animation feedback.',
     selectStructure: 'Select a data structure to explore',
     enterModule: 'Enter Module',
+    modules: 'MODULES',
   },
   settings: {
     animationSpeed: 'Animation Speed',
@@ -1125,6 +1167,9 @@ export const en: Locale = {
     close: 'Press Esc or click outside to close',
     undo: 'Undo last action',
     redo: 'Redo undone action',
+    reset: 'Reset data structure',
+    pause: 'Pause animation',
+    toggleHelp: 'Show/hide shortcut help',
   },
   page: {
     operations: 'Operations',
@@ -1142,6 +1187,17 @@ export const en: Locale = {
     swaps: 'Swaps',
     steps: 'Steps',
   },
+  performanceMonitor: {
+    show: 'Show performance monitor',
+    toggle: 'Toggle performance details',
+    jsHeap: 'JS Heap',
+    total: 'Total',
+    limit: 'Limit',
+    status: 'Status',
+    smooth: 'Smooth',
+    fair: 'Fair',
+    low: 'Low',
+  },
   timeline: {
     title: 'Operation History',
     noHistory: 'No operation history',
@@ -1152,6 +1208,10 @@ export const en: Locale = {
     autoScroll: 'AUTO↓',
     freeze: 'FREEZE',
     type: {
+      oper: 'Oper',
+      info: 'Info',
+      error: 'Error',
+      code: 'Code',
     },
   },
   stepExplainer: {

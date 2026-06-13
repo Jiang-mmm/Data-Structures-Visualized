@@ -6,6 +6,7 @@ import { tStatic } from '../i18n/useI18n'
 const NODE_RADIUS = 24
 const NODE_GAP = 80
 const BASE_DURATION = 350
+const LARGE_DATA_THRESHOLD = 30
 
 interface LLOptions {
   width: number
@@ -93,6 +94,7 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
  * @param {Array} data - 当前链表数据
  */
 export async function animateInsertHead(svg: SVGSVGElement, value: number, data: number[], options: LLOptions = {} as LLOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const container = select(svg)
   const { width, height } = options
   const isDark = detectDarkMode()
@@ -137,6 +139,7 @@ export async function animateInsertHead(svg: SVGSVGElement, value: number, data:
  * @param {Array} data - 当前链表数据
  */
 export async function animateInsertTail(svg: SVGSVGElement, value: number, data: number[], options: LLOptions = {} as LLOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const container = select(svg)
   const { width, height } = options
   const isDark = detectDarkMode()
@@ -182,6 +185,7 @@ export async function animateInsertTail(svg: SVGSVGElement, value: number, data:
  * @param {Array} data - 当前链表数据
  */
 export async function animateDeleteNode(svg: SVGSVGElement, index: number, data: number[], options: LLOptions = {} as LLOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const container = select(svg)
   const { width, height } = options
   const isDark = detectDarkMode()
@@ -217,6 +221,7 @@ export async function animateDeleteNode(svg: SVGSVGElement, index: number, data:
  * @param {Array} data - 当前链表数据
  */
 export async function animateSearchNode(svg: SVGSVGElement, index: number, data: number[], options: LLOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const container = select(svg)
   const isDark = detectDarkMode()
   const C = getColors(isDark)
@@ -262,6 +267,7 @@ export async function animateSearchNode(svg: SVGSVGElement, index: number, data:
  * @param {Array} data - 当前链表数据
  */
 export async function animateInsertAt(svg: SVGSVGElement, index: number, value: number, data: number[], options: LLOptions = {} as LLOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const container = select(svg)
   const { width, height } = options
   const isDark = detectDarkMode()
@@ -306,6 +312,7 @@ export async function animateInsertAt(svg: SVGSVGElement, index: number, value: 
  * @param {Array} data - 当前链表数据
  */
 export async function animateReverse(svg: SVGSVGElement, data: number[], options: LLOptions = {} as LLOptions, anim?: Animation) {
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const container = select(svg)
   const { width, height } = options
   const isDark = detectDarkMode()

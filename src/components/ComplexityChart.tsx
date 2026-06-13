@@ -1,4 +1,5 @@
 import { memo, useMemo, useRef, useEffect, useState } from 'react'
+import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
 interface ComplexityChartProps {
   algorithms: Array<{
@@ -28,6 +29,7 @@ const defaultColors = [
 ]
 
 function ComplexityChart({ algorithms, maxN = 50 }: ComplexityChartProps) {
+  const { t } = useGlobalSettings()
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 400, height: 300 })
@@ -81,7 +83,7 @@ function ComplexityChart({ algorithms, maxN = 50 }: ComplexityChartProps) {
 
   return (
     <div ref={containerRef} className="w-full h-full min-h-[200px]">
-      <svg ref={svgRef} width="100%" height="100%" viewBox={`0 0 ${dimensions.width} ${dimensions.height}`} role="img" aria-label="Complexity comparison chart">
+      <svg ref={svgRef} width="100%" height="100%" viewBox={`0 0 ${dimensions.width} ${dimensions.height}`} role="img" aria-label={t('performanceChart.title')}>
         <g transform={`translate(50, 20)`}>
           <line x1="0" y1="0" x2="0" y2={dimensions.height - 60} stroke="currentColor" className="text-ink/20 dark:text-dark-ink/20" />
           <line x1="0" y1={dimensions.height - 60} x2={dimensions.width - 70} y2={dimensions.height - 60} stroke="currentColor" className="text-ink/20 dark:text-dark-ink/20" />

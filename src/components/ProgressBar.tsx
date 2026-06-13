@@ -1,3 +1,5 @@
+import { useGlobalSettings } from '../hooks/useGlobalSettings'
+
 interface ProgressBarProps {
   progress: number
   label?: string
@@ -5,6 +7,7 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({ progress, label, height = 'h-2' }: ProgressBarProps) {
+  const { t } = useGlobalSettings()
   const clamped = Math.max(0, Math.min(100, progress))
 
   return (
@@ -14,7 +17,7 @@ export default function ProgressBar({ progress, label, height = 'h-2' }: Progres
         aria-valuenow={clamped}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label={label || 'Progress'}
+        aria-label={label || t('page.running')}
         className={`${height} flex-1 bg-ink/10 dark:bg-dark-ink/10 rounded-full overflow-hidden border border-ink/20 dark:border-dark-border/30`}
       >
         <div
