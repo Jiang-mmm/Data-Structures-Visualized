@@ -75,6 +75,7 @@ export function importState(file: File): Promise<any> {
 }
 
 export function exportPerformanceCSV(performanceData: { algorithm: string; comparisons: number; swaps: number; steps: number }[]): string {
+  if (!Array.isArray(performanceData)) return ''
   const headers = ['Algorithm', 'Comparisons', 'Swaps', 'Steps']
   const rows = performanceData.map(d => [d.algorithm, d.comparisons, d.swaps, d.steps])
   return [headers.join(','), ...rows.map(r => r.join(','))].join('\n')

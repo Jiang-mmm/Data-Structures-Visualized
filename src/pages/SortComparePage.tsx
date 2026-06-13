@@ -256,12 +256,18 @@ export default function SortComparePage() {
   }
 
   const handleExportCSV = () => {
-    exportPerformanceCSV(algoResults as any)
+    const data = Object.entries(algoResults).map(([key, r]) => ({
+      algorithm: key, comparisons: r.comparisons || 0, swaps: r.swaps || 0, steps: r.steps || 0
+    }))
+    exportPerformanceCSV(data)
     setShowExportMenu(false)
   }
 
   const handleExportJSON = () => {
-    exportPerformanceJSON(algoResults as any)
+    const data = Object.entries(algoResults).map(([key, r]) => ({
+      algorithm: key, comparisons: r.comparisons || 0, swaps: r.swaps || 0, steps: r.steps || 0
+    }))
+    exportPerformanceJSON(data)
     setShowExportMenu(false)
   }
 
