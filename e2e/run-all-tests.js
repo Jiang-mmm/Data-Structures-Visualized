@@ -12,13 +12,14 @@ const testFiles = [
   'test-v5-features.js',
 ];
 
-function runTest(file) {
+function runTest(file, browser) {
   return new Promise((resolve) => {
     const filePath = path.join(__dirname, file);
 
     const child = exec(`node "${filePath}"`, {
       encoding: 'utf-8',
       timeout: 300000,
+      env: { ...process.env, BROWSER: browser },
     }, (error, stdout, stderr) => {
       const output = stdout || '';
       const errOutput = stderr || '';
@@ -49,41 +50,63 @@ function runTest(file) {
   });
 }
 
-console.log(`\n${'='.repeat(60)}`);
-console.log(`Running ${testFiles.length} test files in parallel...`);
-console.log('='.repeat(60));
+const browsers = ['chromium', 'firefox'];
+let grandTotalPassed = 0;
+let grandTotalFailed = 0;
 
-const startTime = Date.now();
-const allResults = await Promise.all(testFiles.map(runTest));
-const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+for (const browser of browsers) {
+  console.log(`\n${'#'.repeat(60)}`);
+  console.log(`# Browser: ${browser.toUpperCase()}`);
+  console.log('#'.repeat(60));
 
-let totalPassed = 0;
-let totalFailed = 0;
+  console.log(`\n${'='.repeat(60)}`);
+  console.log(`Running ${testFiles.length} test files in parallel [${browser}]...`);
+  console.log('='.repeat(60));
 
-allResults.forEach((r) => {
-  totalPassed += r.passed;
-  totalFailed += r.failed;
-});
+  const startTime = Date.now();
+  const allResults = await Promise.all(testFiles.map(f => runTest(f, browser)));
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
-console.log('\n' + '='.repeat(60));
-console.log('E2E 测试汇总报告');
-console.log('='.repeat(60));
-console.log(`总测试用例: ${totalPassed + totalFailed}`);
-console.log(`通过: ${totalPassed}`);
-console.log(`失败: ${totalFailed}`);
-console.log(`通过率: ${((totalPassed / (totalPassed + totalFailed)) * 100).toFixed(1)}%`);
-console.log(`总耗时: ${elapsed}s`);
-console.log('');
+  let totalPassed = 0;
+  let totalFailed = 0;
 
-allResults.forEach((r) => {
-  const icon = r.status === 'PASS' ? '✅' : '❌';
-  console.log(`${icon} ${r.file}: ${r.passed} passed, ${r.failed} failed`);
-});
+  allResults.forEach((r) => {
+    totalPassed += r.passed;
+    totalFailed += r.failed;
+  });
+
+  console.log('\n' + '='.repeat(60));
+  console.log(`E2E 测试汇总报告 [${browser.toUpperCase()}]`);
+  console.log('='.repeat(60));
+  console.log(`总测试用例: ${totalPassed + totalFailed}`);
+  console.log(`通过: ${totalPassed}`);
+  console.log(`失败: ${totalFailed}`);
+  console.log(`通过率: ${((totalPassed / (totalPassed + totalFailed)) * 100).toFixed(1)}%`);
+  console.log(`总耗时: ${elapsed}s`);
+  console.log('');
+
+  allResults.forEach((r) => {
+    const icon = r.status === 'PASS' ? '✅' : '❌';
+    console.log(`${icon} ${r.file}: ${r.passed} passed, ${r.failed} failed`);
+  });
+
+  grandTotalPassed += totalPassed;
+  grandTotalFailed += totalFailed;
+}
 
 console.log('\n截图保存在: e2e/screenshots/');
 
-if (totalFailed > 0) {
-  console.log('\n⚠️  部分测试失败，请检查上述错误信息');
+// Grand summary
+console.log(`\n${'#'.repeat(60)}`);
+console.log(`# 跨浏览器测试汇总 (Cross-Browser Summary)`);
+console.log('#'.repeat(60));
+console.log(`总测试用例: ${grandTotalPassed + grandTotalFailed}`);
+console.log(`通过: ${grandTotalPassed}`);
+console.log(`失败: ${grandTotalFailed}`);
+console.log(`通过率: ${((grandTotalPassed / (grandTotalPassed + grandTotalFailed)) * 100).toFixed(1)}%`);
+
+if (grandTotalFailed > 0) {
+  console.log(`\n⚠️  部分测试失败，请检查上述错误信息`);
 }
 
-process.exit(totalFailed > 0 ? 1 : 0);
+process.exit(grandTotalFailed > 0 ? 1 : 0);
