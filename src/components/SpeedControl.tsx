@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo, useState, useEffect, useRef } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { ANIMATION_PRESETS } from '../utils/animationEngine'
 
@@ -20,10 +20,27 @@ const PRESET_KEYS = Object.keys(ANIMATION_PRESETS)
 export default memo(function SpeedControl() {
   const { animationSpeed, setAnimationSpeed, currentPreset, applyPreset, t } = useGlobalSettings()
   const [showPresets, setShowPresets] = useState<boolean>(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!showPresets) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowPresets(false)
+    }
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setShowPresets(false)
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showPresets])
 
   return (
     <div className="flex items-center gap-2">
-      <div className="relative">
+      <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setShowPresets(!showPresets)}
           aria-label={t('speedControl.presetDefault')}

@@ -50,6 +50,7 @@ export default function ExportImport({ dataType, data, onImport, disabled }: Exp
           active:translate-y-0 active:shadow-none
           disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         title={t('exportImport.exportTooltip')}
+        aria-label={t('exportImport.export')}
       >
         ↓ {t('exportImport.export')}
       </button>
@@ -63,6 +64,7 @@ export default function ExportImport({ dataType, data, onImport, disabled }: Exp
           active:translate-y-0 active:shadow-none
           disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         title={t('exportImport.importTooltip')}
+        aria-label={t('exportImport.import')}
       >
         ↑ {t('exportImport.import')}
       </button>

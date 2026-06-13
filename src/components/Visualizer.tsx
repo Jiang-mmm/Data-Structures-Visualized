@@ -10,13 +10,14 @@ interface VisualizerProps {
   dimensions: { width: number; height: number }
   containerRef: React.RefObject<HTMLDivElement>
   className?: string
+  ariaLabel?: string
 }
 
 const ZOOM_MIN = 0.5
 const ZOOM_MAX = 2
 const ZOOM_STEP = 0.1
 
-export default function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '' }: VisualizerProps) {
+export default function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel }: VisualizerProps) {
   const { resolved: themeResolved } = useTheme()
   const { t } = useGlobalSettings()
   const isDark = themeResolved === 'dark'
@@ -127,6 +128,8 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
         viewBox={viewBox}
         className="w-full h-full"
         preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label={ariaLabel || t('visualizer.empty')}
       />
 
       <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white/90 dark:bg-slate/90 backdrop-blur-sm border-2 border-ink/30 dark:border-dark-border/50 px-2 py-1 shadow-[2px_2px_0px_rgba(26,26,46,0.15)] dark:shadow-[2px_2px_0px_rgba(51,65,85,0.3)] z-10">
@@ -145,7 +148,7 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
         <button
           onClick={handleZoomOut}
           disabled={zoom <= ZOOM_MIN}
-          aria-label="Zoom out"
+          aria-label={t('visualizer.zoomOut') || 'Zoom out'}
           className="w-9 h-9 sm:w-6 sm:h-6 flex items-center justify-center text-ink-light dark:text-dark-ink-light hover:bg-ink/10 dark:hover:bg-dark-ink/10 disabled:opacity-30 transition-colors text-sm font-bold touch-manipulation"
         >
           −
@@ -156,7 +159,7 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
         <button
           onClick={handleZoomIn}
           disabled={zoom >= ZOOM_MAX}
-          aria-label="Zoom in"
+          aria-label={t('visualizer.zoomIn') || 'Zoom in'}
           className="w-9 h-9 sm:w-6 sm:h-6 flex items-center justify-center text-ink-light dark:text-dark-ink-light hover:bg-ink/10 dark:hover:bg-dark-ink/10 disabled:opacity-30 transition-colors text-sm font-bold touch-manipulation"
         >
           +

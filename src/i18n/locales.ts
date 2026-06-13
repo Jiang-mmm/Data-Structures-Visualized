@@ -248,6 +248,9 @@ export interface Locale {
     queueRear: string
     stackTop: string
     stackBottom: string
+    empty: string
+    zoomIn: string
+    zoomOut: string
   }
   shortcuts: {
     title: string
@@ -642,6 +645,9 @@ export const zh: Locale = {
     queueRear: '↑ 队尾 Rear',
     stackTop: '← 栈顶 Top',
     stackBottom: '← 栈底 Bottom',
+    empty: '数据结构可视化',
+    zoomIn: '放大',
+    zoomOut: '缩小',
   },
   shortcuts: {
     title: '键盘快捷键',
@@ -1080,6 +1086,9 @@ export const en: Locale = {
     queueRear: '↑ Rear',
     stackTop: '← Top',
     stackBottom: '← Bottom',
+    empty: 'Data structure visualization',
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out',
   },
   shortcuts: {
     title: 'Keyboard Shortcuts',
