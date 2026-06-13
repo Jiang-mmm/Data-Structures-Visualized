@@ -25,7 +25,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['e2e/**', 'e2e/*'],
+    files: ['e2e/**', 'e2e/*', 'scripts/**'],
     languageOptions: {
       globals: { ...globals.browser, ...globals.node, process: true },
     },

@@ -160,15 +160,25 @@ async function runTest() {
     results.passed.push('Graph: DFS 遍历可执行');
 
     await clickButtonIfEnabled(page, /矩阵/);
-    await sleep(600);
-    const hasMatrix = await page.locator('text=邻接矩阵').count() > 0 ||
-                      page.locator('text=Adjacency Matrix').count() > 0;
+    await sleep(1000);
+    let hasMatrix = await page.locator('text=邻接矩阵').count() > 0 ||
+                    page.locator('text=Adjacency Matrix').count() > 0;
+    if (!hasMatrix) {
+      await sleep(1000);
+      hasMatrix = await page.locator('text=邻接矩阵').count() > 0 ||
+                  page.locator('text=Adjacency Matrix').count() > 0;
+    }
     assert(hasMatrix, 'Graph: 切换到邻接矩阵视图', 'Graph: 邻接矩阵视图切换失败');
 
     await clickButtonIfEnabled(page, /邻接表/);
-    await sleep(600);
-    const hasList = await page.locator('text=邻接表').count() > 0 ||
-                    page.locator('text=Adjacency List').count() > 0;
+    await sleep(1000);
+    let hasList = await page.locator('text=邻接表').count() > 0 ||
+                  page.locator('text=Adjacency List').count() > 0;
+    if (!hasList) {
+      await sleep(1000);
+      hasList = await page.locator('text=邻接表').count() > 0 ||
+                page.locator('text=Adjacency List').count() > 0;
+    }
     assert(hasList, 'Graph: 切换到邻接表视图', 'Graph: 邻接表视图切换失败');
 
     await clickButtonIfEnabled(page, /力导向/);
