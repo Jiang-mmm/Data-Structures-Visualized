@@ -31,23 +31,26 @@ function OperationGroup({
   useEffect(() => {
     if (!contentRef.current) return
     if (isOpen) {
-      setMaxHeight(`${contentRef.current.scrollHeight}px`)
-      const timer = setTimeout(() => setMaxHeight('none'), 200)
-      return () => clearTimeout(timer)
+      // Only animate open if not already fully open ('none')
+      if (maxHeight !== 'none') {
+        setMaxHeight(`${contentRef.current.scrollHeight}px`)
+        const timer = setTimeout(() => setMaxHeight('none'), 200)
+        return () => clearTimeout(timer)
+      }
     } else {
       if (maxHeight === 'none') {
         setMaxHeight(`${contentRef.current.scrollHeight}px`)
         rafRef.current = requestAnimationFrame(() => {
           setMaxHeight('0px')
         })
-      } else {
+      } else if (maxHeight !== '0px') {
         setMaxHeight('0px')
         const timer = setTimeout(() => setShouldRender(false), 200)
         return () => clearTimeout(timer)
       }
     }
     return () => cancelAnimationFrame(rafRef.current)
-  }, [isOpen, maxHeight])
+  }, [isOpen, maxHeight, shouldRender])
 
   const toggle = useCallback(() => setIsOpen(prev => !prev), [])
 

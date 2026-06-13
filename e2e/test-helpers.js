@@ -51,7 +51,10 @@ export async function clickButtonIfEnabled(page, textRegex, timeout = 5000) {
       if (count > 0) {
         const isDisabled = await btn.isDisabled();
         if (!isDisabled) {
-          await btn.click();
+          // Use force:true to bypass actionability checks.
+          // OperationGroup's overflow:hidden wrapper can intercept pointer events
+          // during its maxHeight animation, even though the button is visible and enabled.
+          await btn.click({ force: true });
           return true;
         }
       }

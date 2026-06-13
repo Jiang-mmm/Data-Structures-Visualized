@@ -75,11 +75,19 @@ for (const browser of browsers) {
   console.log('#'.repeat(60));
 
   console.log(`\n${'='.repeat(60)}`);
-  console.log(`Phase 1: Running ${coreTestFiles.length} core test files in parallel [${browser}]...`);
+  console.log(`Phase 1: Running ${coreTestFiles.length} core test files with staggered start [${browser}]...`);
   console.log('='.repeat(60));
 
+  const STAGGER_DELAY_MS = 2000;
   const startTime = Date.now();
-  const coreResults = await Promise.all(coreTestFiles.map(f => runTest(f, browser)));
+
+  // Stagger test starts to avoid simultaneous navigation, screenshot overwrites,
+  // and localStorage state leaking between tests
+  const staggeredRun = async (file, index) => {
+    await new Promise(r => setTimeout(r, index * STAGGER_DELAY_MS));
+    return runTest(file, browser);
+  };
+  const coreResults = await Promise.all(coreTestFiles.map((f, i) => staggeredRun(f, i)));
 
   console.log(`\n${'='.repeat(60)}`);
   console.log(`Phase 2: Running ${comprehensiveTestFiles.length} comprehensive test files sequentially [${browser}]...`);

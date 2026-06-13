@@ -41,9 +41,27 @@ async function waitForNextReady(page, nextBtnRegex, timeout = 20000) {
   return false;
 }
 
+// Wait for any running animation to complete by polling for the Stop button to disappear.
+// The Stop button is only rendered when isAnimating=true, so its absence means animation is done.
+async function waitForAnimationComplete(page, timeout = 20000) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    const stopBtn = page.locator('button').filter({ hasText: /停止|Stop/ }).first();
+    const count = await stopBtn.count();
+    if (count === 0) return true;
+    await sleep(400);
+  }
+  return false;
+}
+
 // Perform an operation with proper wait time for animation
 async function doOperation(page, btnRegex, waitTime = 2000) {
-  const clicked = await clickButtonIfEnabled(page, btnRegex);
+  // Wait for any running animation to complete first
+  await waitForAnimationComplete(page, 20000);
+  // Also wait for the specific button to be enabled
+  const btnReady = await waitForNextReady(page, btnRegex, 15000);
+  if (!btnReady) return false;
+  const clicked = await clickButtonIfEnabled(page, btnRegex, 3000);
   if (clicked) {
     await sleep(waitTime);
     await closeModalIfOpen(page);
@@ -53,18 +71,22 @@ async function doOperation(page, btnRegex, waitTime = 2000) {
   return clicked;
 }
 
-// Perform operation and then wait for a specific next button to be ready
-// When nextBtnRegex is null, waits for the clicked button to re-enable (animation done)
+// Perform operation and then wait for animation to complete
+// When nextBtnRegex is given, also waits for that button to be enabled
 async function doOpAndWait(page, btnRegex, nextBtnRegex, waitTime = 2000) {
-  const clicked = await clickButtonIfEnabled(page, btnRegex);
+  // First wait for any running animation to complete
+  await waitForAnimationComplete(page, 20000);
+  // Then wait for the specific button to be enabled
+  const btnReady = await waitForNextReady(page, btnRegex, 15000);
+  if (!btnReady) return false;
+  const clicked = await clickButtonIfEnabled(page, btnRegex, 3000);
   if (clicked) {
     await sleep(waitTime);
     await closeModalIfOpen(page);
+    // Wait for the triggered animation to complete
+    await waitForAnimationComplete(page, 20000);
     if (nextBtnRegex) {
       await waitForNextReady(page, nextBtnRegex, 15000);
-    } else {
-      // No next button to wait for — wait for the clicked button to re-enable (animation done)
-      await waitForNextReady(page, btnRegex, 15000);
     }
     await sleep(500); // Buffer for DOM to settle after animation
     await closeModalIfOpen(page);
@@ -93,6 +115,9 @@ async function expandMore(page) {
 
 // Test undo/redo: optionally expand "更多" first, then wait for undo, click, wait for redo, click
 async function testUndoRedo(page, results, pageName, hasOperationGroup = false) {
+  // Wait for any running animation to complete before expanding or interacting
+  await waitForAnimationComplete(page, 25000);
+
   if (hasOperationGroup) {
     await expandMore(page);
     await sleep(1000); // Extra wait for animation to settle after expand
@@ -102,8 +127,8 @@ async function testUndoRedo(page, results, pageName, hasOperationGroup = false) 
   const undoReady = await waitForNextReady(page, /撤销|Undo/, 30000);
   if (undoReady) {
     await clickButtonIfEnabled(page, /撤销|Undo/, 3000);
-    // Wait for undo animation to complete by polling for redo button to be enabled
-    await waitForNextReady(page, /重做|Redo/, 15000);
+    // Wait for undo animation to complete
+    await waitForAnimationComplete(page, 25000);
     await sleep(500); // Buffer for DOM to settle
     await cleanup(page);
     recordPass(results, `${pageName}: 撤销按钮可点击`);
@@ -112,8 +137,8 @@ async function testUndoRedo(page, results, pageName, hasOperationGroup = false) 
     const redoReady = await waitForNextReady(page, /重做|Redo/, 30000);
     if (redoReady) {
       await clickButtonIfEnabled(page, /重做|Redo/, 3000);
-      // Wait for redo animation to complete by polling for undo button to be enabled
-      await waitForNextReady(page, /撤销|Undo/, 15000);
+      // Wait for redo animation to complete
+      await waitForAnimationComplete(page, 25000);
       await sleep(500); // Buffer for DOM to settle
       await cleanup(page);
       recordPass(results, `${pageName}: 重做按钮可点击`);
@@ -860,6 +885,9 @@ async function testTrie(page, results) {
   await sleep(200);
   await cleanup(page);
   await doOperation(page, /^插入$/, 3000);
+  // Trie has no Stop button, so waitForAnimationComplete won't work.
+  // Wait for insert button to re-enable instead (signals isAnimating=false).
+  await waitForNextReady(page, /^插入$/, 30000);
 
   await testUndoRedo(page, results, 'Trie', false);
 
