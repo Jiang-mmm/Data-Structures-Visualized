@@ -3,7 +3,7 @@ import { tStatic } from '../i18n/useI18n'
 
 const DATA_VERSION = '1.0'
 
-export interface ExportedState {
+interface ExportedState {
   version: string
   type: string
   data: any

@@ -1,10 +1,10 @@
-export interface FPSRecord {
+interface FPSRecord {
   timestamp: number
   fps: number
   frameTime: number
 }
 
-export interface FuncPerfRecord {
+interface FuncPerfRecord {
   functionName: string
   callCount: number
   totalMs: number
@@ -17,7 +17,7 @@ export interface FuncPerfRecord {
   lastCallAt: number
 }
 
-export interface PerfLogEntry {
+interface PerfLogEntry {
   timestamp: number
   type: 'fps' | 'render' | 'function' | 'memory' | 'warning'
   message: string

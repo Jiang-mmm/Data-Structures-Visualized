@@ -1,5 +1,8 @@
 import { tStatic } from '../i18n/useI18n'
 
+/**
+ * @internal 仅用于测试验证，生产代码未直接调用
+ */
 export function sanitizeInput(value: string | number, maxLength: number = 100): string {
   if (typeof value !== 'string' && typeof value !== 'number') return ''
   const str = String(value).trim()
@@ -7,7 +10,7 @@ export function sanitizeInput(value: string | number, maxLength: number = 100): 
   return str.replace(/[<>"'`&;\\]/g, '')
 }
 
-export interface NumericValidationResult {
+interface NumericValidationResult {
   valid: boolean
   value: number
 }

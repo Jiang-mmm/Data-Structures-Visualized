@@ -26,3 +26,9 @@ dist-ssr
 # AI tool directories
 .agents/
 .claude/
+
+# Coverage and test artifacts
+coverage/
+e2e/screenshots/
+test-output.txt
+.trae/
