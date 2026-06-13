@@ -1,0 +1,167 @@
+import { useState } from 'react'
+import PageHeader from '../components/PageHeader'
+import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
+import Visualizer from '../components/Visualizer'
+import LogPanel from '../components/LogPanel'
+import EmptyState from '../components/EmptyState'
+import Timeline from '../components/Timeline'
+import { renderHeap, animateInsertHeap, animateExtractHeap, animatePeekHeap } from '../visualizers/heapVisualizer'
+import { useHeapState } from '../hooks/useHeapState'
+import { useVisualizer } from '../hooks/useVisualizer'
+import { useKeyboard } from '../hooks/useKeyboard'
+import SpeedControl from '../components/SpeedControl'
+import ExportImport from '../components/ExportImport'
+import UndoPreviewButton from '../components/UndoPreviewButton'
+import ShareButton from '../components/ShareButton'
+import { showToast } from '../components/toastStore'
+import { getValidationError } from '../utils/validate'
+import { handleAnimationError } from '../utils/errorHandler'
+import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import StepExplainer from '../components/StepExplainer'
+import { useLearningMode } from '../hooks/useLearningMode'
+
+export default function HeapPage() {
+  const { t } = useGlobalSettings()
+  const { data, logs, isAnimating, setIsAnimating, insert, extractMax, peek, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, heapSize } = useHeapState()
+  const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  const [inputValue, setInputValue] = useState<string>('')
+  const [showLearning, setShowLearning] = useState(false)
+  const learningMode = useLearningMode('heapStructure')
+
+  useKeyboard({
+    'ctrl+z': undo,
+    'ctrl+shift+z': redo,
+    'r': reset,
+  }, !isAnimating)
+
+  const handleInsert = async () => {
+    if (isAnimating) return
+    const error = getValidationError(inputValue)
+    if (error) { showToast({ type: 'error', message: error }); return }
+    const value = parseInt(inputValue, 10)
+
+    setIsAnimating(true)
+    const anim = getAnimationContext()
+    try {
+      insert(value)
+      await new Promise(r => setTimeout(r, 50))
+      if (svgRef.current) await animateInsertHeap(svgRef.current, value, data, anim)
+    } catch (e) {
+      handleAnimationError(e, t('heap.insert'))
+    } finally {
+      setIsAnimating(false)
+    }
+    setInputValue('')
+  }
+
+  const handleExtract = async () => {
+    if (isAnimating || data.length === 0) return
+    setIsAnimating(true)
+    const anim = getAnimationContext()
+    try {
+      if (svgRef.current) await animateExtractHeap(svgRef.current, anim)
+      extractMax()
+    } catch (e) {
+      handleAnimationError(e, t('heap.extractMax'))
+    } finally {
+      setIsAnimating(false)
+    }
+  }
+
+  const handlePeek = async () => {
+    if (isAnimating || data.length === 0) return
+    setIsAnimating(true)
+    const anim = getAnimationContext()
+    try {
+      if (svgRef.current) await animatePeekHeap(svgRef.current, anim)
+      peek()
+    } catch (e) {
+      handleAnimationError(e, t('heap.peek'))
+    } finally {
+      setIsAnimating(false)
+    }
+  }
+
+  return (
+    <div className="flex flex-col h-screen">
+      <PageHeader title={t('heap.title')} subtitle={t('heap.subtitle')} icon="▲">
+        <ExportImport dataType="heap" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
+          if (Array.isArray(imported)) loadData(imported)
+        }} />
+        <ShareButton data={data} dataType="heap" disabled={isAnimating} />
+        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+      </PageHeader>
+
+      <OperationBar>
+        <SpeedControl />
+        <OperationLabel>{t('page.operations')}</OperationLabel>
+        <OperationInput type="number" placeholder={t('heap.inputPlaceholder')} value={inputValue} onChange={setInputValue} />
+        <OperationButton variant="success" onClick={handleInsert} disabled={isAnimating}>{t('heap.insert')}</OperationButton>
+        <OperationButton variant="danger" onClick={handleExtract} disabled={isAnimating || data.length === 0}>{t('heap.extractMax')}</OperationButton>
+        <OperationButton variant="purple" onClick={handlePeek} disabled={isAnimating || data.length === 0} popAnimation>{t('heap.peek')}</OperationButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={undo}
+          disabled={isAnimating || !canUndo()}
+          previewData={getUndoPreview()}
+          previewLabel={t('shortcuts.undo')}
+        >
+          {t('common.undo')}
+        </UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={redo}
+          disabled={isAnimating || !canRedo()}
+          previewData={getRedoPreview()}
+          previewLabel={t('shortcuts.redo')}
+        >
+          {t('common.redo')}
+        </UndoPreviewButton>
+        <OperationInfo><span className="font-mono text-xs text-ink-light">SIZE: {heapSize}</span></OperationInfo>
+      </OperationBar>
+
+      <Visualizer data={data} renderFn={renderHeap} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} />
+      {data.length === 0 && (
+        <EmptyState icon="▲" titleKey="emptyState.emptyHeap" descriptionKey="emptyState.emptyHeapDesc" onFill={reset} />
+      )}
+      {logs.length > 0 && (
+        <Timeline
+          history={logs.map(log => ({ type: log.type, description: log.message }))}
+          currentIndex={logs.length - 1}
+          onJump={undefined}
+          maxHeight="h-24"
+        />
+      )}
+      <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
+        <button
+          onClick={() => setShowLearning(!showLearning)}
+          className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
+            shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]
+            active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
+            ${showLearning
+              ? 'bg-accent-blue text-paper border-accent-blue'
+              : 'border-ink dark:border-dark-border hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]'
+            }`}
+        >
+          {showLearning ? t('learning.close') : t('learning.open')}
+        </button>
+      </div>
+
+      {showLearning && (
+        <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
+          <StepExplainer
+            step={learningMode.currentStep}
+            currentStepIndex={learningMode.currentStepIndex}
+            totalSteps={learningMode.totalSteps}
+            progress={learningMode.progress}
+            onNext={learningMode.nextStep}
+            onPrev={learningMode.prevStep}
+            onReset={learningMode.reset}
+            isAnimating={isAnimating}
+          />
+        </div>
+      )}
+      <LogPanel logs={logs} />
+    </div>
+  )
+}

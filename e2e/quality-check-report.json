@@ -1,0 +1,114 @@
+{
+  "summary": {
+    "total": 295,
+    "passed": 295,
+    "failed": 0,
+    "passRate": "100.0%",
+    "pages": 12,
+    "buttons": 132,
+    "inputs": 17,
+    "consoleErrors": 0,
+    "pagesWithIssues": []
+  },
+  "pageResults": [
+    {
+      "name": "Home",
+      "path": "/",
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "name": "Array",
+      "path": "/array",
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "name": "Stack",
+      "path": "/stack",
+      "total": 24,
+      "passed": 24,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "name": "Queue",
+      "path": "/queue",
+      "total": 24,
+      "passed": 24,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "name": "LinkedList",
+      "path": "/linkedlist",
+      "total": 29,
+      "passed": 29,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "name": "Tree",
+      "path": "/tree",
+      "total": 29,
+      "passed": 29,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "name": "Graph",
+      "path": "/graph",
+      "total": 34,
+      "passed": 34,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "name": "Hash",
+      "path": "/hash",
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "name": "Heap",
+      "path": "/heap",
+      "total": 24,
+      "passed": 24,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "name": "Trie",
+      "path": "/trie",
+      "total": 22,
+      "passed": 22,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "name": "Sort",
+      "path": "/sort",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "name": "SortCompare",
+      "path": "/compare",
+      "total": 11,
+      "passed": 11,
+      "failed": 0,
+      "failures": []
+    }
+  ],
+  "consoleErrors": [],
+  "start": "2026-06-01T15:25:39.851Z",
+  "end": "2026-06-01T15:28:48.428Z"
+}

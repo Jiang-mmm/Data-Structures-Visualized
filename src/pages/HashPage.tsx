@@ -1,0 +1,186 @@
+import { useState } from 'react'
+import PageHeader from '../components/PageHeader'
+import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
+import Visualizer from '../components/Visualizer'
+import LogPanel from '../components/LogPanel'
+import EmptyState from '../components/EmptyState'
+import Timeline from '../components/Timeline'
+import { renderHash, animateInsertHash, animateSearchHash, animateDeleteHash } from '../visualizers/hashVisualizer'
+import { useHashState } from '../hooks/useHashState'
+import { useVisualizer } from '../hooks/useVisualizer'
+import { useKeyboard } from '../hooks/useKeyboard'
+import SpeedControl from '../components/SpeedControl'
+import ExportImport from '../components/ExportImport'
+import UndoPreviewButton from '../components/UndoPreviewButton'
+import ShareButton from '../components/ShareButton'
+import { showToast } from '../components/toastStore'
+import { getValidationError } from '../utils/validate'
+import { handleAnimationError } from '../utils/errorHandler'
+import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import StepExplainer from '../components/StepExplainer'
+import { useLearningMode } from '../hooks/useLearningMode'
+
+export default function HashPage() {
+  const { t } = useGlobalSettings()
+  const { data, logs, isAnimating, setIsAnimating, insert, remove, search, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, entryCount, bucketCount, hashFn } = useHashState()
+  const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  const [keyValue, setKeyValue] = useState<string>('')
+  const [valueInput, setValueInput] = useState<string>('')
+  const [showLearning, setShowLearning] = useState(false)
+  const learningMode = useLearningMode('hash')
+
+  useKeyboard({
+    'ctrl+z': undo,
+    'ctrl+shift+z': redo,
+    'r': reset,
+  }, !isAnimating)
+
+  const handleInsert = async (): Promise<void> => {
+    if (isAnimating) return
+    const keyError = getValidationError(keyValue)
+    if (keyError) { showToast({ type: 'error', message: keyError }); return }
+    if (!valueInput.trim()) { showToast({ type: 'error', message: t('errors.inputRequired').replace('{item}', t('hash.valuePlaceholder')) }); return }
+
+    const key = parseInt(keyValue, 10)
+    const value = valueInput.trim()
+
+    setIsAnimating(true)
+    const anim = getAnimationContext()
+    try {
+      insert(key, value)
+      // Wait for React re-render then animate the new entry
+      await new Promise(r => setTimeout(r, 50))
+      if (svgRef.current) await animateInsertHash(svgRef.current, key, value, { hashFn }, anim)
+    } catch (e) {
+      handleAnimationError(e, t('hash.insert'))
+    } finally {
+      setIsAnimating(false)
+    }
+    setKeyValue('')
+    setValueInput('')
+  }
+
+  const handleSearch = async (): Promise<void> => {
+    if (isAnimating) return
+    const keyError = getValidationError(keyValue)
+    if (keyError) { showToast({ type: 'error', message: keyError }); return }
+
+    const key = parseInt(keyValue, 10)
+    setIsAnimating(true)
+    const anim = getAnimationContext()
+    const found = search(key)
+    try { if (svgRef.current) await animateSearchHash(svgRef.current, key, !!found, data, { hashFn }, anim) }
+    catch (e) { handleAnimationError(e, t('hash.search')) }
+    finally { setIsAnimating(false) }
+  }
+
+  const handleDelete = async (): Promise<void> => {
+    if (isAnimating) return
+    const keyError = getValidationError(keyValue)
+    if (keyError) { showToast({ type: 'error', message: keyError }); return }
+
+    const key = parseInt(keyValue, 10)
+    setIsAnimating(true)
+    const anim = getAnimationContext()
+    try {
+      if (svgRef.current) await animateDeleteHash(svgRef.current, key, data, { hashFn }, anim)
+      remove(key)
+    } catch (e) {
+      handleAnimationError(e, t('hash.remove'))
+    } finally {
+      setIsAnimating(false)
+    }
+    setKeyValue('')
+    setValueInput('')
+  }
+
+  return (
+    <div className="flex flex-col h-screen">
+      <PageHeader title={t('hash.title')} subtitle={t('hash.subtitle')} icon="#">
+        <ExportImport dataType="hash" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
+          if (Array.isArray(imported)) loadData(imported)
+        }} />
+        <ShareButton data={data} dataType="hash" disabled={isAnimating} />
+        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+      </PageHeader>
+
+      <OperationBar>
+        <SpeedControl />
+        <OperationLabel>{t('page.operations')}</OperationLabel>
+        <OperationInput type="number" placeholder={t('hash.keyPlaceholder')} value={keyValue} onChange={setKeyValue} />
+        <OperationInput type="text" placeholder={t('hash.valuePlaceholder')} value={valueInput} onChange={setValueInput} />
+        <OperationButton variant="success" onClick={handleInsert} disabled={isAnimating}>{t('hash.insert')}</OperationButton>
+        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('hash.remove')}</OperationButton>
+        <OperationButton variant="purple" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('hash.search')}</OperationButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={undo}
+          disabled={isAnimating || !canUndo()}
+          previewData={getUndoPreview()}
+          previewLabel={t('shortcuts.undo')}
+        >
+          {t('common.undo')}
+        </UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={redo}
+          disabled={isAnimating || !canRedo()}
+          previewData={getRedoPreview()}
+          previewLabel={t('shortcuts.redo')}
+        >
+          {t('common.redo')}
+        </UndoPreviewButton>
+        <OperationInfo><span className="font-mono text-xs text-ink-light">BUCKETS: {bucketCount} · ENTRIES: {entryCount}</span></OperationInfo>
+      </OperationBar>
+
+      <Visualizer
+        data={data}
+        renderFn={(svg: SVGSVGElement, d: unknown, dims: { width: number; height: number }) => renderHash(svg, d as any, { ...dims, hashFn })}
+        svgRef={svgRef}
+        dimensions={dimensions}
+        containerRef={containerRef}
+      />
+      {data.length === 0 && (
+        <EmptyState icon="#" titleKey="emptyState.emptyHash" descriptionKey="emptyState.emptyHashDesc" onFill={reset} />
+      )}
+      {logs.length > 0 && (
+        <Timeline
+          history={logs.map(log => ({ type: log.type, description: log.message }))}
+          currentIndex={logs.length - 1}
+          onJump={undefined}
+          maxHeight="h-24"
+        />
+      )}
+      <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
+        <button
+          onClick={() => setShowLearning(!showLearning)}
+          className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
+            shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]
+            active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
+            ${showLearning
+              ? 'bg-accent-blue text-paper border-accent-blue'
+              : 'border-ink dark:border-dark-border hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]'
+            }`}
+        >
+          {showLearning ? t('learning.close') : t('learning.open')}
+        </button>
+      </div>
+
+      {showLearning && (
+        <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
+          <StepExplainer
+            step={learningMode.currentStep}
+            currentStepIndex={learningMode.currentStepIndex}
+            totalSteps={learningMode.totalSteps}
+            progress={learningMode.progress}
+            onNext={learningMode.nextStep}
+            onPrev={learningMode.prevStep}
+            onReset={learningMode.reset}
+            isAnimating={isAnimating}
+          />
+        </div>
+      )}
+      <LogPanel logs={logs} />
+    </div>
+  )
+}

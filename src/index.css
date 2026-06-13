@@ -1,0 +1,307 @@
+@import 'tailwindcss';
+
+@layer base {
+  button, a, input, select, textarea, [role="button"] {
+    touch-action: manipulation;
+  }
+}
+
+@theme {
+  --font-display: 'Noto Sans SC', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --color-paper: #faf8f5;
+  --color-ink: #1a1a2e;
+  --color-ink-light: #4a4a6a;
+  --color-slate: #2d2d44;
+  --color-slate-light: #3d3d5c;
+  --color-paper-warm: #f5f3ef;
+  --color-accent-blue: #2563eb;
+  --color-accent-teal: #0d9488;
+  --color-accent-rose: #e11d48;
+  --color-accent-amber: #d97706;
+  --color-accent-violet: #7c3aed;
+  --color-accent-emerald: #059669;
+  --color-accent-cyan: #0891b2;
+  --color-border: #e5e0d8;
+  --color-border-dark: #2d2d44;
+
+  --shadow-card: 4px 4px 0px #1a1a2e;
+  --shadow-card-hover: 6px 6px 0px #2563eb;
+  --shadow-button: 2px 2px 0px #1a1a2e;
+  --shadow-card-dark: 4px 4px 0px #334155;
+  --shadow-card-dark-hover: 6px 6px 0px #3b82f6;
+  --shadow-button-dark: 2px 2px 0px #334155;
+
+  --color-dark-paper: #0f172a;
+  --color-dark-ink: #e2e8f0;
+  --color-dark-ink-light: #94a3b8;
+  --color-dark-border: #334155;
+
+  --animate-fade-in: fade-in 0.4s ease-out;
+  --animate-slide-up: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-down: slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-pop: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-stagger: stagger 0.5s ease-out both;
+  --animate-pulse-border: pulse-border 2s ease-in-out infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slide-down {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes button-pop {
+    0% { transform: scale(1) translateY(0); }
+    35% { transform: scale(1.06) translateY(-3px); }
+    100% { transform: scale(1) translateY(0); }
+  }
+  @keyframes stagger {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-border {
+    0%, 100% { border-color: var(--color-accent-blue); }
+    50% { border-color: var(--color-accent-violet); }
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-display);
+  margin: 0;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+}
+
+html.dark body {
+  background-color: var(--color-dark-paper);
+  color: var(--color-dark-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+html.dark :focus-visible {
+  outline-color: #60a5fa;
+}
+
+html.dark .dot-grid {
+  background-image:
+    linear-gradient(to right, #334155 1px, transparent 1px),
+    linear-gradient(to bottom, #334155 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+code,
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 3px;
+  }
+}
+
+@utility dot-grid {
+  background-image:
+    linear-gradient(to right, #d4d0c8 1px, transparent 1px),
+    linear-gradient(to bottom, #d4d0c8 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+@utility grain {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+    pointer-events: none;
+  }
+}
+
+@utility neo-border {
+  border: 2px solid var(--color-ink);
+  box-shadow: var(--shadow-card);
+}
+
+@utility neo-border-hover {
+  border: 2px solid var(--color-ink);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  &:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translate(-2px, -2px);
+  }
+}
+
+@utility touch-manipulation {
+  touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+  /* 视觉化容器 - 移动端触摸滚动 */
+  .visualizer-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 操作栏 - 换行 + 触摸友好的间距 */
+  .operation-bar {
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .operation-bar button {
+    flex: 0 1 auto;
+    min-width: 60px;
+    min-height: 44px; /* 最小触摸目标 44px */
+  }
+
+  .operation-bar input {
+    min-height: 44px;
+    font-size: 14px; /* 防止 iOS 自动缩放 */
+  }
+
+  /* 侧边栏移动端 */
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 40;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 35;
+    animation: fade-in 0.2s ease-out;
+  }
+
+  /* 统计栏 */
+  .stats-bar {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .stats-bar .stat-item {
+    font-size: 0.625rem;
+  }
+
+  /* 页面头部 */
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .page-header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  /* 触摸优化 - 防止双击缩放 */
+  button,
+  a {
+    touch-action: manipulation;
+  }
+
+  /* 链接和按钮触摸反馈 */
+  button:active,
+  a:active {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* 触摸优化全局规则 */
+@media (hover: none) and (pointer: coarse) {
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 缩放控件按钮保持小尺寸，但触摸区域足够 */
+  .visualizer-zoom-controls button {
+    min-height: 36px;
+    min-width: 36px;
+  }
+}
+
+@media (max-width: 640px) {
+  .operation-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+    position: relative;
+  }
+
+  .operation-bar-scroll-hint::after {
+    content: '';
+    position: sticky;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 24px;
+    background: linear-gradient(to right, transparent, var(--color-paper) 100%);
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+
+  .page-header-actions {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .log-panel {
+    max-height: 120px;
+  }
+}

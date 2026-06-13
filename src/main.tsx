@@ -1,0 +1,15 @@
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+
+import 'd3-transition'
+
+import './index.css'
+import App from './App'
+import ToastContainer from './components/Toast.tsx'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+    <ToastContainer />
+  </StrictMode>,
+)
