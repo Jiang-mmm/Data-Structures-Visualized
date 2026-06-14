@@ -24,7 +24,7 @@ import { useLearningMode } from '../hooks/useLearningMode'
 export default function TreePage() {
   const { t } = useGlobalSettings()
   const { data, logs, isAnimating, setIsAnimating, insert, preorder, inorder, postorder, levelorder, search, deleteNode, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, nodeCount } = useTreeState()
-  const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
@@ -109,6 +109,11 @@ export default function TreePage() {
     setInputValue('')
   }, [isAnimating, inputValue, data, dimensions, deleteNode, setIsAnimating, getAnimationContext, svgRef, setInputValue])
 
+  const handleStop = useCallback((): void => {
+    abortAnimation()
+    setIsAnimating(false)
+  }, [abortAnimation, setIsAnimating])
+
   const handleReset = useCallback((): void => {
     clearTreePositions()
     reset()
@@ -140,6 +145,7 @@ export default function TreePage() {
         <OperationButton variant="teal" onClick={handleSearch} disabled={isAnimating}>{t('tree.search')}</OperationButton>
         <OperationButton variant="primary" onClick={() => handleTraversal(preorder)} disabled={isAnimating} popAnimation>{t('tree.preorder')}</OperationButton>
         <OperationButton variant="purple" onClick={() => handleTraversal(inorder)} disabled={isAnimating} popAnimation>{t('tree.inorder')}</OperationButton>
+        {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <OperationGroup label={t('common.more')}>
           <OperationButton variant="warning" onClick={() => handleTraversal(postorder)} disabled={isAnimating} popAnimation>{t('tree.postorder')}</OperationButton>
           <OperationButton variant="teal" onClick={handleLevelOrder} disabled={isAnimating} popAnimation>{t('tree.levelorder')}</OperationButton>

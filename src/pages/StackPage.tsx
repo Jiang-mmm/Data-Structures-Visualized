@@ -23,7 +23,7 @@ import { useLearningMode } from '../hooks/useLearningMode'
 export default function StackPage() {
   const { t } = useGlobalSettings()
   const { data, logs, isAnimating, setIsAnimating, push, pop, peek, clear, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, size } = useStackState()
-  const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('stack')
@@ -33,6 +33,11 @@ export default function StackPage() {
     'ctrl+shift+z': redo,
     'r': reset,
   }, !isAnimating)
+
+  const handleStop = useCallback((): void => {
+    abortAnimation()
+    setIsAnimating(false)
+  }, [abortAnimation, setIsAnimating])
 
   const handlePush = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -95,6 +100,7 @@ export default function StackPage() {
         <OperationButton variant="danger" onClick={handlePop} disabled={isAnimating || data.length === 0}>{'- ' + t('stack.pop')}</OperationButton>
         <OperationButton variant="outline" onClick={handlePeek} popAnimation>{t('stack.peek')}</OperationButton>
         <OperationButton variant="outline" onClick={clear} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
+        {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
           onClick={undo}

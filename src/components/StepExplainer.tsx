@@ -57,7 +57,7 @@ function StepExplainer({
         {step.description}
       </p>
 
-      <div className="bg-paper dark:bg-dark-paper border border-ink/10 dark:border-dark-border p-3 mb-4 font-mono text-xs">
+      <div className="bg-paper dark:bg-dark-paper border border-ink/10 dark:border-dark-border p-3 mb-4 font-mono text-xs max-h-48 overflow-y-auto scrollbar-thin">
         {step.codeSnippet.split('\n').map((line, index) => (
           <div
             key={index}

@@ -96,6 +96,11 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
+  @keyframes heap-violation-pulse {
+    0% { stroke-dashoffset: 0; stroke-opacity: 0.7; }
+    50% { stroke-dashoffset: 16; stroke-opacity: 1; }
+    100% { stroke-dashoffset: 32; stroke-opacity: 0.7; }
+  }
 }
 
 * {

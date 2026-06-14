@@ -31,7 +31,7 @@ export default function GraphPage() {
     getAdjacencyMatrix, getAdjacencyList,
   } = useGraphState()
 
-  const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [sourceInput, setSourceInput] = useState<string>('A')
   const [targetInput, setTargetInput] = useState<string>('B')
   const [weightInput, setWeightInput] = useState<string>('1')
@@ -73,6 +73,11 @@ export default function GraphPage() {
     if (isAnimating || !sourceInput || !targetInput) return
     deleteEdge(sourceInput.toUpperCase(), targetInput.toUpperCase())
   }, [isAnimating, sourceInput, targetInput, deleteEdge])
+  const handleStop = useCallback((): void => {
+    abortAnimation()
+    setIsAnimating(false)
+  }, [abortAnimation, setIsAnimating])
+
   const handleBFS = useCallback(async (): Promise<void> => {
     if (isAnimating) return
     setIsAnimating(true)
@@ -187,6 +192,7 @@ export default function GraphPage() {
         <OperationButton variant="purple" onClick={handleBFS} disabled={isAnimating} popAnimation>{t('graph.bfs')}</OperationButton>
         <OperationButton variant="teal" onClick={handleDFS} disabled={isAnimating} popAnimation>{t('graph.dfs')}</OperationButton>
         <OperationButton variant="warning" onClick={handleDijkstra} disabled={isAnimating}>{t('graph.dijkstra')}</OperationButton>
+        {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <div className="flex items-center gap-1">
           {[{ k: 'force', l: t('graphView.force') }, { k: 'matrix', l: t('graphView.matrix') }, { k: 'list', l: t('graphView.list') }].map(({ k, l }) => (
             <button key={k} aria-pressed={viewMode === k} onClick={() => setViewMode(k)}

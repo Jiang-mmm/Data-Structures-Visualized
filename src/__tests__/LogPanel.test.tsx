@@ -129,7 +129,7 @@ describe('LogPanel', () => {
 
     it('应显示筛选后的日志数量', () => {
       const { container } = renderLogPanel()
-      const countElement = container.querySelector('.text-paper\\/40')
+      const countElement = container.querySelector('.text-slate-500')
       expect(countElement?.textContent).toBe('4')
     })
   })

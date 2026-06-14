@@ -104,11 +104,26 @@ export function useDataStructureState<T>(initialData: T, options: DataStructureS
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     saveTimerRef.current = setTimeout(() => {
       saveToStorage(storageKey, dataRef.current)
+      saveTimerRef.current = null
     }, STORAGE_WRITE_DEBOUNCE_MS)
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
   }, [storageKey, data])
+
+  // Flush pending save before page unload to prevent data loss
+  useEffect(() => {
+    if (!storageKey) return
+    const handleBeforeUnload = () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current)
+        saveTimerRef.current = null
+        saveToStorage(storageKey, dataRef.current)
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => { window.removeEventListener('beforeunload', handleBeforeUnload) }
+  }, [storageKey])
 
   useEffect(() => {
     return () => {

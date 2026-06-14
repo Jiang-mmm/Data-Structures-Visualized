@@ -1,5 +1,5 @@
 import { select } from '../utils/d3Imports'
-import { duration, EASING, type Animation } from '../utils/animationEngine'
+import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
 
@@ -89,12 +89,16 @@ export function renderHeap(svg: SVGSVGElement, data: number[], options: HeapOpti
     if (parentPos && parentIndex >= 0) {
       const isHeapViolation = pos.index < data.length && parentIndex < data.length && data[pos.index] > data[parentIndex]
 
-      container.append('line')
+      const edgeLine = container.append('line')
         .attr('x1', parentPos.x).attr('y1', parentPos.y)
         .attr('x2', pos.x).attr('y2', pos.y)
         .attr('stroke', isHeapViolation ? C.nodeError : C.edgeDefault)
         .attr('stroke-width', isHeapViolation ? 3 : 2)
         .attr('stroke-dasharray', isHeapViolation ? '5,3' : 'none')
+
+      if (isHeapViolation) {
+        edgeLine.style('animation', 'heap-violation-pulse 1.2s ease-in-out infinite')
+      }
     }
   }
 
@@ -145,6 +149,7 @@ export function renderHeap(svg: SVGSVGElement, data: number[], options: HeapOpti
 export async function animateInsertHeap(svg: SVGSVGElement, value: number, data: number[], anim?: Animation) {
   if (data.length >= LARGE_DATA_THRESHOLD) return
   const container = select(svg)
+  const defaultEase = getDefaultEasing()
 
   // Find the newly inserted node (last heap-node in DOM)
   const allNodes = container.selectAll('.heap-node').nodes()
@@ -160,17 +165,16 @@ export async function animateInsertHeap(svg: SVGSVGElement, value: number, data:
   newCircle.attr('r', 0).attr('opacity', 0)
   newTexts.attr('opacity', 0)
 
-  await new Promise<void>((resolve) => {
+  await transitionEnd(
     newCircle
       .transition().duration(duration(300)).ease(EASING.easeOutBack)
       .attr('r', NODE_RADIUS + 5)
       .attr('opacity', 1)
       .attr('fill', gradUrl('node-active'))
-      .transition().duration(duration(250)).ease(EASING.easeOutCubic)
+      .transition().duration(duration(250)).ease(defaultEase)
       .attr('r', NODE_RADIUS)
       .attr('fill', gradUrl('node-default'))
-      .on('end interrupt', resolve)
-  })
+  )
   newTexts.transition().duration(duration(200)).attr('opacity', 1)
 
   if (anim?.isAborted?.()) return
@@ -184,16 +188,15 @@ export async function animateInsertHeap(svg: SVGSVGElement, value: number, data:
 
     if (anim?.isAborted?.()) return
 
-    await new Promise<void>((resolve) => {
+    await transitionEnd(
       parentGroup.select('circle')
         .transition().duration(duration(200)).ease(EASING.easeOutBack)
         .attr('r', NODE_RADIUS + 4)
         .attr('fill', gradUrl('node-active'))
-        .transition().duration(duration(200)).ease(EASING.easeOutCubic)
+        .transition().duration(duration(200)).ease(defaultEase)
         .attr('r', NODE_RADIUS)
         .attr('fill', gradUrl('node-default'))
-        .on('end interrupt', resolve)
-    })
+    )
     idx = parentIdx
   }
 }
@@ -205,33 +208,78 @@ export async function animateInsertHeap(svg: SVGSVGElement, value: number, data:
  */
 export async function animateExtractHeap(svg: SVGSVGElement, anim?: Animation) {
   const container = select(svg)
+  const defaultEase = getDefaultEasing()
   const rootGroup = container.select('.heap-node.index-0')
 
   if (!rootGroup.empty()) {
     if (anim?.isAborted?.()) return
 
     // Phase 1: Root pulses with overshoot (highlight the max value)
-    await new Promise<void>((resolve) => {
+    await transitionEnd(
       rootGroup.select('circle')
         .transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('r', NODE_RADIUS + 10)
         .attr('fill', gradUrl('node-active'))
-        .transition().duration(duration(200)).ease(EASING.easeOutCubic)
+        .transition().duration(duration(200)).ease(defaultEase)
         .attr('r', NODE_RADIUS)
         .attr('fill', gradUrl('node-error'))
-        .on('end interrupt', resolve)
-    })
+    )
 
     if (anim?.isAborted?.()) return
 
-    // Phase 2: Root shrinks and fades out
-    await new Promise<void>((resolve) => {
+    // Phase 2: Sift-down visualization — highlight children sequentially
+    const allNodes = container.selectAll('.heap-node').nodes()
+    const totalNodes = allNodes.length
+    let idx = 0
+    while (true) {
+      const leftIdx = 2 * idx + 1
+      const rightIdx = 2 * idx + 2
+      if (leftIdx >= totalNodes) break
+
+      const leftGroup = container.select(`.heap-node.index-${leftIdx}`)
+      const rightGroup = rightIdx < totalNodes ? container.select(`.heap-node.index-${rightIdx}`) : null
+
+      if (anim?.isAborted?.()) return
+
+      // Highlight left child
+      if (!leftGroup.empty()) {
+        await transitionEnd(
+          leftGroup.select('circle')
+            .transition().duration(duration(200)).ease(EASING.easeOutBack)
+            .attr('r', NODE_RADIUS + 4)
+            .attr('fill', gradUrl('node-active'))
+            .transition().duration(duration(150)).ease(defaultEase)
+            .attr('r', NODE_RADIUS)
+            .attr('fill', gradUrl('node-default'))
+        )
+      }
+
+      // Highlight right child if exists
+      if (rightGroup && !rightGroup.empty()) {
+        await transitionEnd(
+          rightGroup.select('circle')
+            .transition().duration(duration(200)).ease(EASING.easeOutBack)
+            .attr('r', NODE_RADIUS + 4)
+            .attr('fill', gradUrl('node-active'))
+            .transition().duration(duration(150)).ease(defaultEase)
+            .attr('r', NODE_RADIUS)
+            .attr('fill', gradUrl('node-default'))
+        )
+      }
+
+      // Move to the child that would be swapped (simulated)
+      idx = leftIdx
+    }
+
+    if (anim?.isAborted?.()) return
+
+    // Phase 3: Root shrinks and fades out
+    await transitionEnd(
       rootGroup.select('circle')
         .transition().duration(duration(250)).ease(EASING.easeInCubic)
         .attr('r', 0)
         .attr('opacity', 0)
-        .on('end interrupt', resolve)
-    })
+    )
     rootGroup.selectAll('text')
       .transition().duration(duration(150)).attr('opacity', 0)
   }
@@ -249,7 +297,7 @@ export async function animatePeekHeap(svg: SVGSVGElement, anim?: Animation) {
   if (!rootGroup.empty()) {
     if (anim?.isAborted?.()) return
     // Elastic bounce effect for peek
-    await new Promise<void>((resolve) => {
+    await transitionEnd(
       rootGroup.select('circle')
         .transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('r', NODE_RADIUS + 8)
@@ -257,7 +305,6 @@ export async function animatePeekHeap(svg: SVGSVGElement, anim?: Animation) {
         .transition().duration(duration(500)).ease(EASING.easeOutElastic)
         .attr('r', NODE_RADIUS)
         .attr('fill', gradUrl('node-root'))
-        .on('end interrupt', resolve)
-    })
+    )
   }
 }

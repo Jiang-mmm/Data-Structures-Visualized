@@ -23,7 +23,7 @@ import { useLearningMode } from '../hooks/useLearningMode'
 export default function ArrayPage() {
   const { t } = useGlobalSettings()
   const { data, logs, isAnimating, setIsAnimating, insert, remove, search, randomize, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useArrayState()
-  const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const [inputIndex, setInputIndex] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
@@ -57,6 +57,11 @@ export default function ArrayPage() {
     }
     return index
   }, [inputIndex, data.length])
+
+  const handleStop = useCallback((): void => {
+    abortAnimation()
+    setIsAnimating(false)
+  }, [abortAnimation, setIsAnimating])
 
   const handleInsert = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -140,6 +145,7 @@ export default function ArrayPage() {
         <OperationButton variant="success" onClick={handleInsert} disabled={isAnimating}>{t('array.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('common.delete')}</OperationButton>
         <OperationButton variant="primary" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('common.search')}</OperationButton>
+        {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
           onClick={undo}

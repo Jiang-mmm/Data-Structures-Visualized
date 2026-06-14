@@ -1,5 +1,5 @@
 import { select, d3Drag, forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from '../utils/d3Imports'
-import { duration, EASING, transitionEnd, type Animation } from '../utils/animationEngine'
+import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
 
@@ -304,10 +304,34 @@ async function animateTraversalOrder(svg: SVGWithSimulation, order: string[], an
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
+  const defaultEase = getDefaultEasing()
+  const visited = new Set<string>()
 
   for (let i = 0; i < order.length; i++) {
     if (anim?.isAborted?.()) return
     const nodeId = order[i]
+    visited.add(nodeId)
+
+    // Highlight incoming edge from previous node in traversal
+    if (i > 0) {
+      const prevNodeId = order[i - 1]
+      container.selectAll('line').filter(function() {
+        const s = select(this)
+        const x1 = parseFloat(s.attr('x1')), y1 = parseFloat(s.attr('y1'))
+        const x2 = parseFloat(s.attr('x2')), y2 = parseFloat(s.attr('y2'))
+        // Match edges connected to both prev and current node positions
+        const prevNode = container.selectAll('g.graph-node').filter((d: any) => d.id === prevNodeId)
+        const currNode = container.selectAll('g.graph-node').filter((d: any) => d.id === nodeId)
+        if (prevNode.empty() || currNode.empty()) return false
+        const prevD = prevNode.datum() as any
+        const currD = currNode.datum() as any
+        if (!prevD || !currD) return false
+        const matchForward = Math.abs(x1 - prevD.x) < 5 && Math.abs(y1 - prevD.y) < 5 && Math.abs(x2 - currD.x) < 5 && Math.abs(y2 - currD.y) < 5
+        const matchReverse = Math.abs(x1 - currD.x) < 5 && Math.abs(y1 - currD.y) < 5 && Math.abs(x2 - prevD.x) < 5 && Math.abs(y2 - prevD.y) < 5
+        return matchForward || matchReverse
+      }).transition().duration(duration(300)).ease(defaultEase)
+        .attr('stroke', C.edgeActive).attr('stroke-width', 3)
+    }
 
     const t = container.selectAll('g.graph-node').filter(function(d: any) {
       return d.id === nodeId
@@ -315,7 +339,7 @@ async function animateTraversalOrder(svg: SVGWithSimulation, order: string[], an
       .transition().duration(duration(300)).ease(EASING.easeOutBack)
       .attr('r', NODE_RADIUS + 6)
       .attr('fill', C.nodeActive)
-      .transition().duration(duration(300)).ease(EASING.easeOutCubic)
+      .transition().duration(duration(300)).ease(defaultEase)
       .attr('r', NODE_RADIUS)
       .attr('fill', C.nodeVisited)
     await transitionEnd(t)
@@ -326,15 +350,39 @@ async function animatePathHighlight(svg: SVGWithSimulation, path: string[], anim
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
-  for (const nodeId of path) {
+  const defaultEase = getDefaultEasing()
+
+  for (let i = 0; i < path.length; i++) {
+    const nodeId = path[i]
     if (anim?.isAborted?.()) return
+
+    // Highlight edge from previous node to current node on the path
+    if (i > 0) {
+      const prevNodeId = path[i - 1]
+      container.selectAll('line').filter(function() {
+        const s = select(this)
+        const prevNode = container.selectAll('g.graph-node').filter((d: any) => d.id === prevNodeId)
+        const currNode = container.selectAll('g.graph-node').filter((d: any) => d.id === nodeId)
+        if (prevNode.empty() || currNode.empty()) return false
+        const prevD = prevNode.datum() as any
+        const currD = currNode.datum() as any
+        if (!prevD || !currD) return false
+        const x1 = parseFloat(s.attr('x1')), y1 = parseFloat(s.attr('y1'))
+        const x2 = parseFloat(s.attr('x2')), y2 = parseFloat(s.attr('y2'))
+        const matchForward = Math.abs(x1 - prevD.x) < 5 && Math.abs(y1 - prevD.y) < 5 && Math.abs(x2 - currD.x) < 5 && Math.abs(y2 - currD.y) < 5
+        const matchReverse = Math.abs(x1 - currD.x) < 5 && Math.abs(y1 - currD.y) < 5 && Math.abs(x2 - prevD.x) < 5 && Math.abs(y2 - prevD.y) < 5
+        return matchForward || matchReverse
+      }).transition().duration(duration(400)).ease(defaultEase)
+        .attr('stroke', C.nodeError).attr('stroke-width', 3)
+    }
+
     const t = container.selectAll('g.graph-node').filter(function(d: any) {
       return d.id === nodeId
     }).select('circle')
       .transition().duration(duration(400)).ease(EASING.easeOutBack)
       .attr('r', NODE_RADIUS + 8)
       .attr('fill', C.nodeError).attr('stroke', C.nodeErrorStroke)
-      .transition().duration(duration(300)).ease(EASING.easeOutCubic)
+      .transition().duration(duration(300)).ease(defaultEase)
       .attr('r', NODE_RADIUS)
       .attr('fill', C.nodeError).attr('stroke', C.nodeErrorStroke)
     await transitionEnd(t)

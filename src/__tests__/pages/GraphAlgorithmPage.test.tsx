@@ -7,6 +7,27 @@ vi.mock('../../hooks/useGlobalSettings')
 vi.mock('../../hooks/useKeyboard', () => ({
   useKeyboard: vi.fn(),
 }))
+vi.mock('../../hooks/useVisualizer', () => ({
+  useVisualizer: vi.fn().mockReturnValue({
+    containerRef: { current: null },
+    svgRef: { current: null },
+    dimensions: { width: 800, height: 400 },
+    getAnimationContext: vi.fn().mockReturnValue({ isAborted: () => false }),
+  }),
+}))
+vi.mock('../../components/Visualizer', () => ({
+  default: () => null,
+}))
+vi.mock('../../visualizers/graphVisualizer', () => ({
+  renderGraph: vi.fn(),
+  animateBFS: vi.fn().mockResolvedValue([]),
+  animateDFS: vi.fn().mockResolvedValue([]),
+  animateDijkstra: vi.fn().mockResolvedValue([]),
+  clearGraphSimulation: vi.fn(),
+}))
+vi.mock('../../utils/errorHandler', () => ({
+  handleAnimationError: vi.fn(),
+}))
 vi.mock('../../hooks/useLearningMode', () => ({
   useLearningMode: vi.fn().mockReturnValue({
     currentStep: null,

@@ -11,7 +11,7 @@ function chainable() {
       if (p === 'text') return () => c
       if (p === 'attr') return () => c
       if (p === 'style') return () => c
-      if (p === 'on') return () => c
+      if (p === 'on') return (_event: string, cb?: Function) => { if (cb) cb(); return c }
       if (p === 'interrupt') return () => c
       if (p === Symbol.iterator) return undefined
       if (!(p in t)) t[p as string] = vi.fn(() => chainable())
@@ -42,6 +42,7 @@ vi.mock('../../utils/animationEngine', () => ({
   duration: (ms: number) => ms,
   EASING: { easeOutCubic: 'easeOutCubic', easeInCubic: 'easeInCubic', easeOutBack: 'easeOutBack', easeOutElastic: 'easeOutElastic' },
   transitionEnd: vi.fn(() => Promise.resolve()),
+  getDefaultEasing: () => 'easeOutCubic',
 }))
 vi.mock('../../i18n/useI18n', () => ({ tStatic: (key: string) => key }))
 

@@ -23,7 +23,7 @@ import { useLearningMode } from '../hooks/useLearningMode'
 export default function HeapPage() {
   const { t } = useGlobalSettings()
   const { data, logs, isAnimating, setIsAnimating, insert, extractMax, peek, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, heapSize } = useHeapState()
-  const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('heapStructure')
@@ -33,6 +33,11 @@ export default function HeapPage() {
     'ctrl+shift+z': redo,
     'r': reset,
   }, !isAnimating)
+
+  const handleStop = useCallback((): void => {
+    abortAnimation()
+    setIsAnimating(false)
+  }, [abortAnimation, setIsAnimating])
 
   const handleInsert = useCallback(async () => {
     if (isAnimating) return
@@ -103,6 +108,7 @@ export default function HeapPage() {
         <OperationButton variant="success" onClick={handleInsert} disabled={isAnimating}>{t('heap.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleExtract} disabled={isAnimating || data.length === 0}>{t('heap.extractMax')}</OperationButton>
         <OperationButton variant="purple" onClick={handlePeek} disabled={isAnimating || data.length === 0} popAnimation>{t('heap.peek')}</OperationButton>
+        {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
           onClick={undo}

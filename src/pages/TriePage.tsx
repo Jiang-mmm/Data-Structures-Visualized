@@ -22,7 +22,7 @@ import { useLearningMode } from '../hooks/useLearningMode'
 export default function TriePage() {
   const { t } = useGlobalSettings()
   const { logs, isAnimating, setIsAnimating, insert, remove, search, searchPrefix, getFlattened, wordCount, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useTrieState()
-  const { containerRef, svgRef, dimensions } = useVisualizer()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('trie')
@@ -33,6 +33,11 @@ export default function TriePage() {
     'r': reset,
   }, !isAnimating)
 
+  const handleStop = useCallback((): void => {
+    abortAnimation()
+    setIsAnimating(false)
+  }, [abortAnimation, setIsAnimating])
+
   const handleInsert = useCallback(async () => {
     if (isAnimating) return
     if (!inputValue || inputValue.trim().length === 0) {
@@ -41,8 +46,9 @@ export default function TriePage() {
     }
     const word = inputValue.trim().toLowerCase()
     setIsAnimating(true)
+    const anim = getAnimationContext()
     try {
-      if (svgRef.current) await animateInsertTrie(svgRef.current, word)
+      if (svgRef.current) await animateInsertTrie(svgRef.current, word, anim)
       insert(word)
     } catch (e) {
       handleAnimationError(e, t('trie.insert'))
@@ -50,7 +56,7 @@ export default function TriePage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, insert, setIsAnimating, svgRef])
+  }, [isAnimating, inputValue, insert, setIsAnimating, getAnimationContext, svgRef])
 
   const handleDelete = useCallback(async () => {
     if (isAnimating) return
@@ -60,8 +66,9 @@ export default function TriePage() {
     }
     const word = inputValue.trim().toLowerCase()
     setIsAnimating(true)
+    const anim = getAnimationContext()
     try {
-      if (svgRef.current) await animateDeleteTrie(svgRef.current, word)
+      if (svgRef.current) await animateDeleteTrie(svgRef.current, word, anim)
       remove(word)
     } catch (e) {
       handleAnimationError(e, t('trie.delete'))
@@ -69,7 +76,7 @@ export default function TriePage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, remove, setIsAnimating, svgRef])
+  }, [isAnimating, inputValue, remove, setIsAnimating, getAnimationContext, svgRef])
 
   const handleSearch = useCallback(async () => {
     if (isAnimating) return
@@ -79,15 +86,16 @@ export default function TriePage() {
     }
     const word = inputValue.trim().toLowerCase()
     setIsAnimating(true)
+    const anim = getAnimationContext()
     try {
       const result = search(word)
-      if (svgRef.current) await animateSearchTrie(svgRef.current, result.found, word)
+      if (svgRef.current) await animateSearchTrie(svgRef.current, result.found, word, anim)
     } catch (e) {
       handleAnimationError(e, t('trie.search'))
     } finally {
       setIsAnimating(false)
     }
-  }, [isAnimating, inputValue, search, setIsAnimating, svgRef])
+  }, [isAnimating, inputValue, search, setIsAnimating, getAnimationContext, svgRef])
 
   const handlePrefixSearch = useCallback(async () => {
     if (isAnimating) return
@@ -97,6 +105,7 @@ export default function TriePage() {
     }
     const prefix = inputValue.trim().toLowerCase()
     setIsAnimating(true)
+    const anim = getAnimationContext()
     try {
       const result = searchPrefix(prefix)
       if (result.found && result.words.length > 0) {
@@ -104,20 +113,20 @@ export default function TriePage() {
       } else {
         showToast({ type: 'info', message: t('errors.noPrefixMatch') })
       }
-      if (svgRef.current) await animateSearchTrie(svgRef.current, result.words.length > 0, prefix)
+      if (svgRef.current) await animateSearchTrie(svgRef.current, result.words.length > 0, prefix, anim)
     } catch (e) {
       handleAnimationError(e, t('trie.prefixSearch'))
     } finally {
       setIsAnimating(false)
     }
-  }, [isAnimating, inputValue, searchPrefix, setIsAnimating, svgRef])
+  }, [isAnimating, inputValue, searchPrefix, setIsAnimating, getAnimationContext, svgRef])
 
   const flatData = getFlattened()
   const count = wordCount()
 
   return (
     <div className="flex flex-col h-screen">
-      <PageHeader title={t('trie.title')} subtitle={t('trie.subtitle')} icon="🌳">
+      <PageHeader title={t('trie.title')} subtitle={t('trie.subtitle')} icon="⊾">
         <ExportImport dataType="trie" data={flatData} disabled={isAnimating} onImport={({ data: imported }) => {
           if (imported && typeof imported === 'object' && 'children' in (imported as object)) {
             const node = imported as Record<string, unknown>
@@ -142,6 +151,7 @@ export default function TriePage() {
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('trie.delete')}</OperationButton>
         <OperationButton variant="blue" onClick={handleSearch} disabled={isAnimating}>{t('trie.search')}</OperationButton>
         <OperationButton variant="purple" onClick={handlePrefixSearch} disabled={isAnimating}>{t('trie.prefixSearch')}</OperationButton>
+        {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
           onClick={undo}
@@ -165,7 +175,7 @@ export default function TriePage() {
 
       <Visualizer data={flatData} renderFn={renderTrie} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.trieLabel")} />
       {flatData.nodes.length === 0 && (
-        <EmptyState icon="🌳" titleKey="emptyState.emptyTrie" descriptionKey="emptyState.emptyTrieDesc" onFill={reset} />
+        <EmptyState icon="⊾" titleKey="emptyState.emptyTrie" descriptionKey="emptyState.emptyTrieDesc" onFill={reset} />
       )}
       {logs.length > 0 && (
         <Timeline

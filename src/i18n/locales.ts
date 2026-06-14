@@ -658,7 +658,7 @@ export const zh: Locale = {
   home: {
     badge: 'Data Structures Visualized',
     title: '数据结构学习助手',
-    heroDescription: '通过交互式可视化动画，直观理解6种核心数据结构的原理与操作。Neo-Brutalism 风格 · 工程图纸质感 · 实时动画反馈。',
+    heroDescription: '通过交互式可视化动画，直观理解9种核心数据结构的原理与操作。Neo-Brutalism 风格 · 工程图纸质感 · 实时动画反馈。',
     selectStructure: '选择数据结构开始探索',
     enterModule: '进入模块',
     modules: '个模块',
@@ -1154,7 +1154,7 @@ export const en: Locale = {
   home: {
     badge: 'Data Structures Visualized',
     title: 'Data Structure Learner',
-    heroDescription: 'Learn 6 core data structures through interactive visualization animations. Neo-Brutalist style · Engineering blueprint feel · Real-time animation feedback.',
+    heroDescription: 'Learn 9 core data structures through interactive visualization animations. Neo-Brutalist style · Engineering blueprint feel · Real-time animation feedback.',
     selectStructure: 'Select a data structure to explore',
     enterModule: 'Enter Module',
     modules: 'MODULES',

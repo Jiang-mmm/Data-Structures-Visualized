@@ -1,6 +1,6 @@
 import { select } from '../utils/d3Imports'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl, type ThemeColors } from '../utils/themeColors'
-import { duration, EASING } from '../utils/animationEngine'
+import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import type { TrieFlattened } from '../hooks/useTrieState'
 
 export interface TrieVisualizerOptions {
@@ -49,7 +49,7 @@ function layout(data: TrieFlattened, width: number): { positions: TriePosition[]
     const childWidth = totalWidth / children.length
 
     children.forEach((child, i) => {
-      const childId = `root-${child.char}`
+      const childId = `root-${child.prefix}`
       const x = minX + childWidth * i + childWidth / 2
       const y = 40 + level * LEVEL_HEIGHT
 
@@ -57,7 +57,7 @@ function layout(data: TrieFlattened, width: number): { positions: TriePosition[]
         id: childId,
         x,
         y,
-        prefix: child.char,
+        prefix: child.prefix,
         isEndOfWord: child.isEndOfWord,
       })
 
@@ -191,18 +191,19 @@ function getPathNodes(container: ReturnType<typeof select>, word: string) {
 /**
  * 插入字典树动画 - only animates the path from root to the new node
  */
-export async function animateInsertTrie(svg: SVGSVGElement, word?: string) {
+export async function animateInsertTrie(svg: SVGSVGElement, word?: string, anim?: Animation) {
   const container = select(svg)
 
   if (!word) {
     const nodeElements = container.selectAll('.trie-node').nodes()
     if (nodeElements.length === 0) return
     for (let i = 0; i < nodeElements.length; i++) {
+      if (anim?.isAborted?.()) return
       const node = select(nodeElements[i] as SVGGElement)
       const circle = node.select('circle')
       if (circle.empty()) continue
       const originalFill = circle.attr('fill') || gradUrl('node-default')
-      await new Promise<void>((resolve) => {
+      await transitionEnd(
         circle
           .transition().duration(duration(250)).ease(EASING.easeOutBack)
           .attr('r', NODE_RADIUS + 5)
@@ -210,8 +211,7 @@ export async function animateInsertTrie(svg: SVGSVGElement, word?: string) {
           .transition().duration(duration(200)).ease(EASING.easeOutCubic)
           .attr('r', NODE_RADIUS)
           .attr('fill', i === nodeElements.length - 1 ? gradUrl('node-leaf') : originalFill)
-          .on('end interrupt', resolve)
-      })
+      )
     }
     return
   }
@@ -220,13 +220,14 @@ export async function animateInsertTrie(svg: SVGSVGElement, word?: string) {
   if (pathNodes.length === 0) return
 
   for (let i = 0; i < pathNodes.length; i++) {
+    if (anim?.isAborted?.()) return
     const node = pathNodes[i]
     const circle = node.select('circle')
     if (circle.empty()) continue
     const originalFill = circle.attr('fill') || gradUrl('node-default')
     const isLast = i === pathNodes.length - 1
 
-    await new Promise<void>((resolve) => {
+    await transitionEnd(
       circle
         .transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('r', NODE_RADIUS + 5)
@@ -234,27 +235,27 @@ export async function animateInsertTrie(svg: SVGSVGElement, word?: string) {
         .transition().duration(duration(200)).ease(EASING.easeOutCubic)
         .attr('r', NODE_RADIUS)
         .attr('fill', isLast ? gradUrl('node-leaf') : originalFill)
-        .on('end interrupt', resolve)
-    })
+    )
   }
 }
 
 /**
  * 搜索字典树动画 - only animates the search path
  */
-export async function animateSearchTrie(svg: SVGSVGElement, found: boolean, word?: string) {
+export async function animateSearchTrie(svg: SVGSVGElement, found: boolean, word?: string, anim?: Animation) {
   const container = select(svg)
 
   if (!word) {
     const nodeElements = container.selectAll('.trie-node').nodes()
     if (nodeElements.length === 0) return
     for (let i = 0; i < nodeElements.length; i++) {
+      if (anim?.isAborted?.()) return
       const node = select(nodeElements[i] as SVGGElement)
       const circle = node.select('circle')
       if (circle.empty()) continue
       const isLast = i === nodeElements.length - 1
       const originalFill = circle.attr('fill') || gradUrl('node-default')
-      await new Promise<void>((resolve) => {
+      await transitionEnd(
         circle
           .transition().duration(duration(250)).ease(EASING.easeOutBack)
           .attr('r', NODE_RADIUS + (isLast ? 8 : 5))
@@ -262,8 +263,7 @@ export async function animateSearchTrie(svg: SVGSVGElement, found: boolean, word
           .transition().duration(duration(isLast ? 350 : 200)).ease(isLast ? EASING.easeOutElastic : EASING.easeOutCubic)
           .attr('r', NODE_RADIUS)
           .attr('fill', isLast ? (found ? gradUrl('node-leaf') : gradUrl('node-error')) : originalFill)
-          .on('end interrupt', resolve)
-      })
+      )
     }
     return
   }
@@ -272,13 +272,14 @@ export async function animateSearchTrie(svg: SVGSVGElement, found: boolean, word
   if (pathNodes.length === 0) return
 
   for (let i = 0; i < pathNodes.length; i++) {
+    if (anim?.isAborted?.()) return
     const node = pathNodes[i]
     const circle = node.select('circle')
     if (circle.empty()) continue
     const isLast = i === pathNodes.length - 1
     const originalFill = circle.attr('fill') || gradUrl('node-default')
 
-    await new Promise<void>((resolve) => {
+    await transitionEnd(
       circle
         .transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('r', NODE_RADIUS + (isLast ? 8 : 5))
@@ -286,25 +287,25 @@ export async function animateSearchTrie(svg: SVGSVGElement, found: boolean, word
         .transition().duration(duration(isLast ? 350 : 200)).ease(isLast ? EASING.easeOutElastic : EASING.easeOutCubic)
         .attr('r', NODE_RADIUS)
         .attr('fill', isLast ? (found ? gradUrl('node-leaf') : gradUrl('node-error')) : originalFill)
-        .on('end interrupt', resolve)
-    })
+    )
   }
 }
 
 /**
  * 删除字典树动画 - only animates the path in reverse
  */
-export async function animateDeleteTrie(svg: SVGSVGElement, word?: string) {
+export async function animateDeleteTrie(svg: SVGSVGElement, word?: string, anim?: Animation) {
   const container = select(svg)
 
   if (!word) {
     const nodeElements = container.selectAll('.trie-node').nodes()
     if (nodeElements.length === 0) return
     for (let i = nodeElements.length - 1; i >= 0; i--) {
+      if (anim?.isAborted?.()) return
       const node = select(nodeElements[i] as SVGGElement)
       const circle = node.select('circle')
       if (circle.empty()) continue
-      await new Promise<void>((resolve) => {
+      await transitionEnd(
         circle
           .transition().duration(duration(200)).ease(EASING.easeOutCubic)
           .attr('fill', gradUrl('node-error'))
@@ -312,8 +313,7 @@ export async function animateDeleteTrie(svg: SVGSVGElement, word?: string) {
           .transition().duration(duration(250)).ease(EASING.easeInCubic)
           .attr('r', NODE_RADIUS)
           .attr('fill', gradUrl('node-default'))
-          .on('end interrupt', resolve)
-      })
+      )
     }
     return
   }
@@ -322,11 +322,12 @@ export async function animateDeleteTrie(svg: SVGSVGElement, word?: string) {
   if (pathNodes.length === 0) return
 
   for (let i = pathNodes.length - 1; i >= 0; i--) {
+    if (anim?.isAborted?.()) return
     const node = pathNodes[i]
     const circle = node.select('circle')
     if (circle.empty()) continue
 
-    await new Promise<void>((resolve) => {
+    await transitionEnd(
       circle
         .transition().duration(duration(200)).ease(EASING.easeOutCubic)
         .attr('fill', gradUrl('node-error'))
@@ -334,7 +335,6 @@ export async function animateDeleteTrie(svg: SVGSVGElement, word?: string) {
         .transition().duration(duration(250)).ease(EASING.easeInCubic)
         .attr('r', NODE_RADIUS)
         .attr('fill', gradUrl('node-default'))
-        .on('end interrupt', resolve)
-    })
+    )
   }
 }

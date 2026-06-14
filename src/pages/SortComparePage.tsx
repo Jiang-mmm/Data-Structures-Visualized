@@ -295,7 +295,7 @@ export default function SortComparePage() {
 
   return (
     <div className="flex flex-col h-screen">
-      <PageHeader title={t('compare.title')} subtitle={t('compare.subtitle')} icon="⚔">
+      <PageHeader title={t('compare.title')} subtitle={t('compare.subtitle')} icon="⊞">
         <OperationButton variant="outline" onClick={handleReset}>{t('compare.reset')}</OperationButton>
       </PageHeader>
 

@@ -23,7 +23,7 @@ import { useLearningMode } from '../hooks/useLearningMode'
 export default function QueuePage() {
   const { t } = useGlobalSettings()
   const { data, logs, isAnimating, setIsAnimating, enqueue, dequeue, front, clear, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, size } = useQueueState()
-  const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('queue')
@@ -33,6 +33,11 @@ export default function QueuePage() {
     'ctrl+shift+z': redo,
     'r': reset,
   }, !isAnimating)
+
+  const handleStop = useCallback((): void => {
+    abortAnimation()
+    setIsAnimating(false)
+  }, [abortAnimation, setIsAnimating])
 
   const handleEnqueue = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -95,6 +100,7 @@ export default function QueuePage() {
         <OperationButton variant="danger" onClick={handleDequeue} disabled={isAnimating || data.length === 0}>{'- ' + t('queue.dequeue')}</OperationButton>
         <OperationButton variant="outline" onClick={handleFront} popAnimation>{t('queue.peek')}</OperationButton>
         <OperationButton variant="outline" onClick={clear} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
+        {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
           onClick={undo}

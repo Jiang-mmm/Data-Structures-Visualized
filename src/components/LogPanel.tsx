@@ -37,10 +37,10 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
   }
 
   return (
-    <div className="bg-ink/95 dark:bg-dark-paper/95 backdrop-blur-sm text-paper flex flex-col log-panel" style={{ maxHeight }}>
-      <div className="flex items-center justify-between px-4 py-2.5 bg-slate/80 border-b border-slate-light/20">
+    <div className="bg-slate-800 dark:bg-slate-900 backdrop-blur-sm text-paper flex flex-col log-panel rounded-lg" style={{ maxHeight }}>
+      <div className="flex items-center justify-between px-4 py-2.5 bg-slate-700/80 dark:bg-slate-800/80 border-b border-slate-600/30 rounded-t-lg">
         <div className="flex items-center gap-3">
-          <span className="font-mono text-xs font-bold tracking-widest uppercase opacity-80">
+          <span className="font-mono text-xs font-bold tracking-widest uppercase opacity-70">
             ▸ {t('logPanel.title')}
           </span>
           <div className="flex gap-0.5">
@@ -50,10 +50,10 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
                 onClick={() => setFilter(f)}
                 aria-pressed={filter === f}
                 className={`
-                  px-2.5 py-0.5 font-mono text-[10px] font-bold transition-all border
+                  px-2.5 py-0.5 font-mono text-[10px] font-bold transition-all border rounded-sm
                   ${filter === f
-                    ? 'border-paper/40 bg-paper/15 text-paper'
-                    : 'border-transparent text-paper/50 hover:text-paper/80 hover:bg-paper/5'
+                    ? 'border-slate-400/40 bg-slate-600/50 text-paper'
+                    : 'border-transparent text-slate-400 hover:text-slate-300 hover:bg-slate-700/50'
                   }
                 `}
               >
@@ -63,17 +63,17 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="font-mono text-[10px] text-paper/40">
+          <span className="font-mono text-[10px] text-slate-500">
             {filteredLogs.length}
           </span>
           <button
             onClick={() => setAutoScroll(!autoScroll)}
             aria-pressed={autoScroll}
             className={`
-              font-mono text-[10px] font-bold px-2 py-0.5 border transition-colors
+              font-mono text-[10px] font-bold px-2 py-0.5 border rounded-sm transition-colors
               ${autoScroll
                 ? 'border-accent-blue/50 bg-accent-blue/20 text-accent-blue'
-                : 'border-paper/20 text-paper/40 hover:border-paper/40'
+                : 'border-slate-600/40 text-slate-500 hover:border-slate-500/60'
               }
             `}
           >
@@ -88,10 +88,10 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
         role="log"
         aria-live="polite"
         aria-label={t('logPanel.title')}
-        className="flex-1 overflow-y-auto p-3 font-mono text-sm space-y-0.5 scrollbar-thin"
+        className="flex-1 overflow-y-auto p-3 font-mono text-sm space-y-0 scrollbar-thin"
       >
         {filteredLogs.length === 0 ? (
-          <div className="text-paper/25 text-center py-6 text-xs tracking-wide">
+          <div className="text-slate-600 text-center py-6 text-xs tracking-wide">
             ── {t('logPanel.noLogs')} ──
           </div>
         ) : (
@@ -101,21 +101,22 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
               <div
                 key={i}
                 className={`
-                  flex gap-2 sm:gap-3 py-1 px-2 animate-slide-up
-                  border-l-2 border-transparent hover:border-paper/10
+                  flex gap-2 sm:gap-3 py-1.5 px-2 animate-slide-up rounded-sm
+                  ${i % 2 === 0 ? 'bg-slate-800/0' : 'bg-slate-700/20'}
+                  border-l-2 border-transparent hover:border-slate-500/40
                 `}
               >
-                <span className="text-paper/25 w-20 shrink-0 text-xs hidden sm:block">
+                <span className="text-slate-600 w-20 shrink-0 text-xs hidden sm:block">
                   {log.time}
                 </span>
-                <span className="text-paper/25 w-20 shrink-0 text-xs sm:hidden">
+                <span className="text-slate-600 w-20 shrink-0 text-xs sm:hidden">
                   {log.time.split(':').slice(1).join(':')}
                 </span>
-                <span className={`${config.color} shrink-0 font-bold text-xs`}>
+                <span className={`${config.color} shrink-0 font-bold text-xs opacity-80`}>
                   <span className="sm:hidden">[{t(config.labelKey).charAt(0)}]</span>
                   <span className="hidden sm:inline">[{t(config.labelKey)}]</span>
                 </span>
-                <span className="text-paper/80 break-all text-xs leading-relaxed flex-1 min-w-0">
+                <span className="text-slate-300 break-all text-xs leading-relaxed flex-1 min-w-0">
                   {log.message}
                 </span>
               </div>

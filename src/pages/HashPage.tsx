@@ -23,7 +23,7 @@ import { useLearningMode } from '../hooks/useLearningMode'
 export default function HashPage() {
   const { t } = useGlobalSettings()
   const { data, logs, isAnimating, setIsAnimating, insert, remove, search, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, entryCount, bucketCount, hashFn } = useHashState()
-  const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [keyValue, setKeyValue] = useState<string>('')
   const [valueInput, setValueInput] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
@@ -34,6 +34,11 @@ export default function HashPage() {
     'ctrl+shift+z': redo,
     'r': reset,
   }, !isAnimating)
+
+  const handleStop = useCallback((): void => {
+    abortAnimation()
+    setIsAnimating(false)
+  }, [abortAnimation, setIsAnimating])
 
   const handleInsert = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -118,6 +123,7 @@ export default function HashPage() {
         <OperationButton variant="success" onClick={handleInsert} disabled={isAnimating}>{t('hash.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('hash.remove')}</OperationButton>
         <OperationButton variant="purple" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('hash.search')}</OperationButton>
+        {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
           onClick={undo}

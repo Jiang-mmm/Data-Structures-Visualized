@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getAvailableThemes, setTheme as setColorTheme, getTheme, initTheme } from '../utils/themeColors'
+import { showToast } from './toastStore'
 
 interface StructureItem {
   path: string
@@ -31,7 +32,7 @@ const STRUCTURE_KEYS: StructureItem[] = [
   { path: '/graph-algorithm', key: 'graphAlgorithm' },
 ]
 
-const ICONS: string[] = ['⌂', '▦', '☰', '→', '∞', '❖', '⬡', '⇅', '#', '▲', '🌳', '⚔', '🔀']
+const ICONS: string[] = ['⌂', '▦', '☰', '→', '∞', '❖', '⬡', '⇅', '#', '▲', '⊾', '⊞', '⊕']
 
 const SIDEBAR_CONTAINER_BASE = 'bg-white/95 dark:bg-slate/95 backdrop-blur-sm border-r-2 border-ink dark:border-dark-border flex flex-col h-screen transition-all duration-300 ease-out'
 const NAV_ITEM_BASE = 'flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-sm font-medium transition-all duration-200 ease-out border-2'
@@ -48,7 +49,7 @@ export default function Sidebar() {
     return getTheme()
   })
   const { mode, cycle } = useTheme()
-  const { t } = useGlobalSettings()
+  const { t, lang, setLanguage, supportedLanguages } = useGlobalSettings()
   const sidebarElRef = useRef<HTMLElement | null>(null)
   const swipeRef = useRef<SwipeState>({ startX: 0, startY: 0, isSwiping: false })
   const themes = useMemo(() => getAvailableThemes(), [])
@@ -112,6 +113,8 @@ export default function Sidebar() {
   const handleColorThemeChange = (themeKey: string) => {
     setColorTheme(themeKey)
     setColorThemeState(themeKey)
+    const theme = themes.find(t => t.key === themeKey)
+    showToast({ type: 'info', message: `${t('sidebar.themeTooltip')}: ${theme?.nameKey ? t(theme.nameKey) : theme?.name || themeKey}` })
   }
 
   const structures = useMemo(() => 
@@ -139,7 +142,7 @@ export default function Sidebar() {
             <div className="w-8 h-8 bg-ink dark:bg-dark-ink flex items-center justify-center">
               <span className="text-paper dark:text-dark-paper font-black text-xs">DS</span>
             </div>
-            <span className="font-bold text-sm text-ink dark:text-dark-ink tracking-tight">
+            <span className="font-bold text-sm text-ink dark:text-dark-ink tracking-tight whitespace-nowrap">
               {t('sidebar.title')}
             </span>
           </div>
@@ -173,7 +176,7 @@ export default function Sidebar() {
       <nav className="flex-1 p-2 space-y-1 overflow-y-auto scrollbar-thin">
         {(!collapsed || isMobile) && (
           <div className="px-3 pt-3 pb-2 font-mono text-[10px] text-ink-light dark:text-dark-ink-light tracking-[0.2em] uppercase">
-            {t('home.modules')}
+            {STRUCTURE_KEYS.length - 1}{t('home.modules')}
           </div>
         )}
         {structures.map((item) => {
@@ -231,14 +234,28 @@ export default function Sidebar() {
               <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light tracking-wide">V6.4</span>
             </div>
           )}
-          <button
-            onClick={cycle}
-            title={`${t('sidebar.themeTooltip')}: ${mode}`}
-            aria-label={`${t('sidebar.themeTooltip')}: ${mode}`}
-            className="w-7 h-7 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-slate hover:bg-accent-amber hover:text-paper dark:hover:bg-accent-amber dark:hover:text-paper transition-colors text-xs"
-          >
-            {themeIcon}
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => {
+                const idx = supportedLanguages.indexOf(lang)
+                const next = supportedLanguages[(idx + 1) % supportedLanguages.length]
+                setLanguage(next)
+              }}
+              title={`${t('sidebar.langTooltip') || 'Language'}: ${lang.toUpperCase()}`}
+              aria-label={`${t('sidebar.langTooltip') || 'Language'}: ${lang.toUpperCase()}`}
+              className="w-7 h-7 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-slate hover:bg-accent-teal hover:text-paper dark:hover:bg-accent-teal dark:hover:text-paper transition-colors text-[10px] font-bold font-mono"
+            >
+              {lang.toUpperCase()}
+            </button>
+            <button
+              onClick={cycle}
+              title={`${t('sidebar.themeTooltip')}: ${mode}`}
+              aria-label={`${t('sidebar.themeTooltip')}: ${mode}`}
+              className="w-7 h-7 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-slate hover:bg-accent-amber hover:text-paper dark:hover:bg-accent-amber dark:hover:text-paper transition-colors text-xs"
+            >
+              {themeIcon}
+            </button>
+          </div>
         </div>
       </div>
     </aside>

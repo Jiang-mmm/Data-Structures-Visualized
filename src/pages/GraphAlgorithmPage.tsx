@@ -1,15 +1,19 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationButton } from '../components/OperationBar'
 import LogPanel from '../components/LogPanel'
+import Visualizer from '../components/Visualizer'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { useKeyboard } from '../hooks/useKeyboard'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { useVisualizer } from '../hooks/useVisualizer'
 import { showToast } from '../components/toastStore'
 import StepExplainer from '../components/StepExplainer'
 import ComplexityChart from '../components/ComplexityChart'
 import { bfs, dfs, dijkstra, topoSort, graphAlgorithms, type GraphAlgorithmKey } from '../algorithms/graph'
 import { exportPerformanceCSV, exportPerformanceJSON } from '../utils/dataExport'
+import { renderGraph, animateBFS, animateDFS, animateDijkstra, clearGraphSimulation } from '../visualizers/graphVisualizer'
+import { handleAnimationError } from '../utils/errorHandler'
 
 interface LogEntry {
   time: string
@@ -19,23 +23,23 @@ interface LogEntry {
 
 export default function GraphAlgorithmPage() {
   const { t } = useGlobalSettings()
-  const containerRef = useRef<HTMLDivElement>(null)
   const [isAnimating, setIsAnimating] = useState(false)
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<GraphAlgorithmKey>('bfs')
   const [startNode, setStartNode] = useState('A')
   const learningMode = useLearningMode(selectedAlgorithm)
-  
-  const [nodes] = useState([
-    { id: 'A', x: 100, y: 100 },
-    { id: 'B', x: 250, y: 50 },
-    { id: 'C', x: 400, y: 100 },
-    { id: 'D', x: 100, y: 250 },
-    { id: 'E', x: 250, y: 200 },
-    { id: 'F', x: 400, y: 250 },
-  ])
-  
-  const [links] = useState([
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+
+  const nodes = [
+    { id: 'A', group: 0 },
+    { id: 'B', group: 1 },
+    { id: 'C', group: 1 },
+    { id: 'D', group: 2 },
+    { id: 'E', group: 0 },
+    { id: 'F', group: 2 },
+  ]
+
+  const links = [
     { source: 'A', target: 'B', weight: 4 },
     { source: 'A', target: 'D', weight: 2 },
     { source: 'B', target: 'C', weight: 3 },
@@ -43,18 +47,34 @@ export default function GraphAlgorithmPage() {
     { source: 'C', target: 'F', weight: 5 },
     { source: 'D', target: 'E', weight: 7 },
     { source: 'E', target: 'F', weight: 2 },
-  ])
+  ]
+
+  useEffect(() => {
+    return () => { clearGraphSimulation(svgRef.current) }
+  }, [])
   
   const addLog = useCallback((type: string, message: string) => {
     const time = new Date().toLocaleTimeString(undefined, { hour12: false })
     setLogs(prev => [...prev, { time, type, message }])
   }, [])
+
+  const handleGraphRender = useCallback((svg: SVGSVGElement, _data: unknown, dims: { width: number; height: number }) => {
+    if (svg) {
+      renderGraph(svg, nodes, links, dims)
+    }
+  }, [nodes, links])
   
+  const handleStop = useCallback((): void => {
+    abortAnimation()
+    setIsAnimating(false)
+  }, [abortAnimation, setIsAnimating])
+
   const handleRun = useCallback(async () => {
     if (isAnimating) return
     setIsAnimating(true)
     addLog('info', `${t('common.run')} ${selectedAlgorithm.toUpperCase()}...`)
-    
+    const anim = getAnimationContext()
+
     try {
       const adjacencyList = new Map<string, Array<{ node: string; weight?: number }>>()
       for (const node of nodes) {
@@ -63,36 +83,40 @@ export default function GraphAlgorithmPage() {
       for (const link of links) {
         adjacencyList.get(link.source)?.push({ node: link.target, weight: link.weight })
       }
-      
+
       let result
       const onStep = (step: any) => {
         addLog('oper', `${step.type}: ${step.node || JSON.stringify(step.edge || step.queue)}`)
       }
-      
+
       switch (selectedAlgorithm) {
         case 'bfs':
           result = await bfs(adjacencyList, startNode, onStep)
+          if (svgRef.current) await animateBFS(svgRef.current, startNode, nodes, links, dimensions, anim)
           break
         case 'dfs':
           result = await dfs(adjacencyList, startNode, onStep)
+          if (svgRef.current) await animateDFS(svgRef.current, startNode, nodes, links, dimensions, anim)
           break
         case 'dijkstra':
           result = await dijkstra(adjacencyList, startNode, onStep)
+          if (svgRef.current) await animateDijkstra(svgRef.current, startNode, 'F', nodes, links, dimensions, anim)
           break
         case 'topoSort':
           result = await topoSort(adjacencyList, onStep)
           break
       }
-      
+
       addLog('info', `${selectedAlgorithm.toUpperCase()} ${t('page.done')} · ${result?.visited.length} nodes`)
       showToast({ type: 'success', message: `${selectedAlgorithm.toUpperCase()} ${t('page.done')}` })
     } catch (e) {
+      handleAnimationError(e, selectedAlgorithm.toUpperCase())
       addLog('error', `${t('errors.graphRunError')}: ${e}`)
       showToast({ type: 'error', message: t('errors.graphRunError') })
     }
-    
+
     setIsAnimating(false)
-  }, [isAnimating, selectedAlgorithm, startNode, nodes, links, addLog])
+  }, [isAnimating, selectedAlgorithm, startNode, nodes, links, addLog, getAnimationContext, svgRef, dimensions])
   
   const reset = useCallback(() => {
     setLogs([])
@@ -133,7 +157,7 @@ export default function GraphAlgorithmPage() {
       <PageHeader
         title={t('graphAlgorithm.title')}
         subtitle={t('graphAlgorithm.subtitle')}
-        icon="🔀"
+        icon="⊕"
       >
         <OperationButton variant="outline" onClick={reset} disabled={isAnimating}>
           {t('common.reset')}
@@ -172,6 +196,7 @@ export default function GraphAlgorithmPage() {
             <OperationButton variant="primary" onClick={handleRun} disabled={isAnimating}>
               {isAnimating ? t('common.running') : t('common.run')}
             </OperationButton>
+            {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
             <OperationButton
               variant={learningMode.isLearning ? 'primary' : 'outline'}
               onClick={() => learningMode.isLearning ? learningMode.stopLearning() : learningMode.startLearning()}
@@ -191,59 +216,15 @@ export default function GraphAlgorithmPage() {
             )}
           </div>
           
-          <div className="flex-1 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border p-4">
-            <div ref={containerRef} className="w-full h-full">
-              <svg width="100%" height="100%" viewBox="0 0 500 350">
-                {links.map((link, i) => {
-                  const source = nodes.find(n => n.id === link.source)
-                  const target = nodes.find(n => n.id === link.target)
-                  if (!source || !target) return null
-                  return (
-                    <g key={i}>
-                      <line
-                        x1={source.x}
-                        y1={source.y}
-                        x2={target.x}
-                        y2={target.y}
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        className="text-ink/20 dark:text-dark-ink/20"
-                      />
-                      <text
-                        x={(source.x + target.x) / 2}
-                        y={(source.y + target.y) / 2}
-                        textAnchor="middle"
-                        dy="-5"
-                        className="text-xs fill-ink-light dark:fill-dark-ink-light"
-                      >
-                        {link.weight}
-                      </text>
-                    </g>
-                  )
-                })}
-                
-                {nodes.map(node => (
-                  <g key={node.id}>
-                    <circle
-                      cx={node.x}
-                      cy={node.y}
-                      r="20"
-                      className="fill-white dark:fill-slate stroke-ink dark:stroke-dark-border"
-                      strokeWidth="2"
-                    />
-                    <text
-                      x={node.x}
-                      y={node.y}
-                      textAnchor="middle"
-                      dy="5"
-                      className="text-sm font-bold fill-ink dark:fill-dark-ink"
-                    >
-                      {node.id}
-                    </text>
-                  </g>
-                ))}
-              </svg>
-            </div>
+          <div className="flex-1 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border">
+            <Visualizer
+              data={nodes}
+              renderFn={handleGraphRender}
+              svgRef={svgRef}
+              dimensions={dimensions}
+              containerRef={containerRef}
+              ariaLabel={t('visualizer.graphLabel')}
+            />
           </div>
         </div>
         

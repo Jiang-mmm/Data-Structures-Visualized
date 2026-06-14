@@ -1,5 +1,5 @@
 import { select, d3Drag } from '../utils/d3Imports'
-import { duration, EASING, transitionEnd, type Animation } from '../utils/animationEngine'
+import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import { showToast } from '../components/toastStore'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
@@ -119,7 +119,7 @@ function updateLines(container: ReturnType<typeof select>) {
     }
   })
 
-  container.selectAll('line.tree-edge').remove()
+  container.selectAll('.tree-edge').remove()
   lineData.forEach(({ child, parentIndex }) => {
     const parentGroup = nodeGroups.filter(function(p: TreeNodeData) {
       return p && p.dataIndex === parentIndex
@@ -141,16 +141,13 @@ function updateLines(container: ReturnType<typeof select>) {
     const cy = parseFloat(cMatch[2])
     if (isNaN(px) || isNaN(py) || isNaN(cx) || isNaN(cy)) return
 
-    const line = container.insert('line', 'g.tree-node')
+    const x1 = px, y1 = py + NODE_RADIUS
+    const x2 = cx, y2 = cy - NODE_RADIUS
+    container.insert('line', 'g.tree-node')
       .attr('class', 'tree-edge')
-      .attr('x1', px).attr('y1', py + NODE_RADIUS)
-      .attr('x2', cx).attr('y2', cy - NODE_RADIUS)
+      .attr('x1', x1).attr('y1', y1)
+      .attr('x2', x2).attr('y2', y2)
       .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
-
-    const isTraversed = (line.node() as any)?.__traversed || false
-    if (isTraversed) {
-      line.attr('stroke', C.nodeVisitedStroke).attr('stroke-width', 2.5)
-    }
   })
 }
 
@@ -164,7 +161,7 @@ function resetNodeAndEdgeColors(container: ReturnType<typeof select>, C: ReturnT
 
   container.selectAll('text.visit-order').remove()
 
-  container.selectAll('line.tree-edge')
+  container.selectAll('.tree-edge')
     .interrupt()
     .attr('stroke', C.edgeDefault)
     .attr('stroke-width', DEFAULT_EDGE_STROKE_WIDTH)
@@ -204,12 +201,13 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
       const p = nodes.find(n => n.dataIndex === node.parentIndex)
       if (!p) return
       if (isNaN(p.x!) || isNaN(p.y!) || isNaN(node.x!) || isNaN(node.y!)) return
+      const x1 = p.x, y1 = p.y + NODE_RADIUS
+      const x2 = node.x, y2 = node.y - NODE_RADIUS
       container.append('line')
         .attr('class', 'tree-edge')
-        .attr('x1', p.x).attr('y1', p.y + NODE_RADIUS)
-        .attr('x2', node.x).attr('y2', node.y - NODE_RADIUS)
+        .attr('x1', x1).attr('y1', y1)
+        .attr('x2', x2).attr('y2', y2)
         .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
-        .classed('tree-edge', true)
     }
   })
 
@@ -228,6 +226,26 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
 
   nodeGroups.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
     .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', 'bold').text((d: TreeNodeData) => d.value)
+
+  // Hover micro-animation: scale up + shadow glow
+  nodeGroups
+    .on('mouseover', function(this: SVGGElement) {
+      const g = select(this)
+      g.raise()
+      g.select('circle')
+        .transition().duration(150).ease(EASING.easeOutBack)
+        .attr('r', NODE_RADIUS + 3)
+        .attr('stroke-width', 3)
+        .attr('filter', 'drop-shadow(0 2px 6px rgba(0,0,0,0.25))')
+    })
+    .on('mouseout', function(this: SVGGElement, _event: any, d: TreeNodeData) {
+      const g = select(this)
+      g.select('circle')
+        .transition().duration(200).ease(EASING.easeOutCubic)
+        .attr('r', NODE_RADIUS)
+        .attr('stroke-width', 2)
+        .attr('filter', null)
+    })
 }
 
 export async function animateInsertNode(svg: SVGSVGElement, value: number, data: number[], options: TreeOptions = {} as TreeOptions, anim?: Animation) {
@@ -277,21 +295,17 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
     const p = nodes.find(n => n.dataIndex === newNode.parentIndex)
     if (!p) return
     if (isNaN(p.x) || isNaN(p.y) || isNaN(x) || isNaN(y)) return
-    const dx = x - p.x
-    const dy = (y - NODE_RADIUS) - (p.y + NODE_RADIUS)
-    const lineLength = Math.sqrt(dx * dx + dy * dy)
-    const line = container.append('line')
+    const x1 = p.x, y1 = p.y + NODE_RADIUS
+    const x2 = x, y2 = y - NODE_RADIUS
+    const lineEl = container.append('line')
       .attr('class', 'tree-edge')
-      .attr('x1', p.x).attr('y1', p.y + NODE_RADIUS)
-      .attr('x2', p.x).attr('y2', p.y + NODE_RADIUS)
+      .attr('x1', x1).attr('y1', y1)
+      .attr('x2', x1).attr('y2', y1)
       .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
-      .attr('stroke-dasharray', lineLength)
-      .attr('stroke-dashoffset', lineLength)
 
     await transitionEnd(
-      line.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
-        .attr('x2', x).attr('y2', y - NODE_RADIUS)
-        .attr('stroke-dashoffset', 0)
+      lineEl.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
+        .attr('x2', x2).attr('y2', y2)
     )
   }
 
@@ -361,6 +375,7 @@ export async function animateTraversal(svg: SVGSVGElement, order: number[], data
 
     if (anim?.isAborted?.()) return
 
+    addRippleEffect(container, dataIndex, C)
     highlightEntryEdge(container, dataIndex, C)
 
     addVisitOrderLabel(nodeGroup, stepIdx + 1, C)
@@ -382,22 +397,48 @@ function highlightEntryEdge(container: any, childDataIndex: number, C: ReturnTyp
   })
   if (parentGroup.empty()) return
 
-  container.selectAll('line.tree-edge').filter(function() {
-    const line = select(this)
-    const x2 = parseFloat(line.attr('x2'))
-    const y2 = parseFloat(line.attr('y2'))
-    if (isNaN(x2) || isNaN(y2)) return false
-
+  container.selectAll('.tree-edge').filter(function() {
+    const el = select(this)
     const childTransform = childGroup.attr('transform')
     const parentTransform = parentGroup.attr('transform')
-    if (!childTransform || !parentTransform) return
-    const cxMatch = childTransform.match(/translate\(([^,]+)/)
-    const cyMatch = childTransform.match(/, ([^)]+)/)
-    const cx = childData.x || parseFloat(cxMatch?.[1] || '0')
-    const cy = childData.y || parseFloat(cyMatch?.[1] || '0')
-    return Math.abs(x2 - cx) < 2 && Math.abs(y2 - (cy - NODE_RADIUS)) < 2
+    if (!childTransform || !parentTransform) return false
+    const cx = childData.x || 0
+    const cy = childData.y || 0
+    const px = parseFloat(parentTransform.match(/translate\(([^,]+)/)?.[1] || '0')
+    const py = parseFloat(parentTransform.match(/, ([^)]+)/)?.[1] || '0')
+    const ex1 = parseFloat(el.attr('x1') || '-999')
+    const ey1 = parseFloat(el.attr('y1') || '-999')
+    const ex2 = parseFloat(el.attr('x2') || '-999')
+    const ey2 = parseFloat(el.attr('y2') || '-999')
+    return Math.abs(ex1 - px) < 2 && Math.abs(ey1 - (py + NODE_RADIUS)) < 2 &&
+           Math.abs(ex2 - cx) < 2 && Math.abs(ey2 - (cy - NODE_RADIUS)) < 2
   }).transition().duration(duration(400)).ease(EASING.easeOutBack)
     .attr('stroke', C.nodeVisitedStroke).attr('stroke-width', 2.5)
+}
+
+function addRippleEffect(container: ReturnType<typeof select>, dataIndex: number, C: ReturnType<typeof getColors>) {
+  const nodeGroup = container.selectAll('g.tree-node').filter(function(d: TreeNodeData) {
+    return d.dataIndex === dataIndex
+  })
+  if (nodeGroup.empty()) return
+
+  const nodeData = nodeGroup.datum() as TreeNodeData
+  if (!nodeData || nodeData.x === undefined || nodeData.y === undefined) return
+
+  const ripple = container.insert('circle', 'g.tree-node')
+    .attr('cx', nodeData.x)
+    .attr('cy', nodeData.y)
+    .attr('r', NODE_RADIUS)
+    .attr('fill', 'none')
+    .attr('stroke', C.nodeActive)
+    .attr('stroke-width', 2.5)
+    .attr('opacity', 0.7)
+
+  ripple.transition().duration(duration(600)).ease(EASING.easeOutCubic)
+    .attr('r', NODE_RADIUS * 3)
+    .attr('stroke-width', 0.5)
+    .attr('opacity', 0)
+    .remove()
 }
 
 function addVisitOrderLabel(nodeGroup: any, order: number | string, C: ReturnType<typeof getColors>) {
@@ -452,6 +493,7 @@ export async function animateLevelOrder(svg: SVGSVGElement, order: number[], dat
 
     if (anim?.isAborted?.()) return
 
+    addRippleEffect(container, dataIndex, C)
     highlightEntryEdge(container, dataIndex, C)
     addVisitOrderLabel(nodeGroup, stepIdx + 1, C)
   }

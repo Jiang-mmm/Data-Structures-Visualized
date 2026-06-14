@@ -1,5 +1,5 @@
 import { select } from '../utils/d3Imports'
-import { duration, EASING, type Animation } from '../utils/animationEngine'
+import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
 
@@ -145,39 +145,73 @@ export async function animateInsertHash(svg: SVGSVGElement, key: number | string
   const container = select(svg)
   const { hashFn } = options
   const bucketIdx = hashFn(key)
+  const defaultEase = getDefaultEasing()
 
+  // Phase 1: Scan buckets sequentially to find target
+  for (let bi = 0; bi <= bucketIdx; bi++) {
+    if (anim?.isAborted?.()) return
+    const scanGroup = container.select(`.hash-bucket-${bi}`)
+    if (!scanGroup.empty()) {
+      scanGroup.select('rect')
+        .transition().duration(duration(80)).ease(EASING.easeOutCubic)
+        .attr('fill', bi === bucketIdx ? C.bucketHighlight : C.bucketHighlight)
+        .attr('stroke', C.bucketHighlightStroke)
+      if (bi < bucketIdx) {
+        await transitionEnd(
+          scanGroup.select('rect')
+            .transition().duration(duration(120)).ease(defaultEase)
+            .attr('fill', C.bucketBg).attr('stroke', C.bucketStroke)
+        )
+      }
+    }
+  }
+
+  // Phase 2: Target bucket pulses
   const bucketGroup = container.select(`.hash-bucket-${bucketIdx}`)
   if (!bucketGroup.empty()) {
-    await new Promise<void>((resolve) => {
+    await transitionEnd(
       bucketGroup.select('rect')
         .transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('fill', C.bucketHighlight).attr('stroke', C.bucketHighlightStroke)
-        .transition().duration(duration(300)).ease(EASING.easeOutCubic)
+        .transition().duration(duration(300)).ease(defaultEase)
         .attr('fill', C.bucketBg).attr('stroke', C.bucketStroke)
-        .on('end interrupt', resolve)
-    })
+    )
   }
   if (anim?.isAborted?.()) return
 
+  // Phase 3: Entry drops in from above with bounce
   const entryGroup = container.select(`.hash-entry.key-${key}`)
   if (!entryGroup.empty()) {
     const circle = entryGroup.select('circle')
     const texts = entryGroup.selectAll('text')
-    circle.attr('r', 0).attr('opacity', 0)
+    const originalTransform = entryGroup.attr('transform') || ''
+    const match = originalTransform.match(/translate\(([^,]+),\s*([^)]+)\)/)
+    const targetY = match ? parseFloat(match[2]) : 0
+
+    // Start from above
+    entryGroup.attr('transform', originalTransform.replace(/translate\(([^,]+),\s*[^)]+\)/, `translate($1, ${targetY - 60})`))
+    circle.attr('opacity', 0)
     texts.attr('opacity', 0)
 
-    await new Promise<void>((resolve) => {
-      circle
-        .transition().duration(duration(300)).ease(EASING.easeOutBack)
-        .attr('r', ENTRY_RADIUS + 4)
+    // Drop down with bounce
+    await transitionEnd(
+      entryGroup
+        .transition().duration(duration(350)).ease(EASING.easeOutBack)
+        .attr('transform', originalTransform)
         .attr('opacity', 1)
+    )
+
+    circle.attr('r', 0).attr('opacity', 1)
+    await transitionEnd(
+      circle
+        .transition().duration(duration(250)).ease(EASING.easeOutBack)
+        .attr('r', ENTRY_RADIUS + 4)
         .attr('fill', C.bucketHighlight)
-        .transition().duration(duration(250)).ease(EASING.easeOutCubic)
+        .transition().duration(duration(200)).ease(defaultEase)
         .attr('r', ENTRY_RADIUS)
         .attr('fill', gradUrl('node-default'))
-        .on('end interrupt', resolve)
-    })
-    texts.transition().duration(duration(200)).ease(EASING.easeOutCubic).attr('opacity', 1)
+    )
+    texts.transition().duration(duration(200)).ease(defaultEase).attr('opacity', 1)
   }
 }
 
@@ -189,36 +223,56 @@ export async function animateSearchHash(svg: SVGSVGElement, key: number | string
   const container = select(svg)
   const { hashFn } = options
   const bucketIdx = hashFn(key)
+  const defaultEase = getDefaultEasing()
 
+  // Phase 1: Scan buckets sequentially to find target
+  for (let bi = 0; bi <= bucketIdx; bi++) {
+    if (anim?.isAborted?.()) return
+    const scanGroup = container.select(`.hash-bucket-${bi}`)
+    if (!scanGroup.empty()) {
+      scanGroup.select('rect')
+        .transition().duration(duration(80)).ease(EASING.easeOutCubic)
+        .attr('fill', C.bucketHighlight)
+        .attr('stroke', C.bucketHighlightStroke)
+      if (bi < bucketIdx) {
+        await transitionEnd(
+          scanGroup.select('rect')
+            .transition().duration(duration(120)).ease(defaultEase)
+            .attr('fill', C.bucketBg).attr('stroke', C.bucketStroke)
+        )
+      }
+    }
+  }
+
+  // Phase 2: Target bucket result highlight
   const bucketGroup = container.select(`.hash-bucket-${bucketIdx}`)
   if (!bucketGroup.empty()) {
-    await new Promise<void>((resolve) => {
+    await transitionEnd(
       bucketGroup.select('rect')
         .transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('fill', found ? C.bucketSuccess : C.bucketError)
         .attr('stroke', found ? C.bucketSuccessStroke : C.bucketErrorStroke)
-        .transition().duration(duration(300)).ease(EASING.easeOutCubic)
+        .transition().duration(duration(300)).ease(defaultEase)
         .attr('fill', C.bucketBg).attr('stroke', C.bucketStroke)
-        .on('end interrupt', resolve)
-    })
+    )
   }
   if (anim?.isAborted?.()) return
 
+  // Phase 3: Entry pops out if found
   if (found) {
     const entryGroup = container.select(`.hash-entry.key-${key}`)
     if (!entryGroup.empty()) {
-      await new Promise<void>((resolve) => {
+      await transitionEnd(
         entryGroup.select('circle')
           .transition().duration(duration(300)).ease(EASING.easeOutBack)
           .attr('r', ENTRY_RADIUS + 6)
           .attr('fill', C.nodeActive)
           .attr('stroke', C.nodeActiveStroke)
-          .transition().duration(duration(250)).ease(EASING.easeOutCubic)
+          .transition().duration(duration(250)).ease(defaultEase)
           .attr('r', ENTRY_RADIUS)
           .attr('fill', C.entryFill)
           .attr('stroke', C.nodeDefaultStroke)
-          .on('end interrupt', resolve)
-      })
+      )
     }
   }
 }
@@ -231,17 +285,17 @@ export async function animateDeleteHash(svg: SVGSVGElement, key: number | string
   const container = select(svg)
   const { hashFn } = options
   const bucketIdx = hashFn(key)
+  const defaultEase = getDefaultEasing()
 
   const entryGroup = container.select(`.hash-entry.key-${key}`)
   if (!entryGroup.empty()) {
-    await new Promise<void>((resolve) => {
+    await transitionEnd(
       entryGroup.select('circle')
-        .transition().duration(duration(200)).ease(EASING.easeOutCubic)
+        .transition().duration(duration(200)).ease(defaultEase)
         .attr('fill', C.nodeError).attr('stroke', C.nodeErrorStroke)
         .transition().duration(duration(250)).ease(EASING.easeInCubic)
         .attr('r', 0).attr('opacity', 0)
-        .on('end interrupt', resolve)
-    })
+    )
     entryGroup.selectAll('text')
       .transition().duration(duration(150)).ease(EASING.easeInCubic)
       .attr('opacity', 0)
@@ -250,13 +304,12 @@ export async function animateDeleteHash(svg: SVGSVGElement, key: number | string
 
   const bucketGroup = container.select(`.hash-bucket-${bucketIdx}`)
   if (!bucketGroup.empty()) {
-    await new Promise<void>((resolve) => {
+    await transitionEnd(
       bucketGroup.select('rect')
         .transition().duration(duration(200)).ease(EASING.easeOutBack)
         .attr('fill', C.bucketError).attr('stroke', C.bucketErrorStroke)
-        .transition().duration(duration(300)).ease(EASING.easeOutCubic)
+        .transition().duration(duration(300)).ease(defaultEase)
         .attr('fill', C.bucketBg).attr('stroke', C.bucketStroke)
-        .on('end interrupt', resolve)
-    })
+    )
   }
 }

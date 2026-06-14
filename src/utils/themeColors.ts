@@ -387,10 +387,10 @@ const palettes: Record<string, { light: ThemeColors; dark: ThemeColors }> = {
 }
 
 const availableThemes = [
-  { key: 'default', name: '默认', nameKey: 'sidebar.themeDefault', icon: '🎨' },
-  { key: 'forest', name: '森林', nameKey: 'sidebar.themeForest', icon: '🌲' },
-  { key: 'warm', name: '暖色', nameKey: 'sidebar.themeWarm', icon: '☀️' },
-  { key: 'royal', name: '皇家', nameKey: 'sidebar.themeRoyal', icon: '👑' },
+  { key: 'default', name: '默认', nameKey: 'sidebar.themeDefault', icon: '◉' },
+  { key: 'forest', name: '森林', nameKey: 'sidebar.themeForest', icon: '◈' },
+  { key: 'warm', name: '暖色', nameKey: 'sidebar.themeWarm', icon: '◎' },
+  { key: 'royal', name: '皇家', nameKey: 'sidebar.themeRoyal', icon: '◇' },
 ]
 
 let currentTheme = 'default'
