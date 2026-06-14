@@ -10,7 +10,7 @@ import EmptyState from '../components/EmptyState'
 import SpeedControl from '../components/SpeedControl'
 import ExportImport from '../components/ExportImport'
 import ProgressBar from '../components/ProgressBar'
-import StepExplainer from '../components/StepExplainer'
+import LearningModeToggle from '../components/LearningModeToggle'
 import { renderSortBars, animateCompare, animateSwap, animateSorted } from '../visualizers/sortVisualizer'
 import { useSortState } from '../hooks/useSortState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -70,7 +70,7 @@ export default function SortPage() {
   const algorithms = useMemo(() => Array.from(getAllSortAlgorithms()), [])
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto">
+    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('sort.title')} subtitle={t('sort.subtitle')} icon="⇅">
         <ExportImport dataType="sort" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
@@ -176,54 +176,31 @@ export default function SortPage() {
         <EmptyState icon="⇅" titleKey="emptyState.emptySort" descriptionKey="emptyState.emptySortDesc" onFill={randomize} />
       )}
 
-      <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
-        <button
-          aria-expanded={showLearning}
-          onClick={() => setShowLearning(!showLearning)}
-          className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
-            shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]
-            active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
-            ${showLearning
-              ? 'bg-accent-blue text-paper border-accent-blue'
-              : 'border-ink dark:border-dark-border hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]'
-            }`}
-        >
-          {showLearning ? t('learning.close') : t('learning.open')}
-        </button>
-      </div>
-
-      {showLearning && (
-        <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm font-semibold text-ink dark:text-dark-ink">{t('sort.selectAlgorithm')}：</span>
-            {algorithms.filter(([key]) => ['bubble', 'quick', 'merge', 'heap'].includes(key)).map(([key, algo]) => (
-              <button
-                key={key}
-                onClick={() => {
-                  setSelectedAlgorithm(key)
-                  learningMode.reset()
-                }}
-                className={`px-2 py-1 text-xs border-2 border-ink dark:border-dark-border transition-colors ${selectedAlgorithm === key
-                    ? 'bg-accent-blue text-white border-accent-blue'
-                    : 'hover:bg-ink hover:text-white dark:hover:bg-dark-ink dark:hover:text-dark-paper'
-                  }`}
-              >
-                {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
-              </button>
-            ))}
-          </div>
-          <StepExplainer
-            step={learningMode.currentStep}
-            currentStepIndex={learningMode.currentStepIndex}
-            totalSteps={learningMode.totalSteps}
-            progress={learningMode.progress}
-            onNext={learningMode.nextStep}
-            onPrev={learningMode.prevStep}
-            onReset={learningMode.reset}
-            isAnimating={isAnimating}
-          />
+      <LearningModeToggle
+        showLearning={showLearning}
+        setShowLearning={setShowLearning}
+        learningMode={learningMode}
+        isAnimating={isAnimating}
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-sm font-semibold text-ink dark:text-dark-ink">{t('sort.selectAlgorithm')}：</span>
+          {algorithms.filter(([key]) => ['bubble', 'quick', 'merge', 'heap'].includes(key)).map(([key, algo]) => (
+            <button
+              key={key}
+              onClick={() => {
+                setSelectedAlgorithm(key)
+                learningMode.reset()
+              }}
+              className={`px-2 py-1 text-xs border-2 border-ink dark:border-dark-border transition-colors ${selectedAlgorithm === key
+                  ? 'bg-accent-blue text-white border-accent-blue'
+                  : 'hover:bg-ink hover:text-white dark:hover:bg-dark-ink dark:hover:text-dark-paper'
+                }`}
+            >
+              {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
+            </button>
+          ))}
         </div>
-      )}
+      </LearningModeToggle>
 
       <LogPanel logs={logs} />
     </div>

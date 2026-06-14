@@ -158,7 +158,7 @@ export default function GraphAlgorithmPage() {
   }, !isAnimating)
   
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-paper dark:bg-dark-paper grain">
       <PageHeader
         title={t('graphAlgorithm.title')}
         subtitle={t('graphAlgorithm.subtitle')}

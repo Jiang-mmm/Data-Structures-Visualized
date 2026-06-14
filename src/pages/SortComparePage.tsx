@@ -294,7 +294,7 @@ export default function SortComparePage() {
   const timelineIndex = logs.length > 0 ? logs.length - 1 : -1
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto">
+    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('compare.title')} subtitle={t('compare.subtitle')} icon="⊞">
         <OperationButton variant="outline" onClick={handleReset}>{t('compare.reset')}</OperationButton>
       </PageHeader>

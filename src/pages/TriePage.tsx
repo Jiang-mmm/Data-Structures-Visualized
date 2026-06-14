@@ -16,7 +16,7 @@ import ShareButton from '../components/ShareButton'
 import { showToast } from '../components/toastStore'
 import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
-import StepExplainer from '../components/StepExplainer'
+import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 
 export default function TriePage() {
@@ -125,7 +125,7 @@ export default function TriePage() {
   const count = wordCount()
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto">
+    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('trie.title')} subtitle={t('trie.subtitle')} icon="⊾">
         <ExportImport dataType="trie" data={flatData} disabled={isAnimating} onImport={({ data: imported }) => {
           if (imported && typeof imported === 'object' && 'children' in (imported as object)) {
@@ -185,36 +185,12 @@ export default function TriePage() {
           maxHeight="h-24"
         />
       )}
-      <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
-        <button
-          aria-expanded={showLearning}
-          onClick={() => setShowLearning(!showLearning)}
-          className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
-            shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]
-            active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
-            ${showLearning
-              ? 'bg-accent-blue text-paper border-accent-blue'
-              : 'border-ink dark:border-dark-border hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]'
-            }`}
-        >
-          {showLearning ? t('learning.close') : t('learning.open')}
-        </button>
-      </div>
-
-      {showLearning && (
-        <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
-          <StepExplainer
-            step={learningMode.currentStep}
-            currentStepIndex={learningMode.currentStepIndex}
-            totalSteps={learningMode.totalSteps}
-            progress={learningMode.progress}
-            onNext={learningMode.nextStep}
-            onPrev={learningMode.prevStep}
-            onReset={learningMode.reset}
-            isAnimating={isAnimating}
-          />
-        </div>
-      )}
+      <LearningModeToggle
+        showLearning={showLearning}
+        setShowLearning={setShowLearning}
+        learningMode={learningMode}
+        isAnimating={isAnimating}
+      />
       <LogPanel logs={logs} />
     </div>
   )
