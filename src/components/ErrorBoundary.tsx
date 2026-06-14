@@ -40,7 +40,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center min-h-[300px] gap-4 p-8 bg-white/50 dark:bg-slate/50 border-2 border-dashed border-accent-rose/30">
-          <div className="text-4xl">⚠️</div>
+          <div className="text-4xl">⊘</div>
           <h3 className="font-mono text-sm font-bold text-accent-rose uppercase tracking-widest">
             {tStatic('errorBoundary.title')}
           </h3>

@@ -24,7 +24,7 @@ describe('EmptyState', () => {
   })
 
   it('应该渲染图标', () => {
-    const { container } = render(<EmptyState icon="📊" title="测试" />)
+    const { container } = render(<EmptyState icon="▦" title="测试" />)
     expect(container.querySelector('[aria-hidden="true"]')).toBeInTheDocument()
   })
 
