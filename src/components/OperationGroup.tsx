@@ -64,9 +64,9 @@ function OperationGroup({
           font-mono text-[11px] font-bold px-2 py-1 min-h-[44px]
           touch-manipulation select-none
           border-2 border-ink dark:border-dark-border
-          shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]
+          shadow-button dark:shadow-button-dark
           hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper
-          hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]
+          hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover
           active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
           transition-all duration-200
         `}

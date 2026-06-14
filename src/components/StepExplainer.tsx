@@ -80,10 +80,10 @@ function StepExplainer({
           onClick={onPrev}
           disabled={currentStepIndex === 0 || isAnimating}
           className="flex-1 px-3 py-2 text-sm font-bold border-2 border-ink dark:border-dark-border
-            shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]
+            shadow-button dark:shadow-button-dark
             disabled:opacity-50 disabled:cursor-not-allowed
             hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper
-            hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]
+            hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover
             active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
             transition-all duration-200"
         >
@@ -93,10 +93,10 @@ function StepExplainer({
           onClick={onReset}
           disabled={isAnimating}
           className="px-3 py-2 text-sm font-bold border-2 border-ink dark:border-dark-border
-            shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]
+            shadow-button dark:shadow-button-dark
             disabled:opacity-50 disabled:cursor-not-allowed
             hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper
-            hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]
+            hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover
             active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
             transition-all duration-200"
         >
@@ -106,9 +106,9 @@ function StepExplainer({
           onClick={onNext}
           disabled={currentStepIndex === totalSteps - 1 || isAnimating}
           className="flex-1 px-3 py-2 text-sm font-bold bg-accent-blue text-paper border-2 border-accent-blue
-            shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]
+            shadow-button dark:shadow-button-dark
             disabled:opacity-50 disabled:cursor-not-allowed
-            hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]
+            hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover
             active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
             transition-all duration-200"
         >

@@ -58,9 +58,9 @@ export default memo(function ShareButton({ data, dataType, disabled = false }: S
           px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold
           border-2 border-ink dark:border-dark-border
           bg-white dark:bg-slate text-ink dark:text-dark-ink
-          shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]
+          shadow-button dark:shadow-button-dark
           transition-all duration-200
-          hover:bg-paper-warm dark:hover:bg-slate-light hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]
+          hover:bg-paper-warm dark:hover:bg-slate-light hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover
           active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
           disabled:opacity-40 disabled:cursor-not-allowed
         `}
@@ -73,7 +73,7 @@ export default memo(function ShareButton({ data, dataType, disabled = false }: S
 
       {showTooltip && (
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50">
-          <div className="bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper px-3 py-2 border-2 border-ink dark:border-dark-border shadow-[3px_3px_0px_#1a1a2e] dark:shadow-[3px_3px_0px_#334155] text-xs font-mono font-bold whitespace-nowrap">
+          <div className="bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper px-3 py-2 border-2 border-ink dark:border-dark-border shadow-button-hover dark:shadow-button-dark-hover text-xs font-mono font-bold whitespace-nowrap">
             {t('share.linkCopied')}
           </div>
           <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent border-t-ink dark:border-t-dark-ink" />

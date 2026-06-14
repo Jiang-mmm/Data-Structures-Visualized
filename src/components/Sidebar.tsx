@@ -37,7 +37,7 @@ const ICONS: string[] = ['⌂', '▦', '☰', '→', '∞', '❖', '⬡', '⇅',
 
 const SIDEBAR_CONTAINER_BASE = 'bg-white/95 dark:bg-slate/95 backdrop-blur-sm border-r-2 border-ink dark:border-dark-border flex flex-col h-screen transition-all duration-300 ease-out'
 const NAV_ITEM_BASE = 'flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-sm font-medium transition-all duration-200 ease-out border-2'
-const NAV_ITEM_ACTIVE = 'border-ink dark:border-dark-border bg-accent-blue text-paper shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155] scale-[1.02]'
+const NAV_ITEM_ACTIVE = 'border-ink dark:border-dark-border bg-accent-blue text-paper shadow-button dark:shadow-button-dark scale-[1.02]'
 const NAV_ITEM_INACTIVE = 'border-transparent text-ink-light dark:text-dark-ink-light hover:border-ink/20 dark:hover:border-dark-border/50 hover:bg-paper-warm/50 dark:hover:bg-slate-light/50 hover:translate-x-1 hover:text-ink dark:hover:text-dark-ink'
 
 export default function Sidebar() {
@@ -214,7 +214,7 @@ export default function Sidebar() {
                   flex-1 h-7 flex items-center justify-center text-xs
                   border-2 transition-all duration-200
                   ${colorTheme === theme.key
-                    ? 'border-ink dark:border-dark-border bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]'
+                    ? 'border-ink dark:border-dark-border bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper shadow-button dark:shadow-button-dark'
                     : 'border-border dark:border-dark-border bg-paper dark:bg-slate hover:border-ink dark:hover:border-dark-border hover:translate-y-[-1px]'
                   }
                 `}
@@ -263,7 +263,7 @@ export default function Sidebar() {
       {isMobile && (
         <button
           onClick={() => setMobileOpen(true)}
-          className="fixed top-3 left-3 z-50 w-10 h-10 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-white dark:bg-slate shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155] hover:bg-accent-blue hover:text-paper transition-colors text-lg font-bold md:hidden"
+          className="fixed top-3 left-3 z-50 w-10 h-10 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-white dark:bg-slate shadow-button dark:shadow-button-dark hover:bg-accent-blue hover:text-paper transition-colors text-lg font-bold md:hidden"
           aria-label={t('sidebar.openMenu')}
         >
           ☰

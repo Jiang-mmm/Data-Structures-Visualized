@@ -55,10 +55,10 @@ export default memo(function UndoPreviewButton({
   }, [])
 
   const variants = {
-    primary: 'bg-accent-blue border-accent-blue text-paper hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]',
-    success: 'bg-accent-emerald border-accent-emerald text-paper hover:bg-emerald-700 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]',
-    danger: 'bg-accent-rose border-accent-rose text-paper hover:bg-rose-700 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]',
-    outline: 'bg-white dark:bg-slate border-ink dark:border-dark-border text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#1a1a2e] dark:hover:shadow-[3px_3px_0px_#334155]',
+    primary: 'bg-accent-blue border-accent-blue text-paper hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    success: 'bg-accent-emerald border-accent-emerald text-paper hover:bg-emerald-700 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    danger: 'bg-accent-rose border-accent-rose text-paper hover:bg-rose-700 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    outline: 'bg-white dark:bg-slate border-ink dark:border-dark-border text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
   }
 
   return (
@@ -71,10 +71,10 @@ export default memo(function UndoPreviewButton({
         className={`
           px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold
           border-2
-          shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]
+          shadow-button dark:shadow-button-dark
           transition-all duration-200
           active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
-          disabled:opacity-40 disabled:cursor-not-allowed disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-[2px_2px_0px_#1a1a2e] dark:disabled:active:shadow-[2px_2px_0px_#334155]
+          disabled:opacity-40 disabled:cursor-not-allowed disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-button dark:disabled:active:shadow-button-dark
           ${variants[variant] || variants.outline}
           ${className}
         `}

@@ -13,7 +13,7 @@ function PageHeader({ title, subtitle, icon, children }: PageHeaderProps) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div className="flex items-center gap-3 sm:gap-4">
           {icon && (
-            <div className="w-11 h-11 sm:w-13 sm:h-13 border-2 border-ink dark:border-dark-border bg-gradient-to-br from-paper to-paper-warm dark:from-slate dark:to-slate-light flex items-center justify-center shrink-0 shadow-[3px_3px_0px_#1a1a2e] dark:shadow-[3px_3px_0px_#334155] transition-transform duration-200 hover:scale-105">
+            <div className="w-11 h-11 sm:w-13 sm:h-13 border-2 border-ink dark:border-dark-border bg-gradient-to-br from-paper to-paper-warm dark:from-slate dark:to-slate-light flex items-center justify-center shrink-0 shadow-button-hover dark:shadow-button-dark-hover transition-transform duration-200 hover:scale-105">
               <span className="text-xl sm:text-2xl">{icon}</span>
             </div>
           )}

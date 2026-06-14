@@ -54,7 +54,7 @@ export default function Home() {
                 <div className="w-28 h-28 neo-border bg-gradient-to-br from-accent-violet to-accent-blue flex items-center justify-center -rotate-6 hover:rotate-0 transition-transform duration-500 ease-out">
                   <span className="text-5xl font-black text-paper drop-shadow-lg">DS</span>
                 </div>
-                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-accent-emerald border-2 border-ink dark:border-dark-border flex items-center justify-center text-xs font-bold text-paper shadow-[2px_2px_0px_#1a1a2e]">
+                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-accent-emerald border-2 border-ink dark:border-dark-border flex items-center justify-center text-xs font-bold text-paper shadow-button dark:shadow-button-dark">
                   ✓
                 </div>
               </div>

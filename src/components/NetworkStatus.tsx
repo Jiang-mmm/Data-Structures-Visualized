@@ -39,13 +39,13 @@ export default memo(function NetworkStatus() {
   return (
     <div className="fixed bottom-4 left-4 z-40 animate-slide-up" role="status" aria-live="polite">
       {showOffline && (
-        <div className="flex items-center gap-2 px-3 py-2 bg-accent-rose text-paper border-2 border-ink dark:border-dark-border shadow-[3px_3px_0px_#1a1a2e] dark:shadow-[3px_3px_0px_#334155] text-xs font-mono font-bold">
+        <div className="flex items-center gap-2 px-3 py-2 bg-accent-rose text-paper border-2 border-ink dark:border-dark-border shadow-button-hover dark:shadow-button-dark-hover text-xs font-mono font-bold">
           <span className="w-2 h-2 bg-paper animate-pulse" />
           <span>{t('network.offline')} · {t('network.offlineMode')}</span>
         </div>
       )}
       {showReconnected && (
-        <div className="flex items-center gap-2 px-3 py-2 bg-accent-emerald text-paper border-2 border-ink dark:border-dark-border shadow-[3px_3px_0px_#1a1a2e] dark:shadow-[3px_3px_0px_#334155] text-xs font-mono font-bold">
+        <div className="flex items-center gap-2 px-3 py-2 bg-accent-emerald text-paper border-2 border-ink dark:border-dark-border shadow-button-hover dark:shadow-button-dark-hover text-xs font-mono font-bold">
           <span className="w-2 h-2 bg-paper" />
           <span>{t('network.reconnected')}</span>
         </div>

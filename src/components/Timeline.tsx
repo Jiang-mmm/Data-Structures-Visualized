@@ -82,7 +82,7 @@ function TimelineItem({ entry, index, isCurrent, onClick, clickable = true }: Ti
           border-2 transition-all duration-200 w-full text-left
           ${clickable ? 'cursor-pointer' : 'cursor-default'}
           ${isCurrent
-            ? 'border-ink dark:border-dark-border bg-accent-blue text-paper shadow-[2px_2px_0px_#1a1a2e]'
+            ? 'border-ink dark:border-dark-border bg-accent-blue text-paper shadow-button dark:shadow-button-dark'
             : `${typeColor} bg-white dark:bg-slate text-ink-light ${clickable ? 'hover:bg-paper' : ''}`
           }
         `}

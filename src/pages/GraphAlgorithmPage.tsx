@@ -12,7 +12,7 @@ import StepExplainer from '../components/StepExplainer'
 import ComplexityChart from '../components/ComplexityChart'
 import { bfs, dfs, dijkstra, topoSort, graphAlgorithms, type GraphAlgorithmKey } from '../algorithms/graph'
 import { exportPerformanceCSV, exportPerformanceJSON } from '../utils/dataExport'
-import { renderGraph, animateBFS, animateDFS, animateDijkstra, clearGraphSimulation } from '../visualizers/graphVisualizer'
+import { renderGraph, animateBFS, animateDFS, animateDijkstra, animateTopoSort, clearGraphSimulation } from '../visualizers/graphVisualizer'
 import { handleAnimationError } from '../utils/errorHandler'
 
 interface LogEntry {
@@ -106,6 +106,7 @@ export default function GraphAlgorithmPage() {
           break
         case 'topoSort':
           result = await topoSort(adjacencyList, onStep)
+          if (svgRef.current && result) await animateTopoSort(svgRef.current, result.visited, anim)
           break
       }
 

@@ -77,7 +77,7 @@ function ComparePanel({ algoKey, algorithm, data, svgRef, onDimensions, result }
   }, [svgRef])
 
   return (
-    <div className="border-2 border-ink dark:border-dark-border bg-white dark:bg-slate overflow-hidden shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]">
+    <div className="border-2 border-ink dark:border-dark-border bg-white dark:bg-slate overflow-hidden shadow-button dark:shadow-button-dark">
       <div className="p-2 border-b-2 border-ink dark:border-dark-border bg-paper dark:bg-slate">
         <div className="flex items-center gap-2">
           <span className="text-base">{algorithm.icon}</span>
@@ -97,7 +97,7 @@ function ComparePanel({ algoKey, algorithm, data, svgRef, onDimensions, result }
           )}
         </div>
         {result?.progress !== undefined && result.progress < 100 && (
-          <div className="mt-1 h-1 bg-gray-200 dark:bg-gray-700 overflow-hidden">
+          <div className="mt-1 h-1 bg-border dark:bg-dark-border overflow-hidden">
             <div
               className="h-full bg-accent-emerald transition-all duration-100"
               style={{ width: `${Math.min(100, result.progress)}%` }}
@@ -318,13 +318,13 @@ export default function SortComparePage() {
             {showExportMenu && (
               <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border shadow-card dark:shadow-[4px_4px_0px_#334155] z-10 min-w-[120px]">
                 <button
-                  className="w-full px-3 py-2 text-left text-sm text-ink dark:text-dark-ink hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="w-full px-3 py-2 text-left text-sm text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light transition-colors"
                   onClick={handleExportCSV}
                 >
                   {t('compare.exportCSV')}
                 </button>
                 <button
-                  className="w-full px-3 py-2 text-left text-sm text-ink dark:text-dark-ink hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border-t border-border dark:border-dark-border"
+                  className="w-full px-3 py-2 text-left text-sm text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light transition-colors border-t border-border dark:border-dark-border"
                   onClick={handleExportJSON}
                 >
                   {t('compare.exportJSON')}
@@ -340,7 +340,7 @@ export default function SortComparePage() {
         </OperationInfo>
       </OperationBar>
 
-      <div className="flex-1 p-2 overflow-auto bg-gray-50 dark:bg-gray-900">
+      <div className="flex-1 p-2 overflow-auto bg-paper dark:bg-dark-paper">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
           {allAlgorithms.map(([key, algo]) => {
             const isSelected = selectedAlgos.includes(key)
@@ -356,7 +356,7 @@ export default function SortComparePage() {
                   p-2 border-2 cursor-pointer transition-all text-center
                   ${isSelected
                     ? 'border-ink dark:border-dark-border bg-white dark:bg-slate'
-                    : 'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 opacity-50'
+                    : 'border-border dark:border-dark-border bg-paper-warm dark:bg-slate opacity-50'
                   }
                   ${isRunning ? 'pointer-events-none' : ''}
                 `}

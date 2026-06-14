@@ -275,6 +275,11 @@ export async function animateDijkstra(svg: SVGWithSimulation, startId: string, t
   return path
 }
 
+export async function animateTopoSort(svg: SVGWithSimulation, order: string[], anim?: Animation): Promise<void> {
+  if (order.length >= LARGE_DATA_THRESHOLD) return
+  await animateTraversalOrder(svg, order, anim)
+}
+
 function buildAdjacencyList(nodes: GraphNode[], links: GraphLink[]): Map<string, string[]> {
   const adj = new Map<string, string[]>()
   nodes.forEach(n => adj.set(n.id, []))
