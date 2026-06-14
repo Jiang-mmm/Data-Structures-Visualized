@@ -12,11 +12,16 @@ const LARGE_DATA_THRESHOLD = 30
 
 const DEFAULT_EDGE_STROKE_WIDTH = 2
 
+export type EdgeStyle = 'straight' | 'curved'
+
 interface TreeOptions {
   width: number
   height: number
   isDark?: boolean
+  edgeStyle?: EdgeStyle
 }
+
+let currentEdgeStyle: EdgeStyle = 'straight'
 
 interface TreeNodeData {
   value: number
@@ -45,6 +50,40 @@ function getStoredPosition(dataIndex: number): StoredPosition | null {
 
 function setStoredPosition(dataIndex: number, x: number, y: number) {
   positionStore.set(dataIndex, { x, y })
+}
+
+function curvedPath(x1: number, y1: number, x2: number, y2: number): string {
+  const midY = (y1 + y2) / 2
+  return `M${x1},${y1} C${x1},${midY} ${x2},${midY} ${x2},${y2}`
+}
+
+function drawEdge(
+  container: ReturnType<typeof select>,
+  x1: number, y1: number, x2: number, y2: number,
+  C: ReturnType<typeof getColors>,
+  style: EdgeStyle = 'straight',
+  insertBefore?: string
+): ReturnType<typeof select> {
+  if (style === 'curved') {
+    const pathEl = insertBefore
+      ? container.insert('path', insertBefore)
+      : container.append('path')
+    return pathEl
+      .attr('class', 'tree-edge')
+      .attr('d', curvedPath(x1, y1, x2, y2))
+      .attr('fill', 'none')
+      .attr('stroke', C.edgeDefault)
+      .attr('stroke-width', 2)
+  }
+  const lineEl = insertBefore
+    ? container.insert('line', insertBefore)
+    : container.append('line')
+  return lineEl
+    .attr('class', 'tree-edge')
+    .attr('x1', x1).attr('y1', y1)
+    .attr('x2', x2).attr('y2', y2)
+    .attr('stroke', C.edgeDefault)
+    .attr('stroke-width', 2)
 }
 
 function getTreeLayout(data: number[]): TreeNodeData[] {
@@ -143,11 +182,7 @@ function updateLines(container: ReturnType<typeof select>) {
 
     const x1 = px, y1 = py + NODE_RADIUS
     const x2 = cx, y2 = cy - NODE_RADIUS
-    container.insert('line', 'g.tree-node')
-      .attr('class', 'tree-edge')
-      .attr('x1', x1).attr('y1', y1)
-      .attr('x2', x2).attr('y2', y2)
-      .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
+    drawEdge(container, x1, y1, x2, y2, C, currentEdgeStyle, 'g.tree-node')
   })
 }
 
@@ -168,7 +203,8 @@ function resetNodeAndEdgeColors(container: ReturnType<typeof select>, C: ReturnT
 }
 
 export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOptions = {} as TreeOptions) {
-  const { width, height, isDark = detectDarkMode() } = options
+  const { width, height, isDark = detectDarkMode(), edgeStyle = 'straight' } = options
+  currentEdgeStyle = edgeStyle
   const C = getColors(isDark)
   const container = select(svg)
 
@@ -203,11 +239,7 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
       if (isNaN(p.x!) || isNaN(p.y!) || isNaN(node.x!) || isNaN(node.y!)) return
       const x1 = p.x, y1 = p.y + NODE_RADIUS
       const x2 = node.x, y2 = node.y - NODE_RADIUS
-      container.append('line')
-        .attr('class', 'tree-edge')
-        .attr('x1', x1).attr('y1', y1)
-        .attr('x2', x2).attr('y2', y2)
-        .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
+      drawEdge(container, x1, y1, x2, y2, C, edgeStyle)
     }
   })
 
@@ -253,7 +285,7 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
-  const { width } = options
+  const { width, edgeStyle = 'straight' } = options
   const newData = [...data]
   let insertIndex
   if (newData.length === 0) {
@@ -297,16 +329,34 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
     if (isNaN(p.x) || isNaN(p.y) || isNaN(x) || isNaN(y)) return
     const x1 = p.x, y1 = p.y + NODE_RADIUS
     const x2 = x, y2 = y - NODE_RADIUS
-    const lineEl = container.append('line')
-      .attr('class', 'tree-edge')
-      .attr('x1', x1).attr('y1', y1)
-      .attr('x2', x1).attr('y2', y1)
-      .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
 
-    await transitionEnd(
-      lineEl.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
-        .attr('x2', x2).attr('y2', y2)
-    )
+    if (edgeStyle === 'curved') {
+      const midY = (y1 + y2) / 2
+      const startPath = `M${x1},${y1} C${x1},${midY} ${x1},${midY} ${x1},${y1}`
+      const endPath = `M${x1},${y1} C${x1},${midY} ${x2},${midY} ${x2},${y2}`
+      const pathEl = container.append('path')
+        .attr('class', 'tree-edge')
+        .attr('d', startPath)
+        .attr('fill', 'none')
+        .attr('stroke', C.edgeDefault)
+        .attr('stroke-width', 2)
+
+      await transitionEnd(
+        pathEl.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
+          .attr('d', endPath)
+      )
+    } else {
+      const lineEl = container.append('line')
+        .attr('class', 'tree-edge')
+        .attr('x1', x1).attr('y1', y1)
+        .attr('x2', x1).attr('y2', y1)
+        .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
+
+      await transitionEnd(
+        lineEl.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
+          .attr('x2', x2).attr('y2', y2)
+      )
+    }
   }
 
   if (anim?.isAborted?.()) return

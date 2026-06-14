@@ -5,7 +5,7 @@ import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
 import Timeline from '../components/Timeline'
-import { renderTree, animateInsertNode, animateTraversal, animateLevelOrder, animateSearch, animateDeleteNode, clearTreePositions } from '../visualizers/treeVisualizer'
+import { renderTree, animateInsertNode, animateTraversal, animateLevelOrder, animateSearch, animateDeleteNode, clearTreePositions, type EdgeStyle } from '../visualizers/treeVisualizer'
 import { useTreeState } from '../hooks/useTreeState'
 import { useVisualizer } from '../hooks/useVisualizer'
 import { useKeyboard } from '../hooks/useKeyboard'
@@ -28,6 +28,10 @@ export default function TreePage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
+  const [edgeStyle, setEdgeStyle] = useState<EdgeStyle>(() => {
+    const stored = localStorage.getItem('ds-tree-edge-style')
+    return (stored === 'curved' || stored === 'straight') ? stored : 'straight'
+  })
   const learningMode = useLearningMode('tree')
 
   useKeyboard({
@@ -45,7 +49,7 @@ export default function TreePage() {
     setIsAnimating(true)
     const anim = getAnimationContext()
     try {
-      if (svgRef.current) await animateInsertNode(svgRef.current, value, data, dimensions, anim)
+      if (svgRef.current) await animateInsertNode(svgRef.current, value, data, { ...dimensions, edgeStyle }, anim)
       insert(value)
     } catch (e) {
       handleAnimationError(e, t('tree.insert'))
@@ -149,6 +153,17 @@ export default function TreePage() {
         <OperationGroup label={t('common.more')}>
           <OperationButton variant="warning" onClick={() => handleTraversal(postorder)} disabled={isAnimating} popAnimation>{t('tree.postorder')}</OperationButton>
           <OperationButton variant="teal" onClick={handleLevelOrder} disabled={isAnimating} popAnimation>{t('tree.levelorder')}</OperationButton>
+          <OperationButton
+            variant="outline"
+            onClick={() => {
+              const next = edgeStyle === 'straight' ? 'curved' : 'straight'
+              setEdgeStyle(next)
+              localStorage.setItem('ds-tree-edge-style', next)
+            }}
+            disabled={isAnimating}
+          >
+            {edgeStyle === 'straight' ? '⤿ ' : '│ '}{t('tree.edgeStyle')}
+          </OperationButton>
           <UndoPreviewButton
             variant="outline"
             onClick={undo}
@@ -170,7 +185,7 @@ export default function TreePage() {
         </OperationGroup>
         <OperationInfo><span className="font-mono text-xs text-ink-light">NODES: {nodeCount}</span></OperationInfo>
       </OperationBar>
-      <Visualizer data={data} renderFn={renderTree} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.treeLabel")} />
+      <Visualizer data={data} renderFn={renderTree} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.treeLabel")} renderOptions={{ edgeStyle }} />
       {data.length === 0 && (
         <EmptyState icon="❖" titleKey="emptyState.emptyTree" descriptionKey="emptyState.emptyTreeDesc" onFill={reset} />
       )}

@@ -11,13 +11,14 @@ interface VisualizerProps {
   containerRef: React.RefObject<HTMLDivElement>
   className?: string
   ariaLabel?: string
+  renderOptions?: Record<string, unknown>
 }
 
 const ZOOM_MIN = 0.5
 const ZOOM_MAX = 2
 const ZOOM_STEP = 0.1
 
-export default function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel }: VisualizerProps) {
+export default function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel, renderOptions }: VisualizerProps) {
   const { resolved: themeResolved } = useTheme()
   const { t } = useGlobalSettings()
   const isDark = themeResolved === 'dark'
@@ -90,7 +91,7 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
         const dataSize = Array.isArray(data) ? data.length : (d?.nodes as unknown[])?.length || (d?.length as number) || 1
         const label = `${renderFn.name || 'Visualizer'}:render (${dataSize} items, ${dimensions.width}x${dimensions.height})`
         measureRender(label, () => {
-          renderFn(svgRef.current!, data, { ...dimensions, isDark: isDark as boolean | undefined })
+          renderFn(svgRef.current!, data, { ...dimensions, isDark: isDark as boolean | undefined, ...renderOptions })
         })
       } catch (error) {
         if (import.meta.env.DEV) {
@@ -98,7 +99,7 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
         }
       }
     }
-  }, [data, renderFn, svgRef, dimensions, isDark])
+  }, [data, renderFn, svgRef, dimensions, isDark, renderOptions])
 
   const viewBox = useMemo(() => {
     const w = Math.round(dimensions.width / zoom)

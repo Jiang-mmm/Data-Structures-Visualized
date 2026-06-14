@@ -55,6 +55,7 @@ export interface Locale {
     inorder: string
     postorder: string
     levelorder: string
+    edgeStyle: string
   }
   graph: {
     title: string
@@ -551,6 +552,7 @@ export const zh: Locale = {
     inorder: '中序',
     postorder: '后序',
     levelorder: '层序',
+    edgeStyle: '连线样式',
   },
   graph: {
     title: '图',
@@ -1047,6 +1049,7 @@ export const en: Locale = {
     inorder: 'Inorder',
     postorder: 'Postorder',
     levelorder: 'Level Order',
+    edgeStyle: 'Edge Style',
   },
   graph: {
     title: 'Graph',
