@@ -130,7 +130,7 @@ export default function ArrayPage() {
           if (result.valid) {
             loadData(result.data)
           } else {
-            showToast({ type: 'error', message: `${t('errors.importFailed')}：${result.error}` })
+            showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` })
           }
         }} />
         <ShareButton data={data} dataType="array" disabled={isAnimating} />

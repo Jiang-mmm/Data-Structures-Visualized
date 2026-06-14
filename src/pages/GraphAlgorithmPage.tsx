@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationButton } from '../components/OperationBar'
+import SpeedControl from '../components/SpeedControl'
 import LogPanel from '../components/LogPanel'
 import Visualizer from '../components/Visualizer'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
@@ -198,7 +199,8 @@ export default function GraphAlgorithmPage() {
             ))}
           </OperationBar>
           
-          <div className="flex gap-2">
+          <OperationBar>
+            <SpeedControl />
             <OperationButton variant="primary" onClick={handleRun} disabled={isAnimating}>
               {isAnimating ? t('common.running') : t('common.run')}
             </OperationButton>
@@ -220,8 +222,8 @@ export default function GraphAlgorithmPage() {
                 </OperationButton>
               </>
             )}
-          </div>
-          
+          </OperationBar>
+
           <div className="flex-1 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border">
             <Visualizer
               data={nodes}

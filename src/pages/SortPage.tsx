@@ -77,7 +77,7 @@ export default function SortPage() {
           if (result.valid) {
             loadData(result.data)
           } else {
-            showToast({ type: 'error', message: `${t('errors.importFailed')}：${result.error}` })
+            showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` })
           }
         }} />
         <ShareButton data={data} dataType="sort" disabled={isAnimating} />
@@ -152,9 +152,9 @@ export default function SortPage() {
           {stats.algorithm && (
             <span className="text-ink dark:text-dark-ink font-semibold hidden sm:inline">{stats.algorithm}</span>
           )}
-          <span className="stat-item">{t('sort.compare')}: <span className="text-amber-600 font-bold">{stats.comparisons}</span></span>
-          <span className="stat-item">{t('sort.swap')}: <span className="text-red-500 font-bold">{stats.swaps}</span></span>
-          <span className="stat-item">{t('sort.steps')}: <span className="text-violet-600 font-bold">{stats.steps}</span></span>
+          <span className="stat-item">{t('sort.compare')}: <span className="text-accent-amber font-bold">{stats.comparisons}</span></span>
+          <span className="stat-item">{t('sort.swap')}: <span className="text-accent-rose font-bold">{stats.swaps}</span></span>
+          <span className="stat-item">{t('sort.steps')}: <span className="text-accent-violet font-bold">{stats.steps}</span></span>
         </div>
 
         <div className="ml-auto hidden md:flex items-center gap-3">
@@ -183,7 +183,7 @@ export default function SortPage() {
         isAnimating={isAnimating}
       >
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-sm font-semibold text-ink dark:text-dark-ink">{t('sort.selectAlgorithm')}：</span>
+          <span className="text-sm font-semibold text-ink dark:text-dark-ink">{t('sort.selectAlgorithm')}:</span>
           {algorithms.filter(([key]) => ['bubble', 'quick', 'merge', 'heap'].includes(key)).map(([key, algo]) => (
             <button
               key={key}

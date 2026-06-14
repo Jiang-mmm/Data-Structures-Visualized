@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, memo } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { exportState, importState } from '../utils/dataExport'
 import { showToast } from './toastStore'
@@ -10,7 +10,7 @@ interface ExportImportProps {
   disabled?: boolean
 }
 
-export default function ExportImport({ dataType, data, onImport, disabled }: ExportImportProps) {
+export default memo(function ExportImport({ dataType, data, onImport, disabled }: ExportImportProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { t } = useGlobalSettings()
 
@@ -77,4 +77,4 @@ export default function ExportImport({ dataType, data, onImport, disabled }: Exp
       />
     </div>
   )
-}
+})

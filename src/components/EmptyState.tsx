@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { OperationButton } from './OperationBar'
 
@@ -11,7 +12,7 @@ interface EmptyStateProps {
   fillKey?: string
 }
 
-export default function EmptyState({ icon = '∅', titleKey = 'emptyState.defaultTitle', title, descriptionKey = 'emptyState.defaultDesc', description, onFill, fillKey = 'emptyState.fill' }: EmptyStateProps) {
+export default memo(function EmptyState({ icon = '∅', titleKey = 'emptyState.defaultTitle', title, descriptionKey = 'emptyState.defaultDesc', description, onFill, fillKey = 'emptyState.fill' }: EmptyStateProps) {
   const { t } = useGlobalSettings()
   const displayTitle = title || t(titleKey)
   const displayDesc = description || t(descriptionKey)
@@ -34,4 +35,4 @@ export default function EmptyState({ icon = '∅', titleKey = 'emptyState.defaul
       </div>
     </div>
   )
-}
+})

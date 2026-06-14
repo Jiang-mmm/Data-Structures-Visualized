@@ -82,8 +82,8 @@ function ComparePanel({ algoKey, algorithm, data, svgRef, onDimensions, result }
         <div className="flex items-center gap-2">
           <span className="text-base">{algorithm.icon}</span>
           <span className="font-bold text-xs text-ink dark:text-dark-ink">{algorithm.nameKey ? t(algorithm.nameKey) : algorithm.name}</span>
-          <span className="font-mono text-[9px] text-blue-500 ml-auto">{algorithm.timeComplexity}</span>
-          <span className="font-mono text-[9px] text-amber-500">{algorithm.spaceComplexity}</span>
+          <span className="font-mono text-[9px] text-accent-blue ml-auto">{algorithm.timeComplexity}</span>
+          <span className="font-mono text-[9px] text-accent-amber">{algorithm.spaceComplexity}</span>
           {result?.done && !result?.error && <span className="text-accent-emerald text-xs">✓</span>}
           {result?.error && <span className="text-accent-rose text-xs">✗</span>}
         </div>
@@ -106,7 +106,7 @@ function ComparePanel({ algoKey, algorithm, data, svgRef, onDimensions, result }
         )}
       </div>
       <div ref={containerRef} className="h-40">
-        <svg ref={setSvgRef} className="w-full h-full" />
+        <svg ref={setSvgRef} className="w-full h-full" role="img" aria-label={algorithm.nameKey ? t(algorithm.nameKey) : algorithm.name} />
       </div>
     </div>
   )
@@ -316,7 +316,7 @@ export default function SortComparePage() {
               {t('compare.exportResults')}
             </OperationButton>
             {showExportMenu && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border shadow-card dark:shadow-[4px_4px_0px_#334155] z-10 min-w-[120px]">
+              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark z-10 min-w-[120px]">
                 <button
                   className="w-full px-3 py-2 text-left text-sm text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light transition-colors"
                   onClick={handleExportCSV}
@@ -365,9 +365,9 @@ export default function SortComparePage() {
                 <span className="text-lg">{algo.icon}</span>
                 <div className="font-bold text-[10px] text-ink dark:text-dark-ink mt-0.5">{algo.nameKey ? t(algo.nameKey) : algo.name}</div>
                 <div className="font-mono text-[8px] text-ink-light">
-                  <span className="text-blue-500">{algo.timeComplexity}</span>
+                  <span className="text-accent-blue">{algo.timeComplexity}</span>
                   <span className="mx-0.5 opacity-40">|</span>
-                  <span className="text-amber-500">{algo.spaceComplexity}</span>
+                  <span className="text-accent-amber">{algo.spaceComplexity}</span>
                 </div>
                 {result?.done && !result?.error && <div className="text-accent-emerald text-[10px]">✓</div>}
                 {result?.error && <div className="text-accent-rose text-[10px]">✗</div>}

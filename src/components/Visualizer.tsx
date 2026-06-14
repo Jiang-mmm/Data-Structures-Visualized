@@ -115,12 +115,11 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
     <div
       ref={containerRef}
       className={`
-        flex-1 relative min-h-[200px] sm:min-h-[300px] lg:min-h-[400px] overflow-hidden
+        flex-1 relative min-h-[200px] sm:min-h-[300px] lg:min-h-[400px] overflow-hidden bg-clip-padding
         border-b-2 border-ink dark:border-dark-border
         ${className}
         ${showGrid ? 'dot-grid dark:dot-grid' : ''}
       `}
-      style={{ backgroundClip: 'padding-box' }}
     >
       <svg
         ref={svgRef}

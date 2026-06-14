@@ -94,7 +94,7 @@ export default function HeapPage() {
           if (result.valid && result.data) {
             loadData(result.data)
           } else {
-            showToast({ type: 'error', message: `${t('errors.importFailed')}：${result.error}` })
+            showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` })
           }
         }} />
         <ShareButton data={data} dataType="heap" disabled={isAnimating} />

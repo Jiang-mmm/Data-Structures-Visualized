@@ -57,7 +57,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
             onClick={this.handleReset}
             className="px-4 py-1.5 font-mono text-xs font-bold bg-accent-rose text-paper border-2 border-accent-rose
               shadow-button dark:shadow-button-dark
-              hover:bg-rose-700 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover
+              hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover
               active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
               transition-all duration-200"
           >

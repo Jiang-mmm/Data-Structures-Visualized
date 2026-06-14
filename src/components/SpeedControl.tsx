@@ -55,7 +55,7 @@ export default memo(function SpeedControl() {
           <span className="hidden sm:inline">{ANIMATION_PRESETS[currentPreset]?.nameKey ? t(ANIMATION_PRESETS[currentPreset].nameKey!) : ANIMATION_PRESETS[currentPreset]?.name}</span>
         </button>
         {showPresets && (
-          <div className="absolute top-full left-0 mt-1.5 z-50 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border shadow-[4px_4px_0px_#1a1a2e] dark:shadow-[4px_4px_0px_#334155] min-w-[150px] animate-slide-down overflow-hidden">
+          <div className="absolute top-full left-0 mt-1.5 z-50 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark min-w-[150px] animate-slide-down overflow-hidden">
             {PRESET_KEYS.map((key, index) => {
               const preset = ANIMATION_PRESETS[key]
               return (

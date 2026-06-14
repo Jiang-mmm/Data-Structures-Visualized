@@ -20,10 +20,10 @@ export default function ToastContainer() {
   if (toasts.length === 0) return null
 
   const typeStyles: Record<string, string> = {
-    success: 'border-accent-emerald bg-gradient-to-r from-accent-emerald to-emerald-600',
-    error: 'border-accent-rose bg-gradient-to-r from-accent-rose to-rose-600',
-    warning: 'border-accent-amber bg-gradient-to-r from-accent-amber to-amber-600',
-    info: 'border-accent-blue bg-gradient-to-r from-accent-blue to-blue-600',
+    success: 'border-accent-emerald bg-accent-emerald',
+    error: 'border-accent-rose bg-accent-rose',
+    warning: 'border-accent-amber bg-accent-amber',
+    info: 'border-accent-blue bg-accent-blue',
   }
 
   return (
@@ -34,7 +34,7 @@ export default function ToastContainer() {
           className={`
             flex items-center gap-3 px-4 py-3.5 text-sm font-bold animate-slide-up
             border-2 border-ink dark:border-dark-border
-            shadow-[4px_4px_0px_#1a1a2e] dark:shadow-[4px_4px_0px_#334155]
+            shadow-card dark:shadow-card-dark
             text-paper backdrop-blur-sm
             ${typeStyles[toast.type] || typeStyles.info}
           `}

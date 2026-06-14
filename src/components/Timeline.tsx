@@ -95,7 +95,7 @@ function TimelineItem({ entry, index, isCurrent, onClick, clickable = true }: Ti
       </div>
       {showTooltip && (
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 pointer-events-none">
-          <div className="bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper px-3 py-2 border-2 border-ink dark:border-dark-border shadow-card dark:shadow-[4px_4px_0px_#334155] min-w-[160px] max-w-[240px]">
+          <div className="bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper px-3 py-2 border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark min-w-[160px] max-w-[240px]">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-sm">{icon}</span>
               <span className="font-bold text-xs">{entry.type}</span>

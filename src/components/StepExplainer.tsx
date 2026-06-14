@@ -108,7 +108,7 @@ function StepExplainer({
           className="flex-1 px-3 py-2 text-sm font-bold bg-accent-blue text-paper border-2 border-accent-blue
             shadow-button dark:shadow-button-dark
             disabled:opacity-50 disabled:cursor-not-allowed
-            hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover
+            hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover
             active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
             transition-all duration-200"
         >

@@ -1,5 +1,4 @@
-import { useRef, useEffect, useMemo } from 'react'
-import { memo } from 'react'
+import { useRef, useEffect, useMemo, memo } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import {

@@ -92,12 +92,12 @@ export const OperationButton = memo(({ onClick, disabled, variant = 'primary', p
   }
 
   const variants: Record<string, string> = {
-    primary: 'bg-accent-blue border-accent-blue text-paper hover:bg-blue-600 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover hover:brightness-110',
-    success: 'bg-accent-emerald border-accent-emerald text-paper hover:bg-emerald-600 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover hover:brightness-110',
-    danger: 'bg-accent-rose border-accent-rose text-paper hover:bg-rose-600 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover hover:brightness-110',
-    warning: 'bg-accent-amber border-accent-amber text-paper hover:bg-amber-600 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover hover:brightness-110',
-    purple: 'bg-accent-violet border-accent-violet text-paper hover:bg-violet-600 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover hover:brightness-110',
-    teal: 'bg-accent-teal border-accent-teal text-paper hover:bg-teal-600 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover hover:brightness-110',
+    primary: 'bg-accent-blue border-accent-blue text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    success: 'bg-accent-emerald border-accent-emerald text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    danger: 'bg-accent-rose border-accent-rose text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    warning: 'bg-accent-amber border-accent-amber text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    purple: 'bg-accent-violet border-accent-violet text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    teal: 'bg-accent-teal border-accent-teal text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
     outline: 'bg-white dark:bg-slate border-ink/60 dark:border-dark-border text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light hover:border-ink dark:hover:border-dark-ink hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
   }
 

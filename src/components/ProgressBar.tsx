@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
 interface ProgressBarProps {
@@ -6,7 +7,7 @@ interface ProgressBarProps {
   height?: string
 }
 
-export default function ProgressBar({ progress, label, height = 'h-2' }: ProgressBarProps) {
+export default memo(function ProgressBar({ progress, label, height = 'h-2' }: ProgressBarProps) {
   const { t } = useGlobalSettings()
   const clamped = Math.max(0, Math.min(100, progress))
 
@@ -28,4 +29,4 @@ export default function ProgressBar({ progress, label, height = 'h-2' }: Progres
       {label && <span className="text-xs text-ink-light dark:text-dark-ink-light whitespace-nowrap font-mono tabular-nums">{label}</span>}
     </div>
   )
-}
+})

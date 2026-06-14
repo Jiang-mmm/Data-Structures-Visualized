@@ -14,15 +14,15 @@ function getMemoryInfo(): MemoryInfo | null {
 }
 
 function getFPSColor(fps: number): string {
-  if (fps >= 50) return 'text-emerald-400'
-  if (fps >= 30) return 'text-amber-400'
-  return 'text-red-400'
+  if (fps >= 50) return 'text-accent-emerald'
+  if (fps >= 30) return 'text-accent-amber'
+  return 'text-accent-rose'
 }
 
 function getFPSBg(fps: number): string {
-  if (fps >= 50) return 'bg-emerald-400'
-  if (fps >= 30) return 'bg-amber-400'
-  return 'bg-red-400'
+  if (fps >= 50) return 'bg-accent-emerald'
+  if (fps >= 30) return 'bg-accent-amber'
+  return 'bg-accent-rose'
 }
 
 export default memo(function PerformanceMonitor() {
@@ -105,11 +105,11 @@ export default memo(function PerformanceMonitor() {
               <>
                 <div className="flex items-center justify-between">
                   <span className="text-white/50">{t('performanceMonitor.jsHeap')}</span>
-                  <span className="text-blue-400">{memory.used} MB</span>
+                  <span className="text-accent-blue">{memory.used} MB</span>
                 </div>
                 <div className="w-full bg-white/10 h-1">
                   <div
-                    className="h-1 bg-blue-400 transition-all duration-300"
+                    className="h-1 bg-accent-blue transition-all duration-300"
                     style={{ width: `${Math.min(100, (memory.used / memory.limit) * 100)}%` }}
                   />
                 </div>
@@ -127,7 +127,7 @@ export default memo(function PerformanceMonitor() {
             <div className="pt-1 border-t border-white/10">
               <div className="flex items-center justify-between">
                 <span className="text-white/50">{t('performanceMonitor.status')}</span>
-                <span className={fps >= 50 ? 'text-emerald-400' : fps >= 30 ? 'text-amber-400' : 'text-red-400'}>
+                <span className={fps >= 50 ? 'text-accent-emerald' : fps >= 30 ? 'text-accent-amber' : 'text-accent-rose'}>
                   {fps >= 50 ? t('performanceMonitor.smooth') : fps >= 30 ? t('performanceMonitor.fair') : t('performanceMonitor.low')}
                 </span>
               </div>

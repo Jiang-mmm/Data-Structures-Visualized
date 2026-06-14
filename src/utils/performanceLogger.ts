@@ -88,10 +88,10 @@ class PerformanceLogger {
 
     switch (type) {
       case 'warning':
-        console.warn(message, data || '')
+        if (import.meta.env.DEV) console.warn(message, data || '')
         break
       case 'fps':
-        console.debug(message, data || '')
+        if (import.meta.env.DEV) console.debug(message, data || '')
         break
       default:
         if (import.meta.env.DEV) {

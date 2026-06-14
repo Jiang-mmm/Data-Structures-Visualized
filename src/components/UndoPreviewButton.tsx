@@ -55,9 +55,9 @@ export default memo(function UndoPreviewButton({
   }, [])
 
   const variants = {
-    primary: 'bg-accent-blue border-accent-blue text-paper hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
-    success: 'bg-accent-emerald border-accent-emerald text-paper hover:bg-emerald-700 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
-    danger: 'bg-accent-rose border-accent-rose text-paper hover:bg-rose-700 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    primary: 'bg-accent-blue border-accent-blue text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    success: 'bg-accent-emerald border-accent-emerald text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    danger: 'bg-accent-rose border-accent-rose text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
     outline: 'bg-white dark:bg-slate border-ink dark:border-dark-border text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
   }
 
@@ -84,7 +84,7 @@ export default memo(function UndoPreviewButton({
 
       {showPreview && previewData !== null && previewData !== undefined && (
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 pointer-events-none">
-          <div className="bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper px-3 py-2 border-2 border-ink dark:border-dark-border shadow-card dark:shadow-[4px_4px_0px_#334155] min-w-[160px] max-w-[240px]">
+          <div className="bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper px-3 py-2 border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark min-w-[160px] max-w-[240px]">
             <div className="text-[10px] font-mono text-paper/60 dark:text-dark-paper/60 mb-1">
               {resolvedLabel}
             </div>
