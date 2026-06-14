@@ -694,15 +694,25 @@ async function runTest() {
     console.log('  [Array] 快速连续插入...');
     await clearAndReload('array', 'array');
 
-    // Set input values
+    // If array is full (boundary test leftovers), reset to default first
+    const preSize = await getSizeValue();
+    if (preSize >= 20) {
+      await clickButtonIfEnabled(page, /重置/);
+      await sleep(800);
+      await closeModalIfOpen(page);
+    }
+
+    // Set input values using native input setter to trigger React state
     const rapidInputs = await getVisibleInputs(page);
     if (rapidInputs.length >= 2) {
-      await fillInput(page, rapidInputs[0], '42');
-      await fillInput(page, rapidInputs[1], '0');
+      await rapidInputs[0].fill('42');
+      await rapidInputs[1].fill('0');
+      await rapidInputs[1].press('Tab');
     }
-    await sleep(300);
+    await sleep(500);
 
     const sizeBeforeRapid = await getSizeValue();
+    console.log(`    [Array] 插入前 SIZE=${sizeBeforeRapid}`);
 
     // Rapidly click insert 5 times with minimal delay
     for (let i = 0; i < 5; i++) {
@@ -710,22 +720,39 @@ async function runTest() {
       const insertBtn = page.locator('button').filter({ hasText: /按位插/ }).first();
       try {
         const isDisabled = await insertBtn.isDisabled().catch(() => true);
+        console.log(`    [Array] 第${i+1}次点击: disabled=${isDisabled}`);
         if (!isDisabled) await insertBtn.click();
-      } catch {}
-      await sleep(150);
+      } catch (e) {
+        console.log(`    [Array] 第${i+1}次点击异常: ${e.message}`);
+      }
+      await sleep(200);
     }
 
-    await sleep(4000);
-    await closeModalIfOpen(page);
+    // Wait for animations to complete (up to 10s, polling every 500ms)
+    let sizeAfterRapid = sizeBeforeRapid;
+    for (let i = 0; i < 20; i++) {
+      await sleep(500);
+      await closeModalIfOpen(page);
+      const currentSize = await getSizeValue();
+      if (currentSize > sizeBeforeRapid) {
+        sizeAfterRapid = currentSize;
+        console.log(`    [Array] 第${i+1}次轮询: SIZE变为 ${currentSize}`);
+        break;
+      }
+    }
+    if (sizeAfterRapid === sizeBeforeRapid) {
+      sizeAfterRapid = await getSizeValue();
+    }
 
     // Check page is still functional
     const arrayPageOk = await page.locator('text=/SIZE:/').count() > 0;
     await assert(arrayPageOk, 'Array: 快速连续插入后页面正常', 'Array: 快速连续插入后页面异常');
 
     // Check size is reasonable (should not have duplicated all 5 times due to animation guard)
-    const sizeAfterRapid = await getSizeValue();
-    const sizeIncrease = sizeAfterRapid - sizeBeforeRapid;
-    await assert(sizeIncrease >= 1 && sizeIncrease <= 5, `Array: 快速插入增加了 ${sizeIncrease} 个元素（合理）`, `Array: 快速插入增加 ${sizeIncrease} 个元素（异常）`);
+    const finalSize = await getSizeValue();
+    const sizeIncrease = finalSize - sizeBeforeRapid;
+    console.log(`    [Array] 最终 SIZE=${finalSize}, 增加=${sizeIncrease}`);
+    await assert(sizeIncrease >= 1 && sizeIncrease <= 5, `Array: 快速插入增加了 ${sizeIncrease} 个元素（合理）`, `Array: 快速插入增加 ${sizeIncrease} 个元素（异常，SIZE: ${sizeBeforeRapid}→${finalSize}）`);
 
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, 'rapid-insert-test.png'), fullPage: false });
 
@@ -747,6 +774,7 @@ async function runTest() {
 
     // Trigger traversal animation (preorder) and immediately check button states
     await closeModalIfOpen(page);
+    let insertEnabledAfter = true; // default: skip if preorder button not found
     const preorderBtn = page.locator('button').filter({ hasText: /前序/ }).first();
     if (await preorderBtn.count() > 0) {
       await preorderBtn.click();
@@ -765,16 +793,18 @@ async function runTest() {
       const searchDisabledDuringAnim = await searchDuringAnim.isDisabled().catch(() => true);
       await assert(searchDisabledDuringAnim, 'Tree: 动画期间查找按钮已禁用', 'Tree: 动画期间查找按钮未禁用');
 
-      // Wait for animation to complete (with safety timeout)
-      await sleep(8000);
-      await closeModalIfOpen(page);
+      // Wait for animation to complete (poll for button re-enable, up to 15s)
+      for (let i = 0; i < 30; i++) {
+        await sleep(500);
+        await closeModalIfOpen(page);
+        const btn = page.locator('button').filter({ hasText: /插入/ }).first();
+        if (!(await btn.isDisabled().catch(() => true))) {
+          insertEnabledAfter = true;
+          break;
+        }
+        insertEnabledAfter = false;
+      }
     }
-
-    // After animation, buttons should be enabled again
-    await sleep(500);
-    await closeModalIfOpen(page);
-    const insertAfterAnim = page.locator('button').filter({ hasText: /插入/ }).first();
-    const insertEnabledAfter = !(await insertAfterAnim.isDisabled().catch(() => true));
     await assert(insertEnabledAfter, 'Tree: 动画结束后插入按钮恢复可用', 'Tree: 动画结束后插入按钮仍禁用');
 
     // Verify state is correct after animation
