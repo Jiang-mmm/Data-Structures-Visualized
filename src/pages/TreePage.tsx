@@ -126,7 +126,7 @@ export default function TreePage() {
   const timelineHistory = useMemo(() => logs.map(log => ({ type: log.type, description: log.message })), [logs])
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-y-auto">
       <PageHeader title={t('tree.title')} subtitle={t('tree.subtitle')} icon="❖">
         <ExportImport dataType="tree" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           const result = validateImportData(imported)

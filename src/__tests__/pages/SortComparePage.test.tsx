@@ -6,21 +6,21 @@ import { renderWithRouter, mockUseGlobalSettings } from './testUtils'
 vi.mock('../../hooks/useGlobalSettings')
 vi.mock('../../algorithms/sorting', () => ({
   getAllSortAlgorithms: vi.fn().mockReturnValue(new Map([
-    ['bubble', { name: '冒泡排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '🫧', color: 'bg-accent-blue', variant: 'primary', execute: vi.fn().mockResolvedValue({ comparisons: 10, swaps: 5, steps: 15 }) }],
-    ['quick', { name: '快速排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(log n)', icon: '⚡', color: 'bg-accent-amber', variant: 'warning', execute: vi.fn().mockResolvedValue({ comparisons: 8, swaps: 4, steps: 12 }) }],
-    ['merge', { name: '归并排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(n)', icon: '🔀', color: 'bg-accent-teal', variant: 'teal', execute: vi.fn().mockResolvedValue({ comparisons: 9, swaps: 6, steps: 15 }) }],
-    ['insertion', { name: '插入排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '📥', color: 'bg-accent-violet', variant: 'danger', execute: vi.fn().mockResolvedValue({ comparisons: 11, swaps: 7, steps: 18 }) }],
-    ['selection', { name: '选择排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '👆', color: 'bg-accent-emerald', variant: 'success', execute: vi.fn().mockResolvedValue({ comparisons: 12, swaps: 3, steps: 15 }) }],
-    ['heap', { name: '堆排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(1)', icon: '🏔️', color: 'bg-accent-rose', variant: 'danger', execute: vi.fn().mockResolvedValue({ comparisons: 8, swaps: 6, steps: 14 }) }],
+    ['bubble', { name: '冒泡排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '○', color: 'bg-accent-blue', variant: 'primary', execute: vi.fn().mockResolvedValue({ comparisons: 10, swaps: 5, steps: 15 }) }],
+    ['quick', { name: '快速排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(log n)', icon: '◆', color: 'bg-accent-amber', variant: 'warning', execute: vi.fn().mockResolvedValue({ comparisons: 8, swaps: 4, steps: 12 }) }],
+    ['merge', { name: '归并排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(n)', icon: '⇌', color: 'bg-accent-teal', variant: 'teal', execute: vi.fn().mockResolvedValue({ comparisons: 9, swaps: 6, steps: 15 }) }],
+    ['insertion', { name: '插入排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '↙', color: 'bg-accent-violet', variant: 'danger', execute: vi.fn().mockResolvedValue({ comparisons: 11, swaps: 7, steps: 18 }) }],
+    ['selection', { name: '选择排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '◎', color: 'bg-accent-emerald', variant: 'success', execute: vi.fn().mockResolvedValue({ comparisons: 12, swaps: 3, steps: 15 }) }],
+    ['heap', { name: '堆排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(1)', icon: '△', color: 'bg-accent-rose', variant: 'danger', execute: vi.fn().mockResolvedValue({ comparisons: 8, swaps: 6, steps: 14 }) }],
   ])),
   getSortAlgorithm: vi.fn((key) => {
     const map = new Map([
-      ['bubble', { name: '冒泡排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '🫧', color: 'bg-accent-blue', variant: 'primary', execute: vi.fn().mockResolvedValue({ comparisons: 10, swaps: 5, steps: 15 }) }],
-      ['quick', { name: '快速排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(log n)', icon: '⚡', color: 'bg-accent-amber', variant: 'warning', execute: vi.fn().mockResolvedValue({ comparisons: 8, swaps: 4, steps: 12 }) }],
-      ['merge', { name: '归并排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(n)', icon: '🔀', color: 'bg-accent-teal', variant: 'teal', execute: vi.fn().mockResolvedValue({ comparisons: 9, swaps: 6, steps: 15 }) }],
-      ['insertion', { name: '插入排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '📥', color: 'bg-accent-violet', variant: 'danger', execute: vi.fn().mockResolvedValue({ comparisons: 11, swaps: 7, steps: 18 }) }],
-      ['selection', { name: '选择排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '👆', color: 'bg-accent-emerald', variant: 'success', execute: vi.fn().mockResolvedValue({ comparisons: 12, swaps: 3, steps: 15 }) }],
-      ['heap', { name: '堆排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(1)', icon: '🏔️', color: 'bg-accent-rose', variant: 'danger', execute: vi.fn().mockResolvedValue({ comparisons: 8, swaps: 6, steps: 14 }) }],
+      ['bubble', { name: '冒泡排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '○', color: 'bg-accent-blue', variant: 'primary', execute: vi.fn().mockResolvedValue({ comparisons: 10, swaps: 5, steps: 15 }) }],
+      ['quick', { name: '快速排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(log n)', icon: '◆', color: 'bg-accent-amber', variant: 'warning', execute: vi.fn().mockResolvedValue({ comparisons: 8, swaps: 4, steps: 12 }) }],
+      ['merge', { name: '归并排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(n)', icon: '⇌', color: 'bg-accent-teal', variant: 'teal', execute: vi.fn().mockResolvedValue({ comparisons: 9, swaps: 6, steps: 15 }) }],
+      ['insertion', { name: '插入排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '↙', color: 'bg-accent-violet', variant: 'danger', execute: vi.fn().mockResolvedValue({ comparisons: 11, swaps: 7, steps: 18 }) }],
+      ['selection', { name: '选择排序', timeComplexity: 'O(n²)', spaceComplexity: 'O(1)', icon: '◎', color: 'bg-accent-emerald', variant: 'success', execute: vi.fn().mockResolvedValue({ comparisons: 12, swaps: 3, steps: 15 }) }],
+      ['heap', { name: '堆排序', timeComplexity: 'O(n log n)', spaceComplexity: 'O(1)', icon: '△', color: 'bg-accent-rose', variant: 'danger', execute: vi.fn().mockResolvedValue({ comparisons: 8, swaps: 6, steps: 14 }) }],
     ])
     return map.get(key)
   }),

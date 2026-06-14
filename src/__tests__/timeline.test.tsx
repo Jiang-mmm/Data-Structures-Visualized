@@ -202,9 +202,9 @@ describe('Timeline', () => {
       expect(screen.getByText('−')).toBeInTheDocument()
     })
 
-    it('应该为 search 类型显示 🔍 图标', () => {
+    it('应该为 search 类型显示 ◎ 图标', () => {
       renderTimeline(<Timeline history={[{ type: 'search', description: 'search test' }]} currentIndex={0} onJump={vi.fn()} />)
-      expect(screen.getByText('🔍')).toBeInTheDocument()
+      expect(screen.getByText('◎')).toBeInTheDocument()
     })
 
     it('应该为 reset 类型显示 ↺ 图标', () => {

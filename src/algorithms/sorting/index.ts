@@ -62,7 +62,7 @@ registerSortAlgorithm('bubble', {
   nameKey: 'sort.bubble',
   timeComplexity: 'O(n²)',
   spaceComplexity: 'O(1)',
-  icon: '🫧',
+  icon: '○',
   color: 'bg-accent-blue',
   variant: 'primary',
   execute: async (arr, { animateCompare, animateSwap, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
@@ -100,7 +100,7 @@ registerSortAlgorithm('radix', {
   nameKey: 'sort.radix',
   timeComplexity: 'O(d·n)',
   spaceComplexity: 'O(n+k)',
-  icon: '🔟',
+  icon: '#',
   color: 'bg-accent-cyan',
   variant: 'teal',
   execute: async (arr, { animateCompare, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
@@ -156,7 +156,7 @@ registerSortAlgorithm('bucket', {
   nameKey: 'sort.bucket',
   timeComplexity: 'O(n+k)',
   spaceComplexity: 'O(n+k)',
-  icon: '🪣',
+  icon: '▧',
   color: 'bg-accent-indigo',
   variant: 'primary',
   execute: async (arr, { animateCompare, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
@@ -212,7 +212,7 @@ registerSortAlgorithm('quick', {
   nameKey: 'sort.quick',
   timeComplexity: 'O(n log n)',
   spaceComplexity: 'O(log n)',
-  icon: '⚡',
+  icon: '◆',
   color: 'bg-accent-amber',
   variant: 'warning',
   execute: async (arr, { animateCompare, animateSwap, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
@@ -281,7 +281,7 @@ registerSortAlgorithm('merge', {
   nameKey: 'sort.merge',
   timeComplexity: 'O(n log n)',
   spaceComplexity: 'O(n)',
-  icon: '🔀',
+  icon: '⇌',
   color: 'bg-accent-teal',
   variant: 'teal',
   execute: async (arr, { animateCompare, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
@@ -362,7 +362,7 @@ registerSortAlgorithm('heap', {
   nameKey: 'sort.heapSort',
   timeComplexity: 'O(n log n)',
   spaceComplexity: 'O(1)',
-  icon: '🏔️',
+  icon: '△',
   color: 'bg-accent-rose',
   variant: 'danger',
   execute: async (arr, { animateCompare, animateSwap, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
@@ -433,7 +433,7 @@ registerSortAlgorithm('selection', {
   nameKey: 'sort.selection',
   timeComplexity: 'O(n²)',
   spaceComplexity: 'O(1)',
-  icon: '👆',
+  icon: '◎',
   color: 'bg-accent-emerald',
   variant: 'success',
   execute: async (arr, { animateCompare, animateSwap, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
@@ -473,7 +473,7 @@ registerSortAlgorithm('insertion', {
   nameKey: 'sort.insertion',
   timeComplexity: 'O(n²)',
   spaceComplexity: 'O(1)',
-  icon: '📥',
+  icon: '↙',
   color: 'bg-accent-violet',
   variant: 'danger',
   execute: async (arr, { animateCompare, animateSwap, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {

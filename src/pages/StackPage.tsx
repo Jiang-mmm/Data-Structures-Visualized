@@ -79,7 +79,7 @@ export default function StackPage() {
   const timelineHistory = useMemo(() => logs.map(log => ({ type: log.type, description: log.message })), [logs])
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-y-auto">
       <PageHeader title={t('stack.title')} subtitle={t('stack.subtitle')} icon="☰">
         <ExportImport dataType="stack" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)

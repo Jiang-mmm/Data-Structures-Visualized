@@ -11,7 +11,7 @@ interface EmptyStateProps {
   fillKey?: string
 }
 
-export default function EmptyState({ icon = '📭', titleKey = 'emptyState.defaultTitle', title, descriptionKey = 'emptyState.defaultDesc', description, onFill, fillKey = 'emptyState.fill' }: EmptyStateProps) {
+export default function EmptyState({ icon = '∅', titleKey = 'emptyState.defaultTitle', title, descriptionKey = 'emptyState.defaultDesc', description, onFill, fillKey = 'emptyState.fill' }: EmptyStateProps) {
   const { t } = useGlobalSettings()
   const displayTitle = title || t(titleKey)
   const displayDesc = description || t(descriptionKey)

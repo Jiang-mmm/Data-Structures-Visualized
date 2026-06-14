@@ -2,7 +2,8 @@ import { Link, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
-import { getAvailableThemes, setTheme as setColorTheme, getTheme, initTheme } from '../utils/themeColors'
+import { useColorTheme } from '../hooks/useColorTheme'
+import { initTheme } from '../utils/themeColors'
 import { showToast } from './toastStore'
 
 interface StructureItem {
@@ -44,15 +45,12 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState<boolean>(false)
   const [mobileOpen, setMobileOpen] = useState<boolean>(false)
   const [isMobile, setIsMobile] = useState<boolean>(false)
-  const [colorTheme, setColorThemeState] = useState<string>(() => {
-    initTheme()
-    return getTheme()
-  })
+  useEffect(() => { initTheme() }, [])
+  const { theme: colorTheme, setTheme: setColorTheme, themes } = useColorTheme()
   const { mode, cycle } = useTheme()
   const { t, lang, setLanguage, supportedLanguages } = useGlobalSettings()
   const sidebarElRef = useRef<HTMLElement | null>(null)
   const swipeRef = useRef<SwipeState>({ startX: 0, startY: 0, isSwiping: false })
-  const themes = useMemo(() => getAvailableThemes(), [])
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 768px)')
@@ -112,7 +110,6 @@ export default function Sidebar() {
 
   const handleColorThemeChange = (themeKey: string) => {
     setColorTheme(themeKey)
-    setColorThemeState(themeKey)
     const theme = themes.find(t => t.key === themeKey)
     showToast({ type: 'info', message: `${t('sidebar.themeTooltip')}: ${theme?.nameKey ? t(theme.nameKey) : theme?.name || themeKey}` })
   }

@@ -820,8 +820,8 @@ export const zh: Locale = {
     reconnected: '网络已恢复',
   },
   learning: {
-    open: '📖 学习模式',
-    close: '📖 关闭学习模式',
+    open: '◇ 学习模式',
+    close: '◇ 关闭学习模式',
   },
   undoPreview: {
     noData: '无数据',
@@ -1317,8 +1317,8 @@ export const en: Locale = {
     reconnected: 'Network restored',
   },
   learning: {
-    open: '📖 Learning Mode',
-    close: '📖 Close Learning Mode',
+    open: '◇ Learning Mode',
+    close: '◇ Close Learning Mode',
   },
   undoPreview: {
     noData: 'No data',

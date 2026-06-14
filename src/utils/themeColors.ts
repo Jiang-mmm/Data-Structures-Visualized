@@ -394,6 +394,7 @@ const availableThemes = [
 ]
 
 let currentTheme = 'default'
+let themeListeners: Array<() => void> = []
 
 export function getColors(isDark = false): ThemeColors {
   const palette = palettes[currentTheme] || palettes.default
@@ -410,6 +411,12 @@ export function setTheme(theme: string) {
   try {
     localStorage.setItem(STORAGE_KEY, theme)
   } catch {}
+  for (const listener of themeListeners) listener()
+}
+
+export function subscribeTheme(listener: () => void): () => void {
+  themeListeners.push(listener)
+  return () => { themeListeners = themeListeners.filter(l => l !== listener) }
 }
 
 export function getAvailableThemes() {

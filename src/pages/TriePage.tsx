@@ -125,7 +125,7 @@ export default function TriePage() {
   const count = wordCount()
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-y-auto">
       <PageHeader title={t('trie.title')} subtitle={t('trie.subtitle')} icon="⊾">
         <ExportImport dataType="trie" data={flatData} disabled={isAnimating} onImport={({ data: imported }) => {
           if (imported && typeof imported === 'object' && 'children' in (imported as object)) {

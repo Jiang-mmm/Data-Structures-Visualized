@@ -179,7 +179,7 @@ export default function LinkedListPage() {
   const timelineHistory = useMemo(() => logs.map(log => ({ type: log.type, description: log.message })), [logs])
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-y-auto">
       <PageHeader title={t('linkedlist.title')} subtitle={t('linkedlist.subtitle')} icon="∞">
         <ExportImport dataType="linkedlist" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           const result = validateImportData(imported)

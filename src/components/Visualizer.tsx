@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useTheme } from '../hooks/useTheme'
+import { useColorTheme } from '../hooks/useColorTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { measureRender } from '../utils/animationEngine'
 
@@ -20,6 +21,7 @@ const ZOOM_STEP = 0.1
 
 export default function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel, renderOptions }: VisualizerProps) {
   const { resolved: themeResolved } = useTheme()
+  const { theme: colorTheme } = useColorTheme()
   const { t } = useGlobalSettings()
   const isDark = themeResolved === 'dark'
   const [zoom, setZoom] = useState(1)
@@ -99,7 +101,7 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
         }
       }
     }
-  }, [data, renderFn, svgRef, dimensions, isDark, renderOptions])
+  }, [data, renderFn, svgRef, dimensions, isDark, colorTheme, renderOptions])
 
   const viewBox = useMemo(() => {
     const w = Math.round(dimensions.width / zoom)

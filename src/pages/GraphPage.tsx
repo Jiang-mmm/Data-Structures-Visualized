@@ -133,7 +133,7 @@ export default function GraphPage() {
   const adjList = getAdjacencyList()
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-y-auto">
       <PageHeader title={t('graph.title')} subtitle={t('graph.subtitle')} icon="⬡">
         <ExportImport dataType="graph" data={{ nodes, links }} disabled={isAnimating} onImport={({ data: imported }) => {
           if (imported && typeof imported === 'object' && 'nodes' in imported) {

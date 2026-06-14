@@ -21,8 +21,8 @@ interface TrieEdge {
   char: string
 }
 
-const NODE_RADIUS = 18
-const LEVEL_HEIGHT = 60
+const NODE_RADIUS = 22
+const LEVEL_HEIGHT = 80
 const MIN_NODE_SPACING = 50
 
 function layout(data: TrieFlattened, width: number): { positions: TriePosition[]; edges: TrieEdge[] } {

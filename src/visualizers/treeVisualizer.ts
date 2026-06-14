@@ -239,7 +239,27 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
       if (isNaN(p.x!) || isNaN(p.y!) || isNaN(node.x!) || isNaN(node.y!)) return
       const x1 = p.x, y1 = p.y + NODE_RADIUS
       const x2 = node.x, y2 = node.y - NODE_RADIUS
-      drawEdge(container, x1, y1, x2, y2, C, edgeStyle)
+
+      const isLeftChild = node.dataIndex === 2 * p.dataIndex + 1
+      const isBSTViolation = isLeftChild ? node.value >= p.value : node.value <= p.value
+
+      if (isBSTViolation) {
+        const violationEdge = edgeStyle === 'curved'
+          ? container.append('path')
+              .attr('class', 'tree-edge')
+              .attr('d', curvedPath(x1, y1, x2, y2))
+              .attr('fill', 'none')
+          : container.append('line')
+              .attr('class', 'tree-edge')
+              .attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2)
+        violationEdge
+          .attr('stroke', C.nodeError)
+          .attr('stroke-width', 3)
+          .attr('stroke-dasharray', '5,3')
+          .style('animation', 'heap-violation-pulse 1.2s ease-in-out infinite')
+      } else {
+        drawEdge(container, x1, y1, x2, y2, C, edgeStyle)
+      }
     }
   })
 
@@ -258,6 +278,11 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
 
   nodeGroups.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
     .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', 'bold').text((d: TreeNodeData) => d.value)
+
+  nodeGroups.append('text')
+    .attr('dy', NODE_RADIUS + 14).attr('text-anchor', 'middle')
+    .attr('fill', C.textLight).attr('font-size', '9px')
+    .text((d: TreeNodeData) => `[${d.dataIndex}]`)
 
   // Hover micro-animation: scale up + shadow glow
   nodeGroups

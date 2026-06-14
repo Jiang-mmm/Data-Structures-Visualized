@@ -28,6 +28,15 @@ vi.mock('../utils/themeColors', () => ({
   setTheme: vi.fn(),
   getTheme: vi.fn().mockReturnValue('default'),
   initTheme: vi.fn(),
+  subscribeTheme: vi.fn().mockReturnValue(() => {}),
+}))
+
+vi.mock('../hooks/useColorTheme', () => ({
+  useColorTheme: vi.fn().mockReturnValue({
+    theme: 'default',
+    setTheme: vi.fn(),
+    themes: [],
+  }),
 }))
 
 function renderSidebar() {

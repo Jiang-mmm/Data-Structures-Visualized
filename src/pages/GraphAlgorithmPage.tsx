@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationButton } from '../components/OperationBar'
 import LogPanel from '../components/LogPanel'
@@ -30,16 +30,16 @@ export default function GraphAlgorithmPage() {
   const learningMode = useLearningMode(selectedAlgorithm)
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
 
-  const nodes = [
+  const nodes = useMemo(() => [
     { id: 'A', group: 0 },
     { id: 'B', group: 1 },
     { id: 'C', group: 1 },
     { id: 'D', group: 2 },
     { id: 'E', group: 0 },
     { id: 'F', group: 2 },
-  ]
+  ], [])
 
-  const links = [
+  const links = useMemo(() => [
     { source: 'A', target: 'B', weight: 4 },
     { source: 'A', target: 'D', weight: 2 },
     { source: 'B', target: 'C', weight: 3 },
@@ -47,7 +47,9 @@ export default function GraphAlgorithmPage() {
     { source: 'C', target: 'F', weight: 5 },
     { source: 'D', target: 'E', weight: 7 },
     { source: 'E', target: 'F', weight: 2 },
-  ]
+  ], [])
+
+  const hasRunRef = useRef(false)
 
   useEffect(() => {
     return () => { clearGraphSimulation(svgRef.current) }
@@ -59,7 +61,7 @@ export default function GraphAlgorithmPage() {
   }, [])
 
   const handleGraphRender = useCallback((svg: SVGSVGElement, _data: unknown, dims: { width: number; height: number }) => {
-    if (svg) {
+    if (svg && !hasRunRef.current) {
       renderGraph(svg, nodes, links, dims)
     }
   }, [nodes, links])
@@ -107,6 +109,7 @@ export default function GraphAlgorithmPage() {
           break
       }
 
+      hasRunRef.current = true
       addLog('info', `${selectedAlgorithm.toUpperCase()} ${t('page.done')} · ${result?.visited.length} nodes`)
       showToast({ type: 'success', message: `${selectedAlgorithm.toUpperCase()} ${t('page.done')}` })
     } catch (e) {
@@ -119,9 +122,11 @@ export default function GraphAlgorithmPage() {
   }, [isAnimating, selectedAlgorithm, startNode, nodes, links, addLog, getAnimationContext, svgRef, dimensions])
   
   const reset = useCallback(() => {
+    hasRunRef.current = false
     setLogs([])
+    if (svgRef.current) renderGraph(svgRef.current, nodes, links, dimensions)
     showToast({ type: 'info', message: t('errors.graphResetDone') })
-  }, [])
+  }, [nodes, links, dimensions, svgRef])
 
   const handleExportCSV = useCallback(() => {
     const algo = graphAlgorithms.find(a => a.key === selectedAlgorithm)
@@ -207,10 +212,10 @@ export default function GraphAlgorithmPage() {
             {logs.length > 0 && (
               <>
                 <OperationButton variant="outline" onClick={handleExportCSV} disabled={isAnimating}>
-                  📊 CSV
+                  ⇅ CSV
                 </OperationButton>
                 <OperationButton variant="outline" onClick={handleExportJSON} disabled={isAnimating}>
-                  📋 JSON
+                  ⇅ JSON
                 </OperationButton>
               </>
             )}

@@ -70,7 +70,7 @@ export default function SortPage() {
   const algorithms = useMemo(() => Array.from(getAllSortAlgorithms()), [])
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-y-auto">
       <PageHeader title={t('sort.title')} subtitle={t('sort.subtitle')} icon="⇅">
         <ExportImport dataType="sort" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)

@@ -98,7 +98,7 @@ export default function HashPage() {
   }, [isAnimating, keyValue, data, remove, setIsAnimating, getAnimationContext, svgRef, hashFn])
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-y-auto">
       <PageHeader title={t('hash.title')} subtitle={t('hash.subtitle')} icon="#">
         <ExportImport dataType="hash" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           if (Array.isArray(imported) && imported.length > 0 && imported.length <= 200 && imported.every(item =>
