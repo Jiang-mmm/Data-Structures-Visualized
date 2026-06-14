@@ -25,7 +25,7 @@ export default function Home() {
     { path: '/hash', name: t('hash.title'), en: 'HashTable', icon: '#', desc: t('hash.subtitle'), ops: [t('hash.insert'), t('hash.remove'), t('hash.search')], colorIdx: 3 },
     { path: '/heap', name: t('heap.title'), en: 'Heap', icon: '▲', desc: t('heap.subtitle'), ops: [t('heap.insert'), t('heap.extractMax'), t('heap.peek')], colorIdx: 1 },
     { path: '/trie', name: t('trie.title'), en: 'Trie', icon: '⊾', desc: t('trie.subtitle'), ops: [t('trie.insert'), t('trie.search'), t('trie.prefixSearch')], colorIdx: 5 },
-    { path: '/sort', name: t('sort.title'), en: 'Sorting', icon: '⇅', desc: t('sort.subtitle'), ops: [t('sortLegend.unsorted'), t('sortLegend.comparing'), t('sortLegend.swapping')], colorIdx: 6 },
+    { path: '/sort', name: t('sort.title'), en: 'Sorting', icon: '⇅', desc: t('sort.subtitle'), ops: [t('sort.bubble'), t('sort.quick'), t('sort.merge')], colorIdx: 6 },
     { path: '/compare', name: t('compare.title'), en: 'Compare', icon: '⊞', desc: t('compare.subtitle'), ops: [t('compare.runAll'), t('compare.stop'), t('compare.exportCSV')], colorIdx: 4 },
     { path: '/graph-algorithm', name: t('graphAlgorithm.title'), en: 'GraphAlgo', icon: '⊕', desc: t('graphAlgorithm.subtitle'), ops: [t('graph.bfs'), t('graph.dfs'), t('graph.dijkstra')], colorIdx: 0 },
   ], [t])

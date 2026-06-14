@@ -19,6 +19,7 @@ export interface Locale {
     subtitle: string
     search: string
     insert: string
+    delete: string
     indexPlaceholder: string
     valuePlaceholder: string
   }
@@ -140,6 +141,7 @@ export interface Locale {
   sidebar: {
     title: string
     themeTooltip: string
+    langTooltip: string
     openMenu: string
     collapseMenu: string
     home: string
@@ -516,6 +518,7 @@ export const zh: Locale = {
     subtitle: '线性数据结构 · 连续内存 · 随机访问',
     search: '查找',
     insert: '按位插',
+    delete: '删除',
     indexPlaceholder: '索引',
     valuePlaceholder: '值',
   },
@@ -637,6 +640,7 @@ export const zh: Locale = {
   sidebar: {
     title: '数据结构学习助手',
     themeTooltip: '主题',
+    langTooltip: '语言',
     openMenu: '打开导航菜单',
     collapseMenu: '收起导航菜单',
     home: '首页',
@@ -660,7 +664,7 @@ export const zh: Locale = {
   home: {
     badge: 'Data Structures Visualized',
     title: '数据结构学习助手',
-    heroDescription: '通过交互式可视化动画，直观理解9种核心数据结构的原理与操作。Neo-Brutalism 风格 · 工程图纸质感 · 实时动画反馈。',
+    heroDescription: '通过交互式可视化动画，直观理解12种核心数据结构的原理与操作。Neo-Brutalism 风格 · 工程图纸质感 · 实时动画反馈。',
     selectStructure: '选择数据结构开始探索',
     enterModule: '进入模块',
     modules: '个模块',
@@ -1013,6 +1017,7 @@ export const en: Locale = {
     subtitle: 'Linear Data Structure · Contiguous Memory · Random Access',
     search: 'Search',
     insert: 'Insert',
+    delete: 'Delete',
     indexPlaceholder: 'Index',
     valuePlaceholder: 'Value',
   },
@@ -1134,6 +1139,7 @@ export const en: Locale = {
   sidebar: {
     title: 'Data Structure Learner',
     themeTooltip: 'Theme',
+    langTooltip: 'Language',
     openMenu: 'Open navigation menu',
     collapseMenu: 'Collapse navigation menu',
     home: 'Home',
@@ -1157,7 +1163,7 @@ export const en: Locale = {
   home: {
     badge: 'Data Structures Visualized',
     title: 'Data Structure Learner',
-    heroDescription: 'Learn 9 core data structures through interactive visualization animations. Neo-Brutalist style · Engineering blueprint feel · Real-time animation feedback.',
+    heroDescription: 'Learn 12 core data structures through interactive visualization animations. Neo-Brutalist style · Engineering blueprint feel · Real-time animation feedback.',
     selectStructure: 'Select a data structure to explore',
     enterModule: 'Enter Module',
     modules: 'MODULES',
