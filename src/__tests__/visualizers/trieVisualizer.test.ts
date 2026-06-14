@@ -13,6 +13,10 @@ function chainable() {
       if (p === 'style') return () => c
       if (p === 'on') return () => c
       if (p === 'interrupt') return () => c
+      if (p === 'select') return () => c
+      if (p === 'selectAll') return () => c
+      if (p === 'append') return () => c
+      if (p === 'remove') return () => c
       if (p === Symbol.iterator) return undefined
       if (!(p in t)) t[p as string] = vi.fn(() => chainable())
       return t[p as string]
@@ -29,7 +33,7 @@ vi.mock('../../utils/themeColors', () => ({
     nodeLeaf: '#8b5cf6', nodeLeafStroke: '#7c3aed', nodeVisited: '#8b5cf6',
     nodeVisitedStroke: '#7c3aed', nodeError: '#ef4444', nodeErrorStroke: '#dc2626',
     textWhite: '#ffffff', textLight: '#6b7280', textSecondary: '#6b7280',
-    containerStroke: '#d1d5db', edgeDefault: '#9ca3af', edgeActive: '#f59e0b',
+    textMuted: '#9ca3af', containerStroke: '#d1d5db', edgeDefault: '#9ca3af', edgeActive: '#f59e0b',
   }),
   detectDarkMode: () => false,
   ensureGradientDefs: vi.fn(),
@@ -60,6 +64,11 @@ const trieData = {
   ],
 }
 
+const singleNodeTrie = {
+  nodes: [{ id: '1', prefix: 'a', char: 'a', isEndOfWord: true, parent: '', depth: 1, childrenKeys: [] }],
+  edges: [],
+}
+
 describe('trieVisualizer', () => {
   let svg: SVGSVGElement
 
@@ -76,6 +85,41 @@ describe('trieVisualizer', () => {
     it('应该能够渲染有数据的字典树', () => {
       expect(() => renderTrie(svg, trieData, {})).not.toThrow()
     })
+
+    it('应该渲染单节点字典树', () => {
+      expect(() => renderTrie(svg, singleNodeTrie, {})).not.toThrow()
+    })
+
+    it('应该处理 null 数据', () => {
+      expect(() => renderTrie(svg, null as any, {})).not.toThrow()
+    })
+
+    it('应该处理 undefined 数据', () => {
+      expect(() => renderTrie(svg, undefined as any, {})).not.toThrow()
+    })
+
+    it('应该处理 isDark 选项', () => {
+      expect(() => renderTrie(svg, trieData, { isDark: true })).not.toThrow()
+    })
+
+    it('应该处理空 options', () => {
+      expect(() => renderTrie(svg, trieData)).not.toThrow()
+    })
+
+    it('应该处理只有节点没有边的数据', () => {
+      expect(() => renderTrie(svg, { nodes: trieData.nodes, edges: [] }, {})).not.toThrow()
+    })
+
+    it('应该处理大数据集', () => {
+      const bigNodes = Array.from({ length: 50 }, (_, i) => ({
+        id: String(i), prefix: `p${i}`, char: String.fromCharCode(97 + (i % 26)),
+        isEndOfWord: i % 5 === 0, parent: i > 0 ? `p${i - 1}` : '', depth: i + 1, childrenKeys: [],
+      }))
+      const bigEdges = Array.from({ length: 49 }, (_, i) => ({
+        from: String(i), to: String(i + 1), char: String.fromCharCode(97 + ((i + 1) % 26)),
+      }))
+      expect(() => renderTrie(svg, { nodes: bigNodes, edges: bigEdges }, {})).not.toThrow()
+    })
   })
 
   describe('animateInsertTrie', () => {
@@ -85,6 +129,10 @@ describe('trieVisualizer', () => {
 
     it('应该能够执行插入动画（无 word 参数，回退模式）', async () => {
       await expect(animateInsertTrie(svg)).resolves.toBeUndefined()
+    })
+
+    it('应该处理空字符串', async () => {
+      await expect(animateInsertTrie(svg, '')).resolves.toBeUndefined()
     })
   })
 
@@ -100,6 +148,10 @@ describe('trieVisualizer', () => {
     it('应该能够执行搜索动画（无 word 参数，回退模式）', async () => {
       await expect(animateSearchTrie(svg, true)).resolves.toBeUndefined()
     })
+
+    it('应该处理空字符串搜索', async () => {
+      await expect(animateSearchTrie(svg, false, '')).resolves.toBeUndefined()
+    })
   })
 
   describe('animateDeleteTrie', () => {
@@ -109,6 +161,10 @@ describe('trieVisualizer', () => {
 
     it('应该能够执行删除动画（无 word 参数，回退模式）', async () => {
       await expect(animateDeleteTrie(svg)).resolves.toBeUndefined()
+    })
+
+    it('应该处理空字符串删除', async () => {
+      await expect(animateDeleteTrie(svg, '')).resolves.toBeUndefined()
     })
   })
 })

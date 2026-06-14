@@ -13,6 +13,10 @@ function chainable() {
       if (p === 'style') return () => c
       if (p === 'on') return () => c
       if (p === 'interrupt') return () => c
+      if (p === 'select') return () => c
+      if (p === 'selectAll') return () => c
+      if (p === 'append') return () => c
+      if (p === 'remove') return () => c
       if (p === Symbol.iterator) return undefined
       if (!(p in t)) t[p as string] = vi.fn(() => chainable())
       return t[p as string]
@@ -29,7 +33,7 @@ vi.mock('../../utils/themeColors', () => ({
     nodeLeaf: '#8b5cf6', nodeLeafStroke: '#7c3aed', nodeVisited: '#8b5cf6',
     nodeVisitedStroke: '#7c3aed', nodeError: '#ef4444', nodeErrorStroke: '#dc2626',
     textWhite: '#ffffff', textLight: '#6b7280', textSecondary: '#6b7280',
-    containerStroke: '#d1d5db', edgeDefault: '#9ca3af', edgeActive: '#f59e0b',
+    textMuted: '#9ca3af', containerStroke: '#d1d5db', edgeDefault: '#9ca3af', edgeActive: '#f59e0b',
   }),
   detectDarkMode: () => false,
   ensureGradientDefs: vi.fn(),
@@ -64,28 +68,93 @@ describe('heapVisualizer', () => {
     it('应该能够渲染单元素堆', () => {
       expect(() => renderHeap(svg, [42], { width: 800, height: 400 })).not.toThrow()
     })
+
+    it('应该处理 null 数据', () => {
+      expect(() => renderHeap(svg, null as any, { width: 800, height: 400 })).not.toThrow()
+    })
+
+    it('应该处理 undefined 数据', () => {
+      expect(() => renderHeap(svg, undefined as any, { width: 800, height: 400 })).not.toThrow()
+    })
+
+    it('应该处理大数据集', () => {
+      const data = Array.from({ length: 20 }, (_, i) => 100 - i)
+      expect(() => renderHeap(svg, data, { width: 800, height: 400 })).not.toThrow()
+    })
+
+    it('应该处理 isDark 选项', () => {
+      expect(() => renderHeap(svg, [90, 80, 70], { width: 800, height: 400, isDark: true })).not.toThrow()
+    })
+
+    it('应该使用默认选项', () => {
+      expect(() => renderHeap(svg, [90, 80, 70])).not.toThrow()
+    })
+
+    it('应该处理完全二叉树结构', () => {
+      const fullTree = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 5, 3, 2, 1, 0]
+      expect(() => renderHeap(svg, fullTree, { width: 800, height: 400 })).not.toThrow()
+    })
   })
 
   describe('animateInsertHeap', () => {
     it('应该能够执行插入动画', async () => {
-      await expect(animateInsertHeap(svg, 85, [90, 80, 70, 85])).resolves.toBeUndefined()
+      await expect(animateInsertHeap(svg, 85, [90, 80, 70, 85], anim)).resolves.toBeUndefined()
     })
 
     it('应该跳过大型堆的动画', async () => {
       const largeData = Array.from({ length: 40 }, (_, i) => 100 - i)
-      await expect(animateInsertHeap(svg, 101, largeData)).resolves.toBeUndefined()
+      await expect(animateInsertHeap(svg, 101, largeData, anim)).resolves.toBeUndefined()
+    })
+
+    it('应该在中止时提前退出', async () => {
+      const abortedAnim = { ...anim, isAborted: () => true }
+      await expect(animateInsertHeap(svg, 85, [90, 80, 70], abortedAnim)).resolves.toBeUndefined()
+    })
+
+    it('应该在空堆上执行插入', async () => {
+      await expect(animateInsertHeap(svg, 10, [], anim)).resolves.toBeUndefined()
+    })
+
+    it('应该使用默认选项', async () => {
+      await expect(animateInsertHeap(svg, 85, [90, 80, 70])).resolves.toBeUndefined()
     })
   })
 
   describe('animateExtractHeap', () => {
     it('应该能够执行提取动画', async () => {
-      await expect(animateExtractHeap(svg)).resolves.toBeUndefined()
+      await expect(animateExtractHeap(svg, anim)).resolves.toBeUndefined()
+    })
+
+    it('应该在中止时提前退出', async () => {
+      const abortedAnim = { ...anim, isAborted: () => true }
+      await expect(animateExtractHeap(svg, abortedAnim)).resolves.toBeUndefined()
+    })
+
+    it('应该处理无根节点的情况', async () => {
+      await expect(animateExtractHeap(svg, anim)).resolves.toBeUndefined()
     })
   })
 
   describe('animatePeekHeap', () => {
     it('应该能够执行查看动画', async () => {
-      await expect(animatePeekHeap(svg)).resolves.toBeUndefined()
+      await expect(animatePeekHeap(svg, anim)).resolves.toBeUndefined()
+    })
+
+    it('应该在中止时提前退出', async () => {
+      const abortedAnim = { ...anim, isAborted: () => true }
+      await expect(animatePeekHeap(svg, abortedAnim)).resolves.toBeUndefined()
+    })
+
+    it('应该处理无根节点的情况', async () => {
+      await expect(animatePeekHeap(svg, anim)).resolves.toBeUndefined()
     })
   })
 })
+
+const anim = {
+  promise: Promise.resolve(),
+  abort: () => {},
+  isAborted: () => false,
+  resolve: () => {},
+  reject: () => {},
+}
