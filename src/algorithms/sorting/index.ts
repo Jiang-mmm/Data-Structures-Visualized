@@ -1,4 +1,5 @@
 import type { Animation } from '../../utils/animationEngine'
+export type { Animation } from '../../utils/animationEngine'
 
 export interface SortCallbacks {
   onStep?: () => void

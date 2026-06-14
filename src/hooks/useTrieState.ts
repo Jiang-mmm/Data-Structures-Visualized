@@ -78,18 +78,32 @@ function startsWith(root: TrieNode, prefix: string): { found: boolean; words: st
   return { found: true, words, path }
 }
 
-function flattenTrie(root: TrieNode): { nodes: { id: string; prefix: string; isEndOfWord: boolean; depth: number; childrenKeys: string[] }[]; edges: { from: string; to: string; char: string }[] } {
-  const nodes: { id: string; prefix: string; isEndOfWord: boolean; depth: number; childrenKeys: string[] }[] = []
+interface TrieFlattenedNode {
+  id: string
+  prefix: string
+  parent: string
+  char: string
+  isEndOfWord: boolean
+  depth: number
+  childrenKeys: string[]
+}
+
+export type TrieFlattened = { nodes: TrieFlattenedNode[]; edges: { from: string; to: string; char: string }[] }
+
+function flattenTrie(root: TrieNode): TrieFlattened {
+  const nodes: TrieFlattenedNode[] = []
   const edges: { from: string; to: string; char: string }[] = []
-  const queue: { node: TrieNode; id: string; depth: number; prefix: string }[] = [{ node: root, id: 'root', depth: 0, prefix: '' }]
+  const queue: { node: TrieNode; id: string; depth: number; prefix: string; parent: string; char: string }[] = [{ node: root, id: 'root', depth: 0, prefix: '', parent: '', char: '' }]
   let nodeIdCounter = 1
 
   while (queue.length > 0) {
-    const { node, id, depth, prefix } = queue.shift()!
+    const { node, id, depth, prefix, parent, char } = queue.shift()!
 
     nodes.push({
       id,
       prefix,
+      parent,
+      char,
       isEndOfWord: node.isEndOfWord,
       depth,
       childrenKeys: Object.keys(node.children),
@@ -98,7 +112,7 @@ function flattenTrie(root: TrieNode): { nodes: { id: string; prefix: string; isE
     for (const [ch, child] of Object.entries(node.children)) {
       const childId = `${nodeIdCounter++}`
       edges.push({ from: id, to: childId, char: ch })
-      queue.push({ node: child, id: childId, depth: depth + 1, prefix: prefix + ch })
+      queue.push({ node: child, id: childId, depth: depth + 1, prefix: prefix + ch, parent: prefix, char: ch })
     }
   }
 

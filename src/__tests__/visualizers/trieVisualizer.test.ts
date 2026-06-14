@@ -46,11 +46,17 @@ const { renderTrie, animateInsertTrie, animateSearchTrie, animateDeleteTrie } = 
 
 const trieData = {
   nodes: [
-    { char: 'a', isEndOfWord: false, parent: '' },
-    { char: 'ap', isEndOfWord: false, parent: 'a' },
-    { char: 'app', isEndOfWord: false, parent: 'ap' },
-    { char: 'appl', isEndOfWord: false, parent: 'app' },
-    { char: 'apple', isEndOfWord: true, parent: 'appl' },
+    { id: '1', prefix: 'a', char: 'a', isEndOfWord: false, parent: '', depth: 1, childrenKeys: ['p'] },
+    { id: '2', prefix: 'ap', char: 'p', isEndOfWord: false, parent: 'a', depth: 2, childrenKeys: ['p'] },
+    { id: '3', prefix: 'app', char: 'p', isEndOfWord: false, parent: 'ap', depth: 3, childrenKeys: ['l'] },
+    { id: '4', prefix: 'appl', char: 'l', isEndOfWord: false, parent: 'app', depth: 4, childrenKeys: ['e'] },
+    { id: '5', prefix: 'apple', char: 'e', isEndOfWord: true, parent: 'appl', depth: 5, childrenKeys: [] },
+  ],
+  edges: [
+    { from: '1', to: '2', char: 'p' },
+    { from: '2', to: '3', char: 'p' },
+    { from: '3', to: '4', char: 'l' },
+    { from: '4', to: '5', char: 'e' },
   ],
 }
 
@@ -64,7 +70,7 @@ describe('trieVisualizer', () => {
 
   describe('renderTrie', () => {
     it('应该能够渲染空字典树', () => {
-      expect(() => renderTrie(svg, { nodes: [] }, {})).not.toThrow()
+      expect(() => renderTrie(svg, { nodes: [], edges: [] }, {})).not.toThrow()
     })
 
     it('应该能够渲染有数据的字典树', () => {

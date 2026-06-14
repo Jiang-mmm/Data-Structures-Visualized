@@ -121,7 +121,7 @@ export default function ArrayPage() {
     <div className="flex flex-col h-screen">
       <PageHeader title={t('array.title')} subtitle={t('array.subtitle')} icon="▦">
         <ExportImport dataType="array" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
-          const result = validateImportData(imported, 'array')
+          const result = validateImportData(imported)
           if (result.valid) {
             loadData(result.data)
           } else {
@@ -178,6 +178,7 @@ export default function ArrayPage() {
       )}
       <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
         <button
+          aria-expanded={showLearning}
           onClick={() => setShowLearning(!showLearning)}
           className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
             shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]

@@ -83,32 +83,33 @@ export function useSortState() {
 
     let lastStep = 0
 
-    const result = await algorithm.execute(arr, animateFns, svgRef, dimensions, animation as unknown as Animation, {
-      onStep: async () => {
-        if (lastStep % YIELD_INTERVAL === 0) await yieldToMain()
-        lastStep++
-      },
-      onCompare: (count: number, pct: number) => {
-        setStats(s => ({ ...s, comparisons: count }))
-        setProgress(pct)
-      },
-      onSwap: (swaps: number, steps: number) => {
-        setStats(s => ({ ...s, swaps, steps }))
-      },
-    })
+    try {
+      const result = await algorithm.execute(arr, animateFns, svgRef, dimensions, animation as unknown as Animation, {
+        onStep: async () => {
+          if (lastStep % YIELD_INTERVAL === 0) await yieldToMain()
+          lastStep++
+        },
+        onCompare: (count: number, pct: number) => {
+          setStats(s => ({ ...s, comparisons: count }))
+          setProgress(pct)
+        },
+        onSwap: (swaps: number, steps: number) => {
+          setStats(s => ({ ...s, swaps, steps }))
+        },
+      })
 
-    if (result?.aborted) {
-      addLog('info', tStatic('hooks.sortLogStopped'))
+      if (result?.aborted) {
+        addLog('info', tStatic('hooks.sortLogStopped'))
+        return
+      }
+
+      push([...arr])
+      addLog('info', tStatic('hooks.sortLogComplete').replace('{name}', algorithm.name).replace('{comparisons}', String(result.comparisons)).replace('{swaps}', String(result.swaps)))
+      showToast({ type: 'success', message: tStatic('hooks.sortComplete').replace('{name}', algorithm.name).replace('{comparisons}', String(result.comparisons)).replace('{swaps}', String(result.swaps)) })
+    } finally {
       setIsAnimating(false)
       animRef.current = null
-      return
     }
-
-    push([...arr])
-    addLog('info', tStatic('hooks.sortLogComplete').replace('{name}', algorithm.name).replace('{comparisons}', String(result.comparisons)).replace('{swaps}', String(result.swaps)))
-    showToast({ type: 'success', message: tStatic('hooks.sortComplete').replace('{name}', algorithm.name).replace('{comparisons}', String(result.comparisons)).replace('{swaps}', String(result.swaps)) })
-    setIsAnimating(false)
-    animRef.current = null
   }, [data, push, addLog, setIsAnimating])
 
   const bubbleSort = useCallback((a: SortAnimationFns, b: React.RefObject<SVGSVGElement | null>, c: { width: number; height: number }, d?: { isAborted: () => boolean; abort: () => void }) => runAlgorithm('bubble', a, b, c, d), [runAlgorithm])

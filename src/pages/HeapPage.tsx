@@ -43,9 +43,8 @@ export default function HeapPage() {
     setIsAnimating(true)
     const anim = getAnimationContext()
     try {
-      insert(value)
-      await new Promise(r => setTimeout(r, 50))
       if (svgRef.current) await animateInsertHeap(svgRef.current, value, data, anim)
+      insert(value)
     } catch (e) {
       handleAnimationError(e, t('heap.insert'))
     } finally {
@@ -86,8 +85,12 @@ export default function HeapPage() {
     <div className="flex flex-col h-screen">
       <PageHeader title={t('heap.title')} subtitle={t('heap.subtitle')} icon="▲">
         <ExportImport dataType="heap" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
-          const result = validateImportData(imported, 'heap')
-          if (result.valid && result.data) loadData(result.data)
+          const result = validateImportData(imported)
+          if (result.valid && result.data) {
+            loadData(result.data)
+          } else {
+            showToast({ type: 'error', message: `${t('errors.importFailed')}：${result.error}` })
+          }
         }} />
         <ShareButton data={data} dataType="heap" disabled={isAnimating} />
         <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
@@ -135,6 +138,7 @@ export default function HeapPage() {
       )}
       <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
         <button
+          aria-expanded={showLearning}
           onClick={() => setShowLearning(!showLearning)}
           className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
             shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]

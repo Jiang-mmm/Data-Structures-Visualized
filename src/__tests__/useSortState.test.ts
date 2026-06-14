@@ -99,7 +99,7 @@ describe('useSortState', () => {
       }
       const mockSvgRef = { current: null }
       const mockDimensions = { width: 800, height: 400 }
-      const mockAnim = { isAborted: vi.fn().mockReturnValue(false) }
+      const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
       await act(async () => {
         await result.current.runAlgorithm('bubble', mockAnimateFns, mockSvgRef, mockDimensions, mockAnim)
@@ -118,7 +118,7 @@ describe('useSortState', () => {
       }
       const mockSvgRef = { current: null }
       const mockDimensions = { width: 800, height: 400 }
-      const mockAnim = { isAborted: vi.fn().mockReturnValue(false) }
+      const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
       await act(async () => {
         await result.current.runAlgorithm('bubble', mockAnimateFns, mockSvgRef, mockDimensions, mockAnim)
@@ -139,7 +139,7 @@ describe('useSortState', () => {
       }
       const mockSvgRef = { current: null }
       const mockDimensions = { width: 800, height: 400 }
-      const mockAnim = { isAborted: vi.fn().mockReturnValue(false) }
+      const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
       await act(async () => {
         await result.current.runAlgorithm('bubble', mockAnimateFns, mockSvgRef, mockDimensions, mockAnim)
@@ -170,7 +170,7 @@ describe('useSortState', () => {
     it('应该对未知算法显示错误', async () => {
       const { result } = renderHook(() => useSortState())
       await act(async () => {
-        await result.current.runAlgorithm('unknown', {}, { current: null }, { width: 800, height: 400 }, { isAborted: () => false })
+        await result.current.runAlgorithm('unknown', { animateCompare: vi.fn(), animateSwap: vi.fn(), animateSorted: vi.fn(), renderSortBars: vi.fn() }, { current: null }, { width: 800, height: 400 }, { isAborted: () => false, abort: () => {} })
       })
       expect(showToast).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'error', message: '未知算法: unknown' })
@@ -206,7 +206,7 @@ describe('useSortState', () => {
       }
       const mockSvgRef = { current: null }
       const mockDimensions = { width: 800, height: 400 }
-      const mockAnim = { isAborted: vi.fn().mockReturnValue(false) }
+      const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
       await act(async () => {
         await result.current.runAlgorithm('selection', mockAnimateFns, mockSvgRef, mockDimensions, mockAnim)
@@ -227,7 +227,7 @@ describe('useSortState', () => {
       }
       const mockSvgRef = { current: null }
       const mockDimensions = { width: 800, height: 400 }
-      const mockAnim = { isAborted: vi.fn().mockReturnValue(false) }
+      const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
       await act(async () => {
         await result.current.runAlgorithm('insertion', mockAnimateFns, mockSvgRef, mockDimensions, mockAnim)
@@ -248,7 +248,7 @@ describe('useSortState', () => {
       }
       const mockSvgRef = { current: null }
       const mockDimensions = { width: 800, height: 400 }
-      const mockAnim = { isAborted: vi.fn().mockReturnValue(false) }
+      const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
       await act(async () => {
         await result.current.runAlgorithm('quick', mockAnimateFns, mockSvgRef, mockDimensions, mockAnim)
@@ -269,7 +269,7 @@ describe('useSortState', () => {
       }
       const mockSvgRef = { current: null }
       const mockDimensions = { width: 800, height: 400 }
-      const mockAnim = { isAborted: vi.fn().mockReturnValue(false) }
+      const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
       await act(async () => {
         await result.current.runAlgorithm('merge', mockAnimateFns, mockSvgRef, mockDimensions, mockAnim)
@@ -290,7 +290,7 @@ describe('useSortState', () => {
       }
       const mockSvgRef = { current: null }
       const mockDimensions = { width: 800, height: 400 }
-      const mockAnim = { isAborted: vi.fn().mockReturnValue(false) }
+      const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
       await act(async () => {
         await result.current.runAlgorithm('heap', mockAnimateFns, mockSvgRef, mockDimensions, mockAnim)
@@ -311,7 +311,7 @@ describe('useSortState', () => {
       }
       const mockSvgRef = { current: null }
       const mockDimensions = { width: 800, height: 400 }
-      const mockAnim = { isAborted: vi.fn().mockReturnValue(false) }
+      const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
       await act(async () => {
         await result.current.runAlgorithm('radix', mockAnimateFns, mockSvgRef, mockDimensions, mockAnim)
@@ -332,7 +332,7 @@ describe('useSortState', () => {
       }
       const mockSvgRef = { current: null }
       const mockDimensions = { width: 800, height: 400 }
-      const mockAnim = { isAborted: vi.fn().mockReturnValue(false) }
+      const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
       await act(async () => {
         await result.current.runAlgorithm('bucket', mockAnimateFns, mockSvgRef, mockDimensions, mockAnim)

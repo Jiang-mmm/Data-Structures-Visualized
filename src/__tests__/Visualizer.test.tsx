@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import Visualizer from '../components/Visualizer'
 import { useTheme } from '../hooks/useTheme'
-import { startFPSMonitoring, stopFPSMonitoring } from '../utils/animationEngine'
 
 vi.mock('../hooks/useTheme', () => ({
   useTheme: vi.fn(() => ({ resolved: 'light' })),
@@ -447,7 +446,7 @@ describe('Visualizer', () => {
   // Lifecycle
   // ============================================================
   describe('Lifecycle', () => {
-    it('should start FPS monitoring on mount', () => {
+    it('should render without errors', () => {
       const { unmount } = render(
         <Visualizer
           data={mockData}
@@ -457,25 +456,7 @@ describe('Visualizer', () => {
           containerRef={containerRef}
         />
       )
-
-      expect(startFPSMonitoring).toHaveBeenCalledTimes(1)
       unmount()
-    })
-
-    it('should stop FPS monitoring on unmount', () => {
-      const { unmount } = render(
-        <Visualizer
-          data={mockData}
-          renderFn={mockRenderFn}
-          svgRef={svgRef}
-          dimensions={mockDimensions}
-          containerRef={containerRef}
-        />
-      )
-
-      unmount()
-
-      expect(stopFPSMonitoring).toHaveBeenCalledTimes(1)
     })
   })
 

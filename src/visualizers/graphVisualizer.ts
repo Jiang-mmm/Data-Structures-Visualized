@@ -293,8 +293,9 @@ function buildWeightedAdjacency(nodes: GraphNode[], links: GraphLink[]): Map<str
   links.forEach(l => {
     const s = typeof l.source === 'object' ? l.source.id : l.source
     const t = typeof l.target === 'object' ? l.target.id : l.target
-    adj.get(s)?.push([t, l.weight])
-    adj.get(t)?.push([s, l.weight])
+    const w = l.weight ?? 1
+    adj.get(s)?.push([t, w])
+    adj.get(t)?.push([s, w])
   })
   return adj
 }

@@ -54,15 +54,15 @@ describe('heapVisualizer', () => {
 
   describe('renderHeap', () => {
     it('应该能够渲染空堆', () => {
-      expect(() => renderHeap(svg, [], {})).not.toThrow()
+      expect(() => renderHeap(svg, [], { width: 800, height: 400 })).not.toThrow()
     })
 
     it('应该能够渲染有数据的堆', () => {
-      expect(() => renderHeap(svg, [90, 80, 70, 50, 60, 55, 65], {})).not.toThrow()
+      expect(() => renderHeap(svg, [90, 80, 70, 50, 60, 55, 65], { width: 800, height: 400 })).not.toThrow()
     })
 
     it('应该能够渲染单元素堆', () => {
-      expect(() => renderHeap(svg, [42], {})).not.toThrow()
+      expect(() => renderHeap(svg, [42], { width: 800, height: 400 })).not.toThrow()
     })
   })
 

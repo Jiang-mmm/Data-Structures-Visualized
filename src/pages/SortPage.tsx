@@ -59,7 +59,7 @@ export default function SortPage() {
     try {
       await runAlgorithm(algorithmKey, animateFns, svgRef, dimensions, anim)
     } catch (e) {
-      if (e.message !== 'Animation aborted') {
+      if (e instanceof Error && e.message !== 'Animation aborted') {
         showToast({ type: 'error', message: t('errors.animationError').replace('{action}', '') })
       }
     } finally {
@@ -73,7 +73,7 @@ export default function SortPage() {
     <div className="flex flex-col h-screen">
       <PageHeader title={t('sort.title')} subtitle={t('sort.subtitle')} icon="⇅">
         <ExportImport dataType="sort" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
-          const result = validateImportData(imported, 'sort')
+          const result = validateImportData(imported)
           if (result.valid) {
             loadData(result.data)
           } else {
@@ -178,6 +178,7 @@ export default function SortPage() {
 
       <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
         <button
+          aria-expanded={showLearning}
           onClick={() => setShowLearning(!showLearning)}
           className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
             shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]

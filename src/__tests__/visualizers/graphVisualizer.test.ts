@@ -127,4 +127,83 @@ describe('graphVisualizer', () => {
       expect(() => clearGraphSimulation(svg)).not.toThrow()
     })
   })
+
+  describe('边界条件', () => {
+    it('renderGraph 应处理带权重的边', () => {
+      const weightedLinks = [
+        { source: 'A', target: 'B', weight: 5 },
+        { source: 'B', target: 'C', weight: 3 },
+      ]
+      expect(() => renderGraph(svg, nodes, weightedLinks, { width: 800, height: 500 })).not.toThrow()
+    })
+
+    it('renderGraph 应处理无权重的边', () => {
+      const noWeightLinks = [
+        { source: 'A', target: 'B' },
+        { source: 'B', target: 'C' },
+      ]
+      expect(() => renderGraph(svg, nodes, noWeightLinks, { width: 800, height: 500 })).not.toThrow()
+    })
+
+    it('animateBFS 应在中止时提前退出', async () => {
+      const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => true, resolve: () => {}, reject: () => {} }
+      const result = await animateBFS(svg, 'A', nodes, links, { width: 800, height: 500 }, anim)
+      expect(Array.isArray(result)).toBe(true)
+    })
+
+    it('animateDFS 应在中止时提前退出', async () => {
+      const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => true, resolve: () => {}, reject: () => {} }
+      const result = await animateDFS(svg, 'A', nodes, links, { width: 800, height: 500 }, anim)
+      expect(Array.isArray(result)).toBe(true)
+    })
+
+    it('animateDijkstra 应在中止时提前退出', async () => {
+      const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => true, resolve: () => {}, reject: () => {} }
+      const result = await animateDijkstra(svg, 'A', 'C', nodes, links, { width: 800, height: 500 }, anim)
+      expect(Array.isArray(result)).toBe(true)
+    })
+
+    it('animateDijkstra 应处理不可达节点', async () => {
+      const disconnectedNodes = [
+        { id: 'A', group: 0 }, { id: 'B', group: 1 },
+        { id: 'X', group: 2 }, { id: 'Y', group: 3 },
+      ]
+      const disconnectedLinks = [
+        { source: 'A', target: 'B', weight: 1 },
+        { source: 'X', target: 'Y', weight: 1 },
+      ]
+      const result = await animateDijkstra(svg, 'A', 'Y', disconnectedNodes, disconnectedLinks, { width: 800, height: 500 })
+      expect(Array.isArray(result)).toBe(true)
+    })
+
+    it('animateBFS 应处理单节点图', async () => {
+      const singleNodes = [{ id: 'A', group: 0 }]
+      const result = await animateBFS(svg, 'A', singleNodes, [], { width: 800, height: 500 })
+      expect(result).toEqual(['A'])
+    })
+
+    it('animateDFS 应处理单节点图', async () => {
+      const singleNodes = [{ id: 'A', group: 0 }]
+      const result = await animateDFS(svg, 'A', singleNodes, [], { width: 800, height: 500 })
+      expect(result).toEqual(['A'])
+    })
+
+    it('animateBFS 应跳过大型图', async () => {
+      const largeNodes = Array.from({ length: 60 }, (_, i) => ({ id: `N${i}`, group: 0 }))
+      const result = await animateBFS(svg, 'N0', largeNodes, [], { width: 800, height: 500 })
+      expect(result).toEqual([])
+    })
+
+    it('animateDFS 应跳过大型图', async () => {
+      const largeNodes = Array.from({ length: 60 }, (_, i) => ({ id: `N${i}`, group: 0 }))
+      const result = await animateDFS(svg, 'N0', largeNodes, [], { width: 800, height: 500 })
+      expect(result).toEqual([])
+    })
+
+    it('animateDijkstra 应跳过大型图', async () => {
+      const largeNodes = Array.from({ length: 60 }, (_, i) => ({ id: `N${i}`, group: 0 }))
+      const result = await animateDijkstra(svg, 'N0', 'N59', largeNodes, [], { width: 800, height: 500 })
+      expect(result).toEqual([])
+    })
+  })
 })

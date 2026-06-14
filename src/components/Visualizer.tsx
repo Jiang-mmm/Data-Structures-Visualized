@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
-import { startFPSMonitoring, stopFPSMonitoring, measureRender } from '../utils/animationEngine'
+import { measureRender } from '../utils/animationEngine'
 
 interface VisualizerProps {
   data: unknown
@@ -24,11 +24,6 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
   const [zoom, setZoom] = useState(1)
   const [showGrid, setShowGrid] = useState(true)
   const pinchRef = useRef({ initialDistance: 0, initialZoom: 1 })
-
-  useEffect(() => {
-    startFPSMonitoring()
-    return () => stopFPSMonitoring()
-  }, [])
 
   const handleZoomIn = useCallback(() => {
     setZoom(z => Math.min(ZOOM_MAX, +(z + ZOOM_STEP).toFixed(1)))
@@ -91,7 +86,8 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
   useEffect(() => {
     if (svgRef?.current && renderFn && data) {
       try {
-        const dataSize = Array.isArray(data) ? data.length : data?.nodes?.length || data?.length || 1
+        const d = data as Record<string, unknown>
+        const dataSize = Array.isArray(data) ? data.length : (d?.nodes as unknown[])?.length || (d?.length as number) || 1
         const label = `${renderFn.name || 'Visualizer'}:render (${dataSize} items, ${dimensions.width}x${dimensions.height})`
         measureRender(label, () => {
           renderFn(svgRef.current!, data, { ...dimensions, isDark: isDark as boolean | undefined })

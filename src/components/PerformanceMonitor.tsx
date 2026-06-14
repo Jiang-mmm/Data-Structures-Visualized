@@ -37,6 +37,7 @@ export default memo(function PerformanceMonitor() {
     if (!visible) {
       if (frameRef.current) cancelAnimationFrame(frameRef.current)
       frameRef.current = null
+      stopFPSMonitoring()
       return
     }
 
@@ -52,6 +53,7 @@ export default memo(function PerformanceMonitor() {
     return () => {
       stopFPSMonitoring()
       if (frameRef.current) cancelAnimationFrame(frameRef.current)
+      frameRef.current = null
     }
   }, [visible])
 

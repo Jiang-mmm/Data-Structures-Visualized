@@ -2,15 +2,16 @@ import { showToast } from '../components/toastStore'
 import { tStatic } from '../i18n/useI18n'
 
 const DATA_VERSION = '1.0'
+const MAX_IMPORT_SIZE = 1_000_000 // 1MB max import size
 
 interface ExportedState {
   version: string
   type: string
-  data: any
+  data: unknown
   timestamp: number
 }
 
-export function exportState(dataType: string, data: any): void {
+export function exportState(dataType: string, data: unknown): void {
   try {
     const payload: ExportedState = {
       version: DATA_VERSION,
@@ -37,14 +38,19 @@ export function exportState(dataType: string, data: any): void {
   }
 }
 
-export function importState(file: File): Promise<any> {
+export function importState(file: File): Promise<ExportedState> {
   return new Promise((resolve, reject) => {
+    if (file.size > MAX_IMPORT_SIZE) {
+      reject(new Error(tStatic('errors.importFailed')))
+      return
+    }
+
     const reader = new FileReader()
 
     reader.onload = (event) => {
       try {
         const text = event.target?.result as string
-        const json = JSON.parse(text)
+        const json = JSON.parse(text) as ExportedState
 
         if (
           typeof json !== 'object' ||
@@ -82,13 +88,29 @@ function escapeCSV(value: unknown): string {
   return str
 }
 
+function triggerDownload(content: string, filename: string, mimeType: string): void {
+  const blob = new Blob([content], { type: mimeType })
+  const url = window.URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = filename
+  document.body.appendChild(anchor)
+  anchor.click()
+  document.body.removeChild(anchor)
+  setTimeout(() => window.URL.revokeObjectURL(url), 1000)
+}
+
 export function exportPerformanceCSV(performanceData: { algorithm: string; comparisons: number; swaps: number; steps: number }[]): string {
   if (!Array.isArray(performanceData)) return ''
   const headers = ['Algorithm', 'Comparisons', 'Swaps', 'Steps']
   const rows = performanceData.map(d => [d.algorithm, d.comparisons, d.swaps, d.steps].map(escapeCSV))
-  return [headers.join(','), ...rows.map(r => r.join(','))].join('\n')
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n')
+  triggerDownload(csv, `ds-visualizer-performance-${Date.now()}.csv`, 'text/csv')
+  return csv
 }
 
 export function exportPerformanceJSON(performanceData: unknown): string {
-  return JSON.stringify(performanceData, null, 2)
+  const json = JSON.stringify(performanceData, null, 2)
+  triggerDownload(json, `ds-visualizer-performance-${Date.now()}.json`, 'application/json')
+  return json
 }

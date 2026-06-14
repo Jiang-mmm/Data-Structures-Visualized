@@ -182,9 +182,11 @@ export default function LinkedListPage() {
     <div className="flex flex-col h-screen">
       <PageHeader title={t('linkedlist.title')} subtitle={t('linkedlist.subtitle')} icon="∞">
         <ExportImport dataType="linkedlist" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
-          const result = validateImportData(imported, 'linkedlist')
+          const result = validateImportData(imported)
           if (result.valid && result.data) {
             loadData(result.data)
+          } else {
+            showToast({ type: 'error', message: `${t('errors.importFailed')}：${result.error}` })
           }
         }} />
         <ShareButton data={data} dataType="linkedlist" disabled={isAnimating} />
@@ -239,6 +241,7 @@ export default function LinkedListPage() {
       )}
       <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
         <button
+          aria-expanded={showLearning}
           onClick={() => setShowLearning(!showLearning)}
           className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
             shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]

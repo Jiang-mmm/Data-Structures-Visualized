@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, createElement, type ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useMemo, createElement, type ReactNode } from 'react'
 import { setAnimationSpeed, applyPreset, getAnimationSpeed } from '../utils/animationEngine'
 import { useI18n } from '../i18n/useI18n'
 
@@ -45,21 +45,21 @@ export function GlobalSettingsProvider({ children }: { children: ReactNode }) {
     setSpeed(getAnimationSpeed())
   }, [])
 
-  return createElement(GlobalSettingsContext.Provider, {
-    value: {
-      animationSpeed,
-      setAnimationSpeed: setAnimationSpeedValue,
-      cycleSpeed,
-      showIndices,
-      setShowIndices,
-      currentPreset,
-      applyPreset: applyAnimationPreset,
-      t,
-      lang,
-      setLanguage,
-      supportedLanguages,
-    }
-  }, children)
+  const value = useMemo(() => ({
+    animationSpeed,
+    setAnimationSpeed: setAnimationSpeedValue,
+    cycleSpeed,
+    showIndices,
+    setShowIndices,
+    currentPreset,
+    applyPreset: applyAnimationPreset,
+    t,
+    lang,
+    setLanguage,
+    supportedLanguages,
+  }), [animationSpeed, setAnimationSpeedValue, cycleSpeed, showIndices, currentPreset, applyAnimationPreset, t, lang, setLanguage, supportedLanguages])
+
+  return createElement(GlobalSettingsContext.Provider, { value }, children)
 }
 
 export function useGlobalSettings(): GlobalSettingsValue {

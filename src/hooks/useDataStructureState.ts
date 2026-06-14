@@ -5,6 +5,7 @@ import { tStatic } from '../i18n/useI18n'
 
 const STORAGE_PREFIX = 'ds-visualizer-data-'
 const MAX_LOGS = 100
+const STORAGE_WRITE_DEBOUNCE_MS = 500
 
 function getStorageKey(key: string): string {
   return `${STORAGE_PREFIX}${key}`
@@ -13,7 +14,7 @@ function getStorageKey(key: string): string {
 function isValidStoredData(data: unknown): boolean {
   if (data === null || data === undefined) return false
   if (Array.isArray(data)) {
-    return data.length > 0 && data.every(item => {
+    return data.every(item => {
       if (typeof item === 'number') return Number.isFinite(item)
       if (typeof item === 'object' && item !== null) return true
       return false
@@ -88,13 +89,24 @@ export function useDataStructureState<T>(initialData: T, options: DataStructureS
       animTimeoutRef.current = setTimeout(() => {
         setIsAnimatingRaw(false)
         animTimeoutRef.current = null
+        showToast({ type: 'warning', message: tStatic('errors.animationTimeout') })
       }, 15000)
     }
   }, [])
 
+  // Debounced localStorage write to avoid excessive I/O
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const dataRef = useRef(data)
+  dataRef.current = data
+
   useEffect(() => {
-    if (storageKey && data !== null) {
-      saveToStorage(storageKey, data)
+    if (!storageKey || data === null) return
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(() => {
+      saveToStorage(storageKey, dataRef.current)
+    }, STORAGE_WRITE_DEBOUNCE_MS)
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
   }, [storageKey, data])
 

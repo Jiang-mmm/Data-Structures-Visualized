@@ -2,10 +2,10 @@ import { vi } from 'vitest'
 
 // Creates a chainable D3 selection mock where every method returns the mock itself
 export function createD3SelectionMock() {
-  const mock: Record<string, unknown> = {}
+  const mock: Record<string | symbol, unknown> = {}
 
   const chainable = new Proxy(mock, {
-    get(target, prop) {
+    get(target, prop: string | symbol) {
       if (prop === 'empty') return () => true
       if (prop === 'nodes') return () => []
       if (prop === 'node') return () => null

@@ -139,11 +139,11 @@ export function useGraphState() {
     return Object.fromEntries(adj)
   }, [nodes, links])
 
-  const loadData = useCallback((data: GraphNode[] | { nodes: GraphNode[] }) => {
+  const loadData = useCallback((data: GraphNode[] | { nodes: GraphNode[]; links?: GraphLink[] }) => {
     if (Array.isArray(data)) {
       loadGraphData({ nodes: data, links: [] })
     } else {
-      loadGraphData({ nodes: data.nodes, links: [] })
+      loadGraphData({ nodes: data.nodes, links: data.links || [] })
     }
   }, [loadGraphData])
 

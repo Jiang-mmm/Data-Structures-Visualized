@@ -30,11 +30,16 @@ import {
 import {
   easeLinear,
   easeQuadOut,
+  easeQuadInOut,
+  easeCubicIn,
   easeCubicOut,
   easeCubicInOut,
+  easeBackIn,
   easeBackOut,
   easeElasticOut,
   easeBounceOut,
+  easeExpOut,
+  easeExpInOut,
 } from 'd3-ease'
 
 export {
@@ -48,9 +53,14 @@ export {
   forceCollide,
   easeLinear,
   easeQuadOut,
+  easeQuadInOut,
+  easeCubicIn,
   easeCubicOut,
   easeCubicInOut,
+  easeBackIn,
   easeBackOut,
   easeElasticOut,
   easeBounceOut,
+  easeExpOut,
+  easeExpInOut,
 }

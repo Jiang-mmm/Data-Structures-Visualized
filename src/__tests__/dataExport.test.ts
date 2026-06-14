@@ -196,6 +196,13 @@ describe('dataExport.js', () => {
   })
 
   describe('exportPerformanceCSV', () => {
+    beforeEach(() => {
+      window.URL.createObjectURL = vi.fn(() => 'blob:test-url')
+      window.URL.revokeObjectURL = vi.fn()
+      const mockAnchor = { href: '', download: '', click: vi.fn() }
+      vi.spyOn(document, 'createElement').mockReturnValue(mockAnchor as any)
+    })
+
     it('应该生成正确的 CSV 格式', () => {
       const data = [
         { algorithm: 'bubble', comparisons: 10, swaps: 5, steps: 15 },
@@ -220,6 +227,13 @@ describe('dataExport.js', () => {
   })
 
   describe('exportPerformanceJSON', () => {
+    beforeEach(() => {
+      window.URL.createObjectURL = vi.fn(() => 'blob:test-url')
+      window.URL.revokeObjectURL = vi.fn()
+      const mockAnchor = { href: '', download: '', click: vi.fn() }
+      vi.spyOn(document, 'createElement').mockReturnValue(mockAnchor as any)
+    })
+
     it('应该生成格式化的 JSON', () => {
       const data = { test: 123 }
       const json = exportPerformanceJSON(data)

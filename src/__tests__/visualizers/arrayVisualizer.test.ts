@@ -74,7 +74,7 @@ describe('arrayVisualizer', () => {
 
   describe('animateInsert', () => {
     it('应该能够执行插入动画', async () => {
-      await expect(animateInsert(svg, 4, [1, 2, 3], { width: 800, height: 400 })).resolves.toBeUndefined()
+      await expect(animateInsert(svg, 4, 42, [1, 2, 3], { width: 800, height: 400 })).resolves.toBeUndefined()
     })
   })
 
@@ -86,11 +86,11 @@ describe('arrayVisualizer', () => {
 
   describe('animateSearch', () => {
     it('应该能够执行查找动画（找到）', async () => {
-      await expect(animateSearch(svg, 2, true, [1, 2, 3, 4, 5], { width: 800, height: 400 })).resolves.toBeUndefined()
+      await expect(animateSearch(svg, 2, [1, 2, 3, 4, 5], { width: 800, height: 400 })).resolves.toBeUndefined()
     })
 
     it('应该能够执行查找动画（未找到）', async () => {
-      await expect(animateSearch(svg, -1, false, [1, 2, 3, 4, 5], { width: 800, height: 400 })).resolves.toBeUndefined()
+      await expect(animateSearch(svg, -1, [1, 2, 3, 4, 5], { width: 800, height: 400 })).resolves.toBeUndefined()
     })
   })
 })

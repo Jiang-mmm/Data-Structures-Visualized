@@ -164,7 +164,7 @@ export async function animatePop(svg: SVGSVGElement, data: number[], options?: S
 
   await transitionEnd(
     topGroup.select('rect').transition().duration(duration(200)).ease(EASING.easeOutBack)
-      .attr('r', 8)
+      .attr('rx', 8).attr('ry', 8)
       .attr('fill', C.nodeError).attr('stroke', C.nodeErrorStroke)
   )
 

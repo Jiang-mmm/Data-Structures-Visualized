@@ -119,8 +119,15 @@ export default function TriePage() {
     <div className="flex flex-col h-screen">
       <PageHeader title={t('trie.title')} subtitle={t('trie.subtitle')} icon="🌳">
         <ExportImport dataType="trie" data={flatData} disabled={isAnimating} onImport={({ data: imported }) => {
-          if (imported && typeof imported === 'object' && 'nodes' in (imported as object)) {
-            loadData(imported as Parameters<typeof loadData>[0])
+          if (imported && typeof imported === 'object' && 'children' in (imported as object)) {
+            const node = imported as Record<string, unknown>
+            if (typeof node.children === 'object' && node.children !== null && typeof node.isEndOfWord === 'boolean') {
+              loadData(imported as Parameters<typeof loadData>[0])
+            } else {
+              showToast({ type: 'error', message: t('errors.importFailed') })
+            }
+          } else {
+            showToast({ type: 'error', message: t('errors.importFailed') })
           }
         }} />
         <ShareButton data={flatData} dataType="trie" disabled={isAnimating} />
@@ -170,6 +177,7 @@ export default function TriePage() {
       )}
       <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
         <button
+          aria-expanded={showLearning}
           onClick={() => setShowLearning(!showLearning)}
           className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
             shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]

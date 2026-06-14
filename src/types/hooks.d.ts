@@ -38,11 +38,11 @@ export interface ArrayState extends DataStructureState<number[]> {
 }
 
 export interface SortState extends DataStructureState<number[]> {
-  stats: { comparisons: number; swaps: number };
+  stats: { algorithm: string; comparisons: number; swaps: number; steps: number };
   progress: number;
   randomize: () => void;
   stop: () => void;
-  runAlgorithm: (name: string) => Promise<void>;
+  runAlgorithm: (name: string, animateFns: unknown, svgRef: unknown, dimensions: unknown, anim?: unknown) => Promise<void>;
 }
 
 export interface StackState extends DataStructureState<number[]> {
@@ -118,8 +118,8 @@ export interface GraphState {
   canRedo: () => boolean;
   getUndoPreview: () => any | null;
   getRedoPreview: () => any | null;
-  getAdjacencyMatrix: () => number[][];
-  getAdjacencyList: () => Record<string, string[]>;
+  getAdjacencyMatrix: () => { ids: string[]; matrix: number[][] };
+  getAdjacencyList: () => Record<string, { node: string; weight?: number }[]>;
 }
 
 export interface HashEntry {

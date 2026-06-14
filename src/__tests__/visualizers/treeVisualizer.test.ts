@@ -77,11 +77,11 @@ describe('treeVisualizer', () => {
 
   describe('animateSearch', () => {
     it('应该能够执行搜索动画（找到）', async () => {
-      await expect(animateSearch(svg, [3, 1], true, [5, 3, 7, 1, 4], { width: 800, height: 500 })).resolves.toBeUndefined()
+      await expect(animateSearch(svg, [3, 1], 1, [5, 3, 7, 1, 4], { width: 800, height: 500 })).resolves.toBeUndefined()
     })
 
     it('应该能够执行搜索动画（未找到）', async () => {
-      await expect(animateSearch(svg, [], false, [5, 3, 7], { width: 800, height: 500 })).resolves.toBeUndefined()
+      await expect(animateSearch(svg, [], 0, [5, 3, 7], { width: 800, height: 500 })).resolves.toBeUndefined()
     })
   })
 

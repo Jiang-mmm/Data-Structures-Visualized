@@ -65,35 +65,35 @@ describe('getValidationError', () => {
 
 describe('validateImportData', () => {
   it('应该验证有效数组', () => {
-    expect(validateImportData([1, 2, 3], 'array')).toEqual({ valid: true, data: [1, 2, 3] })
+    expect(validateImportData([1, 2, 3])).toEqual({ valid: true, data: [1, 2, 3] })
   })
 
   it('应该拒绝空数据', () => {
-    expect(validateImportData(null, 'array').valid).toBe(false)
+    expect(validateImportData(null).valid).toBe(false)
   })
 
   it('应该拒绝非数组', () => {
-    expect(validateImportData('hello', 'array').valid).toBe(false)
+    expect(validateImportData('hello').valid).toBe(false)
   })
 
   it('应该拒绝空数组', () => {
-    expect(validateImportData([], 'array').valid).toBe(false)
+    expect(validateImportData([]).valid).toBe(false)
   })
 
   it('应该拒绝超大数组', () => {
     const big = Array(201).fill(1)
-    expect(validateImportData(big, 'array').valid).toBe(false)
+    expect(validateImportData(big).valid).toBe(false)
   })
 
   it('应该拒绝非数字元素', () => {
-    expect(validateImportData([1, 'a', 3], 'array').valid).toBe(false)
+    expect(validateImportData([1, 'a', 3]).valid).toBe(false)
   })
 
   it('应该拒绝浮点数', () => {
-    expect(validateImportData([1.5, 2, 3], 'array').valid).toBe(false)
+    expect(validateImportData([1.5, 2, 3]).valid).toBe(false)
   })
 
   it('应该拒绝超出范围的值', () => {
-    expect(validateImportData([1, 1000, 3], 'array').valid).toBe(false)
+    expect(validateImportData([1, 1000, 3]).valid).toBe(false)
   })
 })

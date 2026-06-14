@@ -102,15 +102,12 @@ export default function GraphAlgorithmPage() {
   const handleExportCSV = useCallback(() => {
     const algo = graphAlgorithms.find(a => a.key === selectedAlgorithm)
     if (!algo) return
-    exportPerformanceCSV({
-      [selectedAlgorithm]: {
-        name: algo.name,
-        timeComplexity: algo.timeComplexity,
-        spaceComplexity: algo.spaceComplexity,
-        comparisons: logs.filter(l => l.type === 'oper').length,
-        steps: logs.length,
-      }
-    } as any)
+    exportPerformanceCSV([{
+      algorithm: algo.name,
+      comparisons: logs.filter(l => l.type === 'oper').length,
+      swaps: 0,
+      steps: logs.length,
+    }])
   }, [selectedAlgorithm, logs])
 
   const handleExportJSON = useCallback(() => {

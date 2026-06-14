@@ -84,5 +84,78 @@ describe('sortVisualizer 集成测试', () => {
       const bars = svg.querySelectorAll('g.bar')
       expect(bars.length).toBe(5)
     })
+
+    it('应该在中止时提前退出', async () => {
+      const data = [50, 30, 80, 20, 60]
+      renderSortBars(svg, data, { width: 800, height: 400 })
+
+      const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => true, resolve: () => {}, reject: () => {} }
+      await expect(animateSorted(svg, data, { width: 800, height: 400 }, anim)).resolves.toBeUndefined()
+    })
+
+    it('应该处理空数据', async () => {
+      const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => false, resolve: () => {}, reject: () => {} }
+      await expect(animateSorted(svg, [], { width: 800, height: 400 }, anim)).resolves.toBeUndefined()
+    })
+  })
+
+  describe('animateCompare', () => {
+    it('应该在中止时提前退出', async () => {
+      const data = [50, 30, 80]
+      renderSortBars(svg, data, { width: 800, height: 400 })
+
+      const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => true, resolve: () => {}, reject: () => {} }
+      await expect(animateCompare(svg, 0, 1, data, { width: 800, height: 400 }, anim)).resolves.toBeUndefined()
+    })
+  })
+
+  describe('animateSwap', () => {
+    it('应该在中止时提前退出', async () => {
+      const data = [50, 30, 80]
+      renderSortBars(svg, data, { width: 800, height: 400 })
+
+      const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => true, resolve: () => {}, reject: () => {} }
+      await expect(animateSwap(svg, 0, 1, data, { width: 800, height: 400 }, anim)).resolves.toBeUndefined()
+    })
+  })
+
+  describe('highlightSortedPosition', () => {
+    it('应该高亮指定位置', async () => {
+      const { highlightSortedPosition } = await import('../../visualizers/sortVisualizer')
+      const data = [50, 30, 80]
+      renderSortBars(svg, data, { width: 800, height: 400 })
+      expect(() => highlightSortedPosition(svg, 0)).not.toThrow()
+    })
+
+    it('应该忽略超出范围的索引', async () => {
+      const { highlightSortedPosition } = await import('../../visualizers/sortVisualizer')
+      const data = [50, 30, 80]
+      renderSortBars(svg, data, { width: 800, height: 400 })
+      expect(() => highlightSortedPosition(svg, 10)).not.toThrow()
+    })
+  })
+
+  describe('renderSortBars 边界条件', () => {
+    it('应该处理大数据集（>100）', () => {
+      const largeData = Array.from({ length: 150 }, (_, i) => i + 1)
+      expect(() => renderSortBars(svg, largeData, { width: 800, height: 400 })).not.toThrow()
+    })
+
+    it('应该处理单元素数据', () => {
+      renderSortBars(svg, [42], { width: 800, height: 400 })
+      const bars = svg.querySelectorAll('g.bar')
+      expect(bars.length).toBe(1)
+    })
+
+    it('应该在重新渲染时更新柱状图', () => {
+      renderSortBars(svg, [50, 30], { width: 800, height: 400 })
+      renderSortBars(svg, [10, 20, 30], { width: 800, height: 400 })
+      const bars = svg.querySelectorAll('g.bar')
+      expect(bars.length).toBe(3)
+    })
+
+    it('应该处理 isDark 选项', () => {
+      expect(() => renderSortBars(svg, [50, 30], { width: 800, height: 400, isDark: true })).not.toThrow()
+    })
   })
 })

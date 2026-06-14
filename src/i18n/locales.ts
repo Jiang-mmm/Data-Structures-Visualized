@@ -189,6 +189,29 @@ export interface Locale {
     emptyHeapShort: string
     emptyTrieShort: string
     nodeNotFound: string
+    emptyArray: string
+    emptyArrayDesc: string
+    emptyStack: string
+    emptyStackDesc: string
+    emptyQueue: string
+    emptyQueueDesc: string
+    emptyLinkedList: string
+    emptyLinkedListDesc: string
+    emptyTree: string
+    emptyTreeDesc: string
+    emptyGraph: string
+    emptyGraphDesc: string
+    emptyHash: string
+    emptyHashDesc: string
+    emptyHeap: string
+    emptyHeapDesc: string
+    emptyTrie: string
+    emptyTrieDesc: string
+    emptySort: string
+    emptySortDesc: string
+    defaultTitle: string
+    defaultDesc: string
+    fill: string
   }
   logPanel: {
     title: string
@@ -312,6 +335,7 @@ export interface Locale {
     invalidIndex: string
     indexOutOfRange: string
     animationError: string
+    animationTimeout: string
     importFailed: string
     inputRequired: string
     stopped: string
@@ -339,6 +363,7 @@ export interface Locale {
     unsorted: string
     comparing: string
     swapping: string
+    sorted: string
   }
   hooks: {
     inputInvalid: string
@@ -660,6 +685,29 @@ export const zh: Locale = {
     emptyHeapShort: '空堆 · 请插入元素',
     emptyTrieShort: '空字典树 · 请插入单词',
     nodeNotFound: '未找到目标节点',
+    emptyArray: '数组为空',
+    emptyArrayDesc: '点击下方按钮生成随机数据或手动插入元素',
+    emptyStack: '栈为空',
+    emptyStackDesc: '点击 Push 按钮压入元素',
+    emptyQueue: '队列为空',
+    emptyQueueDesc: '点击 Enqueue 按钮入队元素',
+    emptyLinkedList: '链表为空',
+    emptyLinkedListDesc: '点击头部/尾部插入按钮添加节点',
+    emptyTree: '二叉树为空',
+    emptyTreeDesc: '点击插入按钮添加节点',
+    emptyGraph: '图为空',
+    emptyGraphDesc: '点击添加节点按钮创建图',
+    emptyHash: '哈希表为空',
+    emptyHashDesc: '点击插入按钮添加键值对',
+    emptyHeap: '堆为空',
+    emptyHeapDesc: '点击插入按钮添加元素',
+    emptyTrie: '字典树为空',
+    emptyTrieDesc: '点击插入按钮添加单词',
+    emptySort: '排序数据为空',
+    emptySortDesc: '点击随机生成按钮创建排序数据',
+    defaultTitle: '暂无数据',
+    defaultDesc: '点击下方按钮填充数据',
+    fill: '填充数据',
   },
   exportImport: {
     export: '导出',
@@ -783,6 +831,7 @@ export const zh: Locale = {
     invalidIndex: '索引必须是有效数字',
     indexOutOfRange: '索引必须在 {range} 之间',
     animationError: '{action}动画出错',
+    animationTimeout: '动画执行超时，已自动恢复',
     importFailed: '导入失败',
     inputRequired: '请输入{item}',
     stopped: '已停止',
@@ -810,6 +859,7 @@ export const zh: Locale = {
     unsorted: '未排序',
     comparing: '比较中',
     swapping: '交换中',
+    sorted: '已排序',
   },
   hooks: {
     inputInvalid: '请输入 1~99 之间的整数',
@@ -1131,6 +1181,29 @@ export const en: Locale = {
     emptyHeapShort: 'Empty Heap · Insert elements',
     emptyTrieShort: 'Empty Trie · Insert words',
     nodeNotFound: 'Target node not found',
+    emptyArray: 'Array is empty',
+    emptyArrayDesc: 'Click below to generate random data or insert elements manually',
+    emptyStack: 'Stack is empty',
+    emptyStackDesc: 'Click Push to add elements',
+    emptyQueue: 'Queue is empty',
+    emptyQueueDesc: 'Click Enqueue to add elements',
+    emptyLinkedList: 'Linked list is empty',
+    emptyLinkedListDesc: 'Click head/tail insert to add nodes',
+    emptyTree: 'Binary tree is empty',
+    emptyTreeDesc: 'Click insert to add nodes',
+    emptyGraph: 'Graph is empty',
+    emptyGraphDesc: 'Click add node to create the graph',
+    emptyHash: 'Hash table is empty',
+    emptyHashDesc: 'Click insert to add key-value pairs',
+    emptyHeap: 'Heap is empty',
+    emptyHeapDesc: 'Click insert to add elements',
+    emptyTrie: 'Trie is empty',
+    emptyTrieDesc: 'Click insert to add words',
+    emptySort: 'Sort data is empty',
+    emptySortDesc: 'Click randomize to generate sort data',
+    defaultTitle: 'No data',
+    defaultDesc: 'Click below to fill data',
+    fill: 'Fill data',
   },
   exportImport: {
     export: 'Export',
@@ -1254,6 +1327,7 @@ export const en: Locale = {
     invalidIndex: 'Index must be a valid number',
     indexOutOfRange: 'Index must be between {range}',
     animationError: '{action} animation error',
+    animationTimeout: 'Animation timed out, automatically recovered',
     importFailed: 'Import failed',
     inputRequired: 'Please enter {item}',
     stopped: 'Stopped',
@@ -1281,6 +1355,7 @@ export const en: Locale = {
     unsorted: 'Unsorted',
     comparing: 'Comparing',
     swapping: 'Swapping',
+    sorted: 'Sorted',
   },
   hooks: {
     inputInvalid: 'Please enter an integer between 1-99',

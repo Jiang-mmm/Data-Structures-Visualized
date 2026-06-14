@@ -47,9 +47,8 @@ export default function HashPage() {
     setIsAnimating(true)
     const anim = getAnimationContext()
     try {
-      insert(key, value)
-      await new Promise(r => setTimeout(r, 50))
       if (svgRef.current) await animateInsertHash(svgRef.current, key, value, { hashFn }, anim)
+      insert(key, value)
     } catch (e) {
       handleAnimationError(e, t('hash.insert'))
     } finally {
@@ -97,7 +96,15 @@ export default function HashPage() {
     <div className="flex flex-col h-screen">
       <PageHeader title={t('hash.title')} subtitle={t('hash.subtitle')} icon="#">
         <ExportImport dataType="hash" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
-          if (Array.isArray(imported)) loadData(imported)
+          if (Array.isArray(imported) && imported.length > 0 && imported.length <= 200 && imported.every(item =>
+            typeof item === 'object' && item !== null &&
+            typeof item.key === 'number' && Number.isFinite(item.key) &&
+            typeof item.value === 'string' && item.value.length <= 100
+          )) {
+            loadData(imported)
+          } else {
+            showToast({ type: 'error', message: t('errors.importFailed') })
+          }
         }} />
         <ShareButton data={data} dataType="hash" disabled={isAnimating} />
         <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
@@ -153,6 +160,7 @@ export default function HashPage() {
       )}
       <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
         <button
+          aria-expanded={showLearning}
           onClick={() => setShowLearning(!showLearning)}
           className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
             shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]

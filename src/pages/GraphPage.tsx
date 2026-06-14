@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
@@ -45,6 +45,10 @@ export default function GraphPage() {
     'ctrl+shift+z': redo,
     'r': reset,
   }, !isAnimating)
+
+  useEffect(() => {
+    return () => { clearGraphSimulation(svgRef.current) }
+  }, [])
 
   const handleGraphRender = useCallback((svg: SVGSVGElement, _data: unknown, dims: { width: number; height: number }) => {
     if (viewMode === 'force' && svg) {
@@ -115,10 +119,10 @@ export default function GraphPage() {
     }
   }, [isAnimating, setIsAnimating, dijkstra, algorithmStart, algorithmEnd, getAnimationContext, svgRef, nodes, links, dimensions])
 
-  const handleReset = (): void => {
+  const handleReset = useCallback((): void => {
     clearGraphSimulation(svgRef.current)
     reset()
-  }
+  }, [reset])
 
   const { ids, matrix } = getAdjacencyMatrix()
   const adjList = getAdjacencyList()
@@ -128,9 +132,16 @@ export default function GraphPage() {
       <PageHeader title={t('graph.title')} subtitle={t('graph.subtitle')} icon="⬡">
         <ExportImport dataType="graph" data={{ nodes, links }} disabled={isAnimating} onImport={({ data: imported }) => {
           if (imported && typeof imported === 'object' && 'nodes' in imported) {
-            loadData(imported as { nodes: typeof nodes })
-          } else if (Array.isArray(imported)) {
-            loadData(imported)
+            const g = imported as Record<string, unknown>
+            if (Array.isArray(g.nodes) && g.nodes.every((n: unknown) =>
+              n && typeof n === 'object' && 'id' in (n as object) && 'label' in (n as object)
+            )) {
+              loadData(imported as { nodes: typeof nodes })
+            } else {
+              showToast({ type: 'error', message: t('errors.importFailed') })
+            }
+          } else {
+            showToast({ type: 'error', message: t('errors.importFailed') })
           }
         }} />
         <ShareButton data={{ nodes, links }} dataType="graph" disabled={isAnimating} />
@@ -178,7 +189,7 @@ export default function GraphPage() {
         <OperationButton variant="warning" onClick={handleDijkstra} disabled={isAnimating}>{t('graph.dijkstra')}</OperationButton>
         <div className="flex items-center gap-1">
           {[{ k: 'force', l: t('graphView.force') }, { k: 'matrix', l: t('graphView.matrix') }, { k: 'list', l: t('graphView.list') }].map(({ k, l }) => (
-            <button key={k} onClick={() => setViewMode(k)}
+            <button key={k} aria-pressed={viewMode === k} onClick={() => setViewMode(k)}
               className={`font-mono text-[10px] px-2 py-0.5 border-2 transition-all duration-200
                 ${viewMode === k
                   ? 'border-ink dark:border-dark-border bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper shadow-[1px_1px_0px_#1a1a2e] dark:shadow-[1px_1px_0px_#334155]'
@@ -256,6 +267,7 @@ export default function GraphPage() {
       )}
       <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
         <button
+          aria-expanded={showLearning}
           onClick={() => setShowLearning(!showLearning)}
           className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
             shadow-[2px_2px_0px_#1a1a2e] dark:shadow-[2px_2px_0px_#334155]

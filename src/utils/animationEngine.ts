@@ -1,5 +1,18 @@
-import { easeQuadOut, easeQuadInOut, easeCubicIn, easeCubicOut, easeCubicInOut, easeBackIn, easeBackOut, easeElasticOut, easeBounceOut, easeLinear, easeExpOut, easeExpInOut } from 'd3-ease'
-import { select } from './d3Imports'
+import {
+  select,
+  easeQuadOut,
+  easeQuadInOut,
+  easeCubicIn,
+  easeCubicOut,
+  easeCubicInOut,
+  easeBackIn,
+  easeBackOut,
+  easeElasticOut,
+  easeBounceOut,
+  easeLinear,
+  easeExpOut,
+  easeExpInOut,
+} from './d3Imports'
 import { showToast } from '../components/toastStore'
 import { tStatic } from '../i18n/useI18n'
 import { perfLogger } from './performanceLogger'
@@ -243,6 +256,7 @@ export async function wait(baseMs: number, anim?: Animation) {
       anim.abort = () => {
         for (const tid of anim._pendingTimers!) clearTimeout(tid)
         anim._pendingTimers = []
+        resolve()
         origAbort?.()
       }
     }

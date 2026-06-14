@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 
 export type ToastType = 'error' | 'success' | 'warning' | 'info'
 
@@ -17,57 +17,50 @@ interface ToastCleanup {
   cleanup: () => void
 }
 
-type Listener = (toasts: Toast[]) => void
+type Listener = () => void
 
 let toastId = 0
 const MAX_TOASTS = 5
 
-const toastStore = {
-  listeners: new Set<Listener>(),
-  toasts: [] as Toast[],
-  add(toast: ToastOptions): ToastCleanup {
-    const id = ++toastId
-    const duration = toast.duration || 3000
-    this.toasts.push({ ...toast, id })
-    while (this.toasts.length > MAX_TOASTS) {
-      const oldest = this.toasts[0]
-      this.toasts.shift()
-    }
-    this.notify()
-    const timerId = setTimeout(() => this.remove(id), duration)
-    return { id, cleanup: () => { clearTimeout(timerId); this.remove(id) } }
-  },
-  remove(id: number): void {
-    this.toasts = this.toasts.filter(t => t.id !== id)
-    this.notify()
-  },
-  notify(): void {
-    this.listeners.forEach(listener => listener([...this.toasts]))
-  },
-  subscribe(listener: Listener): () => void {
-    this.listeners.add(listener)
-    return () => { this.listeners.delete(listener) }
-  }
+let toasts: Toast[] = []
+const listeners = new Set<Listener>()
+
+function emitChange() {
+  listeners.forEach(listener => listener())
 }
 
-export function useToast() {
-  const [toasts, setToasts] = useState<Toast[]>([])
+function subscribe(listener: Listener): () => void {
+  listeners.add(listener)
+  return () => { listeners.delete(listener) }
+}
 
-  useEffect(() => {
-    return toastStore.subscribe(setToasts)
-  }, [])
-
-  const toast = useCallback((options: ToastOptions): ToastCleanup => {
-    return toastStore.add(options)
-  }, [])
-
-  return { toasts, toast }
+function getSnapshot(): Toast[] {
+  return toasts
 }
 
 export function showToast(options: ToastOptions): ToastCleanup {
-  return toastStore.add(options)
+  const id = ++toastId
+  const duration = options.duration || 3000
+  toasts = [...toasts, { ...options, id }]
+  while (toasts.length > MAX_TOASTS) {
+    toasts = toasts.slice(1)
+  }
+  emitChange()
+  const timerId = setTimeout(() => dismissToast(id), duration)
+  return { id, cleanup: () => { clearTimeout(timerId); dismissToast(id) } }
 }
 
 export function dismissToast(id: number): void {
-  toastStore.remove(id)
+  toasts = toasts.filter(t => t.id !== id)
+  emitChange()
+}
+
+export function useToast() {
+  const currentToasts = useSyncExternalStore(subscribe, getSnapshot)
+
+  const toast = useCallback((options: ToastOptions): ToastCleanup => {
+    return showToast(options)
+  }, [])
+
+  return { toasts: currentToasts, toast }
 }

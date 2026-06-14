@@ -465,16 +465,22 @@ export function ensureGradientDefs(svg: SVGSVGElement, isDark = false) {
   ]
 
   gradients.forEach(({ id, stops }) => {
-    if (!defs!.querySelector(`#${id}`)) {
-      const grad = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient')
+    let grad = defs!.querySelector(`#${id}`)
+    if (!grad) {
+      grad = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient')
       grad.setAttribute('id', id)
       stops.forEach((color, i) => {
         const stop = document.createElementNS('http://www.w3.org/2000/svg', 'stop')
         stop.setAttribute('offset', `${(i / (stops.length - 1)) * 100}%`)
         stop.setAttribute('stop-color', color)
-        grad.appendChild(stop)
+        grad!.appendChild(stop)
       })
       defs!.appendChild(grad)
+    } else {
+      const stopEls = grad.querySelectorAll('stop')
+      stops.forEach((color, i) => {
+        if (stopEls[i]) stopEls[i].setAttribute('stop-color', color)
+      })
     }
   })
 }
