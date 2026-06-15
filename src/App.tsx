@@ -33,7 +33,7 @@ function PageLoader() {
 function App() {
   return (
     <GlobalSettingsProvider>
-      <BrowserRouter basename="/ds-visualizer">
+      <BrowserRouter basename="/Data-Structures-Visualized">
         <Layout>
           <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>

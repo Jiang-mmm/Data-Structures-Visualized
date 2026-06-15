@@ -46,11 +46,11 @@ export default defineConfig(({ mode }) => ({
         theme_color: '#2563eb',
         background_color: '#faf8f5',
         display: 'standalone',
-        start_url: '/ds-visualizer/',
-        scope: '/ds-visualizer/',
+        start_url: '/Data-Structures-Visualized/',
+        scope: '/Data-Structures-Visualized/',
         icons: [
           {
-            src: '/ds-visualizer/favicon.svg',
+            src: '/Data-Structures-Visualized/favicon.svg',
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any maskable',
@@ -59,7 +59,7 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ].filter(Boolean),
-  base: '/ds-visualizer/',
+  base: '/Data-Structures-Visualized/',
   server: {
     port: 3000,
     open: true,

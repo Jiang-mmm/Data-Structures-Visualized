@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import path from 'path';
 import { sleep, clickButtonIfEnabled, closeModalIfOpen, getVisibleInputs, fillInput, SCREENSHOTS_DIR } from './test-helpers.js';
 
-const BASE_URL = 'http://localhost:3000/ds-visualizer/';
+const BASE_URL = 'http://localhost:3000/Data-Structures-Visualized/';
 
 async function runTest() {
   const results = { name: '跨模块交互综合测试', passed: [], failed: [] };

@@ -2,7 +2,7 @@ import { chromium, firefox } from 'playwright';
 import path from 'path';
 import { sleep, clickButtonIfEnabled, closeModalIfOpen, getVisibleInputs, fillInput, assertWithRetry, SCREENSHOTS_DIR, verifyScreenshot } from './test-helpers.js';
 
-const BASE_URL = 'http://localhost:3000/ds-visualizer/';
+const BASE_URL = 'http://localhost:3000/Data-Structures-Visualized/';
 
 async function runTest() {
   const results = { name: '核心数据结构页面交互测试', passed: [], failed: [] };

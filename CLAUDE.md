@@ -4,7 +4,7 @@ This file provides guidance to MiMo Code (claude.ai/code) when working with code
 
 ## Project Overview
 
-**ds-visualizer** (数据结构学习助手) — a Chinese-language educational web app for university students to learn data structures through interactive D3.js SVG animations. React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4. Deployed to GitHub Pages at base path `/ds-visualizer/`.
+**ds-visualizer** (数据结构学习助手) — a Chinese-language educational web app for university students to learn data structures through interactive D3.js SVG animations. React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4. Deployed to GitHub Pages at base path `/Data-Structures-Visualized/`.
 
 ## Commands
 
@@ -20,13 +20,13 @@ npm run test:coverage    # Vitest with v8 coverage
 npm run preview          # Preview production build
 ```
 
-E2E tests: `node e2e/run-all-tests.js` (requires dev server running at `http://localhost:3000/ds-visualizer/`).
+E2E tests: `node e2e/run-all-tests.js` (requires dev server running at `http://localhost:3000/Data-Structures-Visualized/`).
 
 ## Architecture
 
 Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components → Hooks → Visualizers → Algorithms/Utils**.
 
-**Routing:** React Router v7 with `BrowserRouter` (basename `/ds-visualizer`). All 13 pages are `React.lazy` code-split via `Suspense`.
+**Routing:** React Router v7 with `BrowserRouter` (basename `/Data-Structures-Visualized`). All 13 pages are `React.lazy` code-split via `Suspense`.
 
 **State management:** No Redux/Zustand. Each data structure has its own `use*State` hook (11 total) built on `useState` + `useCallback`. All hooks internally use `useHistory` — a `useRef`-based undo/redo stack (max 20 steps). History is stored in refs, not state, to avoid unnecessary re-renders.
 
@@ -55,7 +55,7 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 - **Unit tests:** Vitest + React Testing Library. 1133 tests across 86 files in `src/__tests__/`. Test files mirror source: `useArrayState.test.ts`, `arrayVisualizer.test.ts`, etc.
 - **Known failures:** 0 unit test failures. All 1133 pass.
 - **Test setup:** `src/__tests__/setup.js` (jsdom environment, jest-dom matchers, SVG mocks).
-- **E2E:** Playwright in `e2e/` directory. Run with `node e2e/run-all-tests.js` (requires dev server at `http://localhost:3000/ds-visualizer/`). Uses `domcontentloaded` wait strategy.
+- **E2E:** Playwright in `e2e/` directory. Run with `node e2e/run-all-tests.js` (requires dev server at `http://localhost:3000/Data-Structures-Visualized/`). Uses `domcontentloaded` wait strategy.
 - **Cross-browser:** E2E supports `BROWSER=firefox` env var. Run with `BROWSER=firefox node e2e/test-home.js`.
 - **Comprehensive suites:** `test-comprehensive.js` (all 11 data structures), `test-interactions.js` (cross-module), `test-persistence.js` (localStorage + boundaries). Run after core E2E.
 - **Screenshot assertions:** `verifyScreenshot()` helper in `test-helpers.js` checks file existence + 5KB minimum size.

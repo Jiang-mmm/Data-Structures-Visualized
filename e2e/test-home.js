@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { verifyScreenshot } from './test-helpers.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BASE_URL = 'http://localhost:3000/ds-visualizer/';
+const BASE_URL = 'http://localhost:3000/Data-Structures-Visualized/';
 const SCREENSHOTS_DIR = path.join(__dirname, 'screenshots');
 
 async function sleep(ms) {

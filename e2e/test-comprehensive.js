@@ -2,7 +2,7 @@ import { chromium, firefox } from 'playwright';
 import path from 'path';
 import { sleep, clickButtonIfEnabled, closeModalIfOpen, getVisibleInputs, fillInput, SCREENSHOTS_DIR } from './test-helpers.js';
 
-const BASE_URL = 'http://localhost:3000/ds-visualizer/';
+const BASE_URL = 'http://localhost:3000/Data-Structures-Visualized/';
 
 // ============================================================
 // Test result collector

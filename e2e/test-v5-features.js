@@ -2,7 +2,7 @@ import { chromium, firefox } from 'playwright';
 import path from 'path';
 import { sleep, assertWithRetry, SCREENSHOTS_DIR, verifyScreenshot } from './test-helpers.js';
 
-const BASE_URL = 'http://localhost:3000/ds-visualizer/';
+const BASE_URL = 'http://localhost:3000/Data-Structures-Visualized/';
 
 async function runTest() {
   const results = { name: 'v5.0 功能测试（懒加载 + 撤销预览 + 分享）', passed: [], failed: [] };
