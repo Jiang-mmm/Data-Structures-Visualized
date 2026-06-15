@@ -15,8 +15,8 @@ interface LLOptions {
 }
 
 function layout(data: number[], width: number, height: number) {
-  const totalWidth = data.length * (NODE_RADIUS * 2 + NODE_GAP) - NODE_GAP + 80
-  const startX = (width - totalWidth) / 2 + NODE_RADIUS + 60
+  const totalWidth = data.length * (NODE_RADIUS * 2 + NODE_GAP) - NODE_GAP
+  const startX = (width - totalWidth) / 2 + NODE_RADIUS + 50
   const startY = height / 2
   return { startX, startY, totalWidth }
 }
@@ -58,18 +58,20 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
   const { startX, startY } = layout(data, width, height)
 
   // HEAD label with background box
-  const headLabelX = startX - NODE_RADIUS - 18
+  const headBoxRight = startX - NODE_RADIUS - 2
+  const headBoxWidth = 44
   container.append('rect')
-    .attr('x', headLabelX - 24).attr('y', startY - 12)
-    .attr('width', 48).attr('height', 24).attr('rx', 4)
+    .attr('x', headBoxRight - headBoxWidth).attr('y', startY - 12)
+    .attr('width', headBoxWidth).attr('height', 24).attr('rx', 4)
     .attr('fill', C.nodeRoot).attr('stroke', C.nodeRootStroke).attr('stroke-width', 1.5)
-  container.append('text').attr('x', headLabelX).attr('y', startY + 5)
+  container.append('text').attr('x', headBoxRight - headBoxWidth / 2).attr('y', startY + 5)
     .attr('text-anchor', 'middle').attr('fill', C.textWhite).attr('font-size', '11px').attr('font-weight', 'bold')
     .text(tStatic('linkedlist.headLabel'))
 
+  // Arrow from HEAD box to first node
   container.append('line')
-    .attr('x1', startX - NODE_RADIUS - 8).attr('y1', startY)
-    .attr('x2', startX - NODE_RADIUS + 5).attr('y2', startY)
+    .attr('x1', headBoxRight + 2).attr('y1', startY)
+    .attr('x2', startX - NODE_RADIUS - 2).attr('y2', startY)
     .attr('stroke', C.arrowStroke).attr('stroke-width', 2).attr('marker-end', 'url(#ll-arrow)')
 
   data.forEach((value, i) => {
@@ -116,14 +118,22 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
 
   const lastX = startX + (data.length - 1) * (NODE_RADIUS * 2 + NODE_GAP)
 
-  // Arrow pointing to NULL
+  // NULL label with arrow
+  const nullStartX = lastX + NODE_RADIUS + 8
+  const nullLabelX = nullStartX + 22
   container.append('line')
-    .attr('x1', lastX + NODE_RADIUS + 5).attr('y1', startY)
-    .attr('x2', lastX + NODE_RADIUS + 15).attr('y2', startY)
+    .attr('x1', nullStartX).attr('y1', startY)
+    .attr('x2', nullStartX + 16).attr('y2', startY)
     .attr('stroke', C.arrowStroke).attr('stroke-width', 2).attr('marker-end', 'url(#ll-arrow)')
 
-  container.append('text').attr('x', lastX + NODE_RADIUS + 22).attr('y', startY + 5)
-    .attr('fill', C.textSecondary).attr('font-size', '12px').text(tStatic('linkedlist.nullLabel'))
+  // NULL badge
+  container.append('rect')
+    .attr('x', nullLabelX - 4).attr('y', startY - 11)
+    .attr('width', 38).attr('height', 22).attr('rx', 4)
+    .attr('fill', C.nodeError).attr('opacity', 0.12)
+  container.append('text').attr('x', nullLabelX + 15).attr('y', startY + 5)
+    .attr('text-anchor', 'middle').attr('fill', C.nodeError).attr('font-size', '12px').attr('font-weight', 'bold')
+    .text(tStatic('linkedlist.nullLabel'))
 }
 
 /**

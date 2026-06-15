@@ -80,10 +80,34 @@ function layout(data: TrieFlattened, width: number): { positions: TriePosition[]
 export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: TrieVisualizerOptions = {}) {
   const isDark = options.isDark ?? detectDarkMode()
   const C = getColors(isDark)
-  ensureGradientDefs(svg, isDark)
 
   const container = select(svg)
   container.selectAll('*').interrupt().remove()
+
+  // Create gradient defs inline (ensureGradientDefs doesn't work reliably after full clear)
+  const ns = 'http://www.w3.org/2000/svg'
+  const defs = document.createElementNS(ns, 'defs')
+  const gradDefs: Record<string, string> = {
+    'grad-node-root': C.nodeRoot,
+    'grad-node-default': C.nodeDefault,
+    'grad-node-leaf': C.nodeLeaf,
+    'grad-node-active': C.nodeActive,
+    'grad-node-error': C.nodeError,
+  }
+  for (const [id, color] of Object.entries(gradDefs)) {
+    const grad = document.createElementNS(ns, 'radialGradient')
+    grad.setAttribute('id', id)
+    const stop = document.createElementNS(ns, 'stop')
+    stop.setAttribute('offset', '0%')
+    stop.setAttribute('stop-color', color)
+    grad.appendChild(stop)
+    const stop2 = document.createElementNS(ns, 'stop')
+    stop2.setAttribute('offset', '100%')
+    stop2.setAttribute('stop-color', color)
+    grad.appendChild(stop2)
+    defs.appendChild(grad)
+  }
+  svg.appendChild(defs)
 
   if (!data || !data.nodes || data.nodes.length === 0) {
     const width = svg.getBoundingClientRect().width || 600
@@ -176,19 +200,19 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
     nodeGroup.append('circle')
       .attr('r', NODE_RADIUS)
       .attr('fill', fill)
-      .attr('stroke', C.nodeDefaultStroke)
-      .attr('stroke-width', 2)
+      .attr('stroke', pos.id === 'root' ? C.nodeRootStroke : (pos.isEndOfWord ? C.nodeLeafStroke : C.nodeDefaultStroke))
+      .attr('stroke-width', pos.id === 'root' ? 3 : 2.5)
 
     if (pos.id === 'root') {
       nodeGroup.append('text')
         .attr('dy', '0.35em').attr('text-anchor', 'middle')
-        .attr('fill', C.textWhite).attr('font-size', '11px').attr('font-weight', 'bold')
+        .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', '800')
         .text(tStatic('trie.rootLabel'))
     } else if (pos.prefix.length > 0) {
       const lastChar = pos.prefix[pos.prefix.length - 1]
       nodeGroup.append('text')
         .attr('dy', '0.35em').attr('text-anchor', 'middle')
-        .attr('fill', C.textWhite).attr('font-size', '16px').attr('font-weight', 'bold')
+        .attr('fill', C.textWhite).attr('font-size', '18px').attr('font-weight', '800')
         .text(lastChar)
     }
 

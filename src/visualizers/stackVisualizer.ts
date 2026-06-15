@@ -109,18 +109,31 @@ export function renderStack(svg: SVGSVGElement, data: number[], options: StackVi
     .attr('font-size', '16px').attr('font-weight', 'bold')
     .text((d: number) => d)
 
+  // Stack Top label with colored badge
+  const topLabelY = startY - (data.length - 1) * (RECT_HEIGHT + GAP) + RECT_HEIGHT / 2
+  container.append('rect')
+    .attr('x', startX + RECT_WIDTH + 12).attr('y', topLabelY - 11)
+    .attr('width', 100).attr('height', 22).attr('rx', 4)
+    .attr('fill', C.nodeRoot).attr('opacity', 0.15)
   container.append('text')
-    .attr('x', startX + RECT_WIDTH + 15)
-    .attr('y', startY - (data.length - 1) * (RECT_HEIGHT + GAP) + RECT_HEIGHT / 2)
+    .attr('x', startX + RECT_WIDTH + 18)
+    .attr('y', topLabelY + 1)
     .attr('dy', '0.35em').attr('fill', C.nodeRoot)
     .attr('font-size', '12px').attr('font-weight', 'bold')
-    .text(tStatic('visualizer.stackTop'))
+    .text('← ' + tStatic('visualizer.stackTop'))
 
+  // Stack Bottom label with colored badge
+  const bottomLabelY = startY + RECT_HEIGHT / 2
+  container.append('rect')
+    .attr('x', startX + RECT_WIDTH + 12).attr('y', bottomLabelY - 11)
+    .attr('width', 108).attr('height', 22).attr('rx', 4)
+    .attr('fill', C.nodeDefault).attr('opacity', 0.15)
   container.append('text')
-    .attr('x', startX + RECT_WIDTH + 15)
-    .attr('y', startY + RECT_HEIGHT / 2)
-    .attr('dy', '0.35em').attr('fill', C.textSecondary)
-    .attr('font-size', '12px').text(tStatic('visualizer.stackBottom'))
+    .attr('x', startX + RECT_WIDTH + 18)
+    .attr('y', bottomLabelY + 1)
+    .attr('dy', '0.35em').attr('fill', C.nodeDefault)
+    .attr('font-size', '12px').attr('font-weight', 'bold')
+    .text('← ' + tStatic('visualizer.stackBottom'))
 }
 
 export async function animatePush(svg: SVGSVGElement, value: number, data: number[], options: StackVisualizerOptions = { width: 800, height: 400 }, anim?: Animation) {

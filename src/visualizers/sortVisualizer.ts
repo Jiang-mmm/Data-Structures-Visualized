@@ -24,12 +24,12 @@ interface LayoutResult {
 function getLayout(data: number[], width: number, height: number): LayoutResult {
   const n = Math.max(data.length, 1)
   const usableWidth = width - 40
-  const barWidth = Math.max(14, Math.min(36, usableWidth / (n * (1 + BAR_GAP_RATIO))))
+  const barWidth = Math.max(12, Math.min(30, usableWidth / (n * (1 + BAR_GAP_RATIO))))
   const gap = barWidth * BAR_GAP_RATIO
   const totalWidth = n * barWidth + (n - 1) * gap
   const offsetX = Math.max(10, (width - totalWidth) / 2)
   const maxVal = Math.max(...data, 1)
-  const maxBarHeight = height - 80
+  const maxBarHeight = height - 100
   return { maxVal, barWidth, maxBarHeight, gap, offsetX, n }
 }
 
@@ -74,7 +74,7 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
 
           g.append('rect')
             .attr('x', 0)
-            .attr('y', (d: number) => height - 35 - (d / maxVal) * maxBarHeight)
+            .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight)
             .attr('width', barWidth)
             .attr('height', (d: number) => (d / maxVal) * maxBarHeight)
             .attr('rx', CORNER_RADIUS)
@@ -84,19 +84,9 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
             .attr('filter', 'url(#bar-shadow)')
 
           g.append('text')
-            .attr('class', 'bar-value')
-            .attr('x', barWidth / 2)
-            .attr('y', (d: number) => height - 35 - (d / maxVal) * maxBarHeight - 6)
-            .attr('text-anchor', 'middle')
-            .attr('fill', C.textSecondary)
-            .attr('font-size', barWidth > 20 ? '11px' : '9px')
-            .attr('font-weight', '700')
-            .text((d: number) => d)
-
-          g.append('text')
             .attr('class', 'bar-index')
             .attr('x', barWidth / 2)
-            .attr('y', height - 14)
+            .attr('y', height - 31)
             .attr('text-anchor', 'middle')
             .attr('fill', C.textSecondary)
             .attr('font-size', '11px')
@@ -109,17 +99,11 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
         (update: any) => {
           update.select('rect')
             .transition().duration(duration(200))
-            .attr('y', (d: number) => height - 35 - (d / maxVal) * maxBarHeight)
+            .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight)
             .attr('height', (d: number) => (d / maxVal) * maxBarHeight)
             .attr('fill', gradUrl('bar-default'))
             .attr('stroke', C.sortDefaultStroke)
             .attr('stroke-width', 1.5)
-
-          update.select('text.bar-value')
-            .text((d: number) => d)
-            .transition().duration(duration(200))
-            .attr('y', (d: number) => height - 35 - (d / maxVal) * maxBarHeight - 6)
-            .attr('fill', C.textSecondary)
 
           return update.transition().duration(duration(200))
             .attr('transform', (_d: number, i: number) => `translate(${indexToX(i, barWidth, gap, offsetX)}, 0)`)
@@ -145,7 +129,7 @@ function renderSortBarsImmediate(svg: SVGSVGElement, data: number[], options: So
 
         g.append('rect')
           .attr('x', 0)
-          .attr('y', (d: number) => height - 35 - (d / maxVal) * maxBarHeight)
+          .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight)
           .attr('width', barWidth)
           .attr('height', (d: number) => (d / maxVal) * maxBarHeight)
           .attr('rx', CORNER_RADIUS)
@@ -154,19 +138,9 @@ function renderSortBarsImmediate(svg: SVGSVGElement, data: number[], options: So
           .attr('stroke-width', 1.5)
 
         g.append('text')
-          .attr('class', 'bar-value')
-          .attr('x', barWidth / 2)
-          .attr('y', (d: number) => height - 35 - (d / maxVal) * maxBarHeight - 6)
-          .attr('text-anchor', 'middle')
-          .attr('fill', C.textSecondary)
-          .attr('font-size', barWidth > 20 ? '11px' : '9px')
-          .attr('font-weight', '700')
-          .text((d: number) => d)
-
-        g.append('text')
           .attr('class', 'bar-index')
           .attr('x', barWidth / 2)
-          .attr('y', height - 14)
+          .attr('y', height - 8)
           .attr('text-anchor', 'middle')
           .attr('fill', C.textSecondary)
           .attr('font-size', '11px')
@@ -178,16 +152,11 @@ function renderSortBarsImmediate(svg: SVGSVGElement, data: number[], options: So
       },
       (update: any) => {
         update.select('rect')
-          .attr('y', (d: number) => height - 35 - (d / maxVal) * maxBarHeight)
+          .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight)
           .attr('height', (d: number) => (d / maxVal) * maxBarHeight)
           .attr('fill', gradUrl('bar-default'))
           .attr('stroke', C.sortDefaultStroke)
           .attr('stroke-width', 1.5)
-
-        update.select('text.bar-value')
-          .text((d: number) => d)
-          .attr('y', (d: number) => height - 35 - (d / maxVal) * maxBarHeight - 6)
-          .attr('fill', C.textSecondary)
 
         return update
           .attr('transform', (_d: number, i: number) => `translate(${indexToX(i, barWidth, gap, offsetX)}, 0)`)
@@ -210,8 +179,6 @@ export async function animateCompare(svg: SVGSVGElement, i: number, j: number, d
 
   const rectsI = barI.select('rect')
   const rectsJ = barJ.select('rect')
-  const valueTextsI = barI.select('text.bar-value')
-  const valueTextsJ = barJ.select('text.bar-value')
 
   // Phase 1: Both bars highlight with glow
   await transitionEnd(
@@ -223,23 +190,6 @@ export async function animateCompare(svg: SVGSVGElement, i: number, j: number, d
     rectsJ.transition().duration(duration(200)).ease(EASING.easeOutBack)
       .attr('fill', gradUrl('bar-compare')).attr('stroke', C.sortCompareStroke)
       .attr('stroke-width', 2.5)
-  )
-
-  await transitionEnd(
-    valueTextsI.transition().duration(duration(150)).ease(EASING.easeOutBack)
-      .attr('font-size', () => {
-        const w = rectsI.attr('width')
-        return parseFloat(w || '0') > 20 ? '14px' : '11px'
-      })
-      .attr('fill', C.nodeActive)
-  )
-  await transitionEnd(
-    valueTextsJ.transition().duration(duration(150)).ease(EASING.easeOutBack)
-      .attr('font-size', () => {
-        const w = rectsJ.attr('width')
-        return parseFloat(w || '0') > 20 ? '14px' : '11px'
-      })
-      .attr('fill', C.nodeActive)
   )
 
   if (anim?.isAborted?.()) return
@@ -254,23 +204,6 @@ export async function animateCompare(svg: SVGSVGElement, i: number, j: number, d
     rectsJ.transition().duration(duration(200)).ease(defaultEase)
       .attr('fill', gradUrl('bar-default')).attr('stroke', C.sortDefaultStroke)
       .attr('stroke-width', 1.5)
-  )
-
-  await transitionEnd(
-    valueTextsI.transition().duration(duration(150)).ease(defaultEase)
-      .attr('fill', C.textSecondary)
-      .attr('font-size', () => {
-        const w = rectsI.attr('width')
-        return parseFloat(w || '0') > 20 ? '11px' : '9px'
-      })
-  )
-  await transitionEnd(
-    valueTextsJ.transition().duration(duration(150)).ease(defaultEase)
-      .attr('fill', C.textSecondary)
-      .attr('font-size', () => {
-        const w = rectsJ.attr('width')
-        return parseFloat(w || '0') > 20 ? '11px' : '9px'
-      })
   )
 }
 
@@ -379,13 +312,13 @@ export async function animateSorted(svg: SVGSVGElement, data: number[], options:
       .attr('fill', gradUrl('bar-sorted')).attr('stroke', C.sortSortedStroke)
       .attr('stroke-width', 2.5)
       .attr('height', (d: number) => (d / maxVal) * maxBarHeight + 8)
-      .attr('y', (d: number) => height - 35 - (d / maxVal) * maxBarHeight - 4)
+      .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight - 4)
 
     // Phase 2: Settle back (staggered)
     const p = transitionEnd(
       sel.transition().delay(i * staggerDelay + growDur).duration(settleDur).ease(defaultEase)
         .attr('height', (d: number) => (d / maxVal) * maxBarHeight)
-        .attr('y', (d: number) => height - 35 - (d / maxVal) * maxBarHeight)
+        .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight)
         .attr('stroke-width', 1.5)
     )
     promises.push(p)
@@ -401,7 +334,7 @@ export async function animateSorted(svg: SVGSVGElement, data: number[], options:
     container.append('text')
       .attr('class', 'sort-done')
       .attr('x', indexToX(mid, barWidth, gap, offsetX) + barWidth / 2)
-      .attr('y', height - 40)
+      .attr('y', height - 50)
       .attr('text-anchor', 'middle')
       .attr('fill', C.sortSortedStroke)
       .attr('font-size', '16px')
