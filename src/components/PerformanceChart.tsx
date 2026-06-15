@@ -81,14 +81,15 @@ function PerformanceChart({ results }: PerformanceChartProps) {
         .attr('x1', 0).attr('x2', innerW)
         .attr('y1', y).attr('y2', y)
         .attr('stroke', C.containerStroke)
-        .attr('stroke-width', 1)
+        .attr('stroke-width', i === 0 ? 1.5 : 0.5)
+        .attr('stroke-dasharray', i === 0 ? 'none' : '2,3')
 
       g.append('text')
         .attr('x', -8).attr('y', y + 4)
         .attr('text-anchor', 'end')
         .attr('font-size', '9px')
         .attr('font-family', 'monospace')
-        .attr('fill', C.textSecondary)
+        .attr('fill', C.textMuted)
         .text(val)
     }
 
@@ -107,9 +108,11 @@ function PerformanceChart({ results }: PerformanceChartProps) {
           .attr('y', y)
           .attr('width', barWidth - 2)
           .attr('height', Math.max(0, barH))
+          .attr('rx', 3)
           .attr('fill', metricColors[metric as keyof typeof metricColors])
-          .attr('stroke', C.textWhite)
-          .attr('stroke-width', 1)
+          .attr('opacity', 0.85)
+          .attr('stroke', C.containerStroke)
+          .attr('stroke-width', 0.5)
 
         if (barH > 15) {
           g.append('text')
@@ -118,11 +121,24 @@ function PerformanceChart({ results }: PerformanceChartProps) {
             .attr('text-anchor', 'middle')
             .attr('font-size', '8px')
             .attr('font-family', 'monospace')
-            .attr('fill', C.textPrimary)
+            .attr('fill', C.textSecondary)
             .text(val)
         }
       })
 
+      // Background stripe for each group
+      if (i % 2 === 1) {
+        g.append('rect')
+          .attr('class', 'bg-stripe')
+          .attr('x', groupX)
+          .attr('y', 0)
+          .attr('width', groupWidth)
+          .attr('height', innerH)
+          .attr('fill', C.containerStroke)
+          .attr('opacity', 0.06)
+      }
+
+      const displayName = key.length > 6 ? key.substring(0, 5) + '…' : key
       g.append('text')
         .attr('x', groupX + groupWidth / 2)
         .attr('y', innerH + 14)
@@ -130,7 +146,7 @@ function PerformanceChart({ results }: PerformanceChartProps) {
         .attr('font-size', '9px')
         .attr('font-weight', 'bold')
         .attr('fill', C.textPrimary)
-        .text(key.substring(0, 4))
+        .text(displayName)
     })
 
     const legendY = -10

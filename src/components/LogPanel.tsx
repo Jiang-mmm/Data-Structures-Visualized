@@ -16,10 +16,10 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
   const toggleCollapsed = useCallback(() => setCollapsed(c => !c), [])
 
   const typeConfig = useMemo(() => ({
-    oper: { color: 'text-accent-blue', labelKey: 'logPanel.type.oper' },
-    info: { color: 'text-accent-emerald', labelKey: 'logPanel.type.info' },
-    error: { color: 'text-accent-rose', labelKey: 'logPanel.type.error' },
-    code: { color: 'text-accent-amber', labelKey: 'logPanel.type.code' },
+    oper: { color: 'text-accent-blue', bg: 'bg-accent-blue/10', border: 'border-accent-blue/30', labelKey: 'logPanel.type.oper' },
+    info: { color: 'text-accent-emerald', bg: 'bg-accent-emerald/10', border: 'border-accent-emerald/30', labelKey: 'logPanel.type.info' },
+    error: { color: 'text-accent-rose', bg: 'bg-accent-rose/10', border: 'border-accent-rose/30', labelKey: 'logPanel.type.error' },
+    code: { color: 'text-accent-amber', bg: 'bg-accent-amber/10', border: 'border-accent-amber/30', labelKey: 'logPanel.type.code' },
   }), [])
 
   const filteredLogs = filter === 'all'
@@ -43,7 +43,7 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
 
   return (
     <div
-      className="bg-slate-800 dark:bg-slate-900 text-paper flex flex-col log-panel transition-all duration-200"
+      className="bg-gradient-to-b from-slate-800 to-slate-850 dark:from-slate-900 dark:to-slate-950 text-paper flex flex-col log-panel transition-all duration-200"
       style={collapsed ? { maxHeight: 40 } : { maxHeight }}
     >
       <button
@@ -119,20 +119,20 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
                 <div
                   key={i}
                   className={`
-                    flex gap-2 sm:gap-3 py-1.5 px-2 animate-slide-up
-                    ${i % 2 === 0 ? 'bg-slate-800/0' : 'bg-slate-700/20'}
-                    border-l-2 border-transparent hover:border-slate-500/40
+                    flex gap-2 sm:gap-3 py-1.5 px-2 animate-slide-up rounded-sm
+                    ${i % 2 === 0 ? 'bg-slate-800/0' : 'bg-slate-700/15'}
+                    border-l-2 ${config.border} hover:bg-slate-700/30 transition-colors
                   `}
                 >
-                  <span className="text-slate-600 w-20 shrink-0 text-xs hidden sm:block">
+                  <span className="text-slate-500 w-20 shrink-0 text-xs hidden sm:block tabular-nums">
                     {log.time}
                   </span>
-                  <span className="text-slate-600 w-20 shrink-0 text-xs sm:hidden">
+                  <span className="text-slate-500 w-20 shrink-0 text-xs sm:hidden tabular-nums">
                     {log.time.split(':').slice(1).join(':')}
                   </span>
-                  <span className={`${config.color} shrink-0 font-bold text-xs opacity-80`}>
-                    <span className="sm:hidden">[{t(config.labelKey).charAt(0)}]</span>
-                    <span className="hidden sm:inline">[{t(config.labelKey)}]</span>
+                  <span className={`${config.color} shrink-0 font-bold text-xs`}>
+                    <span className={`sm:hidden ${config.bg} px-1 rounded`}>{t(config.labelKey).charAt(0)}</span>
+                    <span className={`hidden sm:inline ${config.bg} px-1.5 py-0.5 rounded text-[11px]`}>{t(config.labelKey)}</span>
                   </span>
                   <span className="text-slate-300 break-all text-xs leading-relaxed flex-1 min-w-0">
                     {log.message}

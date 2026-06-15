@@ -47,7 +47,7 @@ function layout(data: TrieFlattened, width: number): { positions: TriePosition[]
     if (children.length === 0) return
 
     const totalWidth = maxX - minX
-    const childWidth = totalWidth / children.length
+    const childWidth = Math.max(MIN_NODE_SPACING, totalWidth / children.length)
 
     children.forEach((child, i) => {
       const childId = `root-${child.prefix}`
@@ -110,25 +110,27 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
 
     container.append('line')
       .attr('class', `trie-edge from-${edge.from}-to-${edge.to}`)
-      .attr('x1', fromPos.x).attr('y1', fromPos.y)
-      .attr('x2', toPos.x).attr('y2', toPos.y)
+      .attr('x1', fromPos.x).attr('y1', fromPos.y + NODE_RADIUS)
+      .attr('x2', toPos.x).attr('y2', toPos.y - NODE_RADIUS)
       .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
 
-    const midX = (fromPos.x + toPos.x) / 2
-    const midY = (fromPos.y + toPos.y) / 2
+    // Place edge label closer to parent to avoid overlapping child node
+    const labelT = 0.35
+    const labelX = fromPos.x + (toPos.x - fromPos.x) * labelT
+    const labelY = (fromPos.y + NODE_RADIUS) + ((toPos.y - NODE_RADIUS) - (fromPos.y + NODE_RADIUS)) * labelT
 
     container.append('g')
       .attr('class', `trie-edge-label from-${edge.from}-to-${edge.to}`)
-      .attr('transform', `translate(${midX}, ${midY})`)
+      .attr('transform', `translate(${labelX}, ${labelY})`)
       .append('circle')
-      .attr('r', 11)
+      .attr('r', 10)
       .attr('fill', C.containerStroke).attr('stroke', C.edgeDefault).attr('stroke-width', 1.5)
 
     container.append('text')
       .attr('class', `trie-edge-label-text from-${edge.from}-to-${edge.to}`)
-      .attr('x', midX).attr('y', midY + 1)
+      .attr('x', labelX).attr('y', labelY + 1)
       .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
-      .attr('fill', C.nodeActive).attr('font-size', '13px').attr('font-weight', 'bold')
+      .attr('fill', C.nodeActive).attr('font-size', '12px').attr('font-weight', 'bold')
       .text(edge.char)
   }
 
@@ -229,14 +231,19 @@ export async function animateInsertTrie(svg: SVGSVGElement, word?: string, anim?
       const circle = node.select('circle')
       if (circle.empty()) continue
       const originalFill = circle.attr('fill') || gradUrl('node-default')
+      const isLast = i === nodeElements.length - 1
+
+      // Phase 1: Grow and highlight
       await transitionEnd(
-        circle
-          .transition().duration(duration(250)).ease(EASING.easeOutBack)
+        circle.transition().duration(duration(250)).ease(EASING.easeOutBack)
           .attr('r', NODE_RADIUS + 5)
           .attr('fill', gradUrl('node-active'))
-          .transition().duration(duration(200)).ease(EASING.easeOutCubic)
+      )
+      // Phase 2: Settle back
+      await transitionEnd(
+        circle.transition().duration(duration(200)).ease(EASING.easeOutCubic)
           .attr('r', NODE_RADIUS)
-          .attr('fill', i === nodeElements.length - 1 ? gradUrl('node-leaf') : originalFill)
+          .attr('fill', isLast ? gradUrl('node-leaf') : originalFill)
       )
     }
     return
@@ -253,12 +260,15 @@ export async function animateInsertTrie(svg: SVGSVGElement, word?: string, anim?
     const originalFill = circle.attr('fill') || gradUrl('node-default')
     const isLast = i === pathNodes.length - 1
 
+    // Phase 1: Grow and highlight
     await transitionEnd(
-      circle
-        .transition().duration(duration(250)).ease(EASING.easeOutBack)
+      circle.transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('r', NODE_RADIUS + 5)
         .attr('fill', gradUrl('node-active'))
-        .transition().duration(duration(200)).ease(EASING.easeOutCubic)
+    )
+    // Phase 2: Settle back
+    await transitionEnd(
+      circle.transition().duration(duration(200)).ease(EASING.easeOutCubic)
         .attr('r', NODE_RADIUS)
         .attr('fill', isLast ? gradUrl('node-leaf') : originalFill)
     )
@@ -281,12 +291,16 @@ export async function animateSearchTrie(svg: SVGSVGElement, found: boolean, word
       if (circle.empty()) continue
       const isLast = i === nodeElements.length - 1
       const originalFill = circle.attr('fill') || gradUrl('node-default')
+
+      // Phase 1: Grow and highlight
       await transitionEnd(
-        circle
-          .transition().duration(duration(250)).ease(EASING.easeOutBack)
+        circle.transition().duration(duration(250)).ease(EASING.easeOutBack)
           .attr('r', NODE_RADIUS + (isLast ? 8 : 5))
           .attr('fill', gradUrl('node-active'))
-          .transition().duration(duration(isLast ? 350 : 200)).ease(isLast ? EASING.easeOutElastic : EASING.easeOutCubic)
+      )
+      // Phase 2: Settle back with result color
+      await transitionEnd(
+        circle.transition().duration(duration(isLast ? 350 : 200)).ease(isLast ? EASING.easeOutElastic : EASING.easeOutCubic)
           .attr('r', NODE_RADIUS)
           .attr('fill', isLast ? (found ? gradUrl('node-leaf') : gradUrl('node-error')) : originalFill)
       )
@@ -305,12 +319,15 @@ export async function animateSearchTrie(svg: SVGSVGElement, found: boolean, word
     const isLast = i === pathNodes.length - 1
     const originalFill = circle.attr('fill') || gradUrl('node-default')
 
+    // Phase 1: Grow and highlight
     await transitionEnd(
-      circle
-        .transition().duration(duration(250)).ease(EASING.easeOutBack)
+      circle.transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('r', NODE_RADIUS + (isLast ? 8 : 5))
         .attr('fill', gradUrl('node-active'))
-        .transition().duration(duration(isLast ? 350 : 200)).ease(isLast ? EASING.easeOutElastic : EASING.easeOutCubic)
+    )
+    // Phase 2: Settle back with result color
+    await transitionEnd(
+      circle.transition().duration(duration(isLast ? 350 : 200)).ease(isLast ? EASING.easeOutElastic : EASING.easeOutCubic)
         .attr('r', NODE_RADIUS)
         .attr('fill', isLast ? (found ? gradUrl('node-leaf') : gradUrl('node-error')) : originalFill)
     )
@@ -331,12 +348,16 @@ export async function animateDeleteTrie(svg: SVGSVGElement, word?: string, anim?
       const node = select(nodeElements[i] as SVGGElement)
       const circle = node.select('circle')
       if (circle.empty()) continue
+
+      // Phase 1: Turn red and grow
       await transitionEnd(
-        circle
-          .transition().duration(duration(200)).ease(EASING.easeOutCubic)
+        circle.transition().duration(duration(200)).ease(EASING.easeOutCubic)
           .attr('fill', gradUrl('node-error'))
           .attr('r', NODE_RADIUS + 3)
-          .transition().duration(duration(250)).ease(EASING.easeInCubic)
+      )
+      // Phase 2: Shrink back to default
+      await transitionEnd(
+        circle.transition().duration(duration(250)).ease(EASING.easeInCubic)
           .attr('r', NODE_RADIUS)
           .attr('fill', gradUrl('node-default'))
       )
@@ -353,12 +374,15 @@ export async function animateDeleteTrie(svg: SVGSVGElement, word?: string, anim?
     const circle = node.select('circle')
     if (circle.empty()) continue
 
+    // Phase 1: Turn red and grow
     await transitionEnd(
-      circle
-        .transition().duration(duration(200)).ease(EASING.easeOutCubic)
+      circle.transition().duration(duration(200)).ease(EASING.easeOutCubic)
         .attr('fill', gradUrl('node-error'))
         .attr('r', NODE_RADIUS + 3)
-        .transition().duration(duration(250)).ease(EASING.easeInCubic)
+    )
+    // Phase 2: Shrink back to default
+    await transitionEnd(
+      circle.transition().duration(duration(250)).ease(EASING.easeInCubic)
         .attr('r', NODE_RADIUS)
         .attr('fill', gradUrl('node-default'))
     )

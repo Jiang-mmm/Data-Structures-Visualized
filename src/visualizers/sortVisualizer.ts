@@ -96,10 +96,12 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
           g.append('text')
             .attr('class', 'bar-index')
             .attr('x', barWidth / 2)
-            .attr('y', height - 26)
+            .attr('y', height - 22)
             .attr('text-anchor', 'middle')
-            .attr('fill', C.textMuted)
-            .attr('font-size', '9px')
+            .attr('fill', C.textSecondary)
+            .attr('font-size', '10px')
+            .attr('font-weight', '600')
+            .attr('font-family', 'monospace')
             .text((_d: number, i: number) => i)
 
           return g
@@ -164,10 +166,12 @@ function renderSortBarsImmediate(svg: SVGSVGElement, data: number[], options: So
         g.append('text')
           .attr('class', 'bar-index')
           .attr('x', barWidth / 2)
-          .attr('y', height - 26)
+          .attr('y', height - 22)
           .attr('text-anchor', 'middle')
-          .attr('fill', C.textMuted)
-          .attr('font-size', '9px')
+          .attr('fill', C.textSecondary)
+          .attr('font-size', '10px')
+          .attr('font-weight', '600')
+          .attr('font-family', 'monospace')
           .text((_d: number, i: number) => i)
 
         return g

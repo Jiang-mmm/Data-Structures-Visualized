@@ -16,7 +16,7 @@ interface LLOptions {
 
 function layout(data: number[], width: number, height: number) {
   const totalWidth = data.length * (NODE_RADIUS * 2 + NODE_GAP) - NODE_GAP
-  const startX = (width - totalWidth) / 2 + NODE_RADIUS
+  const startX = (width - totalWidth) / 2 + NODE_RADIUS + 40
   const startY = height / 2
   return { startX, startY, totalWidth }
 }
@@ -57,11 +57,18 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
   ensureArrowDef(container, C)
   const { startX, startY } = layout(data, width, height)
 
-  container.append('text').attr('x', startX - NODE_RADIUS - 10).attr('y', startY + 5)
-    .attr('text-anchor', 'end').attr('fill', C.textSecondary).attr('font-size', '12px').text(tStatic('linkedlist.headLabel'))
+  // HEAD label with background box
+  const headLabelX = startX - NODE_RADIUS - 18
+  container.append('rect')
+    .attr('x', headLabelX - 24).attr('y', startY - 12)
+    .attr('width', 48).attr('height', 24).attr('rx', 4)
+    .attr('fill', C.nodeRoot).attr('stroke', C.nodeRootStroke).attr('stroke-width', 1.5)
+  container.append('text').attr('x', headLabelX).attr('y', startY + 5)
+    .attr('text-anchor', 'middle').attr('fill', C.textWhite).attr('font-size', '11px').attr('font-weight', 'bold')
+    .text(tStatic('linkedlist.headLabel'))
 
   container.append('line')
-    .attr('x1', startX - NODE_RADIUS - 5).attr('y1', startY)
+    .attr('x1', headLabelX + 24 + 4).attr('y1', startY)
     .attr('x2', startX - NODE_RADIUS + 5).attr('y2', startY)
     .attr('stroke', C.arrowStroke).attr('stroke-width', 2).attr('marker-end', 'url(#ll-arrow)')
 
@@ -108,7 +115,14 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
   })
 
   const lastX = startX + (data.length - 1) * (NODE_RADIUS * 2 + NODE_GAP)
-  container.append('text').attr('x', lastX + NODE_RADIUS + 15).attr('y', startY + 5)
+
+  // Arrow pointing to NULL
+  container.append('line')
+    .attr('x1', lastX + NODE_RADIUS + 5).attr('y1', startY)
+    .attr('x2', lastX + NODE_RADIUS + 15).attr('y2', startY)
+    .attr('stroke', C.arrowStroke).attr('stroke-width', 2).attr('marker-end', 'url(#ll-arrow)')
+
+  container.append('text').attr('x', lastX + NODE_RADIUS + 22).attr('y', startY + 5)
     .attr('fill', C.textSecondary).attr('font-size', '12px').text(tStatic('linkedlist.nullLabel'))
 }
 

@@ -198,10 +198,17 @@ function updateLines(container: ReturnType<typeof select>) {
   })
 }
 
-function resetNodeAndEdgeColors(container: ReturnType<typeof select>, C: ReturnType<typeof getColors>) {
+function resetNodeAndEdgeColors(container: ReturnType<typeof select>, C: ReturnType<typeof getColors>, data?: number[]) {
   container.selectAll('g.tree-node').select('circle')
     .interrupt()
-    .attr('fill', (d: TreeNodeData) => d.dataIndex === 0 ? C.nodeRoot : C.nodeDefault)
+    .attr('fill', (d: TreeNodeData) => {
+      if (d.dataIndex === 0) return C.nodeRoot
+      if (data) {
+        const isLeaf = 2 * d.dataIndex + 1 >= data.length || (data[2 * d.dataIndex + 1] === 0 && (2 * d.dataIndex + 2 >= data.length || data[2 * d.dataIndex + 2] === 0))
+        return isLeaf ? C.nodeLeaf : C.nodeDefault
+      }
+      return C.nodeDefault
+    })
     .attr('stroke', (d: TreeNodeData) => d.dataIndex === 0 ? C.nodeRootStroke : C.nodeDefaultStroke)
     .attr('stroke-width', 2)
     .attr('r', NODE_RADIUS)
@@ -308,7 +315,11 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
     .call(dragBehavior())
 
   nodeGroups.append('circle').attr('r', NODE_RADIUS)
-    .attr('fill', (d: TreeNodeData) => d.dataIndex === 0 ? gradUrl('node-root') : gradUrl('node-default'))
+    .attr('fill', (d: TreeNodeData) => {
+      if (d.dataIndex === 0) return gradUrl('node-root')
+      const isLeaf = 2 * d.dataIndex + 1 >= data.length || (data[2 * d.dataIndex + 1] === 0 && (2 * d.dataIndex + 2 >= data.length || data[2 * d.dataIndex + 2] === 0))
+      return isLeaf ? gradUrl('node-leaf') : gradUrl('node-default')
+    })
     .attr('stroke', (d: TreeNodeData) => d.dataIndex === 0 ? C.nodeRootStroke : C.nodeDefaultStroke)
     .attr('stroke-width', 2)
     .style('cursor', 'grab')
@@ -463,7 +474,7 @@ export async function animateTraversal(svg: SVGSVGElement, order: number[], data
   const C = getColors(isDark)
   const container = select(svg)
 
-  resetNodeAndEdgeColors(container, C)
+  resetNodeAndEdgeColors(container, C, data)
 
   for (let stepIdx = 0; stepIdx < order.length; stepIdx++) {
     if (anim?.isAborted?.()) return
@@ -581,7 +592,7 @@ export async function animateLevelOrder(svg: SVGSVGElement, order: number[], dat
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
-  resetNodeAndEdgeColors(container, C)
+  resetNodeAndEdgeColors(container, C, data)
 
   for (let stepIdx = 0; stepIdx < order.length; stepIdx++) {
     if (anim?.isAborted?.()) return
@@ -620,7 +631,7 @@ export async function animateSearch(svg: SVGSVGElement, path: number[], found: n
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
-  resetNodeAndEdgeColors(container, C)
+  resetNodeAndEdgeColors(container, C, data)
 
   for (let stepIdx = 0; stepIdx < path.length; stepIdx++) {
     if (anim?.isAborted?.()) return
@@ -672,7 +683,7 @@ export async function animateDeleteNode(svg: SVGSVGElement, value: number, data:
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
-  resetNodeAndEdgeColors(container, C)
+  resetNodeAndEdgeColors(container, C, data)
 
   const targetIndex = data.indexOf(value)
   if (targetIndex === -1) return

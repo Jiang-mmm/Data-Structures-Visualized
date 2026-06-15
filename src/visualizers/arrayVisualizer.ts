@@ -66,6 +66,24 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVi
 
   ensureGradientDefs(svg, isDark)
 
+  // Add drop shadow filter for array cells
+  const defs = svg.querySelector('defs')
+  if (defs && !defs.querySelector('#array-shadow')) {
+    const filter = document.createElementNS(ns, 'filter')
+    filter.setAttribute('id', 'array-shadow')
+    filter.setAttribute('x', '-20%')
+    filter.setAttribute('y', '-20%')
+    filter.setAttribute('width', '140%')
+    filter.setAttribute('height', '140%')
+    const shadow = document.createElementNS(ns, 'feDropShadow')
+    shadow.setAttribute('dx', '1')
+    shadow.setAttribute('dy', '2')
+    shadow.setAttribute('stdDeviation', '2')
+    shadow.setAttribute('flood-opacity', '0.15')
+    filter.appendChild(shadow)
+    defs.appendChild(filter)
+  }
+
   const { startX, startY } = layout(data.length, width, height)
 
   const ns = 'http://www.w3.org/2000/svg'
@@ -102,10 +120,11 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVi
     const rect = document.createElementNS(ns, 'rect')
     rect.setAttribute('width', String(RECT_WIDTH))
     rect.setAttribute('height', String(RECT_HEIGHT))
-    rect.setAttribute('rx', '6')
+    rect.setAttribute('rx', '8')
     rect.setAttribute('fill', gradUrl('bar-default'))
     rect.setAttribute('stroke', C.nodeDefaultStroke)
     rect.setAttribute('stroke-width', '2')
+    rect.setAttribute('filter', 'url(#array-shadow)')
     g.appendChild(rect)
 
     const textValue = document.createElementNS(ns, 'text')
@@ -123,8 +142,10 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVi
     textIndex.setAttribute('x', String(RECT_WIDTH / 2))
     textIndex.setAttribute('y', String(RECT_HEIGHT + 18))
     textIndex.setAttribute('text-anchor', 'middle')
-    textIndex.setAttribute('fill', C.textSecondary)
-    textIndex.setAttribute('font-size', '12px')
+    textIndex.setAttribute('fill', C.textMuted)
+    textIndex.setAttribute('font-size', '11px')
+    textIndex.setAttribute('font-weight', '600')
+    textIndex.setAttribute('font-family', 'monospace')
     textIndex.textContent = `[${i}]`
     g.appendChild(textIndex)
 

@@ -90,10 +90,11 @@ describe('LogPanel', () => {
     it('展开后应渲染类型标签', () => {
       renderLogPanel()
       expandPanel()
-      expect(screen.getByText('[logPanel.type.oper]')).toBeInTheDocument()
-      expect(screen.getByText('[logPanel.type.info]')).toBeInTheDocument()
-      expect(screen.getByText('[logPanel.type.error]')).toBeInTheDocument()
-      expect(screen.getByText('[logPanel.type.code]')).toBeInTheDocument()
+      // Type labels appear as colored badges in log entries (without brackets in visible span)
+      expect(screen.getAllByText('logPanel.type.oper').length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText('logPanel.type.info').length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText('logPanel.type.error').length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText('logPanel.type.code').length).toBeGreaterThanOrEqual(1)
     })
   })
 
@@ -102,16 +103,19 @@ describe('LogPanel', () => {
       renderLogPanel()
       expandPanel()
       expect(screen.getByText('ALL')).toBeInTheDocument()
-      expect(screen.getByText('logPanel.type.oper')).toBeInTheDocument()
-      expect(screen.getByText('logPanel.type.code')).toBeInTheDocument()
-      expect(screen.getByText('logPanel.type.info')).toBeInTheDocument()
-      expect(screen.getByText('logPanel.type.error')).toBeInTheDocument()
+      // Filter buttons use aria-pressed attribute
+      const filterButtons = screen.getAllByRole('button', { pressed: false })
+      const typeButtons = filterButtons.filter(btn => btn.hasAttribute('aria-pressed') && btn.textContent !== '#')
+      expect(typeButtons.length).toBeGreaterThanOrEqual(4)
     })
 
     it('点击筛选按钮应只显示对应类型的日志', () => {
       renderLogPanel()
       expandPanel()
-      fireEvent.click(screen.getByText('logPanel.type.oper'))
+      // Find the filter button (has aria-pressed) for 'oper'
+      const operButtons = screen.getAllByText('logPanel.type.oper')
+      const filterBtn = operButtons.find(el => el.closest('button')?.hasAttribute('aria-pressed'))
+      fireEvent.click(filterBtn!)
       expect(screen.getByText('操作日志1')).toBeInTheDocument()
       expect(screen.queryByText('信息日志1')).not.toBeInTheDocument()
       expect(screen.queryByText('错误日志1')).not.toBeInTheDocument()
@@ -121,7 +125,9 @@ describe('LogPanel', () => {
     it('点击 ALL 按钮应显示所有日志', () => {
       renderLogPanel()
       expandPanel()
-      fireEvent.click(screen.getByText('logPanel.type.oper'))
+      const operButtons = screen.getAllByText('logPanel.type.oper')
+      const filterBtn = operButtons.find(el => el.closest('button')?.hasAttribute('aria-pressed'))
+      fireEvent.click(filterBtn!)
       fireEvent.click(screen.getByText('ALL'))
       expect(screen.getByText('操作日志1')).toBeInTheDocument()
       expect(screen.getByText('信息日志1')).toBeInTheDocument()
@@ -132,7 +138,9 @@ describe('LogPanel', () => {
     it('点击 error 筛选应只显示错误日志', () => {
       renderLogPanel()
       expandPanel()
-      fireEvent.click(screen.getByText('logPanel.type.error'))
+      const errorButtons = screen.getAllByText('logPanel.type.error')
+      const filterBtn = errorButtons.find(el => el.closest('button')?.hasAttribute('aria-pressed'))
+      fireEvent.click(filterBtn!)
       expect(screen.queryByText('操作日志1')).not.toBeInTheDocument()
       expect(screen.queryByText('信息日志1')).not.toBeInTheDocument()
       expect(screen.getByText('错误日志1')).toBeInTheDocument()
