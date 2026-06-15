@@ -66,6 +66,8 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVi
 
   ensureGradientDefs(svg, isDark)
 
+  const ns = 'http://www.w3.org/2000/svg'
+
   // Add drop shadow filter for array cells
   const defs = svg.querySelector('defs')
   if (defs && !defs.querySelector('#array-shadow')) {
@@ -85,8 +87,6 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVi
   }
 
   const { startX, startY } = layout(data.length, width, height)
-
-  const ns = 'http://www.w3.org/2000/svg'
 
   data.forEach((value, i) => {
     const g = document.createElementNS(ns, 'g')
