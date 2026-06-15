@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderLinkedList, animateReverse, animateInsertHead, animateSearchNode } from '../../visualizers/linkedListVisualizer'
+import { tStatic } from '../../i18n/useI18n'
 
 describe('linkedListVisualizer 集成测试', () => {
   let svg: SVGSVGElement
@@ -53,8 +54,8 @@ describe('linkedListVisualizer 集成测试', () => {
       renderLinkedList(svg, data, { width: 800, height: 400 })
 
       const texts = Array.from(svg.querySelectorAll('text'))
-      const hasHead = texts.some(t => t.textContent === 'HEAD')
-      const hasNull = texts.some(t => t.textContent === 'NULL')
+      const hasHead = texts.some(t => t.textContent === tStatic('linkedlist.headLabel'))
+      const hasNull = texts.some(t => t.textContent === tStatic('linkedlist.nullLabel'))
       expect(hasHead).toBe(true)
       expect(hasNull).toBe(true)
     })

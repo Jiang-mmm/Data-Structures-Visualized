@@ -46,6 +46,8 @@ export interface Locale {
     find: string
     insertAt: string
     detectCycle: string
+    headLabel: string
+    nullLabel: string
   }
   tree: {
     title: string
@@ -100,6 +102,7 @@ export interface Locale {
     delete: string
     search: string
     prefixSearch: string
+    rootLabel: string
   }
   sort: {
     title: string
@@ -234,6 +237,9 @@ export interface Locale {
     next: string
     selectAlgorithm: string
     step: string
+    autoPlay: string
+    pause: string
+    speed: string
   }
   errorBoundary: {
     title: string
@@ -257,6 +263,7 @@ export interface Locale {
   learning: {
     open: string
     close: string
+    title: string
   }
   undoPreview: {
     noData: string
@@ -545,6 +552,8 @@ export const zh: Locale = {
     find: '查找',
     insertAt: '按位插',
     detectCycle: '检测环',
+    headLabel: '头节点',
+    nullLabel: '空',
   },
   tree: {
     title: '二叉树',
@@ -599,6 +608,7 @@ export const zh: Locale = {
     delete: '删除',
     search: '查找',
     prefixSearch: '前缀匹配',
+    rootLabel: '根',
   },
   sort: {
     title: '排序',
@@ -803,6 +813,9 @@ export const zh: Locale = {
     next: '下一步',
     selectAlgorithm: '选择算法并开始学习',
     step: '步骤',
+    autoPlay: '自动播放',
+    pause: '暂停',
+    speed: '速度',
   },
   errorBoundary: {
     title: '组件异常',
@@ -826,6 +839,7 @@ export const zh: Locale = {
   learning: {
     open: '◇ 学习模式',
     close: '◇ 关闭学习模式',
+    title: '学习模式',
   },
   undoPreview: {
     noData: '无数据',
@@ -1044,6 +1058,8 @@ export const en: Locale = {
     find: 'Find',
     insertAt: 'Insert At',
     detectCycle: 'Detect Cycle',
+    headLabel: 'HEAD',
+    nullLabel: 'NULL',
   },
   tree: {
     title: 'Binary Tree',
@@ -1098,6 +1114,7 @@ export const en: Locale = {
     delete: 'Delete',
     search: 'Search',
     prefixSearch: 'Prefix Match',
+    rootLabel: 'root',
   },
   sort: {
     title: 'Sorting',
@@ -1302,6 +1319,9 @@ export const en: Locale = {
     next: 'Next',
     selectAlgorithm: 'Select an algorithm to start learning',
     step: 'Step',
+    autoPlay: 'Auto Play',
+    pause: 'Pause',
+    speed: 'Speed',
   },
   errorBoundary: {
     title: 'Component Error',
@@ -1325,6 +1345,7 @@ export const en: Locale = {
   learning: {
     open: '◇ Learning Mode',
     close: '◇ Close Learning Mode',
+    title: 'Learning Mode',
   },
   undoPreview: {
     noData: 'No data',

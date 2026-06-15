@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo, memo } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useColorTheme } from '../hooks/useColorTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
@@ -18,22 +18,39 @@ interface VisualizerProps {
 const ZOOM_MIN = 0.5
 const ZOOM_MAX = 2
 const ZOOM_STEP = 0.1
+const GRID_KEY = 'ds-visualizer-show-grid'
+const ZOOM_KEY = 'ds-visualizer-zoom'
 
-export default function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel, renderOptions }: VisualizerProps) {
+function loadBool(key: string, fallback: boolean): boolean {
+  try { const v = localStorage.getItem(key); return v !== null ? v === 'true' : fallback } catch { return fallback }
+}
+function loadNumber(key: string, fallback: number): number {
+  try { const v = localStorage.getItem(key); return v !== null ? Number(v) : fallback } catch { return fallback }
+}
+
+function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel, renderOptions }: VisualizerProps) {
   const { resolved: themeResolved } = useTheme()
   const { theme: colorTheme } = useColorTheme()
   const { t } = useGlobalSettings()
   const isDark = themeResolved === 'dark'
-  const [zoom, setZoom] = useState(1)
-  const [showGrid, setShowGrid] = useState(true)
+  const [zoom, setZoom] = useState(() => loadNumber(ZOOM_KEY, 1))
+  const [showGrid, setShowGrid] = useState(() => loadBool(GRID_KEY, true))
   const pinchRef = useRef({ initialDistance: 0, initialZoom: 1 })
 
   const handleZoomIn = useCallback(() => {
-    setZoom(z => Math.min(ZOOM_MAX, +(z + ZOOM_STEP).toFixed(1)))
+    setZoom(z => {
+      const next = Math.min(ZOOM_MAX, +(z + ZOOM_STEP).toFixed(1))
+      try { localStorage.setItem(ZOOM_KEY, String(next)) } catch {}
+      return next
+    })
   }, [])
 
   const handleZoomOut = useCallback(() => {
-    setZoom(z => Math.max(ZOOM_MIN, +(z - ZOOM_STEP).toFixed(1)))
+    setZoom(z => {
+      const next = Math.max(ZOOM_MIN, +(z - ZOOM_STEP).toFixed(1))
+      try { localStorage.setItem(ZOOM_KEY, String(next)) } catch {}
+      return next
+    })
   }, [])
 
   const getTouchDistance = (touches: TouchList) => {
@@ -60,6 +77,7 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
         Math.max(ZOOM_MIN, +(pinchRef.current.initialZoom * scale).toFixed(1))
       )
       setZoom(newZoom)
+      try { localStorage.setItem(ZOOM_KEY, String(newZoom)) } catch {}
     }
   }, [])
 
@@ -68,7 +86,9 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
       e.preventDefault()
       setZoom(z => {
         const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP
-        return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, +(z + delta).toFixed(1)))
+        const next = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, +(z + delta).toFixed(1)))
+        try { localStorage.setItem(ZOOM_KEY, String(next)) } catch {}
+        return next
       })
     }
   }, [])
@@ -130,9 +150,9 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
         aria-label={ariaLabel || t('visualizer.empty')}
       />
 
-      <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white/90 dark:bg-slate/90 backdrop-blur-sm border-2 border-ink/30 dark:border-dark-border/50 px-2 py-1 shadow-[2px_2px_0px_rgba(26,26,46,0.15)] dark:shadow-[2px_2px_0px_rgba(51,65,85,0.3)] z-10">
+      <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white dark:bg-slate border-2 border-ink/30 dark:border-dark-border/50 px-2 py-1 shadow-button dark:shadow-button-dark z-10">
         <button
-          onClick={() => setShowGrid(g => !g)}
+          onClick={() => setShowGrid(g => { const next = !g; try { localStorage.setItem(GRID_KEY, String(next)) } catch {}; return next })}
           className={`w-9 h-9 sm:w-7 sm:h-7 flex items-center justify-center transition-colors text-xs font-bold border-2
             ${showGrid
               ? 'bg-accent-blue/15 border-accent-blue/50 text-accent-blue'
@@ -166,3 +186,5 @@ export default function Visualizer({ data, renderFn, svgRef, dimensions, contain
     </div>
   )
 }
+
+export default memo(Visualizer)

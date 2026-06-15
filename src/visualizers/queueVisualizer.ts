@@ -55,6 +55,32 @@ export function renderQueue(svg: SVGSVGElement, data: number[], options: QueueVi
     .join('g')
     .attr('class', 'queue-item')
     .attr('transform', (_d: unknown, i: number) => `translate(${startX + i * (RECT_WIDTH + GAP)}, ${startY})`)
+    .attr('tabindex', '0')
+    .attr('role', 'group')
+    .attr('aria-label', (d: number) => `Queue element ${d}`)
+    .on('focus', function(this: SVGGElement) {
+      if (!this?.querySelector) return
+      select(this).select('rect').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+    })
+    .on('blur', function(this: SVGGElement, _event?: unknown, d?: number) {
+      if (!this?.querySelector || d == null) return
+      const idx = data.indexOf(d)
+      select(this).select('rect').attr('stroke', idx === 0 ? C.nodeLeafStroke : idx === data.length - 1 ? C.nodeActiveStroke : C.nodeDefaultStroke).attr('stroke-width', 2)
+    })
+    .on('keydown', function(this: SVGGElement, event?: KeyboardEvent) {
+      if (!event?.key) return
+      const allNodes = Array.from(container.selectAll('.queue-item').nodes())
+      const idx = allNodes.indexOf(this)
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+        event.preventDefault()
+        const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
+        next?.focus()
+      } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+        event.preventDefault()
+        const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
+        prev?.focus()
+      }
+    })
 
   groups.append('rect')
     .attr('width', RECT_WIDTH).attr('height', RECT_HEIGHT).attr('rx', 6)

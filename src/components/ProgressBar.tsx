@@ -19,10 +19,10 @@ export default memo(function ProgressBar({ progress, label, height = 'h-2' }: Pr
         aria-valuemin={0}
         aria-valuemax={100}
         aria-label={label || t('page.running')}
-        className={`${height} flex-1 bg-ink/10 dark:bg-dark-ink/10 rounded-full overflow-hidden border border-ink/20 dark:border-dark-border/30`}
+        className={`${height} flex-1 bg-ink/10 dark:bg-dark-ink/10 overflow-hidden border border-ink/20 dark:border-dark-border/30`}
       >
         <div
-          className={`${height} bg-accent-blue rounded-full transition-all duration-300 ease-out`}
+          className={`${height} bg-accent-blue transition-all duration-300 ease-out`}
           style={{ width: `${clamped}%` }}
         />
       </div>

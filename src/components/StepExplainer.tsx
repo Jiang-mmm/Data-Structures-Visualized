@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useState, useEffect, useRef, useCallback } from 'react'
 import type { LearningStep } from '../configs/learning'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
@@ -10,7 +10,28 @@ interface StepExplainerProps {
   onNext: () => void
   onPrev: () => void
   onReset: () => void
+  onGoToStep?: (index: number) => void
   isAnimating: boolean
+}
+
+function highlightCode(line: string, terms: string[], isHighlighted: boolean): React.ReactNode {
+  if (!terms.length || !line.trim()) return line
+
+  const escaped = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+  const regex = new RegExp(`(${escaped.join('|')})`, 'g')
+  const parts = line.split(regex)
+
+  return parts.map((part, i) => {
+    const isTerm = terms.some(t => part === t)
+    if (isTerm) {
+      return (
+        <span key={i} className="bg-accent-amber/20 text-accent-amber font-bold px-0.5">
+          {part}
+        </span>
+      )
+    }
+    return part
+  })
 }
 
 function StepExplainer({
@@ -21,9 +42,44 @@ function StepExplainer({
   onNext,
   onPrev,
   onReset,
+  onGoToStep,
   isAnimating,
 }: StepExplainerProps) {
   const { t } = useGlobalSettings()
+  const [autoPlay, setAutoPlay] = useState(false)
+  const [playSpeed, setPlaySpeed] = useState(3000)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const stopAutoPlay = useCallback(() => {
+    setAutoPlay(false)
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+      timerRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!autoPlay || isAnimating) {
+      stopAutoPlay()
+      return
+    }
+    if (currentStepIndex >= totalSteps - 1) {
+      stopAutoPlay()
+      return
+    }
+    timerRef.current = setTimeout(() => {
+      onNext()
+    }, playSpeed)
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [autoPlay, currentStepIndex, totalSteps, isAnimating, playSpeed, onNext, stopAutoPlay])
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [])
 
   if (!step) {
     return (
@@ -37,6 +93,27 @@ function StepExplainer({
 
   return (
     <div className="bg-white dark:bg-slate border-2 border-ink dark:border-dark-border p-4">
+      {/* Step dots navigation */}
+      <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+        {Array.from({ length: totalSteps }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => onGoToStep?.(i)}
+            disabled={isAnimating}
+            className={`w-2.5 h-2.5 rounded-full transition-all duration-200 border
+              ${i === currentStepIndex
+                ? 'bg-accent-blue border-accent-blue scale-125'
+                : i < currentStepIndex
+                  ? 'bg-accent-emerald/60 border-accent-emerald/60'
+                  : 'bg-ink/10 dark:bg-dark-ink/20 border-ink/20 dark:border-dark-border hover:bg-ink/30'
+              }
+              disabled:cursor-not-allowed`}
+            aria-label={`${t('stepExplainer.step')} ${i + 1}`}
+          />
+        ))}
+      </div>
+
+      {/* Progress bar */}
       <div className="flex items-center justify-between mb-3">
         <div className="text-sm font-mono text-ink-light dark:text-dark-ink-light">
           {t('stepExplainer.step')} {currentStepIndex + 1} / {totalSteps}
@@ -57,6 +134,7 @@ function StepExplainer({
         {step.description}
       </p>
 
+      {/* Code snippet with keyword highlighting */}
       <div className="bg-paper dark:bg-dark-paper border border-ink/10 dark:border-dark-border p-3 mb-4 font-mono text-xs max-h-48 overflow-y-auto scrollbar-thin">
         {step.codeSnippet.split('\n').map((line, index) => (
           <div
@@ -70,11 +148,46 @@ function StepExplainer({
             <span className="inline-block w-6 text-right mr-2 text-ink-light dark:text-dark-ink-light">
               {index + 1}
             </span>
-            {line}
+            {highlightCode(line, step.highlightTerms, index === step.highlightedLine - 1)}
           </div>
         ))}
       </div>
 
+      {/* Auto-play controls */}
+      <div className="flex items-center gap-2 mb-3">
+        <button
+          onClick={() => setAutoPlay(!autoPlay)}
+          disabled={isAnimating || currentStepIndex >= totalSteps - 1}
+          className={`px-3 py-1.5 text-xs font-bold border-2 border-ink dark:border-dark-border
+            shadow-button dark:shadow-button-dark
+            disabled:opacity-50 disabled:cursor-not-allowed
+            transition-all duration-200
+            ${autoPlay
+              ? 'bg-accent-amber text-paper border-accent-amber'
+              : 'hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper'
+            }`}
+        >
+          {autoPlay ? t('stepExplainer.pause') : t('stepExplainer.autoPlay')}
+        </button>
+        <div className="flex items-center gap-1 text-xs text-ink-light dark:text-dark-ink-light">
+          <span>{t('stepExplainer.speed')}:</span>
+          {[1000, 2000, 3000, 5000].map(ms => (
+            <button
+              key={ms}
+              onClick={() => setPlaySpeed(ms)}
+              className={`px-1.5 py-0.5 border text-[10px] font-mono transition-colors
+                ${playSpeed === ms
+                  ? 'bg-ink text-paper dark:bg-dark-ink dark:text-dark-paper border-ink dark:border-dark-border'
+                  : 'border-ink/20 dark:border-dark-border hover:bg-ink/10'
+                }`}
+            >
+              {ms / 1000}s
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Navigation buttons */}
       <div className="flex gap-2">
         <button
           onClick={onPrev}
@@ -90,7 +203,7 @@ function StepExplainer({
           {t('stepExplainer.prev')}
         </button>
         <button
-          onClick={onReset}
+          onClick={() => { onReset(); stopAutoPlay() }}
           disabled={isAnimating}
           className="px-3 py-2 text-sm font-bold border-2 border-ink dark:border-dark-border
             shadow-button dark:shadow-button-dark

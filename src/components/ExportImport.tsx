@@ -46,7 +46,7 @@ export default memo(function ExportImport({ dataType, data, onImport, disabled }
         className="px-3 py-1.5 font-mono text-xs font-bold border-2 border-ink/30 dark:border-dark-border
           bg-white dark:bg-slate text-ink-light dark:text-dark-ink-light
           hover:bg-accent-emerald/10 hover:border-accent-emerald hover:text-accent-emerald
-          hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_#059669]
+          hover:-translate-y-0.5 hover:shadow-button
           active:translate-y-0 active:shadow-none
           disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         title={t('exportImport.exportTooltip')}
@@ -60,7 +60,7 @@ export default memo(function ExportImport({ dataType, data, onImport, disabled }
         className="px-3 py-1.5 font-mono text-xs font-bold border-2 border-ink/30 dark:border-dark-border
           bg-white dark:bg-slate text-ink-light dark:text-dark-ink-light
           hover:bg-accent-blue/10 hover:border-accent-blue hover:text-accent-blue
-          hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_#2563eb]
+          hover:-translate-y-0.5 hover:shadow-button
           active:translate-y-0 active:shadow-none
           disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         title={t('exportImport.importTooltip')}

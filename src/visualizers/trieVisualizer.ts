@@ -2,6 +2,7 @@ import { select } from '../utils/d3Imports'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl, type ThemeColors } from '../utils/themeColors'
 import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import type { TrieFlattened } from '../hooks/useTrieState'
+import { tStatic } from '../i18n/useI18n'
 
 export interface TrieVisualizerOptions {
   isDark?: boolean
@@ -21,9 +22,9 @@ interface TrieEdge {
   char: string
 }
 
-const NODE_RADIUS = 22
-const LEVEL_HEIGHT = 80
-const MIN_NODE_SPACING = 50
+const NODE_RADIUS = 28
+const LEVEL_HEIGHT = 88
+const MIN_NODE_SPACING = 60
 
 function layout(data: TrieFlattened, width: number): { positions: TriePosition[]; edges: TrieEdge[] } {
   const positions: TriePosition[] = []
@@ -90,7 +91,7 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
     container.append('text')
       .attr('x', width / 2).attr('y', height / 2)
       .attr('text-anchor', 'middle').attr('fill', C.textLight)
-      .text('Empty Trie - Insert a word to start')
+      .text(tStatic('emptyState.emptyTrieShort'))
     return
   }
 
@@ -120,14 +121,14 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
       .attr('class', `trie-edge-label from-${edge.from}-to-${edge.to}`)
       .attr('transform', `translate(${midX}, ${midY})`)
       .append('circle')
-      .attr('r', 9)
+      .attr('r', 11)
       .attr('fill', C.containerStroke).attr('stroke', C.edgeDefault).attr('stroke-width', 1.5)
 
     container.append('text')
       .attr('class', `trie-edge-label-text from-${edge.from}-to-${edge.to}`)
       .attr('x', midX).attr('y', midY + 1)
       .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
-      .attr('fill', C.nodeActive).attr('font-size', '12px').attr('font-weight', 'bold')
+      .attr('fill', C.nodeActive).attr('font-size', '13px').attr('font-weight', 'bold')
       .text(edge.char)
   }
 
@@ -137,6 +138,31 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
     const nodeGroup = container.append('g')
       .attr('class', `trie-node node-${pos.id}`)
       .attr('transform', `translate(${pos.x}, ${pos.y})`)
+      .attr('tabindex', '0')
+      .attr('role', 'group')
+      .attr('aria-label', pos.id === 'root' ? tStatic('trie.rootLabel') : pos.prefix)
+      .on('focus', function(this: SVGGElement) {
+        if (!this?.querySelector) return
+        select(this).select('circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+      })
+      .on('blur', function(this: SVGGElement) {
+        if (!this?.querySelector) return
+        select(this).select('circle').attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
+      })
+      .on('keydown', function(this: SVGGElement, event: KeyboardEvent) {
+        if (!event?.key) return
+        const allNodes = Array.from(container.selectAll('.trie-node').nodes())
+        const idx = allNodes.indexOf(this)
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          event.preventDefault()
+          const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
+          next?.focus()
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          event.preventDefault()
+          const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
+          prev?.focus()
+        }
+      })
 
     nodeGroup.append('circle')
       .attr('r', NODE_RADIUS)
@@ -147,27 +173,27 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
     if (pos.id === 'root') {
       nodeGroup.append('text')
         .attr('dy', '0.35em').attr('text-anchor', 'middle')
-        .attr('fill', C.textWhite).attr('font-size', '10px').attr('font-weight', 'bold')
-        .text('root')
+        .attr('fill', C.textWhite).attr('font-size', '11px').attr('font-weight', 'bold')
+        .text(tStatic('trie.rootLabel'))
     } else if (pos.prefix.length > 0) {
       const lastChar = pos.prefix[pos.prefix.length - 1]
       nodeGroup.append('text')
         .attr('dy', '0.35em').attr('text-anchor', 'middle')
-        .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', 'bold')
+        .attr('fill', C.textWhite).attr('font-size', '16px').attr('font-weight', 'bold')
         .text(lastChar)
     }
 
     if (pos.isEndOfWord) {
       nodeGroup.append('text')
         .attr('dy', NODE_RADIUS + 12).attr('text-anchor', 'middle')
-        .attr('fill', C.nodeLeaf).attr('font-size', '9px')
+        .attr('fill', C.nodeLeaf).attr('font-size', '10px')
         .text('✓')
     }
 
     nodeGroup.append('text')
       .attr('dy', -NODE_RADIUS - 8).attr('text-anchor', 'middle')
       .attr('fill', C.textLight).attr('font-size', '8px')
-      .text(pos.prefix || 'root')
+      .text(pos.prefix || tStatic('trie.rootLabel'))
   }
 }
 

@@ -38,18 +38,22 @@ function OperationBar({ children, className = '' }: OperationBarProps) {
       role="toolbar"
       aria-label={t('page.operations')}
       className={`
-        bg-white/95 dark:bg-slate/95 backdrop-blur-sm border-b-2 border-ink dark:border-dark-border
+        bg-white dark:bg-slate border-b-2 border-ink dark:border-dark-border
         px-3 sm:px-6 py-2.5 sm:py-3.5
         operation-bar operation-bar-scroll-hint
         ${className}
       `}
     >
-      <div className="flex flex-wrap sm:flex-wrap items-center gap-2 sm:gap-3 min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-h-[44px]">
         {children}
       </div>
     </div>
   )
 }
+
+export const OperationDivider = memo(() => (
+  <div className="w-px h-6 bg-ink/10 dark:bg-dark-ink/10 mx-0.5 shrink-0" />
+))
 
 export default memo(OperationBar)
 
@@ -62,7 +66,7 @@ export const OperationInput = memo(({ value, onChange, placeholder, type = 'text
       onChange={(e) => onChange?.(e.target.value)}
       aria-label={ariaLabel || placeholder}
       className={`
-        w-24 sm:w-28 px-3 py-2 text-sm font-mono
+        w-20 sm:w-24 px-2.5 py-1.5 text-sm font-mono whitespace-nowrap shrink-0
         border-2 border-ink/80 dark:border-dark-border bg-paper dark:bg-slate
         outline-none rounded-none
         text-ink dark:text-dark-ink
@@ -107,7 +111,7 @@ export const OperationButton = memo(({ onClick, disabled, variant = 'primary', p
       onClick={handleClick}
       disabled={disabled}
       className={`
-        px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold
+        px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold whitespace-nowrap shrink-0
         border-2
         shadow-button dark:shadow-button-dark
         transition-all duration-200 ease-out
@@ -123,7 +127,7 @@ export const OperationButton = memo(({ onClick, disabled, variant = 'primary', p
 })
 
 export const OperationLabel = memo(({ children }: OperationLabelProps) => (
-  <span className="text-xs font-mono font-bold text-ink-light dark:text-dark-ink-light uppercase tracking-wide">
+  <span className="text-xs font-mono font-bold text-ink-light dark:text-dark-ink-light uppercase tracking-wide whitespace-nowrap shrink-0">
     {children}
   </span>
 ))

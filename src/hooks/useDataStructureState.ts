@@ -14,6 +14,7 @@ function getStorageKey(key: string): string {
 function isValidStoredData(data: unknown): boolean {
   if (data === null || data === undefined) return false
   if (Array.isArray(data)) {
+    if (data.length === 0) return false
     return data.every(item => {
       if (typeof item === 'number') return Number.isFinite(item)
       if (typeof item === 'object' && item !== null) return true
@@ -21,8 +22,14 @@ function isValidStoredData(data: unknown): boolean {
     })
   }
   if (typeof data === 'object') {
-    const keys = Object.keys(data as Record<string, unknown>)
-    return keys.length > 0
+    const obj = data as Record<string, unknown>
+    const keys = Object.keys(obj)
+    if (keys.length === 0) return false
+    // Validate that object values are proper types (arrays or objects), not primitives
+    return keys.every(k => {
+      const v = obj[k]
+      return v === null || v === undefined || typeof v === 'object' || Array.isArray(v)
+    })
   }
   return false
 }

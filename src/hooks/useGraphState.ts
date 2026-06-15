@@ -44,8 +44,8 @@ export function useGraphState() {
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
   } = useDataStructureState<GraphData>(INITIAL_DATA, { storageKey: 'graph' })
 
-  const nodes = graphData.nodes
-  const links = graphData.links
+  const nodes = Array.isArray(graphData.nodes) ? graphData.nodes : INITIAL_DATA.nodes
+  const links = Array.isArray(graphData.links) ? graphData.links : INITIAL_DATA.links
 
   const [viewMode, setViewMode] = useState<string>('force')
 

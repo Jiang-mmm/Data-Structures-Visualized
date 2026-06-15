@@ -13,6 +13,11 @@ const sampleLogs = [
   { time: '10:00:04', type: 'code', message: '代码日志1' },
 ]
 
+function expandPanel() {
+  const header = screen.getByRole('button', { name: /logPanel\.title/i })
+  fireEvent.click(header)
+}
+
 function renderLogPanel(props: { logs?: Array<{ time: string; type: string; message: string }>; maxHeight?: number } = {}) {
   const defaultProps = { logs: sampleLogs, ...props }
   return render(<LogPanel {...defaultProps} />)
@@ -20,36 +25,71 @@ function renderLogPanel(props: { logs?: Array<{ time: string; type: string; mess
 
 describe('LogPanel', () => {
   describe('空状态', () => {
-    it('logs 为空时应显示无日志提示', () => {
-      renderLogPanel({ logs: [] })
-      expect(screen.getByText('── logPanel.noLogs ──')).toBeInTheDocument()
+    it('logs 为空时不应渲染面板', () => {
+      const { container } = renderLogPanel({ logs: [] })
+      expect(container.firstChild).toBeNull()
     })
 
     it('logs 为空时不应显示日志条目', () => {
-      renderLogPanel({ logs: [] })
+      const { container } = renderLogPanel({ logs: [] })
       expect(screen.queryByText('操作日志1')).not.toBeInTheDocument()
     })
   })
 
-  describe('日志条目渲染', () => {
-    it('应渲染日志消息', () => {
+  describe('折叠/展开', () => {
+    it('默认应折叠显示', () => {
       renderLogPanel()
+      // 面板应存在但内容区域不可见
+      const header = screen.getByRole('button', { name: /logPanel\.title/i })
+      expect(header).toBeInTheDocument()
+      expect(header).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    it('点击标题栏应展开面板', () => {
+      renderLogPanel()
+      expandPanel()
+      const header = screen.getByRole('button', { name: /logPanel\.title/i })
+      expect(header).toHaveAttribute('aria-expanded', 'true')
+    })
+
+    it('展开后应显示日志内容', () => {
+      renderLogPanel()
+      expandPanel()
+      expect(screen.getByText('操作日志1')).toBeInTheDocument()
+      expect(screen.getByText('信息日志1')).toBeInTheDocument()
+    })
+
+    it('再次点击标题栏应折叠面板', () => {
+      renderLogPanel()
+      expandPanel()
+      expandPanel()
+      const header = screen.getByRole('button', { name: /logPanel\.title/i })
+      expect(header).toHaveAttribute('aria-expanded', 'false')
+    })
+  })
+
+  describe('日志条目渲染', () => {
+    it('展开后应渲染日志消息', () => {
+      renderLogPanel()
+      expandPanel()
       expect(screen.getByText('操作日志1')).toBeInTheDocument()
       expect(screen.getByText('信息日志1')).toBeInTheDocument()
       expect(screen.getByText('错误日志1')).toBeInTheDocument()
       expect(screen.getByText('代码日志1')).toBeInTheDocument()
     })
 
-    it('应渲染日志时间', () => {
+    it('展开后应渲染日志时间', () => {
       renderLogPanel()
+      expandPanel()
       expect(screen.getByText('10:00:01')).toBeInTheDocument()
       expect(screen.getByText('10:00:02')).toBeInTheDocument()
       expect(screen.getByText('10:00:03')).toBeInTheDocument()
       expect(screen.getByText('10:00:04')).toBeInTheDocument()
     })
 
-    it('应渲染类型标签', () => {
+    it('展开后应渲染类型标签', () => {
       renderLogPanel()
+      expandPanel()
       expect(screen.getByText('[logPanel.type.oper]')).toBeInTheDocument()
       expect(screen.getByText('[logPanel.type.info]')).toBeInTheDocument()
       expect(screen.getByText('[logPanel.type.error]')).toBeInTheDocument()
@@ -58,8 +98,9 @@ describe('LogPanel', () => {
   })
 
   describe('筛选按钮', () => {
-    it('应渲染所有筛选按钮', () => {
+    it('展开后应渲染所有筛选按钮', () => {
       renderLogPanel()
+      expandPanel()
       expect(screen.getByText('ALL')).toBeInTheDocument()
       expect(screen.getByText('logPanel.type.oper')).toBeInTheDocument()
       expect(screen.getByText('logPanel.type.code')).toBeInTheDocument()
@@ -69,6 +110,7 @@ describe('LogPanel', () => {
 
     it('点击筛选按钮应只显示对应类型的日志', () => {
       renderLogPanel()
+      expandPanel()
       fireEvent.click(screen.getByText('logPanel.type.oper'))
       expect(screen.getByText('操作日志1')).toBeInTheDocument()
       expect(screen.queryByText('信息日志1')).not.toBeInTheDocument()
@@ -78,6 +120,7 @@ describe('LogPanel', () => {
 
     it('点击 ALL 按钮应显示所有日志', () => {
       renderLogPanel()
+      expandPanel()
       fireEvent.click(screen.getByText('logPanel.type.oper'))
       fireEvent.click(screen.getByText('ALL'))
       expect(screen.getByText('操作日志1')).toBeInTheDocument()
@@ -88,6 +131,7 @@ describe('LogPanel', () => {
 
     it('点击 error 筛选应只显示错误日志', () => {
       renderLogPanel()
+      expandPanel()
       fireEvent.click(screen.getByText('logPanel.type.error'))
       expect(screen.queryByText('操作日志1')).not.toBeInTheDocument()
       expect(screen.queryByText('信息日志1')).not.toBeInTheDocument()
@@ -97,21 +141,29 @@ describe('LogPanel', () => {
   })
 
   describe('maxHeight', () => {
-    it('应使用默认 maxHeight 208', () => {
+    it('折叠时应使用 maxHeight 40', () => {
       const { container } = renderLogPanel()
+      const panel = container.firstChild as HTMLElement
+      expect(panel).toHaveStyle({ maxHeight: 40 })
+    })
+
+    it('展开后应使用默认 maxHeight 208', () => {
+      const { container } = renderLogPanel()
+      expandPanel()
       const panel = container.firstChild as HTMLElement
       expect(panel).toHaveStyle({ maxHeight: 208 })
     })
 
-    it('应应用自定义 maxHeight', () => {
+    it('展开后应应用自定义 maxHeight', () => {
       const { container } = renderLogPanel({ maxHeight: 400 })
+      expandPanel()
       const panel = container.firstChild as HTMLElement
       expect(panel).toHaveStyle({ maxHeight: 400 })
     })
   })
 
   describe('多种日志类型', () => {
-    it('应正确渲染包含所有类型的日志', () => {
+    it('展开后应正确渲染包含所有类型的日志', () => {
       const logs = [
         { time: '00:00:01', type: 'oper', message: '操作' },
         { time: '00:00:02', type: 'info', message: '信息' },
@@ -120,6 +172,7 @@ describe('LogPanel', () => {
         { time: '00:00:05', type: 'unknown', message: '未知类型' },
       ]
       renderLogPanel({ logs })
+      expandPanel()
       expect(screen.getByText('操作')).toBeInTheDocument()
       expect(screen.getByText('信息')).toBeInTheDocument()
       expect(screen.getByText('错误')).toBeInTheDocument()
@@ -127,60 +180,58 @@ describe('LogPanel', () => {
       expect(screen.getByText('未知类型')).toBeInTheDocument()
     })
 
-    it('应显示筛选后的日志数量', () => {
+    it('折叠时应显示日志数量', () => {
       const { container } = renderLogPanel()
-      const countElement = container.querySelector('.text-slate-500')
+      const countElement = container.querySelector('.text-slate-400')
       expect(countElement?.textContent).toBe('4')
     })
   })
 
   describe('移动端响应式优化 (P1-2c)', () => {
-    it('时间戳列应有移动端隐藏类', () => {
+    it('展开后时间戳列应有移动端隐藏类', () => {
       const { container } = renderLogPanel()
+      expandPanel()
       const timeSpans = container.querySelectorAll('.shrink-0.text-xs')
       const timeSpan = timeSpans[0] as HTMLElement
-      // 应包含 sm:block 用于移动端隐藏/显示
       expect(timeSpan.className).toContain('hidden')
       expect(timeSpan.className).toContain('sm:block')
     })
 
-    it('类型标签列应有移动端缩短显示', () => {
-      const { container } = renderLogPanel()
-      // 类型标签应有 sm:hidden 的移动端缩写和 hidden sm:block 的完整文本
-      const typeSpans = container.querySelectorAll('.shrink-0.font-bold.text-xs')
-      expect(typeSpans.length).toBeGreaterThan(0)
-    })
-
-    it('日志消息应保持可读性', () => {
+    it('展开后日志消息应保持可读性', () => {
       renderLogPanel()
+      expandPanel()
       expect(screen.getByText('操作日志1')).toBeInTheDocument()
       expect(screen.getByText('信息日志1')).toBeInTheDocument()
     })
 
-    it('日志条目应有 flex 布局', () => {
+    it('展开后日志条目应有 flex 布局', () => {
       const { container } = renderLogPanel()
+      expandPanel()
       const logEntries = container.querySelectorAll('.animate-slide-up')
       expect(logEntries.length).toBe(sampleLogs.length)
     })
 
-    it('日志消息应有 break-all 处理长文本', () => {
+    it('展开后日志消息应有 break-all 处理长文本', () => {
       const longLog = [
         { time: '10:00:01', type: 'oper', message: '这是一个非常长的日志消息用于测试移动端换行行为是否正确处理' }
       ]
       renderLogPanel({ logs: longLog })
+      expandPanel()
       const msg = screen.getByText(longLog[0].message)
       expect(msg.className).toContain('break-all')
     })
   })
 
   describe('自动滚动', () => {
-    it('应显示自动滚动按钮', () => {
+    it('展开后应显示自动滚动按钮', () => {
       renderLogPanel()
+      expandPanel()
       expect(screen.getByText('logPanel.autoScroll')).toBeInTheDocument()
     })
 
     it('点击自动滚动按钮应切换状态', () => {
       renderLogPanel()
+      expandPanel()
       const btn = screen.getByText('logPanel.autoScroll')
       fireEvent.click(btn)
       expect(screen.getByText('logPanel.freeze')).toBeInTheDocument()

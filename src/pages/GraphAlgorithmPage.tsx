@@ -236,7 +236,7 @@ export default function GraphAlgorithmPage() {
           </div>
         </div>
         
-        <div className="w-full lg:w-80">
+        <div className="w-full lg:w-96 shrink-0 overflow-y-auto">
           <LogPanel logs={logs} />
 
           {learningMode.isLearning && (

@@ -122,20 +122,21 @@ async function cleanup(page) {
 
 // Expand the "更多" OperationGroup if it exists
 async function expandMore(page) {
-  const moreBtn = page.locator('button').filter({ hasText: /更多/ }).first();
-  const count = await moreBtn.count();
-  if (count > 0) {
+  // Try up to 3 times to ensure the group is expanded
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const moreBtn = page.locator('button').filter({ hasText: /更多/ }).first();
+    const count = await moreBtn.count();
+    if (count === 0) return;
     const expanded = await moreBtn.getAttribute('aria-expanded').catch(() => null);
-    if (expanded !== 'true') {
-      await moreBtn.click();
-      await sleep(500);
-    }
+    if (expanded === 'true') return;
+    await moreBtn.click();
+    await sleep(800);
   }
   await cleanup(page);
 }
 
 // Test undo/redo: optionally expand "更多" first, then wait for undo, click, wait for redo, click
-async function testUndoRedo(page, results, pageName, hasOperationGroup = false) {
+async function testUndoRedo(page, results, pageName, hasOperationGroup = false, undoTimeout = 30000) {
   // Wait for any running animation to complete before expanding or interacting
   await waitForAnimationComplete(page, 25000);
 
@@ -145,7 +146,7 @@ async function testUndoRedo(page, results, pageName, hasOperationGroup = false) 
   }
 
   // Wait for undo button to become enabled
-  const undoReady = await waitForNextReady(page, /撤销|Undo/, 30000);
+  const undoReady = await waitForNextReady(page, /撤销|Undo/, undoTimeout);
   if (undoReady) {
     await clickButtonIfEnabled(page, /撤销|Undo/, 3000);
     // Wait for undo animation to complete
@@ -758,6 +759,10 @@ async function testHash(page, results) {
   }
 
   // --- Undo/Redo ---
+  // Ensure the previous insert animation fully completes before checking undo
+  await waitForAnimationComplete(page, 30000);
+  await sleep(2000);
+
   inputs = await getVisibleInputs(page);
   if (inputs.length >= 2) {
     await fillInput(page, inputs[0], '5');
@@ -765,9 +770,17 @@ async function testHash(page, results) {
   }
   await sleep(200);
   await cleanup(page);
-  await doOperation(page, /^插入$/, 2000);
+  await doOperation(page, /^插入$/, 3000);
 
-  await testUndoRedo(page, results, 'Hash', false);
+  // Extra long wait for hash insert animation to complete
+  await waitForAnimationComplete(page, 30000);
+  await sleep(3000);
+  // Ensure all modals/toasts are dismissed
+  await cleanup(page);
+  await sleep(1000);
+  await cleanup(page);
+
+  await testUndoRedo(page, results, 'Hash', false, 60000);
 
   // --- Reset ---
   const resetClicked = await doOperation(page, /重置/);
@@ -825,11 +838,22 @@ async function testHeap(page, results) {
   }
 
   // --- Undo/Redo ---
+  // Ensure the previous insert animation fully completes before checking undo
+  await waitForAnimationComplete(page, 30000);
+  await sleep(2000);
+
   inputs = await getVisibleInputs(page);
   if (inputs.length > 0) await fillInput(page, inputs[0], '50');
   await sleep(200);
   await cleanup(page);
-  await doOperation(page, /^插入|Insert$/, 2000);
+  await doOperation(page, /^插入|Insert$/, 3000);
+
+  // Extra wait for heap insert animation to complete (siftUp is slow in headless)
+  await waitForAnimationComplete(page, 30000);
+  await sleep(3000);
+  await cleanup(page);
+  await sleep(1000);
+  await cleanup(page);
 
   await testUndoRedo(page, results, 'Heap', false);
 

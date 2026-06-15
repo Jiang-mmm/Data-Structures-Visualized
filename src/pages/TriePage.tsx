@@ -4,7 +4,6 @@ import OperationBar, { OperationInput, OperationButton, OperationLabel, Operatio
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
-import Timeline from '../components/Timeline'
 import { renderTrie, animateInsertTrie, animateSearchTrie, animateDeleteTrie } from '../visualizers/trieVisualizer'
 import { useTrieState } from '../hooks/useTrieState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -176,14 +175,6 @@ export default function TriePage() {
       <Visualizer data={flatData} renderFn={renderTrie} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.trieLabel")} />
       {flatData.nodes.length === 0 && (
         <EmptyState icon="⊾" titleKey="emptyState.emptyTrie" descriptionKey="emptyState.emptyTrieDesc" onFill={reset} />
-      )}
-      {logs.length > 0 && (
-        <Timeline
-          history={logs.map(log => ({ type: log.type, description: log.message }))}
-          currentIndex={logs.length - 1}
-          onJump={undefined}
-          maxHeight="h-24"
-        />
       )}
       <LearningModeToggle
         showLearning={showLearning}

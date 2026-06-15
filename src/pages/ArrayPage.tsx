@@ -7,7 +7,6 @@ import ShareButton from '../components/ShareButton'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
-import Timeline from '../components/Timeline'
 import { renderArray, animateInsert, animateDelete, animateSearch } from '../visualizers/arrayVisualizer'
 import { useArrayState } from '../hooks/useArrayState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -174,14 +173,6 @@ export default function ArrayPage() {
           <EmptyState icon="▦" titleKey="emptyState.emptyArray" descriptionKey="emptyState.emptyArrayDesc" onFill={randomize} />
         )}
       </div>
-      {logs.length > 0 && (
-        <Timeline
-          history={logs.map(log => ({ type: log.type, description: log.message }))}
-          currentIndex={logs.length - 1}
-          onJump={undefined}
-          maxHeight="h-24"
-        />
-      )}
       <LearningModeToggle
         showLearning={showLearning}
         setShowLearning={setShowLearning}

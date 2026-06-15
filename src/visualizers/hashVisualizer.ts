@@ -119,6 +119,31 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       const entryGroup = container.append('g')
         .attr('class', `hash-entry key-${entry.key}`)
         .attr('transform', `translate(${centerX}, ${ey})`)
+        .attr('tabindex', '0')
+        .attr('role', 'group')
+        .attr('aria-label', `Entry ${entry.key}: ${entry.value}`)
+        .on('focus', function(this: SVGGElement) {
+          if (!this?.querySelector) return
+          select(this).select('circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+        })
+        .on('blur', function(this: SVGGElement) {
+          if (!this?.querySelector) return
+          select(this).select('circle').attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
+        })
+        .on('keydown', function(this: SVGGElement, event: KeyboardEvent) {
+          if (!event?.key) return
+          const allEntries = Array.from(container.selectAll('.hash-entry').nodes())
+          const idx = allEntries.indexOf(this)
+          if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+            event.preventDefault()
+            const next = allEntries[(idx + 1) % allEntries.length] as HTMLElement
+            next?.focus()
+          } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+            event.preventDefault()
+            const prev = allEntries[(idx - 1 + allEntries.length) % allEntries.length] as HTMLElement
+            prev?.focus()
+          }
+        })
 
       entryGroup.append('circle')
         .attr('r', ENTRY_RADIUS)

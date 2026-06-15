@@ -158,8 +158,8 @@ const palettes: Record<string, { light: ThemeColors; dark: ThemeColors }> = {
       sortCompareStroke: '#f97316',
       sortSwapStroke: '#a855f7',
       sortSortedStroke: '#10b981',
-      sortDefault: '#3b82f6',
-      sortDefaultStroke: '#2563eb',
+      sortDefault: '#059669',
+      sortDefaultStroke: '#047857',
       sortSorted: '#10b981',
       bucketBg: '#f3f4f6',
       bucketStroke: '#d1d5db',
@@ -171,7 +171,7 @@ const palettes: Record<string, { light: ThemeColors; dark: ThemeColors }> = {
       bucketError: '#fee2e2',
       bucketErrorStroke: '#ef4444',
       countText: '#6b7280',
-      entryFill: '#3b82f6',
+      entryFill: '#059669',
       entryValue: '#6b7280',
     },
     dark: {
@@ -199,8 +199,8 @@ const palettes: Record<string, { light: ThemeColors; dark: ThemeColors }> = {
       sortCompareStroke: '#fb923c',
       sortSwapStroke: '#c084fc',
       sortSortedStroke: '#34d399',
-      sortDefault: '#60a5fa',
-      sortDefaultStroke: '#3b82f6',
+      sortDefault: '#34d399',
+      sortDefaultStroke: '#059669',
       sortSorted: '#34d399',
       bucketBg: '#1e293b',
       bucketStroke: '#475569',
@@ -242,8 +242,8 @@ const palettes: Record<string, { light: ThemeColors; dark: ThemeColors }> = {
       sortCompareStroke: '#f97316',
       sortSwapStroke: '#a855f7',
       sortSortedStroke: '#10b981',
-      sortDefault: '#3b82f6',
-      sortDefaultStroke: '#2563eb',
+      sortDefault: '#ea580c',
+      sortDefaultStroke: '#c2410c',
       sortSorted: '#10b981',
       bucketBg: '#f3f4f6',
       bucketStroke: '#d1d5db',
@@ -283,8 +283,8 @@ const palettes: Record<string, { light: ThemeColors; dark: ThemeColors }> = {
       sortCompareStroke: '#fb923c',
       sortSwapStroke: '#c084fc',
       sortSortedStroke: '#34d399',
-      sortDefault: '#60a5fa',
-      sortDefaultStroke: '#3b82f6',
+      sortDefault: '#fb923c',
+      sortDefaultStroke: '#ea580c',
       sortSorted: '#34d399',
       bucketBg: '#1e293b',
       bucketStroke: '#475569',
@@ -326,8 +326,8 @@ const palettes: Record<string, { light: ThemeColors; dark: ThemeColors }> = {
       sortCompareStroke: '#f97316',
       sortSwapStroke: '#a855f7',
       sortSortedStroke: '#10b981',
-      sortDefault: '#3b82f6',
-      sortDefaultStroke: '#2563eb',
+      sortDefault: '#7c3aed',
+      sortDefaultStroke: '#5b21b6',
       sortSorted: '#10b981',
       bucketBg: '#f3f4f6',
       bucketStroke: '#d1d5db',
@@ -367,8 +367,8 @@ const palettes: Record<string, { light: ThemeColors; dark: ThemeColors }> = {
       sortCompareStroke: '#fb923c',
       sortSwapStroke: '#c084fc',
       sortSortedStroke: '#34d399',
-      sortDefault: '#60a5fa',
-      sortDefaultStroke: '#3b82f6',
+      sortDefault: '#a78bfa',
+      sortDefaultStroke: '#7c3aed',
       sortSorted: '#34d399',
       bucketBg: '#1e293b',
       bucketStroke: '#475569',
@@ -393,6 +393,61 @@ const availableThemes = [
   { key: 'royal', name: '皇家', nameKey: 'sidebar.themeRoyal', icon: '◇' },
 ]
 
+const THEME_CSS_MAP: Record<string, Record<string, string>> = {
+  default: {
+    '--color-accent-blue': '#3b82f6',
+    '--color-accent-teal': '#0d9488',
+    '--color-accent-rose': '#e11d48',
+    '--color-accent-amber': '#d97706',
+    '--color-accent-violet': '#7c3aed',
+    '--color-accent-emerald': '#059669',
+    '--color-accent-cyan': '#0891b2',
+    '--shadow-card-hover': '6px 6px 0px #3b82f6',
+    '--shadow-card-dark-hover': '6px 6px 0px #60a5fa',
+  },
+  forest: {
+    '--color-accent-blue': '#059669',
+    '--color-accent-teal': '#0f766e',
+    '--color-accent-rose': '#e11d48',
+    '--color-accent-amber': '#b45309',
+    '--color-accent-violet': '#6d28d9',
+    '--color-accent-emerald': '#10b981',
+    '--color-accent-cyan': '#0e7490',
+    '--shadow-card-hover': '6px 6px 0px #059669',
+    '--shadow-card-dark-hover': '6px 6px 0px #34d399',
+  },
+  warm: {
+    '--color-accent-blue': '#ea580c',
+    '--color-accent-teal': '#0d9488',
+    '--color-accent-rose': '#dc2626',
+    '--color-accent-amber': '#f59e0b',
+    '--color-accent-violet': '#7c3aed',
+    '--color-accent-emerald': '#059669',
+    '--color-accent-cyan': '#0891b2',
+    '--shadow-card-hover': '6px 6px 0px #ea580c',
+    '--shadow-card-dark-hover': '6px 6px 0px #fb923c',
+  },
+  royal: {
+    '--color-accent-blue': '#7c3aed',
+    '--color-accent-teal': '#0d9488',
+    '--color-accent-rose': '#e11d48',
+    '--color-accent-amber': '#d97706',
+    '--color-accent-violet': '#8b5cf6',
+    '--color-accent-emerald': '#059669',
+    '--color-accent-cyan': '#0891b2',
+    '--shadow-card-hover': '6px 6px 0px #7c3aed',
+    '--shadow-card-dark-hover': '6px 6px 0px #a78bfa',
+  },
+}
+
+function applyThemeToCSS(theme: string) {
+  const vars = THEME_CSS_MAP[theme] || THEME_CSS_MAP.default
+  const root = document.documentElement
+  for (const [prop, val] of Object.entries(vars)) {
+    root.style.setProperty(prop, val)
+  }
+}
+
 let currentTheme = 'default'
 let themeListeners: Array<() => void> = []
 
@@ -411,7 +466,17 @@ export function setTheme(theme: string) {
   try {
     localStorage.setItem(STORAGE_KEY, theme)
   } catch {}
+  applyThemeToCSS(theme)
   for (const listener of themeListeners) listener()
+}
+
+export function initThemeColors() {
+  const stored = (() => {
+    try { return localStorage.getItem(STORAGE_KEY) } catch { return null }
+  })()
+  const theme = stored && palettes[stored] ? stored : 'default'
+  currentTheme = theme
+  applyThemeToCSS(theme)
 }
 
 export function subscribeTheme(listener: () => void): () => void {
@@ -436,13 +501,9 @@ export function detectDarkMode(): boolean {
   return value
 }
 
+/** @deprecated Use initThemeColors() instead — it also applies CSS variables */
 export function initTheme() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved && palettes[saved]) {
-      currentTheme = saved
-    }
-  } catch {}
+  initThemeColors()
 }
 
 export function gradUrl(id: string): string {

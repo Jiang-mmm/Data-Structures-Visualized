@@ -27,7 +27,7 @@ export default function ToastContainer() {
   }
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm" aria-live={toasts.some(t => t.type === 'error') ? 'assertive' : 'polite'}>
+    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm" role={toasts.some(t => t.type === 'error') ? 'alert' : 'status'} aria-live={toasts.some(t => t.type === 'error') ? 'assertive' : 'polite'}>
       {toasts.map((toast: Toast) => (
         <div
           key={toast.id}
@@ -35,7 +35,7 @@ export default function ToastContainer() {
             flex items-center gap-3 px-4 py-3.5 text-sm font-bold animate-slide-up
             border-2 border-ink dark:border-dark-border
             shadow-card dark:shadow-card-dark
-            text-paper backdrop-blur-sm
+            text-paper
             ${typeStyles[toast.type] || typeStyles.info}
           `}
         >

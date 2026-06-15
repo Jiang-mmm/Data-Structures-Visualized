@@ -12,7 +12,7 @@ const LARGE_DATA_THRESHOLD = 30
 
 const DEFAULT_EDGE_STROKE_WIDTH = 2
 
-export type EdgeStyle = 'straight' | 'curved'
+export type EdgeStyle = 'straight' | 'curved' | 'orthogonal'
 
 interface TreeOptions {
   width: number
@@ -57,6 +57,15 @@ function curvedPath(x1: number, y1: number, x2: number, y2: number): string {
   return `M${x1},${y1} C${x1},${midY} ${x2},${midY} ${x2},${y2}`
 }
 
+function orthogonalPath(x1: number, y1: number, x2: number, y2: number): string {
+  const midY = (y1 + y2) / 2
+  const r = Math.min(6, Math.abs(midY - y1) * 0.3, Math.abs(x2 - x1) * 0.3)
+  if (Math.abs(x2 - x1) < 1) {
+    return `M${x1},${y1} L${x2},${y2}`
+  }
+  return `M${x1},${y1} L${x1},${midY - r} Q${x1},${midY} ${x1 + (x2 > x1 ? r : -r)},${midY} L${x2 - (x2 > x1 ? r : -r)},${midY} Q${x2},${midY} ${x2},${midY + r} L${x2},${y2}`
+}
+
 function drawEdge(
   container: ReturnType<typeof select>,
   x1: number, y1: number, x2: number, y2: number,
@@ -64,16 +73,19 @@ function drawEdge(
   style: EdgeStyle = 'straight',
   insertBefore?: string
 ): ReturnType<typeof select> {
-  if (style === 'curved') {
+  if (style === 'curved' || style === 'orthogonal') {
+    const pathD = style === 'curved' ? curvedPath(x1, y1, x2, y2) : orthogonalPath(x1, y1, x2, y2)
     const pathEl = insertBefore
       ? container.insert('path', insertBefore)
       : container.append('path')
     return pathEl
       .attr('class', 'tree-edge')
-      .attr('d', curvedPath(x1, y1, x2, y2))
+      .attr('d', pathD)
       .attr('fill', 'none')
       .attr('stroke', C.edgeDefault)
       .attr('stroke-width', 2)
+      .attr('data-x1', x1).attr('data-y1', y1)
+      .attr('data-x2', x2).attr('data-y2', y2)
   }
   const lineEl = insertBefore
     ? container.insert('line', insertBefore)
@@ -244,10 +256,10 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
       const isBSTViolation = isLeftChild ? node.value >= p.value : node.value <= p.value
 
       if (isBSTViolation) {
-        const violationEdge = edgeStyle === 'curved'
+        const violationEdge = (edgeStyle === 'curved' || edgeStyle === 'orthogonal')
           ? container.append('path')
               .attr('class', 'tree-edge')
-              .attr('d', curvedPath(x1, y1, x2, y2))
+              .attr('d', edgeStyle === 'curved' ? curvedPath(x1, y1, x2, y2) : orthogonalPath(x1, y1, x2, y2))
               .attr('fill', 'none')
           : container.append('line')
               .attr('class', 'tree-edge')
@@ -268,6 +280,31 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
     .join('g')
     .attr('class', 'tree-node')
     .attr('transform', (d: TreeNodeData) => `translate(${d.x}, ${d.y})`)
+    .attr('tabindex', '0')
+    .attr('role', 'group')
+    .attr('aria-label', (d: TreeNodeData) => `Node ${d.value}`)
+    .on('focus', function(this: SVGGElement) {
+      if (!this?.querySelector) return
+      select(this).select('circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+    })
+    .on('blur', function(this: SVGGElement) {
+      if (!this?.querySelector) return
+      select(this).select('circle').attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
+    })
+    .on('keydown', function(this: SVGGElement, event: KeyboardEvent) {
+      if (!event?.key) return
+      const allNodes = Array.from(container.selectAll('g.tree-node').nodes())
+      const idx = allNodes.indexOf(this)
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+        event.preventDefault()
+        const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
+        next?.focus()
+      } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+        event.preventDefault()
+        const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
+        prev?.focus()
+      }
+    })
     .call(dragBehavior())
 
   nodeGroups.append('circle').attr('r', NODE_RADIUS)
@@ -355,10 +392,14 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
     const x1 = p.x, y1 = p.y + NODE_RADIUS
     const x2 = x, y2 = y - NODE_RADIUS
 
-    if (edgeStyle === 'curved') {
+    if (edgeStyle === 'curved' || edgeStyle === 'orthogonal') {
       const midY = (y1 + y2) / 2
-      const startPath = `M${x1},${y1} C${x1},${midY} ${x1},${midY} ${x1},${y1}`
-      const endPath = `M${x1},${y1} C${x1},${midY} ${x2},${midY} ${x2},${y2}`
+      const startPath = edgeStyle === 'curved'
+        ? `M${x1},${y1} C${x1},${midY} ${x1},${midY} ${x1},${y1}`
+        : `M${x1},${y1} L${x1},${y1}`
+      const endPath = edgeStyle === 'curved'
+        ? `M${x1},${y1} C${x1},${midY} ${x2},${midY} ${x2},${y2}`
+        : orthogonalPath(x1, y1, x2, y2)
       const pathEl = container.append('path')
         .attr('class', 'tree-edge')
         .attr('d', startPath)
@@ -481,10 +522,10 @@ function highlightEntryEdge(container: any, childDataIndex: number, C: ReturnTyp
     const cy = childData.y || 0
     const px = parseFloat(parentTransform.match(/translate\(([^,]+)/)?.[1] || '0')
     const py = parseFloat(parentTransform.match(/, ([^)]+)/)?.[1] || '0')
-    const ex1 = parseFloat(el.attr('x1') || '-999')
-    const ey1 = parseFloat(el.attr('y1') || '-999')
-    const ex2 = parseFloat(el.attr('x2') || '-999')
-    const ey2 = parseFloat(el.attr('y2') || '-999')
+    const ex1 = parseFloat(el.attr('x1') || el.attr('data-x1') || '-999')
+    const ey1 = parseFloat(el.attr('y1') || el.attr('data-y1') || '-999')
+    const ex2 = parseFloat(el.attr('x2') || el.attr('data-x2') || '-999')
+    const ey2 = parseFloat(el.attr('y2') || el.attr('data-y2') || '-999')
     return Math.abs(ex1 - px) < 2 && Math.abs(ey1 - (py + NODE_RADIUS)) < 2 &&
            Math.abs(ex2 - cx) < 2 && Math.abs(ey2 - (cy - NODE_RADIUS)) < 2
   }).transition().duration(duration(400)).ease(EASING.easeOutBack)

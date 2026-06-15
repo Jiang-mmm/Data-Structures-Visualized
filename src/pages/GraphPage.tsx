@@ -4,7 +4,6 @@ import OperationBar, { OperationInput, OperationButton, OperationLabel, Operatio
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
-import Timeline from '../components/Timeline'
 import { renderGraph, animateBFS, animateDFS, animateDijkstra, clearGraphSimulation } from '../visualizers/graphVisualizer'
 import { useGraphState } from '../hooks/useGraphState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -198,7 +197,7 @@ export default function GraphPage() {
             <button key={k} aria-pressed={viewMode === k} onClick={() => setViewMode(k)}
               className={`font-mono text-[10px] px-2 py-0.5 border-2 transition-all duration-200
                 ${viewMode === k
-                  ? 'border-ink dark:border-dark-border bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper shadow-[1px_1px_0px_#1a1a2e] dark:shadow-[1px_1px_0px_#334155]'
+                  ? 'border-ink dark:border-dark-border bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper shadow-button dark:shadow-button-dark'
                   : 'border-ink/20 dark:border-dark-border text-ink-light dark:text-dark-ink-light hover:border-ink/40 dark:hover:border-dark-ink/40 hover:bg-ink/5 dark:hover:bg-dark-ink/5'
                 }`}>{l}</button>
           ))}
@@ -263,14 +262,6 @@ export default function GraphPage() {
         </div>
       )}
 
-      {logs.length > 0 && (
-        <Timeline
-          history={logs.map(log => ({ type: log.type, description: log.message }))}
-          currentIndex={logs.length - 1}
-          onJump={undefined}
-          maxHeight="h-24"
-        />
-      )}
       <LearningModeToggle
         showLearning={showLearning}
         setShowLearning={setShowLearning}

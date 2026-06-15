@@ -342,7 +342,7 @@ async function runTest() {
     for (let i = 0; i < 3; i++) {
       await closeModalIfOpen(page);
       await clickButtonIfEnabled(page, /撤销/);
-      await sleep(1000);
+      await sleep(2000);
       await closeModalIfOpen(page);
       const s = await getSizeValue();
       sizes.push(s);
@@ -355,7 +355,7 @@ async function runTest() {
     for (let i = 0; i < 2; i++) {
       await closeModalIfOpen(page);
       await clickButtonIfEnabled(page, /重做/);
-      await sleep(1000);
+      await sleep(2000);
       await closeModalIfOpen(page);
     }
 
@@ -370,7 +370,7 @@ async function runTest() {
       const disabled = await undoBtn.isDisabled().catch(() => true);
       if (disabled) break;
       await undoBtn.click();
-      await sleep(800);
+      await sleep(1500);
       await closeModalIfOpen(page);
     }
 

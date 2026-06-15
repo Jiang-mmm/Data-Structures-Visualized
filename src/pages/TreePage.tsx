@@ -1,10 +1,9 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
-import Timeline from '../components/Timeline'
 import { renderTree, animateInsertNode, animateTraversal, animateLevelOrder, animateSearch, animateDeleteNode, clearTreePositions, type EdgeStyle } from '../visualizers/treeVisualizer'
 import { useTreeState } from '../hooks/useTreeState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -30,7 +29,7 @@ export default function TreePage() {
   const [showLearning, setShowLearning] = useState(false)
   const [edgeStyle, setEdgeStyle] = useState<EdgeStyle>(() => {
     const stored = localStorage.getItem('ds-tree-edge-style')
-    return (stored === 'curved' || stored === 'straight') ? stored : 'straight'
+    return (stored === 'curved' || stored === 'straight' || stored === 'orthogonal') ? stored as EdgeStyle : 'straight'
   })
   const learningMode = useLearningMode('tree')
 
@@ -123,8 +122,6 @@ export default function TreePage() {
     reset()
   }, [reset])
 
-  const timelineHistory = useMemo(() => logs.map(log => ({ type: log.type, description: log.message })), [logs])
-
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('tree.title')} subtitle={t('tree.subtitle')} icon="❖">
@@ -156,13 +153,13 @@ export default function TreePage() {
           <OperationButton
             variant="outline"
             onClick={() => {
-              const next = edgeStyle === 'straight' ? 'curved' : 'straight'
+              const next = edgeStyle === 'straight' ? 'curved' : edgeStyle === 'curved' ? 'orthogonal' : 'straight'
               setEdgeStyle(next)
               localStorage.setItem('ds-tree-edge-style', next)
             }}
             disabled={isAnimating}
           >
-            {edgeStyle === 'straight' ? '⤿ ' : '│ '}{t('tree.edgeStyle')}
+            {edgeStyle === 'straight' ? '⤿ ' : edgeStyle === 'curved' ? '⌇ ' : '⊞ '}{t('tree.edgeStyle')}
           </OperationButton>
           <UndoPreviewButton
             variant="outline"
@@ -188,14 +185,6 @@ export default function TreePage() {
       <Visualizer data={data} renderFn={renderTree} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.treeLabel")} renderOptions={{ edgeStyle }} />
       {data.length === 0 && (
         <EmptyState icon="❖" titleKey="emptyState.emptyTree" descriptionKey="emptyState.emptyTreeDesc" onFill={reset} />
-      )}
-      {logs.length > 0 && (
-        <Timeline
-          history={timelineHistory}
-          currentIndex={logs.length - 1}
-          onJump={undefined}
-          maxHeight="h-24"
-        />
       )}
       <LearningModeToggle
         showLearning={showLearning}

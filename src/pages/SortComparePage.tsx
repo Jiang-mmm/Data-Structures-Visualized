@@ -4,7 +4,6 @@ import OperationBar, { OperationButton, OperationInfo } from '../components/Oper
 import LogPanel from '../components/LogPanel'
 import SpeedControl from '../components/SpeedControl'
 import PerformanceChart from '../components/PerformanceChart'
-import Timeline from '../components/Timeline'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getAnimationSpeed, createAnimation } from '../utils/animationEngine'
 import { renderSortBars, animateCompare, animateSwap, animateSorted } from '../visualizers/sortVisualizer'
@@ -290,8 +289,6 @@ export default function SortComparePage() {
 
   const allAlgorithms = Array.from(getAllSortAlgorithms().entries())
   const allDone = selectedAlgos.length > 0 && selectedAlgos.every(k => algoResults[k]?.done)
-  const timelineHistory = logs.map(log => ({ type: log.type, description: log.message }))
-  const timelineIndex = logs.length > 0 ? logs.length - 1 : -1
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
@@ -409,14 +406,6 @@ export default function SortComparePage() {
         )}
       </div>
 
-      {timelineHistory.length > 0 && (
-        <Timeline
-          history={timelineHistory}
-          currentIndex={timelineIndex}
-          onJump={undefined}
-          maxHeight="h-24"
-        />
-      )}
       <LogPanel logs={logs} />
     </div>
   )

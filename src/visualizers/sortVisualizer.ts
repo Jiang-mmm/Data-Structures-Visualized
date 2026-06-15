@@ -1,6 +1,7 @@
 import { select } from '../utils/d3Imports'
 import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
+import { tStatic } from '../i18n/useI18n'
 
 const BAR_GAP_RATIO = 0.35
 const CORNER_RADIUS = 4
@@ -105,7 +106,7 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
         },
         (update: any) => {
           update.select('rect')
-            .transition().duration(200)
+            .transition().duration(duration(200))
             .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight)
             .attr('height', (d: number) => (d / maxVal) * maxBarHeight)
             .attr('fill', gradUrl('bar-default'))
@@ -114,14 +115,14 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
 
           update.select('text.bar-value')
             .text((d: number) => d)
-            .transition().duration(200)
+            .transition().duration(duration(200))
             .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight - 6)
             .attr('fill', C.textSecondary)
 
-          return update.transition().duration(200)
+          return update.transition().duration(duration(200))
             .attr('transform', (_d: number, i: number) => `translate(${indexToX(i, barWidth, gap, offsetX)}, 0)`)
         },
-        (exit: any) => exit.transition().duration(200).attr('opacity', 0).remove()
+        (exit: any) => exit.transition().duration(duration(200)).attr('opacity', 0).remove()
       )
   }
 }
@@ -403,7 +404,7 @@ export async function animateSorted(svg: SVGSVGElement, data: number[], options:
       .attr('font-weight', '800')
       .attr('font-family', "'JetBrains Mono', monospace")
       .attr('opacity', 0)
-      .text('SORTED')
+      .text(tStatic('sortLegend.sorted').toUpperCase())
       .transition().duration(duration(600)).ease(EASING.easeOutBack)
       .attr('opacity', 1)
   )

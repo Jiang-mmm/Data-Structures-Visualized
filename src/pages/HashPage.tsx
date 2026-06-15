@@ -4,7 +4,6 @@ import OperationBar, { OperationInput, OperationButton, OperationLabel, Operatio
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
-import Timeline from '../components/Timeline'
 import { renderHash, animateInsertHash, animateSearchHash, animateDeleteHash } from '../visualizers/hashVisualizer'
 import { useHashState } from '../hooks/useHashState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -155,14 +154,6 @@ export default function HashPage() {
       />
       {data.length === 0 && (
         <EmptyState icon="#" titleKey="emptyState.emptyHash" descriptionKey="emptyState.emptyHashDesc" onFill={reset} />
-      )}
-      {logs.length > 0 && (
-        <Timeline
-          history={logs.map(log => ({ type: log.type, description: log.message }))}
-          currentIndex={logs.length - 1}
-          onJump={undefined}
-          maxHeight="h-24"
-        />
       )}
       <LearningModeToggle
         showLearning={showLearning}

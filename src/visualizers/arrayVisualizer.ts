@@ -74,6 +74,30 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVi
     const g = document.createElementNS(ns, 'g')
     g.setAttribute('class', 'array-item')
     g.setAttribute('transform', `translate(${posX(startX, i)}, ${startY})`)
+    g.setAttribute('tabindex', '0')
+    g.setAttribute('role', 'group')
+    g.setAttribute('aria-label', `Array element [${i}]: ${value}`)
+    g.addEventListener('focus', () => {
+      rect.setAttribute('stroke', C.nodeActive)
+      rect.setAttribute('stroke-width', '3')
+    })
+    g.addEventListener('blur', () => {
+      rect.setAttribute('stroke', C.nodeDefaultStroke)
+      rect.setAttribute('stroke-width', '2')
+    })
+    g.addEventListener('keydown', (event) => {
+      const allItems = Array.from(svg.querySelectorAll('.array-item'))
+      const idx = allItems.indexOf(g)
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+        event.preventDefault()
+        const next = allItems[(idx + 1) % allItems.length] as HTMLElement
+        next.focus()
+      } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+        event.preventDefault()
+        const prev = allItems[(idx - 1 + allItems.length) % allItems.length] as HTMLElement
+        prev.focus()
+      }
+    })
 
     const rect = document.createElementNS(ns, 'rect')
     rect.setAttribute('width', String(RECT_WIDTH))

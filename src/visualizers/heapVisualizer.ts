@@ -120,6 +120,31 @@ export function renderHeap(svg: SVGSVGElement, data: number[], options: HeapOpti
     const nodeGroup = container.append('g')
       .attr('class', `heap-node index-${pos.index}`)
       .attr('transform', `translate(${pos.x}, ${pos.y})`)
+      .attr('tabindex', '0')
+      .attr('role', 'group')
+      .attr('aria-label', `Node ${data[pos.index]}`)
+      .on('focus', function(this: SVGGElement) {
+        if (!this?.querySelector) return
+        select(this).select('circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+      })
+      .on('blur', function(this: SVGGElement) {
+        if (!this?.querySelector) return
+        select(this).select('circle').attr('stroke', isViolation ? C.nodeErrorStroke : C.nodeDefaultStroke).attr('stroke-width', isViolation ? 3 : 2)
+      })
+      .on('keydown', function(this: SVGGElement, event: KeyboardEvent) {
+        if (!event?.key) return
+        const allNodes = Array.from(container.selectAll('.heap-node').nodes())
+        const idx = allNodes.indexOf(this)
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          event.preventDefault()
+          const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
+          next?.focus()
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          event.preventDefault()
+          const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
+          prev?.focus()
+        }
+      })
 
     nodeGroup.append('circle')
       .attr('r', NODE_RADIUS)

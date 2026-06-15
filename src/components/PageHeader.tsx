@@ -9,11 +9,11 @@ interface PageHeaderProps {
 
 function PageHeader({ title, subtitle, icon, children }: PageHeaderProps) {
   return (
-    <header className="bg-white/95 dark:bg-slate/95 backdrop-blur-sm border-b-2 border-ink dark:border-dark-border px-4 sm:px-6 py-3.5 sm:py-5 page-header">
+    <header className="bg-white dark:bg-slate border-b-2 border-ink dark:border-dark-border px-4 sm:px-6 py-3.5 sm:py-5 page-header">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div className="flex items-center gap-3 sm:gap-4">
           {icon && (
-            <div className="w-11 h-11 sm:w-13 sm:h-13 border-2 border-ink dark:border-dark-border bg-gradient-to-br from-paper to-paper-warm dark:from-slate dark:to-slate-light flex items-center justify-center shrink-0 shadow-button-hover dark:shadow-button-dark-hover transition-transform duration-200 hover:scale-105">
+            <div className="w-11 h-11 sm:w-13 sm:h-13 border-2 border-ink dark:border-dark-border bg-gradient-to-br from-paper to-paper-warm dark:from-slate dark:to-slate-light flex items-center justify-center shrink-0 shadow-button dark:shadow-button-dark hover:shadow-button-hover dark:hover:shadow-button-dark-hover transition-all duration-200 hover:scale-105">
               <span className="text-xl sm:text-2xl">{icon}</span>
             </div>
           )}

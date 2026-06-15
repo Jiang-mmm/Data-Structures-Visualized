@@ -12,6 +12,7 @@ interface LearningModeToggleProps {
     progress: number
     nextStep: () => void
     prevStep: () => void
+    goToStep: (index: number) => void
     reset: () => void
   }
   isAnimating: boolean
@@ -23,36 +24,55 @@ function LearningModeToggle({ showLearning, setShowLearning, learningMode, isAni
 
   return (
     <>
-      <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
-        <button
-          aria-expanded={showLearning}
-          onClick={() => setShowLearning(!showLearning)}
-          className={`px-3 py-1.5 text-sm font-bold border-2 transition-all duration-200
-            shadow-button dark:shadow-button-dark
-            active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
-            ${showLearning
-              ? 'bg-accent-blue text-paper border-accent-blue'
-              : 'border-ink dark:border-dark-border hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover'
-            }`}
-        >
-          {showLearning ? t('learning.close') : t('learning.open')}
-        </button>
-      </div>
+      {/* Floating toggle button */}
+      <button
+        aria-expanded={showLearning}
+        onClick={() => setShowLearning(!showLearning)}
+        className={`fixed bottom-16 right-4 z-40 px-3 py-2 text-sm font-bold border-2 transition-all duration-200
+          shadow-button dark:shadow-button-dark
+          active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
+          ${showLearning
+            ? 'bg-accent-blue text-paper border-accent-blue'
+            : 'bg-white dark:bg-slate border-ink dark:border-dark-border hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover'
+          }`}
+      >
+        {showLearning ? t('learning.close') : t('learning.open')}
+      </button>
 
+      {/* Side panel overlay */}
       {showLearning && (
-        <div className="px-3 sm:px-4 py-2 border-t border-ink/10 dark:border-dark-border/30">
-          {children}
-          <StepExplainer
-            step={learningMode.currentStep}
-            currentStepIndex={learningMode.currentStepIndex}
-            totalSteps={learningMode.totalSteps}
-            progress={learningMode.progress}
-            onNext={learningMode.nextStep}
-            onPrev={learningMode.prevStep}
-            onReset={learningMode.reset}
-            isAnimating={isAnimating}
+        <>
+          <div
+            className="fixed inset-0 bg-black/20 z-40 transition-opacity"
+            onClick={() => setShowLearning(false)}
           />
-        </div>
+          <div className="fixed top-0 right-0 h-full w-[420px] max-w-[90vw] z-50 bg-white dark:bg-dark-paper border-l-2 border-ink dark:border-dark-border shadow-2xl overflow-y-auto transition-transform animate-slide-in-right">
+            <div className="sticky top-0 bg-white dark:bg-dark-paper border-b-2 border-ink dark:border-dark-border px-4 py-3 flex items-center justify-between z-10">
+              <span className="font-bold text-ink dark:text-dark-ink">{t('learning.title')}</span>
+              <button
+                onClick={() => setShowLearning(false)}
+                className="w-8 h-8 flex items-center justify-center border-2 border-ink dark:border-dark-border hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper transition-colors font-bold"
+                aria-label={t('learning.close')}
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-4">
+              {children}
+              <StepExplainer
+                step={learningMode.currentStep}
+                currentStepIndex={learningMode.currentStepIndex}
+                totalSteps={learningMode.totalSteps}
+                progress={learningMode.progress}
+                onNext={learningMode.nextStep}
+                onPrev={learningMode.prevStep}
+                onGoToStep={learningMode.goToStep}
+                onReset={learningMode.reset}
+                isAnimating={isAnimating}
+              />
+            </div>
+          </div>
+        </>
       )}
     </>
   )

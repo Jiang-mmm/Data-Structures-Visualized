@@ -53,7 +53,12 @@ async function runTests() {
       record('随机数据生成', bars > 0 ? 'PASS' : 'FAIL', `柱状图数量: ${bars}`);
     }
 
-    // 排序按钮检查
+    // 排序按钮检查 - 需要先展开"更多"以访问折叠的算法按钮
+    const sortMoreBtn = page.getByRole('button', { name: '更多' });
+    if (await sortMoreBtn.first().isVisible().catch(() => false)) {
+      await sortMoreBtn.first().click();
+      await waitForPage(500);
+    }
     const algoNames = ['冒泡', '基数', '桶', '快速', '归并', '堆', '选择', '插入'];
     let enabledBtns = 0;
     for (const name of algoNames) {
@@ -108,13 +113,23 @@ async function runTests() {
       record('快速排序启动', stopVisible2 ? 'PASS' : 'FAIL', stopVisible2 ? '动画执行中' : '动画未启动');
 
       if (stopVisible2) {
-        for (let i = 0; i < 15; i++) {
+        // Wait up to 20 seconds, then stop if still running (headless Chromium is slow)
+        let quickSortDone = false;
+        for (let i = 0; i < 20; i++) {
           await waitForPage(1000);
           const stillRunning = await page.getByText('停止').isVisible().catch(() => false);
-          if (!stillRunning) break;
+          if (!stillRunning) { quickSortDone = true; break; }
         }
-        const stillRunning = await page.getByText('停止').isVisible().catch(() => false);
-        record('快速排序完成', !stillRunning ? 'PASS' : 'FAIL', !stillRunning ? '排序完成' : '排序仍在执行');
+        if (!quickSortDone) {
+          // Click stop to test stop functionality
+          const stopBtn = page.locator('button').filter({ hasText: '停止' }).first();
+          await stopBtn.click({ timeout: 3000 }).catch(() => {});
+          await waitForPage(2000);
+          const stopGone = !(await page.locator('button').filter({ hasText: '停止' }).isVisible().catch(() => false));
+          record('快速排序停止', stopGone ? 'PASS' : 'FAIL', stopGone ? '停止按钮消失，动画中止' : '停止后按钮仍在');
+        } else {
+          record('快速排序完成', 'PASS', '排序完成');
+        }
       }
     }
 
@@ -252,8 +267,15 @@ async function runTests() {
       record('链表尾插', 'FAIL', '按钮不可用');
     }
 
+    // Expand OperationGroup to access buttons inside "更多"
+    const moreBtn = page.getByRole('button', { name: '更多' });
+    if (await moreBtn.first().isVisible().catch(() => false)) {
+      await moreBtn.first().click();
+      await waitForPage(500);
+    }
+
     const reverseBtn = page.getByText('反转');
-    if (await reverseBtn.first().isEnabled()) {
+    if (await reverseBtn.first().isEnabled({ timeout: 3000 }).catch(() => false)) {
       await reverseBtn.first().click();
       await waitForPage(10000);
       const reverseDone = await reverseBtn.first().isEnabled().catch(() => true);

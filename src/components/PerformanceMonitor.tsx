@@ -31,7 +31,18 @@ export default memo(function PerformanceMonitor() {
   const [memory, setMemory] = useState<MemoryInfo | null>(null)
   const [expanded, setExpanded] = useState<boolean>(false)
   const frameRef = useRef<number | null>(null)
-  const [visible, setVisible] = useState<boolean>(() => import.meta.env.DEV)
+  const [visible, setVisible] = useState<boolean>(false)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'F') {
+        e.preventDefault()
+        setVisible(v => !v)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   useEffect(() => {
     if (!visible) {
@@ -58,21 +69,11 @@ export default memo(function PerformanceMonitor() {
   }, [visible])
 
   if (!visible) {
-    return (
-      <div className="fixed bottom-4 right-4 z-40">
-        <button
-          onClick={() => setVisible(true)}
-          aria-label={t('performanceMonitor.show')}
-          className="px-2 py-1 bg-ink/80 dark:bg-dark-ink/80 backdrop-blur-sm border border-white/10 text-xs font-mono text-white/50 hover:text-white/80 transition-colors"
-        >
-          FPS
-        </button>
-      </div>
-    )
+    return null
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-40">
+    <div className="fixed top-2 left-2 z-40">
       <button
         onClick={() => setExpanded(!expanded)}
         onContextMenu={(e) => { e.preventDefault(); setVisible(false) }}

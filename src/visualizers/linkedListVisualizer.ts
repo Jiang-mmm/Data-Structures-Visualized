@@ -58,7 +58,7 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
   const { startX, startY } = layout(data, width, height)
 
   container.append('text').attr('x', startX - NODE_RADIUS - 10).attr('y', startY + 5)
-    .attr('text-anchor', 'end').attr('fill', C.textSecondary).attr('font-size', '12px').text('HEAD')
+    .attr('text-anchor', 'end').attr('fill', C.textSecondary).attr('font-size', '12px').text(tStatic('linkedlist.headLabel'))
 
   container.append('line')
     .attr('x1', startX - NODE_RADIUS - 5).attr('y1', startY)
@@ -69,6 +69,31 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
     const x = startX + i * (NODE_RADIUS * 2 + NODE_GAP)
     const y = startY
     const g = container.append('g').attr('class', 'linked-node').attr('transform', `translate(${x}, ${y})`)
+      .attr('tabindex', '0')
+      .attr('role', 'group')
+      .attr('aria-label', `Node ${value}`)
+      .on('focus', function(this: SVGGElement) {
+        if (!this?.querySelector) return
+        select(this).select('circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+      })
+      .on('blur', function(this: SVGGElement) {
+        if (!this?.querySelector) return
+        select(this).select('circle').attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
+      })
+      .on('keydown', function(this: SVGGElement, event: KeyboardEvent) {
+        if (!event?.key) return
+        const allNodes = Array.from(container.selectAll('.linked-node').nodes())
+        const idx = allNodes.indexOf(this)
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          event.preventDefault()
+          const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
+          next?.focus()
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          event.preventDefault()
+          const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
+          prev?.focus()
+        }
+      })
     g.append('circle').attr('r', NODE_RADIUS).attr('fill', gradUrl('node-default')).attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
     g.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
       .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', 'bold').text(value)
@@ -84,7 +109,7 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
 
   const lastX = startX + (data.length - 1) * (NODE_RADIUS * 2 + NODE_GAP)
   container.append('text').attr('x', lastX + NODE_RADIUS + 15).attr('y', startY + 5)
-    .attr('fill', C.textSecondary).attr('font-size', '12px').text('NULL')
+    .attr('fill', C.textSecondary).attr('font-size', '12px').text(tStatic('linkedlist.nullLabel'))
 }
 
 /**

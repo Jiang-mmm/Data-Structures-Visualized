@@ -1,9 +1,8 @@
 import { useRef, useEffect, useMemo, memo } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
-import {
-  select,
-} from '../utils/d3Imports'
+import { select } from '../utils/d3Imports'
+import { getColors, detectDarkMode } from '../utils/themeColors'
 
 interface AlgorithmResult {
   comparisons?: number
@@ -15,23 +14,20 @@ interface PerformanceChartProps {
   results: Record<string, AlgorithmResult>
 }
 
-const METRIC_COLORS: Record<string, string> = {
-  comparisons: '#3b82f6',
-  swaps: '#f43f5e',
-  steps: '#8b5cf6',
-}
-
 function PerformanceChart({ results }: PerformanceChartProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const { mode } = useTheme()
   const { t } = useGlobalSettings()
 
-  const colors = useMemo(() => ({
-    comparisons: 'var(--color-accent-blue)',
-    swaps: 'var(--color-accent-amber)',
-    steps: 'var(--color-accent-emerald)',
-  }), [])
+  const metricColors = useMemo(() => {
+    const C = getColors(detectDarkMode())
+    return {
+      comparisons: C.nodeDefault,
+      swaps: C.nodeActive,
+      steps: C.nodeLeaf,
+    }
+  }, [])
 
   const labels = useMemo(() => ({
     comparisons: t('performanceChart.comparisons'),
@@ -60,6 +56,8 @@ function PerformanceChart({ results }: PerformanceChartProps) {
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`)
 
+    const C = getColors(detectDarkMode())
+
     const algoKeys = Object.keys(results)
     if (algoKeys.length === 0) return
 
@@ -82,7 +80,7 @@ function PerformanceChart({ results }: PerformanceChartProps) {
       g.append('line')
         .attr('x1', 0).attr('x2', innerW)
         .attr('y1', y).attr('y2', y)
-        .attr('stroke', mode === 'dark' ? '#334155' : '#e2e8f0')
+        .attr('stroke', C.containerStroke)
         .attr('stroke-width', 1)
 
       g.append('text')
@@ -90,7 +88,7 @@ function PerformanceChart({ results }: PerformanceChartProps) {
         .attr('text-anchor', 'end')
         .attr('font-size', '9px')
         .attr('font-family', 'monospace')
-        .attr('fill', mode === 'dark' ? '#94a3b8' : '#64748b')
+        .attr('fill', C.textSecondary)
         .text(val)
     }
 
@@ -109,9 +107,8 @@ function PerformanceChart({ results }: PerformanceChartProps) {
           .attr('y', y)
           .attr('width', barWidth - 2)
           .attr('height', Math.max(0, barH))
-          .attr('fill', METRIC_COLORS[metric])
-          .attr('rx', 2)
-          .attr('stroke', mode === 'dark' ? '#1e293b' : '#fff')
+          .attr('fill', metricColors[metric as keyof typeof metricColors])
+          .attr('stroke', C.textWhite)
           .attr('stroke-width', 1)
 
         if (barH > 15) {
@@ -121,7 +118,7 @@ function PerformanceChart({ results }: PerformanceChartProps) {
             .attr('text-anchor', 'middle')
             .attr('font-size', '8px')
             .attr('font-family', 'monospace')
-            .attr('fill', mode === 'dark' ? '#e2e8f0' : '#1e293b')
+            .attr('fill', C.textPrimary)
             .text(val)
         }
       })
@@ -132,7 +129,7 @@ function PerformanceChart({ results }: PerformanceChartProps) {
         .attr('text-anchor', 'middle')
         .attr('font-size', '9px')
         .attr('font-weight', 'bold')
-        .attr('fill', mode === 'dark' ? '#e2e8f0' : '#1e293b')
+        .attr('fill', C.textPrimary)
         .text(key.substring(0, 4))
     })
 
@@ -143,21 +140,20 @@ function PerformanceChart({ results }: PerformanceChartProps) {
         .attr('x', legendX)
         .attr('y', legendY - 6)
         .attr('width', 8).attr('height', 8)
-        .attr('fill', METRIC_COLORS[metric])
-        .attr('rx', 1)
+        .attr('fill', metricColors[metric as keyof typeof metricColors])
 
       g.append('text')
         .attr('x', legendX + 12)
         .attr('y', legendY)
         .attr('font-size', '9px')
         .attr('font-family', 'monospace')
-        .attr('fill', mode === 'dark' ? '#94a3b8' : '#64748b')
+        .attr('fill', C.textSecondary)
         .text(labels[metric])
 
       legendX += labels[metric].length * 6 + 30
     })
 
-  }, [results, mode, t])
+  }, [results, mode, t, metricColors, labels])
 
   return (
     <div ref={containerRef} className="w-full h-48 neo-border bg-white dark:bg-slate overflow-hidden">

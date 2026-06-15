@@ -70,6 +70,32 @@ export function renderStack(svg: SVGSVGElement, data: number[], options: StackVi
     .join('g')
     .attr('class', 'stack-item')
     .attr('transform', (_d: unknown, i: number) => `translate(${startX}, ${startY - i * (RECT_HEIGHT + GAP)})`)
+    .attr('tabindex', '0')
+    .attr('role', 'group')
+    .attr('aria-label', (d: number) => `Stack element ${d}`)
+    .on('focus', function(this: SVGGElement) {
+      if (!this?.querySelector) return
+      select(this).select('rect').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+    })
+    .on('blur', function(this: SVGGElement, _event?: unknown, d?: number) {
+      if (!this?.querySelector || d == null) return
+      const idx = data.indexOf(d)
+      select(this).select('rect').attr('stroke', idx === data.length - 1 ? C.nodeRootStroke : C.nodeDefaultStroke).attr('stroke-width', 2)
+    })
+    .on('keydown', function(this: SVGGElement, event?: KeyboardEvent) {
+      if (!event?.key) return
+      const allNodes = Array.from(container.selectAll('.stack-item').nodes())
+      const idx = allNodes.indexOf(this)
+      if (event.key === 'ArrowUp' || event.key === 'ArrowRight') {
+        event.preventDefault()
+        const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
+        next?.focus()
+      } else if (event.key === 'ArrowDown' || event.key === 'ArrowLeft') {
+        event.preventDefault()
+        const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
+        prev?.focus()
+      }
+    })
 
   groups.append('rect')
     .attr('width', RECT_WIDTH).attr('height', RECT_HEIGHT).attr('rx', 6)
@@ -109,7 +135,7 @@ export async function animatePush(svg: SVGSVGElement, value: number, data: numbe
   const existingNodes = container.selectAll('g.stack-item').nodes()
   for (let i = 0; i < existingNodes.length; i++) {
     if (anim?.isAborted?.()) return
-    const delay = i * 30
+    const delay = duration(i * 30)
     select(existingNodes[i] as SVGGElement)
       .transition().delay(delay).duration(duration(BASE_DURATION / 2)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${startX}, ${startY - i * (RECT_HEIGHT + GAP)})`)
@@ -117,7 +143,7 @@ export async function animatePush(svg: SVGSVGElement, value: number, data: numbe
   if (existingNodes.length > 0) {
     await new Promise<void>((resolve) => {
       select(existingNodes[existingNodes.length - 1] as SVGGElement)
-        .transition().delay((existingNodes.length - 1) * 30)
+        .transition().delay(duration((existingNodes.length - 1) * 30))
         .on('end', resolve).on('interrupt', resolve)
     })
   }

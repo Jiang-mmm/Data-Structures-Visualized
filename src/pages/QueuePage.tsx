@@ -1,10 +1,9 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
-import Timeline from '../components/Timeline'
 import { renderQueue, animateEnqueue, animateDequeue, animateFront } from '../visualizers/queueVisualizer'
 import { useQueueState } from '../hooks/useQueueState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -76,8 +75,6 @@ export default function QueuePage() {
     finally { setIsAnimating(false) }
   }, [isAnimating, data, setIsAnimating, getAnimationContext, svgRef, dimensions, front])
 
-  const timelineHistory = useMemo(() => logs.map(log => ({ type: log.type, description: log.message })), [logs])
-
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('queue.title')} subtitle={t('queue.subtitle')} icon="→">
@@ -124,14 +121,6 @@ export default function QueuePage() {
       <Visualizer data={data} renderFn={renderQueue} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.queueLabel")} />
       {data.length === 0 && (
         <EmptyState icon="→" titleKey="emptyState.emptyQueue" descriptionKey="emptyState.emptyQueueDesc" onFill={reset} />
-      )}
-      {logs.length > 0 && (
-        <Timeline
-          history={timelineHistory}
-          currentIndex={logs.length - 1}
-          onJump={undefined}
-          maxHeight="h-24"
-        />
       )}
       <LearningModeToggle
         showLearning={showLearning}

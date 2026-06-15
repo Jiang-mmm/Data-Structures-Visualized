@@ -37,11 +37,11 @@ export default function Home() {
         <header className="mb-16 md:mb-20">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
             <div className="animate-slide-up max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper text-xs font-bold tracking-widest uppercase mb-8 shadow-[3px_3px_0px_rgba(37,99,235,0.3)]">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper text-xs font-bold tracking-widest uppercase mb-8 shadow-button dark:shadow-button-dark">
                 <span className="w-2 h-2 bg-accent-emerald rounded-full animate-pulse" />
                 {t('home.badge')}
               </div>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.9] mb-6 text-ink dark:text-dark-ink">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] mb-6 text-ink dark:text-dark-ink">
                 {t('home.title')}
               </h1>
               <p className="text-ink-light dark:text-dark-ink-light text-lg md:text-xl max-w-lg leading-relaxed mt-6">
@@ -82,7 +82,7 @@ export default function Home() {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {structures.map((item, i) => {
             const color = ACCENT_COLORS[item.colorIdx % ACCENT_COLORS.length]
             return (
@@ -94,10 +94,10 @@ export default function Home() {
                   border-2 border-ink dark:border-dark-border
                   border-l-4 ${color.border}
                   ${color.bg} ${color.hoverGlow}
-                  bg-white/90 dark:bg-slate/90 backdrop-blur-sm
+                  bg-white dark:bg-slate
                   p-6 transition-all duration-300 ease-out
                   hover:-translate-y-1.5
-                  hover:shadow-[6px_6px_0px_#1a1a2e] dark:hover:shadow-[6px_6px_0px_#334155]
+                  hover:shadow-card-hover dark:hover:shadow-card-dark-hover
                   hover:border-ink dark:hover:border-dark-border
                   animate-slide-up
                   overflow-hidden

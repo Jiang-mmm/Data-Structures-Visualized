@@ -85,7 +85,7 @@ function getOrCreateSimulation(
 
   if (!sim) {
     sim = forceSimulation(nodes)
-      .force('link', forceLink(links).id((d: any) => d.id).distance(120))
+      .force('link', forceLink(links).id((d: SimNode) => d.id).distance(120))
       .force('charge', forceManyBody().strength(-400))
       .force('center', forceCenter(width / 2, height / 2))
       .force('collision', forceCollide(NODE_RADIUS + 10))
@@ -135,17 +135,17 @@ export function renderGraph(svg: SVGWithSimulation, nodes: GraphNode[], links: G
   container.append('g').attr('class', 'labels')
 
   const linkElements = linkGroup.selectAll('line')
-    .data(simLinks, (d: any) => `${getNodeIdentifier(d.source)}-${getNodeIdentifier(d.target)}`)
+    .data(simLinks, (d: SimLink) => `${getNodeIdentifier(d.source)}-${getNodeIdentifier(d.target)}`)
     .join('line')
     .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
     .attr('marker-end', 'url(#g-arrow)')
 
   const weightLabels = linkGroup.selectAll('text')
-    .data(simLinks, (d: any) => `${getNodeIdentifier(d.source)}-${getNodeIdentifier(d.target)}`)
+    .data(simLinks, (d: SimLink) => `${getNodeIdentifier(d.source)}-${getNodeIdentifier(d.target)}`)
     .join('text')
     .attr('fill', C.textSecondary).attr('font-size', '11px')
     .attr('text-anchor', 'middle').attr('dy', -6)
-    .text((d: any) => d.weight)
+    .text((d: SimLink) => d.weight)
 
   container.append('defs').append('marker')
     .attr('id', 'g-arrow').attr('viewBox', '0 0 10 10')
@@ -155,49 +155,75 @@ export function renderGraph(svg: SVGWithSimulation, nodes: GraphNode[], links: G
     .append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('fill', C.arrowStroke)
 
   const nodeElements = nodeGroup.selectAll('g.graph-node')
-    .data(simNodes, (d: any) => d.id)
+    .data(simNodes, (d: SimNode) => d.id)
     .join('g')
     .attr('class', 'graph-node')
+    .attr('tabindex', '0')
+    .attr('role', 'group')
+    .attr('aria-label', (d: SimNode) => `Node ${d.id}`)
+    .on('focus', function(this: SVGGElement) {
+      if (!this?.querySelector) return
+      select(this).select('circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+    })
+    .on('blur', function(this: SVGGElement) {
+      if (!this?.querySelector) return
+      select(this).select('circle').attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
+    })
+    .on('keydown', function(this: SVGGElement, event: KeyboardEvent) {
+      if (!event?.key) return
+      const allNodes = Array.from(nodeGroup.selectAll('g.graph-node').nodes())
+      const idx = allNodes.indexOf(this)
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+        event.preventDefault()
+        const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
+        next?.focus()
+      } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+        event.preventDefault()
+        const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
+        prev?.focus()
+      }
+    })
     .call(drag(sim) as any)
 
   nodeElements.append('circle')
     .attr('r', NODE_RADIUS)
-    .attr('fill', (d: any) => {
+    .attr('fill', (d: SimNode) => {
       if (d.group === 1) return gradUrl('node-root')
       if (d.group === 2) return gradUrl('node-leaf')
       return gradUrl('node-default')
     })
     .attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
+    .style('cursor', 'pointer')
 
   nodeElements.append('text')
     .attr('dy', '0.35em').attr('text-anchor', 'middle')
     .attr('fill', C.textWhite).attr('font-size', '14px')
-    .attr('font-weight', 'bold').text((d: any) => d.id)
+    .attr('font-weight', 'bold').text((d: SimNode) => d.id)
 
   sim.on('tick', () => {
     linkElements
-      .attr('x1', (d: any) => d.source.x).attr('y1', (d: any) => d.source.y)
-      .attr('x2', (d: any) => d.target.x).attr('y2', (d: any) => d.target.y)
+      .attr('x1', (d: SimLink) => (d.source as SimNode).x).attr('y1', (d: SimLink) => (d.source as SimNode).y)
+      .attr('x2', (d: SimLink) => (d.target as SimNode).x).attr('y2', (d: SimLink) => (d.target as SimNode).y)
 
     weightLabels
-      .attr('x', (d: any) => (d.source.x + d.target.x) / 2)
-      .attr('y', (d: any) => (d.source.y + d.target.y) / 2)
+      .attr('x', (d: SimLink) => ((d.source as SimNode).x + (d.target as SimNode).x) / 2)
+      .attr('y', (d: SimLink) => ((d.source as SimNode).y + (d.target as SimNode).y) / 2)
 
-    nodeElements.attr('transform', (d: any) => `translate(${d.x}, ${d.y})`)
+    nodeElements.attr('transform', (d: SimNode) => `translate(${d.x}, ${d.y})`)
   })
 }
 
 function drag(sim: ReturnType<typeof forceSimulation>) {
-  function dragstarted(event: any) {
+  function dragstarted(event: { active: boolean; subject: SimNode }) {
     if (!event.active) sim.alphaTarget(0.3).restart()
     event.subject.fx = event.subject.x
     event.subject.fy = event.subject.y
   }
-  function dragged(event: any) {
+  function dragged(event: { x: number; y: number; subject: SimNode }) {
     event.subject.fx = event.x
     event.subject.fy = event.y
   }
-  function dragended(event: any) {
+  function dragended(event: { active: boolean; subject: SimNode }) {
     if (!event.active) sim.alphaTarget(0)
     event.subject.fx = null
     event.subject.fy = null
@@ -325,11 +351,11 @@ async function animateTraversalOrder(svg: SVGWithSimulation, order: string[], an
         const x1 = parseFloat(s.attr('x1')), y1 = parseFloat(s.attr('y1'))
         const x2 = parseFloat(s.attr('x2')), y2 = parseFloat(s.attr('y2'))
         // Match edges connected to both prev and current node positions
-        const prevNode = container.selectAll('g.graph-node').filter((d: any) => d.id === prevNodeId)
-        const currNode = container.selectAll('g.graph-node').filter((d: any) => d.id === nodeId)
+        const prevNode = container.selectAll('g.graph-node').filter((d: SimNode) => d.id === prevNodeId)
+        const currNode = container.selectAll('g.graph-node').filter((d: SimNode) => d.id === nodeId)
         if (prevNode.empty() || currNode.empty()) return false
-        const prevD = prevNode.datum() as any
-        const currD = currNode.datum() as any
+        const prevD = prevNode.datum() as unknown as SimNode
+        const currD = currNode.datum() as unknown as SimNode
         if (!prevD || !currD) return false
         const matchForward = Math.abs(x1 - prevD.x) < 5 && Math.abs(y1 - prevD.y) < 5 && Math.abs(x2 - currD.x) < 5 && Math.abs(y2 - currD.y) < 5
         const matchReverse = Math.abs(x1 - currD.x) < 5 && Math.abs(y1 - currD.y) < 5 && Math.abs(x2 - prevD.x) < 5 && Math.abs(y2 - prevD.y) < 5
@@ -338,7 +364,7 @@ async function animateTraversalOrder(svg: SVGWithSimulation, order: string[], an
         .attr('stroke', C.edgeActive).attr('stroke-width', 3)
     }
 
-    const t = container.selectAll('g.graph-node').filter(function(d: any) {
+    const t = container.selectAll('g.graph-node').filter(function(d: SimNode) {
       return d.id === nodeId
     }).select('circle')
       .transition().duration(duration(300)).ease(EASING.easeOutBack)
@@ -366,11 +392,11 @@ async function animatePathHighlight(svg: SVGWithSimulation, path: string[], anim
       const prevNodeId = path[i - 1]
       container.selectAll('line').filter(function() {
         const s = select(this)
-        const prevNode = container.selectAll('g.graph-node').filter((d: any) => d.id === prevNodeId)
-        const currNode = container.selectAll('g.graph-node').filter((d: any) => d.id === nodeId)
+        const prevNode = container.selectAll('g.graph-node').filter((d: SimNode) => d.id === prevNodeId)
+        const currNode = container.selectAll('g.graph-node').filter((d: SimNode) => d.id === nodeId)
         if (prevNode.empty() || currNode.empty()) return false
-        const prevD = prevNode.datum() as any
-        const currD = currNode.datum() as any
+        const prevD = prevNode.datum() as unknown as SimNode
+        const currD = currNode.datum() as unknown as SimNode
         if (!prevD || !currD) return false
         const x1 = parseFloat(s.attr('x1')), y1 = parseFloat(s.attr('y1'))
         const x2 = parseFloat(s.attr('x2')), y2 = parseFloat(s.attr('y2'))
@@ -381,7 +407,7 @@ async function animatePathHighlight(svg: SVGWithSimulation, path: string[], anim
         .attr('stroke', C.nodeError).attr('stroke-width', 3)
     }
 
-    const t = container.selectAll('g.graph-node').filter(function(d: any) {
+    const t = container.selectAll('g.graph-node').filter(function(d: SimNode) {
       return d.id === nodeId
     }).select('circle')
       .transition().duration(duration(400)).ease(EASING.easeOutBack)

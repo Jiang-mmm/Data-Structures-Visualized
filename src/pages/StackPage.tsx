@@ -1,10 +1,9 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
-import Timeline from '../components/Timeline'
 import { renderStack, animatePush, animatePop, animatePeek } from '../visualizers/stackVisualizer'
 import { useStackState } from '../hooks/useStackState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -76,8 +75,6 @@ export default function StackPage() {
     finally { setIsAnimating(false) }
   }, [isAnimating, data, dimensions, peek, setIsAnimating, getAnimationContext, svgRef])
 
-  const timelineHistory = useMemo(() => logs.map(log => ({ type: log.type, description: log.message })), [logs])
-
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('stack.title')} subtitle={t('stack.subtitle')} icon="☰">
@@ -124,14 +121,6 @@ export default function StackPage() {
       <Visualizer data={data} renderFn={renderStack} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.stackLabel")} />
       {data.length === 0 && (
         <EmptyState icon="☰" titleKey="emptyState.emptyStack" descriptionKey="emptyState.emptyStackDesc" onFill={reset} />
-      )}
-      {logs.length > 0 && (
-        <Timeline
-          history={timelineHistory}
-          currentIndex={logs.length - 1}
-          onJump={undefined}
-          maxHeight="h-24"
-        />
       )}
       <LearningModeToggle
         showLearning={showLearning}

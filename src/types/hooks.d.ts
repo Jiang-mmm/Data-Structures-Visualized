@@ -31,7 +31,7 @@ export interface LogEntry {
 }
 
 export interface ArrayState extends DataStructureState<number[]> {
-  insert: (index: number, value: number) => void;
+  insert: (rawValue: string | number, index: number) => boolean;
   remove: (index: number) => void;
   search: (value: number) => number;
   randomize: () => void;
@@ -46,8 +46,8 @@ export interface SortState extends DataStructureState<number[]> {
 }
 
 export interface StackState extends DataStructureState<number[]> {
-  push: (value: number) => void;
-  pop: () => number | undefined;
+  push: (value: string | number) => boolean;
+  pop: () => number | null;
   peek: () => number | undefined;
   clear: () => void;
   size: number;
@@ -68,7 +68,7 @@ export interface LinkedListState extends DataStructureState<number[]> {
   deleteAt: (index: number) => void;
   search: (value: number) => number;
   reverse: () => void;
-  detectCycle: () => boolean;
+  detectCycle: () => { hasCycle: boolean; steps: { slow: number; fast: number }[] };
   length: number;
 }
 
@@ -116,8 +116,8 @@ export interface GraphState {
   redo: () => void;
   canUndo: () => boolean;
   canRedo: () => boolean;
-  getUndoPreview: () => any | null;
-  getRedoPreview: () => any | null;
+  getUndoPreview: () => { nodes: GraphNode[]; links: GraphLink[] } | null;
+  getRedoPreview: () => { nodes: GraphNode[]; links: GraphLink[] } | null;
   getAdjacencyMatrix: () => { ids: string[]; matrix: number[][] };
   getAdjacencyList: () => Record<string, { node: string; weight?: number }[]>;
 }
@@ -143,13 +143,32 @@ export interface HeapState extends DataStructureState<number[]> {
   heapSize: number;
 }
 
-export interface TrieState extends DataStructureState<any> {
+export interface TrieFlattenedNode {
+  id: string;
+  prefix: string;
+  parent: string;
+  char: string;
+  isEndOfWord: boolean;
+  depth: number;
+}
+
+export interface TrieFlattened {
+  nodes: TrieFlattenedNode[];
+  edges: { from: string; to: string; char: string }[];
+}
+
+export interface TrieState extends DataStructureState<TrieNode> {
   insert: (word: string) => void;
   remove: (word: string) => void;
   search: (word: string) => boolean;
   searchPrefix: (prefix: string) => string[];
-  getFlattened: () => any;
+  getFlattened: () => TrieFlattened;
   wordCount: number;
+}
+
+export interface TrieNode {
+  children: Record<string, TrieNode>;
+  isEndOfWord: boolean;
 }
 
 export interface VisualizerReturn {

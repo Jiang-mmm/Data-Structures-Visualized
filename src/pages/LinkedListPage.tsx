@@ -1,10 +1,9 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
-import Timeline from '../components/Timeline'
 import { renderLinkedList, animateInsertHead, animateInsertTail, animateDeleteNode, animateSearchNode, animateInsertAt, animateReverse, animateCycleDetection } from '../visualizers/linkedListVisualizer'
 import { useLinkedListState } from '../hooks/useLinkedListState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -176,8 +175,6 @@ export default function LinkedListPage() {
     }
   }, [isAnimating, dimensions, detectCycle, setIsAnimating, getAnimationContext, svgRef])
 
-  const timelineHistory = useMemo(() => logs.map(log => ({ type: log.type, description: log.message })), [logs])
-
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('linkedlist.title')} subtitle={t('linkedlist.subtitle')} icon="∞">
@@ -230,14 +227,6 @@ export default function LinkedListPage() {
       <Visualizer data={data} renderFn={renderLinkedList} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.linkedlistLabel")} />
       {data.length === 0 && (
         <EmptyState icon="∞" titleKey="emptyState.emptyLinkedList" descriptionKey="emptyState.emptyLinkedListDesc" onFill={reset} />
-      )}
-      {logs.length > 0 && (
-        <Timeline
-          history={timelineHistory}
-          currentIndex={logs.length - 1}
-          onJump={undefined}
-          maxHeight="h-24"
-        />
       )}
       <LearningModeToggle
         showLearning={showLearning}

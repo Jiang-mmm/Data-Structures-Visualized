@@ -111,7 +111,7 @@ export default function KeyboardHelp() {
       aria-modal="true"
       aria-label={t('shortcuts.title')}
     >
-      <div ref={dialogRef} className="bg-paper dark:bg-slate border-2 border-ink dark:border-dark-border shadow-[6px_6px_0px_#1a1a2e] dark:shadow-[6px_6px_0px_#334155] p-7 max-w-sm w-full mx-4 animate-pop" onClick={(e) => e.stopPropagation()}>
+      <div ref={dialogRef} className="bg-paper dark:bg-slate border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark p-7 max-w-sm w-full mx-4 animate-pop" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-5">
           <h3 className="text-lg font-bold text-ink dark:text-dark-ink flex items-center gap-2">
             <span className="w-8 h-8 bg-accent-blue flex items-center justify-center text-paper text-sm shadow-button dark:shadow-button-dark">⌨</span>

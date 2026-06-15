@@ -24,6 +24,7 @@ const defaultProps = {
   onNext: vi.fn(),
   onPrev: vi.fn(),
   onReset: vi.fn(),
+  onGoToStep: vi.fn(),
   isAnimating: false,
 }
 
@@ -96,20 +97,23 @@ describe('StepExplainer', () => {
 
     it('进度条宽度应匹配 progress 属性', () => {
       const { container } = renderStepExplainer({ progress: 60 })
-      const progressInner = container.querySelector('.bg-accent-blue.transition-all')
+      const progressOuter = container.querySelector('.w-32.h-2')
+      const progressInner = progressOuter?.querySelector('.bg-accent-blue')
       expect(progressInner).toBeInTheDocument()
       expect(progressInner).toHaveStyle({ width: '60%' })
     })
 
     it('progress 为 0 时进度条宽度应为 0%', () => {
       const { container } = renderStepExplainer({ progress: 0 })
-      const progressInner = container.querySelector('.bg-accent-blue.transition-all')
+      const progressOuter = container.querySelector('.w-32.h-2')
+      const progressInner = progressOuter?.querySelector('.bg-accent-blue')
       expect(progressInner).toHaveStyle({ width: '0%' })
     })
 
     it('progress 为 100 时进度条宽度应为 100%', () => {
       const { container } = renderStepExplainer({ progress: 100 })
-      const progressInner = container.querySelector('.bg-accent-blue.transition-all')
+      const progressOuter = container.querySelector('.w-32.h-2')
+      const progressInner = progressOuter?.querySelector('.bg-accent-blue')
       expect(progressInner).toHaveStyle({ width: '100%' })
     })
   })
@@ -187,6 +191,95 @@ describe('StepExplainer', () => {
       const codeContainer = container.querySelector('.font-mono.text-xs')
       const lines = codeContainer?.querySelectorAll(':scope > div')
       expect(lines?.[2].className).toContain('bg-accent-blue')
+    })
+  })
+
+  describe('关键词高亮', () => {
+    it('代码中的关键词应被高亮显示', () => {
+      const { container } = renderStepExplainer({
+        step: { ...mockStep, highlightTerms: ['arr'], highlightedLine: 1 }
+      })
+      const codeContainer = container.querySelector('.font-mono.text-xs')
+      const firstLine = codeContainer?.querySelectorAll(':scope > div')?.[0]
+      const highlighted = firstLine?.querySelector('.bg-accent-amber\\/20')
+      expect(highlighted).toBeInTheDocument()
+      expect(highlighted?.textContent).toBe('arr')
+    })
+
+    it('多个关键词应都被高亮', () => {
+      const { container } = renderStepExplainer({
+        step: { ...mockStep, highlightTerms: ['const', 'arr'], highlightedLine: 1 }
+      })
+      const codeContainer = container.querySelector('.font-mono.text-xs')
+      const firstLine = codeContainer?.querySelectorAll(':scope > div')?.[0]
+      const terms = firstLine?.querySelectorAll('.bg-accent-amber\\/20')
+      expect(terms?.length).toBeGreaterThanOrEqual(2)
+    })
+
+    it('空关键词数组不应添加高亮', () => {
+      const { container } = renderStepExplainer({
+        step: { ...mockStep, highlightTerms: [], highlightedLine: 1 }
+      })
+      const codeContainer = container.querySelector('.font-mono.text-xs')
+      const firstLine = codeContainer?.querySelectorAll(':scope > div')?.[0]
+      const terms = firstLine?.querySelectorAll('.bg-accent-amber\\/20')
+      expect(terms?.length).toBe(0)
+    })
+  })
+
+  describe('步骤导航点', () => {
+    it('应渲染正确数量的步骤点', () => {
+      const { container } = renderStepExplainer({ totalSteps: 5, currentStepIndex: 0 })
+      const dots = container.querySelectorAll('button[aria-label^="stepExplainer.step"]')
+      expect(dots.length).toBe(5)
+    })
+
+    it('当前步骤点应有放大样式', () => {
+      const { container } = renderStepExplainer({ totalSteps: 3, currentStepIndex: 1 })
+      const dots = container.querySelectorAll('button[aria-label^="stepExplainer.step"]')
+      expect(dots[1].className).toContain('scale-125')
+      expect(dots[1].className).toContain('bg-accent-blue')
+    })
+
+    it('已完成步骤点应有绿色样式', () => {
+      const { container } = renderStepExplainer({ totalSteps: 4, currentStepIndex: 2 })
+      const dots = container.querySelectorAll('button[aria-label^="stepExplainer.step"]')
+      expect(dots[0].className).toContain('bg-accent-emerald')
+      expect(dots[1].className).toContain('bg-accent-emerald')
+    })
+
+    it('点击步骤点应调用 onGoToStep', () => {
+      const onGoToStep = vi.fn()
+      const { container } = renderStepExplainer({ totalSteps: 4, currentStepIndex: 0, onGoToStep })
+      const dots = container.querySelectorAll('button[aria-label^="stepExplainer.step"]')
+      fireEvent.click(dots[2])
+      expect(onGoToStep).toHaveBeenCalledWith(2)
+    })
+  })
+
+  describe('自动播放', () => {
+    it('应渲染自动播放按钮', () => {
+      renderStepExplainer()
+      expect(screen.getByText('stepExplainer.autoPlay')).toBeInTheDocument()
+    })
+
+    it('点击自动播放按钮应切换为暂停', () => {
+      renderStepExplainer({ currentStepIndex: 0, totalSteps: 5 })
+      fireEvent.click(screen.getByText('stepExplainer.autoPlay'))
+      expect(screen.getByText('stepExplainer.pause')).toBeInTheDocument()
+    })
+
+    it('最后一步时自动播放按钮应禁用', () => {
+      renderStepExplainer({ currentStepIndex: 4, totalSteps: 5 })
+      expect(screen.getByText('stepExplainer.autoPlay')).toBeDisabled()
+    })
+
+    it('应显示速度选择按钮', () => {
+      renderStepExplainer()
+      expect(screen.getByText('1s')).toBeInTheDocument()
+      expect(screen.getByText('2s')).toBeInTheDocument()
+      expect(screen.getByText('3s')).toBeInTheDocument()
+      expect(screen.getByText('5s')).toBeInTheDocument()
     })
   })
 })

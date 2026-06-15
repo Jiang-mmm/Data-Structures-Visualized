@@ -20,13 +20,7 @@ import { getAllSortAlgorithms } from '../algorithms/sorting'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { validateImportData } from '../utils/validate'
 import { showToast } from '../components/toastStore'
-
-const LEGEND_ITEMS = [
-  { color: '#3b82f6', labelKey: 'sortLegend.unsorted' },
-  { color: '#f59e0b', labelKey: 'sortLegend.comparing' },
-  { color: '#ef4444', labelKey: 'sortLegend.swapping' },
-  { color: '#10b981', labelKey: 'sortLegend.sorted' },
-]
+import { getColors, detectDarkMode } from '../utils/themeColors'
 
 const VARIANT_MAP: Record<string, string> = {
   primary: 'primary',
@@ -50,6 +44,16 @@ export default function SortPage() {
   }, !isAnimating)
 
   const animateFns = useMemo(() => ({ animateCompare, animateSwap, animateSorted, renderSortBars }), [])
+
+  const legendItems = useMemo(() => {
+    const C = getColors(detectDarkMode())
+    return [
+      { color: C.sortDefault, labelKey: 'sortLegend.unsorted' },
+      { color: C.nodeActive, labelKey: 'sortLegend.comparing' },
+      { color: C.nodeVisited, labelKey: 'sortLegend.swapping' },
+      { color: C.sortSorted, labelKey: 'sortLegend.sorted' },
+    ]
+  }, [])
 
   const handleSort = async (algorithmKey: string): Promise<void> => {
     if (isAnimating) return
@@ -159,7 +163,7 @@ export default function SortPage() {
 
         <div className="ml-auto hidden md:flex items-center gap-3">
           <span className="text-ink-light/60 dark:text-dark-ink-light/60 font-mono text-xs">{t('sort.legend')}:</span>
-          {LEGEND_ITEMS.map(item => (
+          {legendItems.map(item => (
             <div key={item.labelKey} className="flex items-center gap-1.5">
               <div
                 className="w-3 h-3 rounded-sm border border-black/20 dark:border-white/20"

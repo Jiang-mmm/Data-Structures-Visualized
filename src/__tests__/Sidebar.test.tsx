@@ -28,6 +28,7 @@ vi.mock('../utils/themeColors', () => ({
   setTheme: vi.fn(),
   getTheme: vi.fn().mockReturnValue('default'),
   initTheme: vi.fn(),
+  initThemeColors: vi.fn(),
   subscribeTheme: vi.fn().mockReturnValue(() => {}),
 }))
 

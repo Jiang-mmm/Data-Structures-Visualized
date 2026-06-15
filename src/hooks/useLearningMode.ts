@@ -1,28 +1,40 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { learningConfigs } from '../configs/learning'
 import type { LearningStep, LearningModeConfig } from '../configs/learning'
 
+const STORAGE_PREFIX = 'ds-learning-step-'
+
 export function useLearningMode(algorithmKey: string) {
   const config = learningConfigs[algorithmKey as keyof typeof learningConfigs]
-  const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const [currentStepIndex, setCurrentStepIndex] = useState(() => {
+    const stored = localStorage.getItem(STORAGE_PREFIX + algorithmKey)
+    const idx = stored !== null ? parseInt(stored, 10) : 0
+    return isNaN(idx) ? 0 : idx
+  })
   const [isLearning, setIsLearning] = useState(false)
 
   const steps = config?.steps || []
-  const currentStep = steps[currentStepIndex] || null
   const totalSteps = steps.length
-  const progress = totalSteps > 0 ? ((currentStepIndex + 1) / totalSteps) * 100 : 0
+
+  // Clamp index if steps changed
+  const clampedIndex = Math.min(currentStepIndex, Math.max(0, totalSteps - 1))
+  const currentStep = steps[clampedIndex] || null
+  const progress = totalSteps > 0 ? ((clampedIndex + 1) / totalSteps) * 100 : 0
+
+  // Persist step index
+  useEffect(() => {
+    if (totalSteps > 0) {
+      localStorage.setItem(STORAGE_PREFIX + algorithmKey, String(clampedIndex))
+    }
+  }, [algorithmKey, clampedIndex, totalSteps])
 
   const nextStep = useCallback(() => {
-    if (currentStepIndex < totalSteps - 1) {
-      setCurrentStepIndex(prev => prev + 1)
-    }
-  }, [currentStepIndex, totalSteps])
+    setCurrentStepIndex(prev => Math.min(prev + 1, totalSteps - 1))
+  }, [totalSteps])
 
   const prevStep = useCallback(() => {
-    if (currentStepIndex > 0) {
-      setCurrentStepIndex(prev => prev - 1)
-    }
-  }, [currentStepIndex])
+    setCurrentStepIndex(prev => Math.max(prev - 1, 0))
+  }, [])
 
   const goToStep = useCallback((index: number) => {
     if (index >= 0 && index < totalSteps) {
@@ -46,7 +58,7 @@ export function useLearningMode(algorithmKey: string) {
 
   return {
     currentStep,
-    currentStepIndex,
+    currentStepIndex: clampedIndex,
     totalSteps,
     progress,
     isLearning,
