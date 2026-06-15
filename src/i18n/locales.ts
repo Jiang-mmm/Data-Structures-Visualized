@@ -375,6 +375,17 @@ export interface Locale {
     swapping: string
     sorted: string
   }
+  nodeLegend: {
+    node: string
+    root: string
+    leaf: string
+    active: string
+    visited: string
+    head: string
+    tail: string
+    top: string
+    endOfWord: string
+  }
   hooks: {
     inputInvalid: string
     dataImported: string
@@ -526,8 +537,8 @@ export const zh: Locale = {
     search: '查找',
     insert: '按位插',
     delete: '删除',
-    indexPlaceholder: '索引',
-    valuePlaceholder: '值',
+    indexPlaceholder: '索引 (0~19)',
+    valuePlaceholder: '值 (1~99)',
   },
   stack: {
     title: '栈',
@@ -569,7 +580,7 @@ export const zh: Locale = {
   graph: {
     title: '图',
     subtitle: '网状结构 · 遍历算法 · 最短路径',
-    inputPlaceholder: '输入节点名',
+    inputPlaceholder: '节点名 (如 A)',
     addNode: '添加节点',
     removeNode: '删除节点',
     addEdge: '添加边',
@@ -586,8 +597,8 @@ export const zh: Locale = {
   hash: {
     title: '哈希表',
     subtitle: '键值映射 · 冲突解决 · 平均 O(1)',
-    keyPlaceholder: '键',
-    valuePlaceholder: '值 (1-99)',
+    keyPlaceholder: '键 (0~99)',
+    valuePlaceholder: '值 (任意文本)',
     insert: '插入',
     remove: '删除',
     search: '查找',
@@ -595,7 +606,7 @@ export const zh: Locale = {
   heap: {
     title: '堆',
     subtitle: '完全二叉树 · 最大堆 · 优先级队列',
-    inputPlaceholder: '输入值 (1-99)',
+    inputPlaceholder: '值 (1~99)',
     insert: '插入',
     extractMax: '提取最大值',
     peek: '查看堆顶',
@@ -603,7 +614,7 @@ export const zh: Locale = {
   trie: {
     title: '字典树',
     subtitle: '前缀树 · 字符串高效检索',
-    inputPlaceholder: '输入单词',
+    inputPlaceholder: '输入英文单词',
     insert: '插入',
     delete: '删除',
     search: '查找',
@@ -880,6 +891,17 @@ export const zh: Locale = {
     comparing: '比较中',
     swapping: '交换中',
     sorted: '已排序',
+  },
+  nodeLegend: {
+    node: '节点',
+    root: '根节点',
+    leaf: '叶子节点',
+    active: '活跃节点',
+    visited: '已访问',
+    head: '头节点',
+    tail: '尾节点',
+    top: '栈顶',
+    endOfWord: '词尾标记',
   },
   hooks: {
     inputInvalid: '请输入 1~99 之间的整数',
@@ -1386,6 +1408,17 @@ export const en: Locale = {
     comparing: 'Comparing',
     swapping: 'Swapping',
     sorted: 'Sorted',
+  },
+  nodeLegend: {
+    node: 'Node',
+    root: 'Root',
+    leaf: 'Leaf',
+    active: 'Active',
+    visited: 'Visited',
+    head: 'Head',
+    tail: 'Tail',
+    top: 'Top',
+    endOfWord: 'End of Word',
   },
   hooks: {
     inputInvalid: 'Please enter an integer between 1-99',

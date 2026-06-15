@@ -9,6 +9,7 @@ import { useLinkedListState } from '../hooks/useLinkedListState'
 import { useVisualizer } from '../hooks/useVisualizer'
 import { useKeyboard } from '../hooks/useKeyboard'
 import SpeedControl from '../components/SpeedControl'
+import ColorLegend from '../components/ColorLegend'
 import OperationGroup from '../components/OperationGroup'
 import ExportImport from '../components/ExportImport'
 import UndoPreviewButton from '../components/UndoPreviewButton'
@@ -17,6 +18,7 @@ import { showToast } from '../components/toastStore'
 import { getValidationError, validateImportData } from '../utils/validate'
 import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { getColors, detectDarkMode } from '../utils/themeColors'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 
@@ -177,7 +179,7 @@ export default function LinkedListPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('linkedlist.title')} subtitle={t('linkedlist.subtitle')} icon="∞">
+      <PageHeader title={t('linkedlist.title')} subtitle={t('linkedlist.subtitle')} icon="◎">
         <ExportImport dataType="linkedlist" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           const result = validateImportData(imported)
           if (result.valid && result.data) {
@@ -194,14 +196,14 @@ export default function LinkedListPage() {
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationInput type="number" placeholder={t('array.indexPlaceholder')} value={inputIndex} onChange={setInputIndex} className="w-20" />
-        <OperationButton variant="success" onClick={handleInsertHead} disabled={isAnimating}>{t('linkedlist.pushFront')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleInsertHead} disabled={isAnimating}>{t('linkedlist.pushFront')}</OperationButton>
         <OperationButton variant="primary" onClick={handleInsertTail} disabled={isAnimating}>{t('linkedlist.pushBack')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('common.delete')}</OperationButton>
-        <OperationButton variant="purple" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('linkedlist.find')}</OperationButton>
+        <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('linkedlist.find')}</OperationButton>
         <OperationGroup label={t('common.more')}>
-          <OperationButton variant="warning" onClick={handleInsertAt} disabled={isAnimating}>{t('linkedlist.insertAt')}</OperationButton>
-          <OperationButton variant="teal" onClick={handleReverse} disabled={isAnimating}>{t('linkedlist.reverse')}</OperationButton>
-          <OperationButton variant="accent" onClick={handleDetectCycle} disabled={isAnimating}>{t('linkedlist.detectCycle')}</OperationButton>
+          <OperationButton variant="primary" onClick={handleInsertAt} disabled={isAnimating}>{t('linkedlist.insertAt')}</OperationButton>
+          <OperationButton variant="outline" onClick={handleReverse} disabled={isAnimating}>{t('linkedlist.reverse')}</OperationButton>
+          <OperationButton variant="purple" onClick={handleDetectCycle} disabled={isAnimating}>{t('linkedlist.detectCycle')}</OperationButton>
           <UndoPreviewButton
             variant="outline"
             onClick={undo}
@@ -222,11 +224,18 @@ export default function LinkedListPage() {
           </UndoPreviewButton>
         </OperationGroup>
         {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
-        <OperationInfo><span className="font-mono text-xs text-ink-light">LEN: {length}</span></OperationInfo>
+        <OperationInfo>
+          <ColorLegend items={[
+            { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
+            { color: getColors().nodeRoot, labelKey: 'nodeLegend.head' },
+            { color: getColors().nodeLeaf, labelKey: 'nodeLegend.tail' },
+          ]} />
+          <span className="font-mono text-xs text-ink-light">LEN: {length}</span>
+        </OperationInfo>
       </OperationBar>
       <Visualizer data={data} renderFn={renderLinkedList} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.linkedlistLabel")} />
       {data.length === 0 && (
-        <EmptyState icon="∞" titleKey="emptyState.emptyLinkedList" descriptionKey="emptyState.emptyLinkedListDesc" onFill={reset} />
+        <EmptyState icon="◎" titleKey="emptyState.emptyLinkedList" descriptionKey="emptyState.emptyLinkedListDesc" onFill={reset} />
       )}
       <LearningModeToggle
         showLearning={showLearning}

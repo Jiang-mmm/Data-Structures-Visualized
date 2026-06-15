@@ -74,7 +74,7 @@ export default memo(function UndoPreviewButton({
           shadow-button dark:shadow-button-dark
           transition-all duration-200
           active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
-          disabled:opacity-40 disabled:cursor-not-allowed disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-button dark:disabled:active:shadow-button-dark
+          disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-button dark:disabled:active:shadow-button-dark
           ${variants[variant] || variants.outline}
           ${className}
         `}

@@ -29,7 +29,7 @@ function getLayout(data: number[], width: number, height: number): LayoutResult 
   const totalWidth = n * barWidth + (n - 1) * gap
   const offsetX = Math.max(10, (width - totalWidth) / 2)
   const maxVal = Math.max(...data, 1)
-  const maxBarHeight = height - 100
+  const maxBarHeight = height - 80
   return { maxVal, barWidth, maxBarHeight, gap, offsetX, n }
 }
 

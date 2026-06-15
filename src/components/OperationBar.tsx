@@ -8,7 +8,7 @@ interface OperationBarProps {
 }
 
 interface OperationButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'outline' | 'danger' | 'success' | 'warning' | 'purple' | 'teal' | 'accent' | 'blue'
+  variant?: 'primary' | 'outline' | 'danger' | 'success' | 'warning' | 'purple' | 'teal' | 'accent' | 'blue' | 'amber'
   popAnimation?: boolean
   children: ReactNode
   className?: string
@@ -38,7 +38,7 @@ function OperationBar({ children, className = '' }: OperationBarProps) {
       role="toolbar"
       aria-label={t('page.operations')}
       className={`
-        bg-white dark:bg-slate border-b-2 border-ink dark:border-dark-border
+        bg-paper-warm dark:bg-slate-light border-b-2 border-ink dark:border-dark-border
         px-3 sm:px-6 py-2.5 sm:py-3.5
         operation-bar operation-bar-scroll-hint
         ${className}
@@ -102,6 +102,9 @@ export const OperationButton = memo(({ onClick, disabled, variant = 'primary', p
     warning: 'bg-accent-amber border-accent-amber text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
     purple: 'bg-accent-violet border-accent-violet text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
     teal: 'bg-accent-teal border-accent-teal text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    blue: 'bg-accent-blue border-accent-blue text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    accent: 'bg-accent-cyan border-accent-cyan text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    amber: 'bg-amber-500 border-amber-500 text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
     outline: 'bg-white dark:bg-slate border-ink/60 dark:border-dark-border text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light hover:border-ink dark:hover:border-dark-ink hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
   }
 

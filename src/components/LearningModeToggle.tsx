@@ -29,11 +29,10 @@ function LearningModeToggle({ showLearning, setShowLearning, learningMode, isAni
         aria-expanded={showLearning}
         onClick={() => setShowLearning(!showLearning)}
         className={`fixed bottom-16 right-4 z-40 px-3 py-2 text-sm font-bold border-2 transition-all duration-200
-          shadow-button dark:shadow-button-dark
-          active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
+          shadow-soft active:translate-x-[1px] active:translate-y-[1px] active:shadow-none rounded-sm
           ${showLearning
-            ? 'bg-accent-blue text-paper border-accent-blue'
-            : 'bg-white dark:bg-slate border-ink dark:border-dark-border hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover'
+            ? 'bg-accent-blue/90 text-paper border-accent-blue backdrop-blur-sm'
+            : 'bg-white/90 dark:bg-slate/90 backdrop-blur-sm border-ink/20 dark:border-dark-border/40 hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover'
           }`}
       >
         {showLearning ? t('learning.close') : t('learning.open')}

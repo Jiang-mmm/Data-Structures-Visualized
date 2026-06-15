@@ -16,6 +16,8 @@ import { showToast } from '../components/toastStore'
 import { getValidationError, validateImportData } from '../utils/validate'
 import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { getColors, detectDarkMode } from '../utils/themeColors'
+import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 
@@ -77,7 +79,7 @@ export default function QueuePage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('queue.title')} subtitle={t('queue.subtitle')} icon="→">
+      <PageHeader title={t('queue.title')} subtitle={t('queue.subtitle')} icon="⇒">
         <ExportImport dataType="queue" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
           if (result.valid && result.data) {
@@ -93,7 +95,7 @@ export default function QueuePage() {
         <SpeedControl />
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
-        <OperationButton variant="success" onClick={handleEnqueue} disabled={isAnimating}>{'+ ' + t('queue.enqueue')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleEnqueue} disabled={isAnimating}>{'+ ' + t('queue.enqueue')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDequeue} disabled={isAnimating || data.length === 0}>{'- ' + t('queue.dequeue')}</OperationButton>
         <OperationButton variant="outline" onClick={handleFront} popAnimation>{t('queue.peek')}</OperationButton>
         <OperationButton variant="outline" onClick={clear} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
@@ -116,11 +118,17 @@ export default function QueuePage() {
         >
           {t('common.redo')}
         </UndoPreviewButton>
-        <OperationInfo><span className="font-mono text-xs text-ink-light">SIZE: {size}</span></OperationInfo>
+        <OperationInfo>
+          <ColorLegend items={[
+            { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
+            { color: getColors().nodeLeaf, labelKey: 'queue.front' },
+          ]} />
+          <span className="font-mono text-xs text-ink-light">SIZE: {size}</span>
+        </OperationInfo>
       </OperationBar>
       <Visualizer data={data} renderFn={renderQueue} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.queueLabel")} />
       {data.length === 0 && (
-        <EmptyState icon="→" titleKey="emptyState.emptyQueue" descriptionKey="emptyState.emptyQueueDesc" onFill={reset} />
+        <EmptyState icon="⇒" titleKey="emptyState.emptyQueue" descriptionKey="emptyState.emptyQueueDesc" onFill={reset} />
       )}
       <LearningModeToggle
         showLearning={showLearning}

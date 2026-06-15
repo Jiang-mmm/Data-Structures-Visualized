@@ -16,6 +16,8 @@ import ExportImport from '../components/ExportImport'
 import { showToast } from '../components/toastStore'
 import { getValidationError, validateImportData } from '../utils/validate'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { getColors, detectDarkMode } from '../utils/themeColors'
+import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 
@@ -141,9 +143,9 @@ export default function ArrayPage() {
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationInput type="number" placeholder={t('array.indexPlaceholder')} value={inputIndex} onChange={setInputIndex} className="w-20" />
-        <OperationButton variant="success" onClick={handleInsert} disabled={isAnimating}>{t('array.insert')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('array.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('common.delete')}</OperationButton>
-        <OperationButton variant="primary" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('common.search')}</OperationButton>
+        <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('common.search')}</OperationButton>
         {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
@@ -164,6 +166,10 @@ export default function ArrayPage() {
           {t('common.redo')}
         </UndoPreviewButton>
         <OperationInfo>
+          <ColorLegend items={[
+            { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
+            { color: getColors().nodeActive, labelKey: 'nodeLegend.active' },
+          ]} />
           <span className="font-mono text-xs text-ink-light">SIZE: {data.length} / 20</span>
         </OperationInfo>
       </OperationBar>

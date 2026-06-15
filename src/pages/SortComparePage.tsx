@@ -298,7 +298,7 @@ export default function SortComparePage() {
 
       <OperationBar>
         <SpeedControl />
-        <OperationButton variant="success" onClick={handleRunAll} disabled={isRunning || selectedAlgos.length === 0}>
+        <OperationButton variant="primary" onClick={handleRunAll} disabled={isRunning || selectedAlgos.length === 0}>
           {t('compare.runAll')}
         </OperationButton>
         <OperationButton variant="danger" onClick={handleStop} disabled={!isRunning}>

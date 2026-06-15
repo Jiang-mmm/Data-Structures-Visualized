@@ -82,7 +82,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
     bucketGroup.append('text')
       .attr('x', BUCKET_WIDTH / 2).attr('y', -8)
       .attr('text-anchor', 'middle')
-      .attr('fill', C.textMuted).attr('font-size', '10px').attr('font-weight', '600')
+      .attr('fill', C.textMuted).attr('font-size', '11px').attr('font-weight', '600')
       .attr('font-family', 'JetBrains Mono, monospace')
       .text(`[${bi}]`)
 
@@ -178,7 +178,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       // Key text (top half of circle)
       entryGroup.append('text')
         .attr('dy', '-0.2em').attr('text-anchor', 'middle')
-        .attr('fill', C.textWhite).attr('font-size', '11px').attr('font-weight', 'bold')
+        .attr('fill', C.textWhite).attr('font-size', '12px').attr('font-weight', 'bold')
         .attr('font-family', 'JetBrains Mono, monospace')
         .text(entry.key)
 
@@ -186,7 +186,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       const displayValue = String(entry.value).length > 6 ? String(entry.value).slice(0, 5) + '…' : String(entry.value)
       entryGroup.append('text')
         .attr('dy', ENTRY_RADIUS + 14).attr('text-anchor', 'middle')
-        .attr('fill', C.textSecondary).attr('font-size', '10px').attr('font-weight', '500')
+        .attr('fill', C.textSecondary).attr('font-size', '11px').attr('font-weight', '500')
         .text(displayValue)
     }
 

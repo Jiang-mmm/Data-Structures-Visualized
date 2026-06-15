@@ -178,7 +178,7 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
         aria-label={ariaLabel || t('visualizer.empty')}
       />
 
-      <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white dark:bg-slate border-2 border-ink/30 dark:border-dark-border/50 px-2 py-1 shadow-button dark:shadow-button-dark z-10"
+      <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white/90 dark:bg-slate/90 backdrop-blur-sm border-2 border-ink/20 dark:border-dark-border/40 px-2 py-1 shadow-soft z-10 rounded-sm"
         onMouseDown={(e) => e.stopPropagation()}
         onMouseMove={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}

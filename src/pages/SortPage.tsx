@@ -75,7 +75,7 @@ export default function SortPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('sort.title')} subtitle={t('sort.subtitle')} icon="⇅">
+      <PageHeader title={t('sort.title')} subtitle={t('sort.subtitle')} icon="⇚">
         <ExportImport dataType="sort" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
           if (result.valid) {
@@ -177,7 +177,7 @@ export default function SortPage() {
 
       <Visualizer data={data} renderFn={renderSortBars} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.sortLabel")} />
       {data.length === 0 && (
-        <EmptyState icon="⇅" titleKey="emptyState.emptySort" descriptionKey="emptyState.emptySortDesc" onFill={randomize} />
+        <EmptyState icon="⇚" titleKey="emptyState.emptySort" descriptionKey="emptyState.emptySortDesc" onFill={randomize} />
       )}
 
       <LearningModeToggle

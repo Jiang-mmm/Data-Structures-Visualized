@@ -159,10 +159,10 @@ export default function GraphPage() {
         <OperationInput placeholder={t('graph.source')} value={sourceInput} onChange={setSourceInput} className="w-16" />
         <OperationInput placeholder={t('graph.target')} value={targetInput} onChange={setTargetInput} className="w-16" />
         <OperationInput type="number" placeholder={t('graph.weight')} value={weightInput} onChange={setWeightInput} className="w-14" />
-        <OperationButton variant="success" onClick={handleAddEdge} disabled={isAnimating}>{t('graph.addEdge')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleAddEdge} disabled={isAnimating}>{t('graph.addEdge')}</OperationButton>
         <OperationGroup label={t('common.more')}>
           <OperationButton variant="danger" onClick={handleDeleteEdge} disabled={isAnimating}>{t('graph.removeEdge')}</OperationButton>
-          <OperationButton variant="outline" onClick={handleDeleteNode} disabled={isAnimating}>{t('graph.removeNode')}</OperationButton>
+          <OperationButton variant="danger" onClick={handleDeleteNode} disabled={isAnimating}>{t('graph.removeNode')}</OperationButton>
           <UndoPreviewButton
             variant="outline"
             onClick={undo}
@@ -189,8 +189,8 @@ export default function GraphPage() {
         <OperationInput placeholder={t('graph.source')} value={algorithmStart} onChange={setAlgorithmStart} className="w-16" />
         <OperationInput placeholder={t('graph.target')} value={algorithmEnd} onChange={setAlgorithmEnd} className="w-16" />
         <OperationButton variant="purple" onClick={handleBFS} disabled={isAnimating} popAnimation>{t('graph.bfs')}</OperationButton>
-        <OperationButton variant="teal" onClick={handleDFS} disabled={isAnimating} popAnimation>{t('graph.dfs')}</OperationButton>
-        <OperationButton variant="warning" onClick={handleDijkstra} disabled={isAnimating}>{t('graph.dijkstra')}</OperationButton>
+        <OperationButton variant="purple" onClick={handleDFS} disabled={isAnimating} popAnimation>{t('graph.dfs')}</OperationButton>
+        <OperationButton variant="purple" onClick={handleDijkstra} disabled={isAnimating}>{t('graph.dijkstra')}</OperationButton>
         {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <div className="flex items-center gap-1">
           {[{ k: 'force', l: t('graphView.force') }, { k: 'matrix', l: t('graphView.matrix') }, { k: 'list', l: t('graphView.list') }].map(({ k, l }) => (

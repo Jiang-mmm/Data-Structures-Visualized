@@ -16,6 +16,8 @@ import { showToast } from '../components/toastStore'
 import { getValidationError, validateImportData } from '../utils/validate'
 import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { getColors, detectDarkMode } from '../utils/themeColors'
+import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 
@@ -104,9 +106,9 @@ export default function HeapPage() {
         <SpeedControl />
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('heap.inputPlaceholder')} value={inputValue} onChange={setInputValue} />
-        <OperationButton variant="success" onClick={handleInsert} disabled={isAnimating}>{t('heap.insert')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('heap.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleExtract} disabled={isAnimating || data.length === 0}>{t('heap.extractMax')}</OperationButton>
-        <OperationButton variant="purple" onClick={handlePeek} disabled={isAnimating || data.length === 0} popAnimation>{t('heap.peek')}</OperationButton>
+        <OperationButton variant="outline" onClick={handlePeek} disabled={isAnimating || data.length === 0} popAnimation>{t('heap.peek')}</OperationButton>
         {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
@@ -126,7 +128,13 @@ export default function HeapPage() {
         >
           {t('common.redo')}
         </UndoPreviewButton>
-        <OperationInfo><span className="font-mono text-xs text-ink-light">SIZE: {heapSize}</span></OperationInfo>
+        <OperationInfo>
+          <ColorLegend items={[
+            { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
+            { color: getColors().nodeRoot, labelKey: 'nodeLegend.root' },
+          ]} />
+          <span className="font-mono text-xs text-ink-light">SIZE: {heapSize}</span>
+        </OperationInfo>
       </OperationBar>
 
       <Visualizer data={data} renderFn={renderHeap} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.heapLabel")} />

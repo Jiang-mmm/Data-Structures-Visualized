@@ -161,7 +161,7 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
       .attr('class', `trie-edge-label-text from-${edge.from}-to-${edge.to}`)
       .attr('x', labelX).attr('y', labelY + 1)
       .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
-      .attr('fill', C.nodeActive).attr('font-size', '12px').attr('font-weight', 'bold')
+      .attr('fill', C.nodeActive).attr('font-size', '13px').attr('font-weight', 'bold')
       .text(edge.char)
   }
 
@@ -225,7 +225,7 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
 
     nodeGroup.append('text')
       .attr('dy', -NODE_RADIUS - 8).attr('text-anchor', 'middle')
-      .attr('fill', C.textLight).attr('font-size', '8px')
+      .attr('fill', C.textLight).attr('font-size', '10px')
       .text(pos.prefix || tStatic('trie.rootLabel'))
   }
 }

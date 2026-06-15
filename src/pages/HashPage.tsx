@@ -16,6 +16,7 @@ import { showToast } from '../components/toastStore'
 import { getValidationError } from '../utils/validate'
 import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 
@@ -119,9 +120,9 @@ export default function HashPage() {
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('hash.keyPlaceholder')} value={keyValue} onChange={setKeyValue} />
         <OperationInput type="text" placeholder={t('hash.valuePlaceholder')} value={valueInput} onChange={setValueInput} />
-        <OperationButton variant="success" onClick={handleInsert} disabled={isAnimating}>{t('hash.insert')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('hash.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('hash.remove')}</OperationButton>
-        <OperationButton variant="purple" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('hash.search')}</OperationButton>
+        <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('hash.search')}</OperationButton>
         {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
@@ -141,7 +142,13 @@ export default function HashPage() {
         >
           {t('common.redo')}
         </UndoPreviewButton>
-        <OperationInfo><span className="font-mono text-xs text-ink-light">BUCKETS: {bucketCount} · ENTRIES: {entryCount}</span></OperationInfo>
+        <OperationInfo>
+          <ColorLegend items={[
+            { color: '#3b82f6', labelKey: 'nodeLegend.node' },
+            { color: '#ef4444', labelKey: 'nodeLegend.active' },
+          ]} />
+          <span className="font-mono text-xs text-ink-light">BUCKETS: {bucketCount} · ENTRIES: {entryCount}</span>
+        </OperationInfo>
       </OperationBar>
 
       <Visualizer

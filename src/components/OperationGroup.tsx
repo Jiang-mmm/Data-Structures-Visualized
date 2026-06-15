@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, type ReactNode } from 'react'
+import { useState, useRef, useEffect, useCallback, Children, type ReactNode } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
 interface OperationGroupProps {
@@ -16,6 +16,7 @@ function OperationGroup({
 }: OperationGroupProps) {
   const { t } = useGlobalSettings()
   const resolvedLabel = label ?? t('common.more')
+  const childCount = Children.count(children)
   const [isOpen, setIsOpen] = useState(defaultOpen)
   const contentRef = useRef<HTMLDivElement>(null)
   const rafRef = useRef<number>(0)
@@ -71,7 +72,7 @@ function OperationGroup({
           transition-all duration-200
         `}
       >
-        {resolvedLabel} {isOpen ? '▾' : '▸'}
+        {resolvedLabel} {!isOpen && childCount > 0 && <span className="ml-0.5 opacity-60">({childCount})</span>} {isOpen ? '▾' : '▸'}
       </button>
 
       {shouldRender && (

@@ -18,7 +18,7 @@
   --color-paper-warm: #f5f3ef;
   --color-accent-blue: #2563eb;
   --color-accent-teal: #0d9488;
-  --color-accent-rose: #e11d48;
+  --color-accent-rose: #dc2626;
   --color-accent-amber: #d97706;
   --color-accent-violet: #7c3aed;
   --color-accent-emerald: #059669;
@@ -154,8 +154,8 @@ html.dark :focus-visible {
 
 html.dark .dot-grid {
   background-image:
-    linear-gradient(to right, #334155 1px, transparent 1px),
-    linear-gradient(to bottom, #334155 1px, transparent 1px);
+    linear-gradient(to right, #1e293b 1px, transparent 1px),
+    linear-gradient(to bottom, #1e293b 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
@@ -176,8 +176,8 @@ code,
 
 @utility dot-grid {
   background-image:
-    linear-gradient(to right, #d4d0c8 1px, transparent 1px),
-    linear-gradient(to bottom, #d4d0c8 1px, transparent 1px);
+    linear-gradient(to right, #e5e2db 1px, transparent 1px),
+    linear-gradient(to bottom, #e5e2db 1px, transparent 1px);
   background-size: 20px 20px;
 }
 

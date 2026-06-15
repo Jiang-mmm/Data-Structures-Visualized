@@ -33,7 +33,7 @@ const STRUCTURE_KEYS: StructureItem[] = [
   { path: '/graph-algorithm', key: 'graphAlgorithm' },
 ]
 
-const ICONS: string[] = ['⌂', '▦', '☰', '→', '∞', '❖', '⬡', '⇅', '#', '▲', '⊾', '⊞', '⊕']
+const ICONS: string[] = ['◉', '▦', '☰', '⇒', '◎', '◆', '⬡', '⇚', '#', '▲', '◈', '⊞', '⊕']
 
 const THEME_SWATCH_COLORS: Record<string, string> = {
   default: '#2563eb',
@@ -211,28 +211,34 @@ export default function Sidebar() {
 
       <div className="p-4 border-t-2 border-ink dark:border-dark-border">
         {(!collapsed || isMobile) && (
-          <div className="flex gap-1 mb-3">
-            {themes.map((theme) => (
-              <button
-                key={theme.key}
-                onClick={() => handleColorThemeChange(theme.key)}
-                title={theme.nameKey ? t(theme.nameKey) : theme.name}
-                className={`
-                  flex-1 h-7 flex items-center justify-center
-                  border-2 transition-all duration-200
-                  ${colorTheme === theme.key
-                    ? 'border-ink dark:border-dark-border shadow-button dark:shadow-button-dark'
-                    : 'border-border dark:border-dark-border bg-paper dark:bg-slate hover:border-ink dark:hover:border-dark-border hover:translate-y-[-1px]'
-                  }
-                `}
-              >
-                <span
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: THEME_SWATCH_COLORS[theme.key] || '#6b7280' }}
-                />
-              </button>
-            ))}
-          </div>
+          <>
+            <div className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light tracking-[0.15em] uppercase mb-2">
+              {t('sidebar.themeTooltip')}
+            </div>
+            <div className="flex gap-1 mb-3">
+              {themes.map((theme) => (
+                <button
+                  key={theme.key}
+                  onClick={() => handleColorThemeChange(theme.key)}
+                  title={theme.nameKey ? t(theme.nameKey) : theme.name}
+                  className={`
+                    flex-1 h-7 flex items-center justify-center
+                    border-2 transition-all duration-200
+                    ${colorTheme === theme.key
+                      ? 'border-ink dark:border-dark-border shadow-button dark:shadow-button-dark'
+                      : 'border-border dark:border-dark-border bg-paper dark:bg-slate hover:border-ink dark:hover:border-dark-border hover:translate-y-[-1px]'
+                    }
+                  `}
+                >
+                  <span
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: THEME_SWATCH_COLORS[theme.key] || '#6b7280' }}
+                  />
+                </button>
+              ))}
+            </div>
+            <div className="h-px bg-ink/10 dark:bg-dark-ink/10 mb-3" />
+          </>
         )}
         <div className={`flex items-center ${collapsed && !isMobile ? 'justify-center' : 'justify-between'}`}>
           {(!collapsed || isMobile) && (

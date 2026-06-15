@@ -17,6 +17,8 @@ import { showToast } from '../components/toastStore'
 import { getValidationError, validateImportData } from '../utils/validate'
 import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { getColors, detectDarkMode } from '../utils/themeColors'
+import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 
@@ -124,7 +126,7 @@ export default function TreePage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('tree.title')} subtitle={t('tree.subtitle')} icon="❖">
+      <PageHeader title={t('tree.title')} subtitle={t('tree.subtitle')} icon="◆">
         <ExportImport dataType="tree" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           const result = validateImportData(imported)
           if (result.valid && result.data) {
@@ -140,16 +142,16 @@ export default function TreePage() {
         <SpeedControl />
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
-        <OperationButton variant="success" onClick={handleInsert} disabled={isAnimating}>{t('tree.insert')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('tree.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('common.delete')}</OperationButton>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={searchValue} onChange={setSearchValue} />
-        <OperationButton variant="teal" onClick={handleSearch} disabled={isAnimating}>{t('tree.search')}</OperationButton>
-        <OperationButton variant="primary" onClick={() => handleTraversal(preorder)} disabled={isAnimating} popAnimation>{t('tree.preorder')}</OperationButton>
+        <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating}>{t('tree.search')}</OperationButton>
+        <OperationButton variant="purple" onClick={() => handleTraversal(preorder)} disabled={isAnimating} popAnimation>{t('tree.preorder')}</OperationButton>
         <OperationButton variant="purple" onClick={() => handleTraversal(inorder)} disabled={isAnimating} popAnimation>{t('tree.inorder')}</OperationButton>
         {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <OperationGroup label={t('common.more')}>
-          <OperationButton variant="warning" onClick={() => handleTraversal(postorder)} disabled={isAnimating} popAnimation>{t('tree.postorder')}</OperationButton>
-          <OperationButton variant="teal" onClick={handleLevelOrder} disabled={isAnimating} popAnimation>{t('tree.levelorder')}</OperationButton>
+          <OperationButton variant="purple" onClick={() => handleTraversal(postorder)} disabled={isAnimating} popAnimation>{t('tree.postorder')}</OperationButton>
+          <OperationButton variant="purple" onClick={handleLevelOrder} disabled={isAnimating} popAnimation>{t('tree.levelorder')}</OperationButton>
           <OperationButton
             variant="outline"
             onClick={() => {
@@ -180,11 +182,18 @@ export default function TreePage() {
             {t('common.redo')}
           </UndoPreviewButton>
         </OperationGroup>
-        <OperationInfo><span className="font-mono text-xs text-ink-light">NODES: {nodeCount}</span></OperationInfo>
+        <OperationInfo>
+          <ColorLegend items={[
+            { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
+            { color: getColors().nodeRoot, labelKey: 'nodeLegend.root' },
+            { color: getColors().nodeLeaf, labelKey: 'nodeLegend.leaf' },
+          ]} />
+          <span className="font-mono text-xs text-ink-light">NODES: {nodeCount}</span>
+        </OperationInfo>
       </OperationBar>
       <Visualizer data={data} renderFn={renderTree} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.treeLabel")} renderOptions={{ edgeStyle }} />
       {data.length === 0 && (
-        <EmptyState icon="❖" titleKey="emptyState.emptyTree" descriptionKey="emptyState.emptyTreeDesc" onFill={reset} />
+        <EmptyState icon="◆" titleKey="emptyState.emptyTree" descriptionKey="emptyState.emptyTreeDesc" onFill={reset} />
       )}
       <LearningModeToggle
         showLearning={showLearning}
