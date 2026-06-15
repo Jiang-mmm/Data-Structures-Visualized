@@ -62,7 +62,7 @@ jobs:
         run: npm run dev &
 
       - name: Wait for server
-        run: npx wait-on http://localhost:3000/ds-visualizer/ --timeout 30000
+        run: npx wait-on http://localhost:3000/Data-Structures-Visualized/ --timeout 30000
 
       - name: Run E2E tests
         run: node e2e/run-all-tests.js
