@@ -15,8 +15,8 @@ interface LLOptions {
 }
 
 function layout(data: number[], width: number, height: number) {
-  const totalWidth = data.length * (NODE_RADIUS * 2 + NODE_GAP) - NODE_GAP
-  const startX = (width - totalWidth) / 2 + NODE_RADIUS + 40
+  const totalWidth = data.length * (NODE_RADIUS * 2 + NODE_GAP) - NODE_GAP + 80
+  const startX = (width - totalWidth) / 2 + NODE_RADIUS + 60
   const startY = height / 2
   return { startX, startY, totalWidth }
 }
@@ -68,7 +68,7 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
     .text(tStatic('linkedlist.headLabel'))
 
   container.append('line')
-    .attr('x1', headLabelX + 24 + 4).attr('y1', startY)
+    .attr('x1', startX - NODE_RADIUS - 8).attr('y1', startY)
     .attr('x2', startX - NODE_RADIUS + 5).attr('y2', startY)
     .attr('stroke', C.arrowStroke).attr('stroke-width', 2).attr('marker-end', 'url(#ll-arrow)')
 

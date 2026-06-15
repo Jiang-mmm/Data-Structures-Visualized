@@ -23,8 +23,8 @@ interface TrieEdge {
 }
 
 const NODE_RADIUS = 28
-const LEVEL_HEIGHT = 88
-const MIN_NODE_SPACING = 60
+const LEVEL_HEIGHT = 96
+const MIN_NODE_SPACING = 64
 
 function layout(data: TrieFlattened, width: number): { positions: TriePosition[]; edges: TrieEdge[] } {
   const positions: TriePosition[] = []
@@ -108,16 +108,23 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
     const toPos = posMap[edge.to]
     if (!fromPos || !toPos) continue
 
-    container.append('line')
+    // Curved edge from parent bottom to child top
+    const x1 = fromPos.x
+    const y1 = fromPos.y + NODE_RADIUS
+    const x2 = toPos.x
+    const y2 = toPos.y - NODE_RADIUS
+    const midY = (y1 + y2) / 2
+
+    container.append('path')
       .attr('class', `trie-edge from-${edge.from}-to-${edge.to}`)
-      .attr('x1', fromPos.x).attr('y1', fromPos.y + NODE_RADIUS)
-      .attr('x2', toPos.x).attr('y2', toPos.y - NODE_RADIUS)
+      .attr('d', `M${x1},${y1} C${x1},${midY} ${x2},${midY} ${x2},${y2}`)
+      .attr('fill', 'none')
       .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
 
-    // Place edge label closer to parent to avoid overlapping child node
-    const labelT = 0.35
-    const labelX = fromPos.x + (toPos.x - fromPos.x) * labelT
-    const labelY = (fromPos.y + NODE_RADIUS) + ((toPos.y - NODE_RADIUS) - (fromPos.y + NODE_RADIUS)) * labelT
+    // Place edge label at 30% along the curve
+    const labelT = 0.3
+    const labelX = x1 + (x2 - x1) * labelT
+    const labelY = y1 + (y2 - y1) * labelT
 
     container.append('g')
       .attr('class', `trie-edge-label from-${edge.from}-to-${edge.to}`)

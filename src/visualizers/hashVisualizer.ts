@@ -3,12 +3,13 @@ import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } fro
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
 
-const BUCKET_HEIGHT = 44
-const BUCKET_WIDTH = 52
-const ENTRY_RADIUS = 16
-const GAP_Y = 48
-const BUCKET_GROUP_GAP = 24
+const BUCKET_HEIGHT = 48
+const BUCKET_WIDTH = 56
+const ENTRY_RADIUS = 18
+const GAP_Y = 44
+const BUCKET_GROUP_GAP = 20
 const LARGE_DATA_THRESHOLD = 50
+const MAX_CHAIN_DISPLAY = 5
 
 interface HashEntry {
   key: number | string
@@ -38,6 +39,13 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
     return
   }
 
+  // Add drop shadow for entries
+  const defs = container.select('defs')
+  if (defs.select('#hash-shadow').empty()) {
+    const filter = defs.append('filter').attr('id', 'hash-shadow').attr('x', '-30%').attr('y', '-30%').attr('width', '160%').attr('height', '160%')
+    filter.append('feDropShadow').attr('dx', 0).attr('dy', 2).attr('stdDeviation', 3).attr('flood-opacity', 0.2)
+  }
+
   const bucketCount = 7
   const buckets = Array.from({ length: bucketCount }, (_, i) => {
     const entries = data
@@ -52,8 +60,8 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
   const offsetX = Math.max(20, (width - totalWidth) / 2)
 
   if (container.select('defs #hash-arrow').empty()) {
-    const defs = container.append('defs')
-    defs.append('marker')
+    const defsEl = container.select('defs')
+    defsEl.append('marker')
       .attr('id', 'hash-arrow').attr('viewBox', '0 0 10 10')
       .attr('refX', 10).attr('refY', 5)
       .attr('markerWidth', 5).attr('markerHeight', 5)
@@ -70,45 +78,62 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       .attr('class', `hash-bucket-${bi}`)
       .attr('transform', `translate(${bx}, ${by})`)
 
+    // Bucket label (index number) above the box
+    bucketGroup.append('text')
+      .attr('x', BUCKET_WIDTH / 2).attr('y', -8)
+      .attr('text-anchor', 'middle')
+      .attr('fill', C.textMuted).attr('font-size', '10px').attr('font-weight', '600')
+      .attr('font-family', 'JetBrains Mono, monospace')
+      .text(`[${bi}]`)
+
+    // Bucket box
     bucketGroup.append('rect')
       .attr('x', 0).attr('y', 0)
       .attr('width', BUCKET_WIDTH).attr('height', BUCKET_HEIGHT)
-      .attr('rx', 4)
-      .attr('fill', C.bucketBg).attr('stroke', C.bucketStroke).attr('stroke-width', 2)
+      .attr('rx', 6)
+      .attr('fill', C.bucketBg).attr('stroke', bucket.entries.length > 0 ? C.nodeDefaultStroke : C.bucketStroke).attr('stroke-width', bucket.entries.length > 0 ? 2 : 1.5)
 
+    // Bucket index inside box
     bucketGroup.append('text')
       .attr('x', BUCKET_WIDTH / 2).attr('y', BUCKET_HEIGHT / 2 + 1)
       .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
-      .attr('fill', C.bucketText).attr('font-size', '12px').attr('font-weight', 'bold')
+      .attr('fill', C.bucketText).attr('font-size', '14px').attr('font-weight', 'bold')
       .attr('font-family', 'JetBrains Mono, monospace')
       .text(bi)
 
+    // Entry count badge
     if (bucket.entries.length > 0) {
+      bucketGroup.append('rect')
+        .attr('x', BUCKET_WIDTH - 16).attr('y', -10)
+        .attr('width', 20).attr('height', 16).attr('rx', 8)
+        .attr('fill', C.nodeDefault).attr('opacity', 0.9)
       bucketGroup.append('text')
-        .attr('x', BUCKET_WIDTH / 2).attr('y', -8)
+        .attr('x', BUCKET_WIDTH - 6).attr('y', -1)
         .attr('text-anchor', 'middle')
-        .attr('fill', C.countText).attr('font-size', '10px')
-        .attr('font-family', 'JetBrains Mono, monospace')
-        .text(`(${bucket.entries.length})`)
+        .attr('fill', C.textWhite).attr('font-size', '9px').attr('font-weight', 'bold')
+        .text(bucket.entries.length)
     }
 
     const centerX = bx + BUCKET_WIDTH / 2
     const entryStartY = by + BUCKET_HEIGHT + GAP_Y
+    const displayCount = Math.min(bucket.entries.length, MAX_CHAIN_DISPLAY)
 
-    for (let ei = 0; ei < bucket.entries.length; ei++) {
+    for (let ei = 0; ei < displayCount; ei++) {
       const entry = bucket.entries[ei]
-      const ey = entryStartY + ei * (ENTRY_RADIUS * 2 + 12)
+      const ey = entryStartY + ei * (ENTRY_RADIUS * 2 + 14)
 
+      // Connector line from bucket to first entry (with arrow)
       if (ei === 0) {
         container.append('line')
           .attr('x1', centerX).attr('y1', by + BUCKET_HEIGHT)
           .attr('x2', centerX).attr('y2', ey - ENTRY_RADIUS)
-          .attr('stroke', C.arrowStroke).attr('stroke-width', 1.5)
-          .attr('stroke-dasharray', '4,3')
+          .attr('stroke', C.arrowStroke).attr('stroke-width', 2)
+          .attr('marker-end', 'url(#hash-arrow)')
       }
 
+      // Connector between entries (with arrow)
       if (ei > 0) {
-        const prevEy = entryStartY + (ei - 1) * (ENTRY_RADIUS * 2 + 12)
+        const prevEy = entryStartY + (ei - 1) * (ENTRY_RADIUS * 2 + 14)
         container.append('line')
           .attr('x1', centerX).attr('y1', prevEy + ENTRY_RADIUS)
           .attr('x2', centerX).attr('y2', ey - ENTRY_RADIUS)
@@ -148,17 +173,31 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       entryGroup.append('circle')
         .attr('r', ENTRY_RADIUS)
         .attr('fill', gradUrl('node-default')).attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
+        .attr('filter', 'url(#hash-shadow)')
 
+      // Key text (top half of circle)
       entryGroup.append('text')
-        .attr('dy', '-0.15em').attr('text-anchor', 'middle')
-        .attr('fill', C.textWhite).attr('font-size', '10px').attr('font-weight', 'bold')
+        .attr('dy', '-0.2em').attr('text-anchor', 'middle')
+        .attr('fill', C.textWhite).attr('font-size', '11px').attr('font-weight', 'bold')
         .attr('font-family', 'JetBrains Mono, monospace')
         .text(entry.key)
 
+      // Value text (below circle, not inside)
+      const displayValue = String(entry.value).length > 6 ? String(entry.value).slice(0, 5) + '…' : String(entry.value)
       entryGroup.append('text')
-        .attr('dy', '1em').attr('text-anchor', 'middle')
-        .attr('fill', C.entryValue).attr('font-size', '8px')
-        .text(entry.value)
+        .attr('dy', ENTRY_RADIUS + 14).attr('text-anchor', 'middle')
+        .attr('fill', C.textSecondary).attr('font-size', '10px').attr('font-weight', '500')
+        .text(displayValue)
+    }
+
+    // Show "..." if chain is truncated
+    if (bucket.entries.length > MAX_CHAIN_DISPLAY) {
+      const moreY = entryStartY + displayCount * (ENTRY_RADIUS * 2 + 14)
+      container.append('text')
+        .attr('x', centerX).attr('y', moreY)
+        .attr('text-anchor', 'middle')
+        .attr('fill', C.textMuted).attr('font-size', '12px').attr('font-weight', 'bold')
+        .text(`+${bucket.entries.length - MAX_CHAIN_DISPLAY}`)
     }
   }
 }
@@ -179,7 +218,7 @@ export async function animateInsertHash(svg: SVGSVGElement, key: number | string
     if (!scanGroup.empty()) {
       scanGroup.select('rect')
         .transition().duration(duration(80)).ease(EASING.easeOutCubic)
-        .attr('fill', bi === bucketIdx ? C.bucketHighlight : C.bucketHighlight)
+        .attr('fill', C.bucketHighlight)
         .attr('stroke', C.bucketHighlightStroke)
       if (bi < bucketIdx) {
         await transitionEnd(
