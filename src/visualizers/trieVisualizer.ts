@@ -218,8 +218,8 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
 
     if (pos.isEndOfWord) {
       nodeGroup.append('text')
-        .attr('dy', NODE_RADIUS + 12).attr('text-anchor', 'middle')
-        .attr('fill', C.nodeLeaf).attr('font-size', '10px')
+        .attr('dy', NODE_RADIUS + 14).attr('text-anchor', 'middle')
+        .attr('fill', C.textWhite).attr('font-size', '12px').attr('font-weight', 'bold')
         .text('✓')
     }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { showToast } from './toastStore'
 
 const PAGE_SHORTCUTS: Record<string, string[]> = {
   '/array': ['undo', 'redo', 'reset', 'help'],
@@ -40,6 +41,21 @@ export default function KeyboardHelp() {
     const pageKeys = PAGE_SHORTCUTS[location.pathname] || ['reset', 'help']
     return pageKeys.map(k => SHORTCUT_MAP[k])
   }, [location.pathname])
+
+  // First-visit hint for keyboard shortcuts
+  useEffect(() => {
+    if (location.pathname === '/') return
+    const hintKey = 'ds-keyboard-hint-shown'
+    try {
+      if (!localStorage.getItem(hintKey)) {
+        const timer = setTimeout(() => {
+          showToast({ type: 'info', message: `${t('shortcuts.title')}：按 ? 键查看` })
+          localStorage.setItem(hintKey, '1')
+        }, 3000)
+        return () => clearTimeout(timer)
+      }
+    } catch {}
+  }, [location.pathname, t])
 
   const close = useCallback(() => {
     setVisible(false)

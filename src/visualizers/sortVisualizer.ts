@@ -89,10 +89,10 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
             .attr('y', height - 31)
             .attr('text-anchor', 'middle')
             .attr('fill', C.textSecondary)
-            .attr('font-size', '11px')
+            .attr('font-size', n > 30 ? '8px' : n > 15 ? '9px' : '11px')
             .attr('font-weight', '700')
             .attr('font-family', 'monospace')
-            .text((_d: number, i: number) => i)
+            .text(n > 50 ? '' : (_d: number, i: number) => i)
 
           return g
         },

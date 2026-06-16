@@ -217,6 +217,7 @@ export default function GraphPage() {
       ) : viewMode === 'matrix' ? (
         <div className="flex-1 overflow-auto p-6 border-b-2 border-ink dark:border-dark-border bg-white dark:bg-slate">
           <h3 className="font-bold text-sm mb-4 text-ink dark:text-dark-ink">{t('graph.adjacencyMatrix')}</h3>
+          <div className="overflow-x-auto">
           <table className="border-collapse font-mono text-sm">
             <thead>
               <tr>
@@ -237,6 +238,7 @@ export default function GraphPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       ) : (
         <div className="flex-1 overflow-auto p-6 border-b-2 border-ink dark:border-dark-border bg-white dark:bg-slate">

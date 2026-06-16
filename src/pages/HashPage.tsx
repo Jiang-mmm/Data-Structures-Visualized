@@ -16,6 +16,7 @@ import { showToast } from '../components/toastStore'
 import { getValidationError } from '../utils/validate'
 import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { getColors } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
@@ -144,8 +145,8 @@ export default function HashPage() {
         </UndoPreviewButton>
         <OperationInfo>
           <ColorLegend items={[
-            { color: '#3b82f6', labelKey: 'nodeLegend.node' },
-            { color: '#ef4444', labelKey: 'nodeLegend.active' },
+            { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
+            { color: getColors().nodeActive, labelKey: 'nodeLegend.active' },
           ]} />
           <span className="font-mono text-xs text-ink-light">BUCKETS: {bucketCount} · ENTRIES: {entryCount}</span>
         </OperationInfo>
