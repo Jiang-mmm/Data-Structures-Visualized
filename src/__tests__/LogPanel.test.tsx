@@ -190,7 +190,7 @@ describe('LogPanel', () => {
 
     it('折叠时应显示日志数量', () => {
       const { container } = renderLogPanel()
-      const countElement = container.querySelector('.text-slate-400')
+      const countElement = container.querySelector('.text-paper\\/60')
       expect(countElement?.textContent).toBe('4')
     })
   })

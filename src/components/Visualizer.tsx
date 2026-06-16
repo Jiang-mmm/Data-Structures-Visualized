@@ -164,7 +164,7 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       className={`
-        flex-1 relative min-h-[200px] sm:min-h-[300px] lg:min-h-[400px] overflow-hidden bg-clip-padding
+        flex-1 relative min-h-[200px] sm:min-h-[250px] lg:min-h-[350px] overflow-hidden bg-clip-padding
         border-b-2 border-ink dark:border-dark-border cursor-grab select-none
         ${className}
         ${showGrid ? 'dot-grid dark:dot-grid' : ''}
@@ -211,7 +211,7 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
           onClick={handleZoomOut}
           disabled={zoom <= ZOOM_MIN}
           aria-label={t('visualizer.zoomOut') || 'Zoom out'}
-          className="w-9 h-9 sm:w-6 sm:h-6 flex items-center justify-center text-ink-light dark:text-dark-ink-light hover:bg-ink/10 dark:hover:bg-dark-ink/10 disabled:opacity-30 transition-colors text-sm font-bold touch-manipulation"
+          className="w-7 h-7 flex items-center justify-center text-ink-light dark:text-dark-ink-light hover:bg-ink/10 dark:hover:bg-dark-ink/10 disabled:opacity-30 transition-colors text-sm font-bold touch-manipulation"
         >
           −
         </button>
@@ -222,7 +222,7 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
           onClick={handleZoomIn}
           disabled={zoom >= ZOOM_MAX}
           aria-label={t('visualizer.zoomIn') || 'Zoom in'}
-          className="w-9 h-9 sm:w-6 sm:h-6 flex items-center justify-center text-ink-light dark:text-dark-ink-light hover:bg-ink/10 dark:hover:bg-dark-ink/10 disabled:opacity-30 transition-colors text-sm font-bold touch-manipulation"
+          className="w-7 h-7 flex items-center justify-center text-ink-light dark:text-dark-ink-light hover:bg-ink/10 dark:hover:bg-dark-ink/10 disabled:opacity-30 transition-colors text-sm font-bold touch-manipulation"
         >
           +
         </button>

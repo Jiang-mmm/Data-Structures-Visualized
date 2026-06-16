@@ -64,7 +64,7 @@ function OperationGroup({
         className={`
           font-mono text-[11px] font-bold px-2 py-1 min-h-[44px]
           touch-manipulation select-none
-          border-2 border-ink dark:border-dark-border
+          border-2 border-dashed border-ink/30 dark:border-dark-border/40
           shadow-button dark:shadow-button-dark
           hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper
           hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover

@@ -150,7 +150,7 @@ export default function SortPage() {
       <div className="flex flex-wrap items-center gap-2 sm:gap-4 px-3 sm:px-4 py-2 bg-ink/5 dark:bg-dark-ink/10 border-b border-ink/10 dark:border-dark-border/30 text-sm stats-bar">
         <SpeedControl />
 
-        <div className="hidden sm:block w-px h-5 bg-ink/20" />
+        <div className="hidden sm:block w-px h-5 bg-ink/20 dark:bg-dark-border/40" />
 
         {isAnimating && (
           <div className="flex-1 min-w-[100px] max-w-48">

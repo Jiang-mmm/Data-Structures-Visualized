@@ -30,12 +30,12 @@
   --color-border: #e5e0d8;
   --color-border-dark: #2d2d44;
 
-  --shadow-card: 4px 4px 0px #1a1a2e;
-  --shadow-card-hover: 6px 6px 0px #2563eb;
+  --shadow-card: 3px 3px 0px #1a1a2e;
+  --shadow-card-hover: 5px 5px 0px #2563eb;
   --shadow-button: 2px 2px 0px #1a1a2e;
   --shadow-button-hover: 3px 3px 0px #1a1a2e;
-  --shadow-card-dark: 4px 4px 0px #334155;
-  --shadow-card-dark-hover: 6px 6px 0px #3b82f6;
+  --shadow-card-dark: 3px 3px 0px #334155;
+  --shadow-card-dark-hover: 5px 5px 0px #3b82f6;
   --shadow-button-dark: 2px 2px 0px #334155;
   --shadow-button-dark-hover: 3px 3px 0px #334155;
   --shadow-soft: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
@@ -366,20 +366,24 @@ code,
     position: relative;
   }
 
+  .operation-bar > * {
+    flex-shrink: 0;
+  }
+
   .operation-bar-scroll-hint::after {
     content: '';
     position: sticky;
     right: 0;
     top: 0;
     bottom: 0;
-    width: 24px;
-    background: linear-gradient(to right, transparent, var(--color-paper) 100%);
+    width: 40px;
+    background: linear-gradient(to right, transparent, var(--color-paper-warm) 100%);
     pointer-events: none;
     flex-shrink: 0;
   }
 
   html.dark .operation-bar-scroll-hint::after {
-    background: linear-gradient(to right, transparent, var(--color-dark-paper) 100%);
+    background: linear-gradient(to right, transparent, #3d3d5c 100%);
   }
 
   .page-header-actions {

@@ -39,7 +39,7 @@ function OperationBar({ children, className = '' }: OperationBarProps) {
       role="toolbar"
       aria-label={t('page.operations')}
       className={`
-        bg-paper-warm dark:bg-slate-light border-b-2 border-ink dark:border-dark-border
+        bg-paper-warm dark:bg-slate-light border-b border-ink/30 dark:border-dark-border/40
         px-3 sm:px-6 py-1.5 sm:py-2.5
         operation-bar operation-bar-scroll-hint
         ${className}
@@ -122,7 +122,7 @@ export const OperationButton = memo(({ onClick, disabled, variant = 'primary', p
         shadow-button dark:shadow-button-dark
         transition-all duration-200 ease-out
         active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
-        disabled:opacity-40 disabled:cursor-not-allowed disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-button dark:disabled:active:shadow-button-dark
+        disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-button dark:disabled:active:shadow-button-dark
         ${variants[variant] || variants.primary}
         ${className}
       `}

@@ -19,14 +19,14 @@ export default memo(function EmptyState({ icon = '∅', titleKey = 'emptyState.d
   const label = t(fillKey)
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-paper/70 dark:bg-dark-paper/70 backdrop-blur-md z-10 pointer-events-none animate-fade-in">
+    <div className="absolute inset-0 flex items-center justify-center bg-paper/90 dark:bg-dark-paper/90 z-10 pointer-events-none animate-fade-in">
       <div className="text-center p-10 pointer-events-auto animate-pop max-w-sm">
         <div className="relative inline-block mb-6">
-          <div className="w-20 h-20 border-2 border-dashed border-ink/15 dark:border-dark-ink/15 flex items-center justify-center mx-auto">
+          <div className="w-20 h-20 border-2 border-ink/20 dark:border-dark-border/30 flex items-center justify-center mx-auto">
             <div className="text-3xl opacity-30" aria-hidden="true">{icon}</div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 border border-ink/10 dark:border-dark-ink/10 flex items-center justify-center text-ink/20 dark:text-dark-ink/20 text-xs">+</div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 border-2 border-ink/20 dark:border-dark-border/30 flex items-center justify-center text-ink/20 dark:text-dark-ink/20 text-xs">+</div>
           </div>
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-ink/10 dark:bg-dark-ink/10 rounded-full blur-sm" />
+          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-ink/20 dark:bg-dark-border/40" />
         </div>
         <h3 className="text-xl font-bold text-ink dark:text-dark-ink mb-3">{displayTitle}</h3>
         <p className="text-sm text-ink-light dark:text-dark-ink-light mb-8 leading-relaxed">{displayDesc}</p>

@@ -87,7 +87,7 @@ describe('OperationBar', () => {
         </OperationBar>
       )
       const bar = container.firstChild as HTMLElement
-      expect(bar.className).toContain('border-b-2')
+      expect(bar.className).toContain('border-b')
     })
   })
 })
@@ -167,7 +167,8 @@ describe('OperationButton', () => {
     it('禁用时应有禁用样式类', () => {
       render(<OperationButton disabled>按钮</OperationButton>)
       const btn = screen.getByText('按钮')
-      expect(btn.className).toContain('disabled:opacity-40')
+      expect(btn.className).toContain('disabled:opacity-50')
+      expect(btn.className).toContain('disabled:grayscale')
       expect(btn.className).toContain('disabled:cursor-not-allowed')
     })
 

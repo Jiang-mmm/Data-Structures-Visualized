@@ -8,9 +8,6 @@ const ACCENT_COLORS = [
   { bg: 'bg-accent-violet/5', border: 'border-l-accent-violet', badge: 'bg-accent-violet/10 text-accent-violet', iconBg: 'bg-accent-violet/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(124,58,237,0.15)]' },
   { bg: 'bg-accent-teal/5', border: 'border-l-accent-teal', badge: 'bg-accent-teal/10 text-accent-teal', iconBg: 'bg-accent-teal/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(13,148,136,0.15)]' },
   { bg: 'bg-accent-amber/5', border: 'border-l-accent-amber', badge: 'bg-accent-amber/10 text-accent-amber', iconBg: 'bg-accent-amber/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(217,119,6,0.15)]' },
-  { bg: 'bg-accent-rose/5', border: 'border-l-accent-rose', badge: 'bg-accent-rose/10 text-accent-rose', iconBg: 'bg-accent-rose/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(225,29,72,0.15)]' },
-  { bg: 'bg-accent-emerald/5', border: 'border-l-accent-emerald', badge: 'bg-accent-emerald/10 text-accent-emerald', iconBg: 'bg-accent-emerald/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(5,150,105,0.15)]' },
-  { bg: 'bg-accent-cyan/5', border: 'border-l-accent-cyan', badge: 'bg-accent-cyan/10 text-accent-cyan', iconBg: 'bg-accent-cyan/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(8,145,178,0.15)]' },
 ]
 
 export default function Home() {
@@ -18,17 +15,17 @@ export default function Home() {
 
   const structures = useMemo(() => [
     { path: '/array', name: t('array.title'), en: 'Array', icon: '▦', desc: t('array.subtitle'), ops: [t('array.insert'), t('array.delete'), t('array.search')], colorIdx: 0 },
-    { path: '/stack', name: t('stack.title'), en: 'Stack', icon: '☰', desc: t('stack.subtitle'), ops: [t('stack.push'), t('stack.pop'), t('stack.peek')], colorIdx: 1 },
-    { path: '/queue', name: t('queue.title'), en: 'Queue', icon: '⇒', desc: t('queue.subtitle'), ops: [t('queue.enqueue'), t('queue.dequeue'), t('queue.peek')], colorIdx: 2 },
-    { path: '/linkedlist', name: t('linkedlist.title'), en: 'LinkedList', icon: '◎', desc: t('linkedlist.subtitle'), ops: [t('linkedlist.pushFront'), t('linkedlist.pushBack'), t('linkedlist.find')], colorIdx: 3 },
-    { path: '/tree', name: t('tree.title'), en: 'BinaryTree', icon: '◆', desc: t('tree.subtitle'), ops: [t('tree.preorder'), t('tree.inorder'), t('tree.postorder')], colorIdx: 4 },
-    { path: '/graph', name: t('graph.title'), en: 'Graph', icon: '⬡', desc: t('graph.subtitle'), ops: [t('graph.bfs'), t('graph.dfs'), t('graph.dijkstra')], colorIdx: 5 },
-    { path: '/hash', name: t('hash.title'), en: 'HashTable', icon: '#', desc: t('hash.subtitle'), ops: [t('hash.insert'), t('hash.remove'), t('hash.search')], colorIdx: 3 },
+    { path: '/stack', name: t('stack.title'), en: 'Stack', icon: '☰', desc: t('stack.subtitle'), ops: [t('stack.push'), t('stack.pop'), t('stack.peek')], colorIdx: 0 },
+    { path: '/queue', name: t('queue.title'), en: 'Queue', icon: '⇒', desc: t('queue.subtitle'), ops: [t('queue.enqueue'), t('queue.dequeue'), t('queue.peek')], colorIdx: 0 },
+    { path: '/linkedlist', name: t('linkedlist.title'), en: 'LinkedList', icon: '◎', desc: t('linkedlist.subtitle'), ops: [t('linkedlist.pushFront'), t('linkedlist.pushBack'), t('linkedlist.find')], colorIdx: 0 },
+    { path: '/tree', name: t('tree.title'), en: 'BinaryTree', icon: '◆', desc: t('tree.subtitle'), ops: [t('tree.preorder'), t('tree.inorder'), t('tree.postorder')], colorIdx: 1 },
+    { path: '/graph', name: t('graph.title'), en: 'Graph', icon: '⬡', desc: t('graph.subtitle'), ops: [t('graph.bfs'), t('graph.dfs'), t('graph.dijkstra')], colorIdx: 2 },
+    { path: '/hash', name: t('hash.title'), en: 'HashTable', icon: '#', desc: t('hash.subtitle'), ops: [t('hash.insert'), t('hash.remove'), t('hash.search')], colorIdx: 2 },
     { path: '/heap', name: t('heap.title'), en: 'Heap', icon: '▲', desc: t('heap.subtitle'), ops: [t('heap.insert'), t('heap.extractMax'), t('heap.peek')], colorIdx: 1 },
-    { path: '/trie', name: t('trie.title'), en: 'Trie', icon: '◈', desc: t('trie.subtitle'), ops: [t('trie.insert'), t('trie.search'), t('trie.prefixSearch')], colorIdx: 5 },
-    { path: '/sort', name: t('sort.title'), en: 'Sorting', icon: '⇚', desc: t('sort.subtitle'), ops: [t('sort.bubble'), t('sort.quick'), t('sort.merge')], colorIdx: 6 },
-    { path: '/compare', name: t('compare.title'), en: 'Compare', icon: '⊞', desc: t('compare.subtitle'), ops: [t('compare.runAll'), t('compare.stop'), t('compare.exportCSV')], colorIdx: 4 },
-    { path: '/graph-algorithm', name: t('graphAlgorithm.title'), en: 'GraphAlgo', icon: '⊕', desc: t('graphAlgorithm.subtitle'), ops: [t('graph.bfs'), t('graph.dfs'), t('graph.dijkstra')], colorIdx: 0 },
+    { path: '/trie', name: t('trie.title'), en: 'Trie', icon: '◈', desc: t('trie.subtitle'), ops: [t('trie.insert'), t('trie.search'), t('trie.prefixSearch')], colorIdx: 1 },
+    { path: '/sort', name: t('sort.title'), en: 'Sorting', icon: '⇚', desc: t('sort.subtitle'), ops: [t('sort.bubble'), t('sort.quick'), t('sort.merge')], colorIdx: 3 },
+    { path: '/compare', name: t('compare.title'), en: 'Compare', icon: '⊞', desc: t('compare.subtitle'), ops: [t('compare.runAll'), t('compare.stop'), t('compare.exportCSV')], colorIdx: 3 },
+    { path: '/graph-algorithm', name: t('graphAlgorithm.title'), en: 'GraphAlgo', icon: '⊕', desc: t('graphAlgorithm.subtitle'), ops: [t('graph.bfs'), t('graph.dfs'), t('graph.dijkstra')], colorIdx: 2 },
   ], [t])
 
   return (
@@ -47,6 +44,9 @@ export default function Home() {
               </h1>
               <p className="text-ink-light dark:text-dark-ink-light text-lg md:text-xl max-w-lg leading-relaxed mt-6">
                 {t('home.heroDescription')}
+              </p>
+              <p className="text-sm font-mono text-ink-light/40 dark:text-dark-ink-light/40 tracking-widest uppercase mt-3">
+                Interactive Data Structure Visualizer
               </p>
             </div>
 
@@ -74,7 +74,7 @@ export default function Home() {
                 {structures.length} {t('home.modules')}
               </span>
               <div className="hidden sm:flex items-center gap-1">
-                {ACCENT_COLORS.slice(0, 5).map((c, i) => (
+                {ACCENT_COLORS.map((c, i) => (
                   <div key={i} className={`w-2 h-2 rounded-full ${c.badge.split(' ')[0].replace('/10', '')}`} />
                 ))}
               </div>

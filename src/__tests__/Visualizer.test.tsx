@@ -545,11 +545,11 @@ describe('Visualizer', () => {
       )
       const zoomInBtn = screen.getByText('+')
       const zoomOutBtn = screen.getByText('−')
-      // 移动端 w-9 h-9 = 36px，加上 sm: 断点缩小到桌面端
-      expect(zoomInBtn.className).toContain('w-9')
-      expect(zoomInBtn.className).toContain('h-9')
-      expect(zoomOutBtn.className).toContain('w-9')
-      expect(zoomOutBtn.className).toContain('h-9')
+      // 统一 w-7 h-7 = 28px，满足触摸目标
+      expect(zoomInBtn.className).toContain('w-7')
+      expect(zoomInBtn.className).toContain('h-7')
+      expect(zoomOutBtn.className).toContain('w-7')
+      expect(zoomOutBtn.className).toContain('h-7')
     })
 
     it('网格切换按钮应有移动端触摸友好尺寸', () => {

@@ -572,7 +572,7 @@ export const zh: Locale = {
   },
   array: {
     title: '数组',
-    subtitle: '线性数据结构 · 连续内存 · 随机访问',
+    subtitle: '线性结构 · Contiguous Memory · Random Access O(1)',
     search: '查找',
     insert: '按位插',
     delete: '删除',
@@ -581,21 +581,21 @@ export const zh: Locale = {
   },
   stack: {
     title: '栈',
-    subtitle: '后进先出 (LIFO) · 函数调用 · 括号匹配',
+    subtitle: '后进先出 LIFO · Function Call · 括号匹配',
     push: '入栈',
     pop: '出栈',
     peek: '查看',
   },
   queue: {
     title: '队列',
-    subtitle: '先进先出 (FIFO) · 缓冲队列 · 广度优先',
+    subtitle: '先进先出 FIFO · Buffer Queue · BFS',
     enqueue: '入队',
     dequeue: '出队',
     peek: '查看',
   },
   linkedlist: {
     title: '链表',
-    subtitle: '动态内存 · 插入高效 · 单向遍历',
+    subtitle: 'Dynamic Memory · O(1) Insert · 单向遍历',
     pushFront: '头插',
     pushBack: '尾插',
     reverse: '反转',
@@ -607,7 +607,7 @@ export const zh: Locale = {
   },
   tree: {
     title: '二叉树',
-    subtitle: '层次结构 · 递归遍历 · 二分查找',
+    subtitle: 'Hierarchical · Recursive Traversal · Binary Search',
     insert: '插入',
     search: '查找',
     preorder: '前序',
@@ -618,7 +618,7 @@ export const zh: Locale = {
   },
   graph: {
     title: '图',
-    subtitle: '网状结构 · 遍历算法 · 最短路径',
+    subtitle: 'Network · BFS / DFS · Shortest Path',
     inputPlaceholder: '节点名 (如 A)',
     addNode: '添加节点',
     removeNode: '删除节点',
@@ -635,7 +635,7 @@ export const zh: Locale = {
   },
   hash: {
     title: '哈希表',
-    subtitle: '键值映射 · 冲突解决 · 平均 O(1)',
+    subtitle: 'Key-Value · Collision Resolution · O(1)',
     keyPlaceholder: '键 (0~99)',
     valuePlaceholder: '值 (任意文本)',
     insert: '插入',
@@ -644,7 +644,7 @@ export const zh: Locale = {
   },
   heap: {
     title: '堆',
-    subtitle: '完全二叉树 · 最大堆 · 优先级队列',
+    subtitle: 'Complete Binary Tree · Max Heap · Priority Queue',
     inputPlaceholder: '值 (1~99)',
     insert: '插入',
     extractMax: '提取最大值',
