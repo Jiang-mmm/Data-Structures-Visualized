@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo, memo } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo, memo, ReactNode } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useColorTheme } from '../hooks/useColorTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
@@ -13,6 +13,7 @@ interface VisualizerProps {
   className?: string
   ariaLabel?: string
   renderOptions?: Record<string, unknown>
+  overlay?: ReactNode
 }
 
 const ZOOM_MIN = 0.5
@@ -28,7 +29,7 @@ function loadNumber(key: string, fallback: number): number {
   try { const v = localStorage.getItem(key); return v !== null ? Number(v) : fallback } catch { return fallback }
 }
 
-function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel, renderOptions }: VisualizerProps) {
+function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel, renderOptions, overlay }: VisualizerProps) {
   const { resolved: themeResolved } = useTheme()
   const { theme: colorTheme } = useColorTheme()
   const { t } = useGlobalSettings()
@@ -177,6 +178,8 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
         role="img"
         aria-label={ariaLabel || t('visualizer.empty')}
       />
+
+      {overlay}
 
       <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white/90 dark:bg-slate/90 backdrop-blur-sm border-2 border-ink/20 dark:border-dark-border/40 px-2 py-1 shadow-soft z-10 rounded-sm"
         onMouseDown={(e) => e.stopPropagation()}

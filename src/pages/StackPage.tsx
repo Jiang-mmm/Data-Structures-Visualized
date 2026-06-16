@@ -18,6 +18,7 @@ import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors, detectDarkMode } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
+import StatsOverlay from '../components/StatsOverlay'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
@@ -127,10 +128,9 @@ export default function StackPage() {
             { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
             { color: getColors().nodeRoot, labelKey: 'nodeLegend.top' },
           ]} />
-          <span className="font-mono text-xs text-ink-light">SIZE: {size}</span>
         </OperationInfo>
       </OperationBar>
-      <Visualizer data={data} renderFn={renderStack} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.stackLabel")} />
+      <Visualizer data={data} renderFn={renderStack} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.stackLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: size }]} />} />
       {data.length === 0 && (
         <EmptyState icon="☰" titleKey="emptyState.emptyStack" descriptionKey="emptyState.emptyStackDesc" onFill={reset} />
       )}

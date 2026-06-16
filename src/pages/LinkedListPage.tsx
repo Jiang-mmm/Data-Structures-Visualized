@@ -10,6 +10,7 @@ import { useVisualizer } from '../hooks/useVisualizer'
 import { useKeyboard } from '../hooks/useKeyboard'
 import SpeedControl from '../components/SpeedControl'
 import ColorLegend from '../components/ColorLegend'
+import StatsOverlay from '../components/StatsOverlay'
 import OperationGroup from '../components/OperationGroup'
 import ExportImport from '../components/ExportImport'
 import UndoPreviewButton from '../components/UndoPreviewButton'
@@ -234,10 +235,9 @@ export default function LinkedListPage() {
             { color: getColors().nodeRoot, labelKey: 'nodeLegend.head' },
             { color: getColors().nodeLeaf, labelKey: 'nodeLegend.tail' },
           ]} />
-          <span className="font-mono text-xs text-ink-light">LEN: {length}</span>
         </OperationInfo>
       </OperationBar>
-      <Visualizer data={data} renderFn={renderLinkedList} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.linkedlistLabel")} />
+      <Visualizer data={data} renderFn={renderLinkedList} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.linkedlistLabel")} overlay={<StatsOverlay stats={[{ label: 'LEN', value: length }]} />} />
       {data.length === 0 && (
         <EmptyState icon="◎" titleKey="emptyState.emptyLinkedList" descriptionKey="emptyState.emptyLinkedListDesc" onFill={reset} />
       )}

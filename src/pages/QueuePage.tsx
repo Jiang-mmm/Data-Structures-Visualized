@@ -18,6 +18,7 @@ import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors, detectDarkMode } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
+import StatsOverlay from '../components/StatsOverlay'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
@@ -127,10 +128,9 @@ export default function QueuePage() {
             { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
             { color: getColors().nodeLeaf, labelKey: 'queue.front' },
           ]} />
-          <span className="font-mono text-xs text-ink-light">SIZE: {size}</span>
         </OperationInfo>
       </OperationBar>
-      <Visualizer data={data} renderFn={renderQueue} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.queueLabel")} />
+      <Visualizer data={data} renderFn={renderQueue} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.queueLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: size }]} />} />
       {data.length === 0 && (
         <EmptyState icon="⇒" titleKey="emptyState.emptyQueue" descriptionKey="emptyState.emptyQueueDesc" onFill={reset} />
       )}

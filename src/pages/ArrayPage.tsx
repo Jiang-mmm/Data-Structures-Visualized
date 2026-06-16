@@ -18,6 +18,7 @@ import { getValidationError, validateImportData } from '../utils/validate'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors, detectDarkMode } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
+import StatsOverlay from '../components/StatsOverlay'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
@@ -174,11 +175,10 @@ export default function ArrayPage() {
             { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
             { color: getColors().nodeActive, labelKey: 'nodeLegend.active' },
           ]} />
-          <span className="font-mono text-xs text-ink-light">SIZE: {data.length} / 20</span>
         </OperationInfo>
       </OperationBar>
       <div className="relative flex flex-col flex-1 min-h-0">
-        <Visualizer data={data} renderFn={renderArray} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.arrayLabel")} />
+        <Visualizer data={data} renderFn={renderArray} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.arrayLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: `${data.length} / 20` }]} />} />
         {data.length === 0 && (
           <EmptyState icon="▦" titleKey="emptyState.emptyArray" descriptionKey="emptyState.emptyArrayDesc" onFill={randomize} />
         )}

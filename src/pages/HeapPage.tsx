@@ -18,6 +18,7 @@ import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors, detectDarkMode } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
+import StatsOverlay from '../components/StatsOverlay'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
@@ -137,11 +138,10 @@ export default function HeapPage() {
             { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
             { color: getColors().nodeRoot, labelKey: 'nodeLegend.root' },
           ]} />
-          <span className="font-mono text-xs text-ink-light">SIZE: {heapSize}</span>
         </OperationInfo>
       </OperationBar>
 
-      <Visualizer data={data} renderFn={renderHeap} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.heapLabel")} />
+      <Visualizer data={data} renderFn={renderHeap} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.heapLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: heapSize }]} />} />
       {data.length === 0 && (
         <EmptyState icon="▲" titleKey="emptyState.emptyHeap" descriptionKey="emptyState.emptyHeapDesc" onFill={reset} />
       )}
