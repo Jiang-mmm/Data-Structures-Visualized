@@ -123,6 +123,8 @@ export interface Locale {
     heapSort: string
     selection: string
     insertion: string
+    axisX: string
+    axisY: string
   }
   compare: {
     title: string
