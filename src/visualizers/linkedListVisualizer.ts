@@ -15,10 +15,25 @@ interface LLOptions {
 }
 
 function layout(data: number[], width: number, height: number) {
-  const totalWidth = data.length * (NODE_RADIUS * 2 + NODE_GAP) - NODE_GAP
-  const startX = (width - totalWidth) / 2 + NODE_RADIUS + 50
+  const nodeSpacing = NODE_RADIUS * 2 + NODE_GAP
+  const totalWidth = data.length * nodeSpacing - NODE_GAP
+  const headSpace = NODE_RADIUS + 50 + 50 // HEAD label + margin
+  const nullSpace = 80 // NULL label + margin
+  const availableWidth = width - headSpace - nullSpace
+
+  let effectiveGap = NODE_GAP
+  let effectiveRadius = NODE_RADIUS
+  if (totalWidth > availableWidth && data.length > 0) {
+    const scale = availableWidth / (totalWidth + NODE_GAP)
+    effectiveGap = Math.max(4, NODE_GAP * scale)
+    effectiveRadius = Math.max(10, NODE_RADIUS * scale)
+  }
+
+  const effectiveNodeSpacing = effectiveRadius * 2 + effectiveGap
+  const effectiveTotalWidth = data.length * effectiveNodeSpacing - effectiveGap
+  const startX = Math.max(headSpace, (width - effectiveTotalWidth) / 2 + effectiveRadius)
   const startY = height / 2
-  return { startX, startY, totalWidth }
+  return { startX, startY, totalWidth: effectiveTotalWidth, effectiveRadius, effectiveGap }
 }
 
 function ensureArrowDef(container: ReturnType<typeof select>, C: ReturnType<typeof getColors>) {
@@ -55,10 +70,11 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
   }
 
   ensureArrowDef(container, C)
-  const { startX, startY } = layout(data, width, height)
+  const { startX, startY, effectiveRadius, effectiveGap } = layout(data, width, height)
+  const nodeSpacing = effectiveRadius * 2 + effectiveGap
 
   // HEAD label with background box
-  const headBoxRight = startX - NODE_RADIUS - 2
+  const headBoxRight = startX - effectiveRadius - 2
   const headBoxWidth = 44
   container.append('rect')
     .attr('x', headBoxRight - headBoxWidth).attr('y', startY - 12)
@@ -71,11 +87,11 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
   // Arrow from HEAD box to first node
   container.append('line')
     .attr('x1', headBoxRight + 2).attr('y1', startY)
-    .attr('x2', startX - NODE_RADIUS - 2).attr('y2', startY)
+    .attr('x2', startX - effectiveRadius - 2).attr('y2', startY)
     .attr('stroke', C.arrowStroke).attr('stroke-width', 2).attr('marker-end', 'url(#ll-arrow)')
 
   data.forEach((value, i) => {
-    const x = startX + i * (NODE_RADIUS * 2 + NODE_GAP)
+    const x = startX + i * nodeSpacing
     const y = startY
     const g = container.append('g').attr('class', 'linked-node').attr('transform', `translate(${x}, ${y})`)
       .attr('tabindex', '0')
@@ -103,23 +119,23 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
           prev?.focus()
         }
       })
-    g.append('circle').attr('r', NODE_RADIUS).attr('fill', gradUrl('node-default')).attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
+    g.append('circle').attr('r', effectiveRadius).attr('fill', gradUrl('node-default')).attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
     g.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
-      .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', 'bold').text(value)
+      .attr('fill', C.textWhite).attr('font-size', Math.max(10, Math.min(14, effectiveRadius * 0.6)) + 'px').attr('font-weight', 'bold').text(value)
 
     if (i < data.length - 1) {
-      const nx = startX + (i + 1) * (NODE_RADIUS * 2 + NODE_GAP)
+      const nx = startX + (i + 1) * nodeSpacing
       container.append('line')
-        .attr('x1', x + NODE_RADIUS + 5).attr('y1', y)
-        .attr('x2', nx - NODE_RADIUS - 5).attr('y2', y)
+        .attr('x1', x + effectiveRadius + 5).attr('y1', y)
+        .attr('x2', nx - effectiveRadius - 5).attr('y2', y)
         .attr('stroke', C.arrowStroke).attr('stroke-width', 2).attr('marker-end', 'url(#ll-arrow)')
     }
   })
 
-  const lastX = startX + (data.length - 1) * (NODE_RADIUS * 2 + NODE_GAP)
+  const lastX = startX + (data.length - 1) * nodeSpacing
 
   // NULL label with arrow
-  const nullStartX = lastX + NODE_RADIUS + 8
+  const nullStartX = lastX + effectiveRadius + 8
   const nullLabelX = nullStartX + 22
   container.append('line')
     .attr('x1', nullStartX).attr('y1', startY)
@@ -149,17 +165,18 @@ export async function animateInsertHead(svg: SVGSVGElement, value: number, data:
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const newData = [value, ...data]
-  const { startX, startY } = layout(newData, width, height)
+  const { startX, startY, effectiveRadius } = layout(newData, width, height)
+  const r = effectiveRadius
 
   const newGroup = container.append('g')
     .attr('class', 'linked-node')
     .attr('transform', `translate(${startX}, ${startY - 50}) scale(0.3)`)
     .attr('opacity', 0)
 
-  newGroup.append('circle').attr('r', NODE_RADIUS)
+  newGroup.append('circle').attr('r', r)
     .attr('fill', gradUrl('node-leaf')).attr('stroke', C.nodeLeafStroke).attr('stroke-width', 2)
   newGroup.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
-    .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', 'bold').text(value)
+    .attr('fill', C.textWhite).attr('font-size', Math.max(10, Math.min(14, r * 0.6)) + 'px').attr('font-weight', 'bold').text(value)
 
   // Phase 1: Enter with overshoot bounce
   await transitionEnd(
@@ -194,18 +211,19 @@ export async function animateInsertTail(svg: SVGSVGElement, value: number, data:
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const newData = [...data, value]
-  const { startX, startY } = layout(newData, width, height)
-  const lastX = startX + (newData.length - 1) * (NODE_RADIUS * 2 + NODE_GAP)
+  const { startX, startY, effectiveRadius, effectiveGap } = layout(newData, width, height)
+  const r = effectiveRadius
+  const lastX = startX + (newData.length - 1) * (r * 2 + effectiveGap)
 
   const newGroup = container.append('g')
     .attr('class', 'linked-node')
     .attr('transform', `translate(${lastX}, ${startY - 50}) scale(0.3)`)
     .attr('opacity', 0)
 
-  newGroup.append('circle').attr('r', NODE_RADIUS)
+  newGroup.append('circle').attr('r', r)
     .attr('fill', gradUrl('node-leaf')).attr('stroke', C.nodeLeafStroke).attr('stroke-width', 2)
   newGroup.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
-    .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', 'bold').text(value)
+    .attr('fill', C.textWhite).attr('font-size', Math.max(10, Math.min(14, r * 0.6)) + 'px').attr('font-weight', 'bold').text(value)
 
   // Phase 1: Enter with overshoot bounce
   await transitionEnd(
@@ -239,8 +257,9 @@ export async function animateDeleteNode(svg: SVGSVGElement, index: number, data:
   const { width, height } = options
   const isDark = detectDarkMode()
   const C = getColors(isDark)
-  const { startX, startY } = layout(data, width, height)
-  const targetX = startX + index * (NODE_RADIUS * 2 + NODE_GAP)
+  const { startX, startY, effectiveRadius, effectiveGap } = layout(data, width, height)
+  const nodeSpacing = effectiveRadius * 2 + effectiveGap
+  const targetX = startX + index * nodeSpacing
 
   const targetNode = container.selectAll('g.linked-node').filter(function() {
     const m = select(this).attr('transform').match(/translate\(([^,]+)/)
@@ -274,6 +293,8 @@ export async function animateSearchNode(svg: SVGSVGElement, index: number, data:
   const container = select(svg)
   const isDark = detectDarkMode()
   const C = getColors(isDark)
+  const { effectiveRadius } = layout(data, options.width, options.height)
+  const r = effectiveRadius
   const nodes = container.selectAll('g.linked-node')
 
   for (let i = 0; i < data.length; i++) {
@@ -282,26 +303,24 @@ export async function animateSearchNode(svg: SVGSVGElement, index: number, data:
     const sel = select(nodes.nodes()[i])
 
     if (isTarget) {
-      // Found: two-phase pulse with bigger overshoot
       await transitionEnd(
         sel.select('circle').transition().duration(duration(300)).ease(EASING.easeOutBack)
-          .attr('r', NODE_RADIUS + 8)
+          .attr('r', r + 8)
           .attr('fill', gradUrl('node-leaf')).attr('stroke', C.nodeLeafStroke)
       )
       await transitionEnd(
         sel.select('circle').transition().duration(duration(250)).ease(EASING.easeOutCubic)
-          .attr('r', NODE_RADIUS + 2)
+          .attr('r', r + 2)
       )
     } else {
-      // Examining: scale pulse then return
       await transitionEnd(
         sel.select('circle').transition().duration(duration(200)).ease(EASING.easeOutBack)
-          .attr('r', NODE_RADIUS + 4)
+          .attr('r', r + 4)
           .attr('fill', gradUrl('node-active')).attr('stroke', C.nodeActiveStroke)
       )
       await transitionEnd(
         sel.select('circle').transition().duration(duration(200)).ease(EASING.easeOutCubic)
-          .attr('r', NODE_RADIUS)
+          .attr('r', r)
           .attr('fill', gradUrl('node-default')).attr('stroke', C.nodeDefaultStroke)
       )
     }
@@ -322,18 +341,20 @@ export async function animateInsertAt(svg: SVGSVGElement, index: number, value: 
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const newData = [...data.slice(0, index), value, ...data.slice(index)]
-  const { startX, startY } = layout(newData, width, height)
-  const targetX = startX + index * (NODE_RADIUS * 2 + NODE_GAP)
+  const { startX, startY, effectiveRadius, effectiveGap } = layout(newData, width, height)
+  const r = effectiveRadius
+  const nodeSpacing = r * 2 + effectiveGap
+  const targetX = startX + index * nodeSpacing
 
   const newGroup = container.append('g')
     .attr('class', 'linked-node')
     .attr('transform', `translate(${targetX}, ${startY - 50}) scale(0.3)`)
     .attr('opacity', 0)
 
-  newGroup.append('circle').attr('r', NODE_RADIUS)
+  newGroup.append('circle').attr('r', r)
     .attr('fill', gradUrl('node-active')).attr('stroke', C.nodeActiveStroke).attr('stroke-width', 2)
   newGroup.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
-    .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', 'bold').text(value)
+    .attr('fill', C.textWhite).attr('font-size', Math.max(10, Math.min(14, r * 0.6)) + 'px').attr('font-weight', 'bold').text(value)
 
   // Phase 1: Enter with overshoot bounce
   await transitionEnd(
@@ -366,7 +387,9 @@ export async function animateReverse(svg: SVGSVGElement, data: number[], options
   const { width, height } = options
   const isDark = detectDarkMode()
   const C = getColors(isDark)
-  const { startX, startY } = layout(data, width, height)
+  const { startX, startY, effectiveRadius, effectiveGap } = layout(data, width, height)
+  const r = effectiveRadius
+  const nodeSpacing = r * 2 + effectiveGap
 
   const nodes = container.selectAll('g.linked-node')
 
@@ -376,7 +399,7 @@ export async function animateReverse(svg: SVGSVGElement, data: number[], options
     await transitionEnd(
       select(nodes.nodes()[i]).select('circle')
         .transition().duration(duration(200)).ease(EASING.easeOutBack)
-        .attr('r', NODE_RADIUS + 6)
+        .attr('r', r + 6)
         .attr('fill', gradUrl('node-active')).attr('stroke', C.nodeActiveStroke)
     )
     if (anim?.isAborted?.()) return
@@ -387,7 +410,7 @@ export async function animateReverse(svg: SVGSVGElement, data: number[], options
   // Step 2: move nodes to reversed positions (mirror horizontally)
   for (let i = 0; i < data.length; i++) {
     if (anim?.isAborted?.()) return
-    const targetX = startX + (data.length - 1 - i) * (NODE_RADIUS * 2 + NODE_GAP)
+    const targetX = startX + (data.length - 1 - i) * nodeSpacing
     await transitionEnd(
       select(nodes.nodes()[i])
         .transition().duration(duration(300)).ease(EASING.easeOutCubic)
@@ -413,6 +436,10 @@ export async function animateCycleDetection(svg: SVGSVGElement, steps: { slow: n
   const isDark = detectDarkMode()
   const C = getColors(isDark)
 
+  // Read current radius from existing nodes
+  const firstCircle = container.select('g.linked-node circle')
+  const baseR = firstCircle.empty() ? NODE_RADIUS : (parseFloat(firstCircle.attr('r')) || NODE_RADIUS)
+
   for (let stepIdx = 0; stepIdx < steps.length; stepIdx++) {
     if (anim?.isAborted?.()) return
     const { slow, fast } = steps[stepIdx]
@@ -425,14 +452,14 @@ export async function animateCycleDetection(svg: SVGSVGElement, steps: { slow: n
         select(nodes.nodes()[slow])
           .select('circle')
           .transition().duration(duration(250)).ease(EASING.easeOutBack)
-          .attr('r', NODE_RADIUS + 6)
+          .attr('r', baseR + 6)
           .attr('fill', gradUrl('node-active')).attr('stroke', C.nodeActiveStroke)
       )
       await transitionEnd(
         select(nodes.nodes()[slow])
           .select('circle')
           .transition().duration(duration(200)).ease(EASING.easeOutCubic)
-          .attr('r', NODE_RADIUS)
+          .attr('r', baseR)
       )
     }
 
@@ -444,14 +471,14 @@ export async function animateCycleDetection(svg: SVGSVGElement, steps: { slow: n
         select(nodes.nodes()[fast])
           .select('circle')
           .transition().duration(duration(250)).ease(EASING.easeOutBack)
-          .attr('r', NODE_RADIUS + 6)
+          .attr('r', baseR + 6)
           .attr('fill', gradUrl('node-error')).attr('stroke', C.nodeErrorStroke)
       )
       await transitionEnd(
         select(nodes.nodes()[fast])
           .select('circle')
           .transition().duration(duration(200)).ease(EASING.easeOutCubic)
-          .attr('r', NODE_RADIUS)
+          .attr('r', baseR)
       )
     }
   }
