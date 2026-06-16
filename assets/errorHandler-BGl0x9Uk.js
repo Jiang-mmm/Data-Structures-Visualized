@@ -1,0 +1,1 @@
+import{m as e,p as t}from"./index-BzVIc0ZK.js";function n(n,r,i=`Error`){let a=t(`errors.animationError`);e({type:`error`,message:r?a.replace(`{action}`,r):a.replace(`{action}`,``)})}function r(e,t){n(e,t,`Animation Error`)}export{r as t};

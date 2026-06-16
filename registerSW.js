@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/Data-Structures-Visualized/sw.js', { scope: '/Data-Structures-Visualized/' })})}
