@@ -110,8 +110,8 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
     .attr('font-family', "'JetBrains Mono', monospace")
     .text(tStatic('sort.axisX'))
   gridGroup.append('text')
-    .attr('x', 10).attr('y', barBottom - maxBarHeight - 8)
-    .attr('text-anchor', 'start')
+    .attr('x', offsetX - 8).attr('y', barBottom - maxBarHeight - 8)
+    .attr('text-anchor', 'end')
     .attr('fill', C.textMuted).attr('font-size', '10px')
     .attr('font-family', "'JetBrains Mono', monospace")
     .text(tStatic('sort.axisY'))
@@ -149,21 +149,7 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
             .attr('font-family', 'monospace')
             .text(n > 50 ? '' : (_d: number, i: number) => i)
 
-          // Bar value label on top
-          if (n <= 30) {
-            g.append('text')
-              .attr('class', 'bar-value')
-              .attr('x', barWidth / 2)
-              .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight - 6)
-              .attr('text-anchor', 'middle')
-              .attr('fill', C.textMuted)
-              .attr('font-size', n > 15 ? '8px' : '10px')
-              .attr('font-weight', '600')
-              .attr('font-family', 'monospace')
-              .text((d: number) => d)
-          }
-
-          // Tooltip
+          // Tooltip only (no always-visible value label to avoid overlap)
           g.append('title').text((d: number, i: number) => `[${i}] = ${d}`)
 
           return g

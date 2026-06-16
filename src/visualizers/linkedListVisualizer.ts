@@ -73,15 +73,16 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
   const { startX, startY, effectiveRadius, effectiveGap } = layout(data, width, height)
   const nodeSpacing = effectiveRadius * 2 + effectiveGap
 
-  // HEAD label with background box
+  // HEAD label - orange light background (state indicator)
   const headBoxRight = startX - effectiveRadius - 2
   const headBoxWidth = 44
   container.append('rect')
     .attr('x', headBoxRight - headBoxWidth).attr('y', startY - 12)
     .attr('width', headBoxWidth).attr('height', 24).attr('rx', 4)
-    .attr('fill', C.containerStroke).attr('opacity', 0.3)
+    .attr('fill', C.nodeRoot).attr('opacity', 0.15)
+    .attr('stroke', C.nodeRootStroke).attr('stroke-width', 1).attr('stroke-opacity', 0.3)
   container.append('text').attr('x', headBoxRight - headBoxWidth / 2).attr('y', startY + 5)
-    .attr('text-anchor', 'middle').attr('fill', C.textSecondary).attr('font-size', '11px').attr('font-weight', 'bold')
+    .attr('text-anchor', 'middle').attr('fill', C.nodeRootStroke).attr('font-size', '11px').attr('font-weight', 'bold')
     .attr('font-family', "'JetBrains Mono', monospace")
     .text(tStatic('linkedlist.headLabel'))
 
@@ -143,13 +144,13 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
     .attr('x2', nullStartX + 16).attr('y2', startY)
     .attr('stroke', C.arrowStroke).attr('stroke-width', 2).attr('marker-end', 'url(#ll-arrow)')
 
-  // NULL badge
+  // NULL badge - light gray (auxiliary annotation)
   container.append('rect')
     .attr('x', nullLabelX - 4).attr('y', startY - 11)
     .attr('width', 38).attr('height', 22).attr('rx', 4)
-    .attr('fill', C.containerStroke).attr('opacity', 0.3)
+    .attr('fill', C.containerStroke).attr('opacity', 0.15)
   container.append('text').attr('x', nullLabelX + 15).attr('y', startY + 5)
-    .attr('text-anchor', 'middle').attr('fill', C.textSecondary).attr('font-size', '12px').attr('font-weight', 'bold')
+    .attr('text-anchor', 'middle').attr('fill', C.textMuted).attr('font-size', '12px').attr('font-weight', 'bold')
     .attr('font-family', "'JetBrains Mono', monospace")
     .text(tStatic('linkedlist.nullLabel'))
 }
