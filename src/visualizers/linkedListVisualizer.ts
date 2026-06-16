@@ -44,7 +44,7 @@ function ensureArrowDef(container: ReturnType<typeof select>, C: ReturnType<type
   container.append('defs').append('marker')
     .attr('id', 'll-arrow').attr('viewBox', '0 0 10 10')
     .attr('refX', 8).attr('refY', 5)
-    .attr('markerWidth', 6).attr('markerHeight', 6)
+    .attr('markerWidth', 5).attr('markerHeight', 5)
     .attr('orient', 'auto')
     .append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('fill', C.arrowStroke)
 }
@@ -79,9 +79,10 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
   container.append('rect')
     .attr('x', headBoxRight - headBoxWidth).attr('y', startY - 12)
     .attr('width', headBoxWidth).attr('height', 24).attr('rx', 4)
-    .attr('fill', C.nodeRoot).attr('stroke', C.nodeRootStroke).attr('stroke-width', 1.5)
+    .attr('fill', C.containerStroke).attr('opacity', 0.3)
   container.append('text').attr('x', headBoxRight - headBoxWidth / 2).attr('y', startY + 5)
-    .attr('text-anchor', 'middle').attr('fill', C.textWhite).attr('font-size', '11px').attr('font-weight', 'bold')
+    .attr('text-anchor', 'middle').attr('fill', C.textSecondary).attr('font-size', '11px').attr('font-weight', 'bold')
+    .attr('font-family', "'JetBrains Mono', monospace")
     .text(tStatic('linkedlist.headLabel'))
 
   // Arrow from HEAD box to first node
@@ -146,9 +147,10 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
   container.append('rect')
     .attr('x', nullLabelX - 4).attr('y', startY - 11)
     .attr('width', 38).attr('height', 22).attr('rx', 4)
-    .attr('fill', C.nodeError).attr('opacity', 0.12)
+    .attr('fill', C.containerStroke).attr('opacity', 0.3)
   container.append('text').attr('x', nullLabelX + 15).attr('y', startY + 5)
-    .attr('text-anchor', 'middle').attr('fill', C.nodeError).attr('font-size', '12px').attr('font-weight', 'bold')
+    .attr('text-anchor', 'middle').attr('fill', C.textSecondary).attr('font-size', '12px').attr('font-weight', 'bold')
+    .attr('font-family', "'JetBrains Mono', monospace")
     .text(tStatic('linkedlist.nullLabel'))
 }
 
