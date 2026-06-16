@@ -145,10 +145,10 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
       .attr('fill', 'none')
       .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
 
-    // Place edge label at 30% along the curve
-    const labelT = 0.3
+    // Place edge label at 40% along the curve, slightly above
+    const labelT = 0.4
     const labelX = x1 + (x2 - x1) * labelT
-    const labelY = y1 + (y2 - y1) * labelT
+    const labelY = y1 + (y2 - y1) * labelT - 6
 
     container.append('g')
       .attr('class', `trie-edge-label from-${edge.from}-to-${edge.to}`)
@@ -196,6 +196,15 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
           prev?.focus()
         }
       })
+
+    if (pos.isEndOfWord && pos.id !== 'root') {
+      nodeGroup.append('circle')
+        .attr('r', NODE_RADIUS + 4)
+        .attr('fill', 'none')
+        .attr('stroke', C.nodeLeafStroke)
+        .attr('stroke-width', 2)
+        .attr('opacity', 0.5)
+    }
 
     nodeGroup.append('circle')
       .attr('r', NODE_RADIUS)
