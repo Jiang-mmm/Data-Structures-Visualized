@@ -155,13 +155,13 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
       .attr('transform', `translate(${labelX}, ${labelY})`)
       .append('circle')
       .attr('r', 10)
-      .attr('fill', C.containerStroke).attr('stroke', C.edgeDefault).attr('stroke-width', 1.5)
+      .attr('fill', C.containerStroke).attr('opacity', 0.5).attr('stroke', C.edgeDefault).attr('stroke-width', 1)
 
     container.append('text')
       .attr('class', `trie-edge-label-text from-${edge.from}-to-${edge.to}`)
       .attr('x', labelX).attr('y', labelY + 1)
       .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
-      .attr('fill', C.nodeActive).attr('font-size', '13px').attr('font-weight', 'bold')
+      .attr('fill', C.textSecondary).attr('font-size', '13px').attr('font-weight', 'bold')
       .text(edge.char)
   }
 
