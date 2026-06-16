@@ -80,8 +80,8 @@ describe('SortPage', () => {
     mockedUseSortState.mockReturnValue(mockState)
     renderWithRouter(<SortPage />)
 
-    const bubbleBtn = screen.getByText(/sort\.bubble/)
-    fireEvent.click(bubbleBtn)
+    const bubbleBtns = screen.getAllByText(/sort\.bubble/)
+    fireEvent.click(bubbleBtns[0])
 
     await waitFor(() => {
       expect(mockState.runAlgorithm).toHaveBeenCalled()

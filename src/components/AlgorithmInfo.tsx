@@ -51,7 +51,7 @@ const ALGORITHM_INFO: Record<string, { description: string; characteristics: str
   },
 }
 
-function AlgorithmInfo({ algorithmKey, name, timeComplexity, spaceComplexity }: AlgorithmInfoProps) {
+function AlgorithmInfo({ algorithmKey, name, timeComplexity, spaceComplexity, isAnimating }: AlgorithmInfoProps) {
   const [open, setOpen] = useState(false)
   const info = ALGORITHM_INFO[algorithmKey]
 
@@ -61,6 +61,7 @@ function AlgorithmInfo({ algorithmKey, name, timeComplexity, spaceComplexity }: 
     <div className="border-t-2 border-ink/10 dark:border-dark-border/30">
       <button
         onClick={() => setOpen(!open)}
+        disabled={isAnimating}
         className="w-full px-4 py-2 flex items-center gap-3 text-sm hover:bg-paper-warm/40 dark:hover:bg-slate-light/40 transition-colors text-left"
         aria-expanded={open}
       >
