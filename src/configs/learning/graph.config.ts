@@ -21,6 +21,8 @@ export const graphConfig: LearningModeConfig = {
 // D → [(A,2), (B,4), (C,5)]`,
       highlightedLine: 2,
       highlightTerms: ['顶点', '边', '邻接表'],
+      tips: ['稀疏图用邻接表 O(V+E)，稠密图用邻接矩阵 O(V²)，根据边密度选择'],
+      complexity: { time: '取决于操作', space: '邻接表 O(V+E)，邻接矩阵 O(V²)' },
     },
     {
       id: 'add-node',
@@ -33,6 +35,7 @@ export const graphConfig: LearningModeConfig = {
 }`,
       highlightedLine: 3,
       highlightTerms: ['adjacency', 'push'],
+      tips: ['添加顶点后还需要添加边才能建立节点间的关系'],
     },
     {
       id: 'add-edge',
@@ -45,6 +48,7 @@ export const graphConfig: LearningModeConfig = {
 }`,
       highlightedLine: 2,
       highlightTerms: ['adjacency[from]', 'weight'],
+      tips: ['有向图只需添加一条边，无向图需要添加两条方向相反的边'],
     },
     {
       id: 'traversal',
@@ -60,6 +64,7 @@ export const graphConfig: LearningModeConfig = {
 // 时间复杂度: O(V + E)`,
       highlightedLine: 5,
       highlightTerms: ['BFS', 'DFS', 'O(V + E)'],
+      tips: ['图的常见算法：BFS/DFS 遍历、Dijkstra 最短路、拓扑排序、最小生成树（Kruskal/Prim）'],
     },
   ],
 }

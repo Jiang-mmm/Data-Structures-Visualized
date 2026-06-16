@@ -16,6 +16,8 @@ export const treeConfig: LearningModeConfig = {
 }`,
       highlightedLine: 4,
       highlightTerms: ['left', 'right'],
+      tips: ['二叉搜索树（BST）的性质：左子树所有值 < 根 < 右子树所有值'],
+      complexity: { time: '平均 O(log n)，最坏 O(n)', space: 'O(n)' },
     },
     {
       id: 'insert',
@@ -31,6 +33,7 @@ export const treeConfig: LearningModeConfig = {
 }`,
       highlightedLine: 3,
       highlightTerms: ['value < node.value', 'left'],
+      tips: ['插入操作的效率取决于树的高度，平衡树 O(log n)，退化链表 O(n)'],
     },
     {
       id: 'traversal',
@@ -44,6 +47,7 @@ export const treeConfig: LearningModeConfig = {
 }`,
       highlightedLine: 4,
       highlightTerms: ['visit', 'inorder'],
+      tips: ['BST 的中序遍历结果是有序的，这是一个重要的性质'],
     },
     {
       id: 'search',
@@ -58,6 +62,7 @@ export const treeConfig: LearningModeConfig = {
 }`,
       highlightedLine: 4,
       highlightTerms: ['value < node.value', 'search'],
+      tips: ['AVL 树和红黑树通过旋转保持平衡，确保查找始终 O(log n)'],
     },
   ],
 }

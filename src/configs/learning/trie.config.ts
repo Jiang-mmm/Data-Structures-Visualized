@@ -20,6 +20,8 @@ export const trieConfig: LearningModeConfig = {
 // 路径 "a→p→e" = 单词 "ape"`,
       highlightedLine: 2,
       highlightTerms: ['前缀', 'isEnd'],
+      tips: ['Trie 的空间换时间：用 O(总字符数) 空间换取 O(单词长度) 的查找时间'],
+      complexity: { time: 'O(m)，m 为单词长度', space: 'O(总字符数)' },
     },
     {
       id: 'insert',
@@ -36,6 +38,7 @@ export const trieConfig: LearningModeConfig = {
 }`,
       highlightedLine: 8,
       highlightTerms: ['isEnd', 'children[ch]'],
+      tips: ['共享前缀的单词会共用路径节点，这是 Trie 节省空间的关键'],
     },
     {
       id: 'search',
@@ -52,6 +55,7 @@ export const trieConfig: LearningModeConfig = {
 }`,
       highlightedLine: 4,
       highlightTerms: ['路径中断', 'isEnd'],
+      tips: ['注意区分"查找单词"和"查找前缀"：前者需要检查 isEnd，后者不需要'],
     },
     {
       id: 'prefix',
@@ -69,6 +73,7 @@ export const trieConfig: LearningModeConfig = {
 }`,
       highlightedLine: 4,
       highlightTerms: ['前缀不存在', '自动补全'],
+      tips: ['Trie 的典型应用：搜索引擎自动补全、拼写检查、IP 路由表、词频统计'],
     },
   ],
 }

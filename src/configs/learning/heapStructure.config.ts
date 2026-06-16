@@ -18,6 +18,8 @@ export const heapStructureConfig: LearningModeConfig = {
 // 父节点: (i-1)/2  左子: 2i+1  右子: 2i+2`,
       highlightedLine: 2,
       highlightTerms: ['完全二叉树', '≥'],
+      tips: ['堆用数组存储完全二叉树，不需要指针，空间利用率高且缓存友好'],
+      complexity: { time: '插入/提取 O(log n)，查看 O(1)', space: 'O(n)' },
     },
     {
       id: 'insert',
@@ -35,6 +37,7 @@ export const heapStructureConfig: LearningModeConfig = {
 }`,
       highlightedLine: 6,
       highlightTerms: ['上浮', 'swap'],
+      tips: ['上浮操作最多比较 log n 次（树的高度），因此插入复杂度 O(log n)'],
     },
     {
       id: 'extract',
@@ -60,6 +63,7 @@ export const heapStructureConfig: LearningModeConfig = {
 }`,
       highlightedLine: 12,
       highlightTerms: ['下沉', 'largest'],
+      tips: ['下沉时需要与较大的子节点交换，否则会破坏堆性质'],
     },
     {
       id: 'peek',
@@ -71,6 +75,7 @@ export const heapStructureConfig: LearningModeConfig = {
 }`,
       highlightedLine: 3,
       highlightTerms: ['heap[0]', 'O(1)'],
+      tips: ['堆的典型应用：优先队列、堆排序、Top-K 问题、中位数维护、Dijkstra 优化'],
     },
   ],
 }

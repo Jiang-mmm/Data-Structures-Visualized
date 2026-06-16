@@ -16,6 +16,8 @@ export const hashConfig: LearningModeConfig = {
 }`,
       highlightedLine: 6,
       highlightTerms: ['hash % size'],
+      tips: ['好的哈希函数应均匀分布，减少冲突。常见的有乘法哈希、MurmurHash 等'],
+      complexity: { time: '平均 O(1)，最坏 O(n)', space: 'O(n)' },
     },
     {
       id: 'insert',
@@ -27,6 +29,7 @@ export const hashConfig: LearningModeConfig = {
 }`,
       highlightedLine: 2,
       highlightTerms: ['hash(key)', 'push'],
+      tips: ['当负载因子（元素数/桶数）超过 0.75 时，通常需要扩容并重新哈希'],
     },
     {
       id: 'collision',
@@ -42,6 +45,7 @@ function get(key) {
 }`,
       highlightedLine: 6,
       highlightTerms: ['find', 'item.key'],
+      tips: ['冲突处理的两种主要方式：链地址法（本例）和开放寻址法'],
     },
     {
       id: 'search',
@@ -57,6 +61,7 @@ function get(key) {
 }`,
       highlightedLine: 5,
       highlightTerms: ['item.key === key'],
+      tips: ['哈希表是 JavaScript 对象/Map 的底层实现，是最重要的数据结构之一'],
     },
   ],
 }

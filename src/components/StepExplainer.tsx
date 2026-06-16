@@ -153,6 +153,34 @@ function StepExplainer({
         ))}
       </div>
 
+      {/* Complexity badge */}
+      {step.complexity && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {step.complexity.time && (
+            <span className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-mono font-bold bg-accent-amber/10 text-accent-amber border border-accent-amber/30">
+              T: {step.complexity.time}
+            </span>
+          )}
+          {step.complexity.space && (
+            <span className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-mono font-bold bg-accent-emerald/10 text-accent-emerald border border-accent-emerald/30">
+              S: {step.complexity.space}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Tips */}
+      {step.tips && step.tips.length > 0 && (
+        <div className="mb-3 space-y-1">
+          {step.tips.map((tip, i) => (
+            <div key={i} className="flex items-start gap-2 text-xs text-ink-light dark:text-dark-ink-light bg-accent-violet/5 dark:bg-accent-violet/10 border border-accent-violet/20 px-2.5 py-1.5">
+              <span className="text-accent-violet font-bold flex-shrink-0 mt-px">!</span>
+              <span>{tip}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Auto-play controls */}
       <div className="flex items-center gap-2 mb-3">
         <button

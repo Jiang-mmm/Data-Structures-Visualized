@@ -14,6 +14,8 @@ export const bfsConfig: LearningModeConfig = {
 }`,
       highlightedLine: 2,
       highlightTerms: ['queue', 'start'],
+      tips: ['BFS 使用队列（FIFO），DFS 使用栈（LIFO），这是两者最本质的区别'],
+      complexity: { time: 'O(V+E)', space: 'O(V)' },
     },
     {
       id: 'dequeue',
@@ -25,6 +27,7 @@ export const bfsConfig: LearningModeConfig = {
 }`,
       highlightedLine: 2,
       highlightTerms: ['shift'],
+      tips: ['BFS 天然按层遍历，第一次到达的路径就是最短路径（无权图）'],
     },
     {
       id: 'visit',
@@ -34,6 +37,7 @@ export const bfsConfig: LearningModeConfig = {
   visited.add(node)`,
       highlightedLine: 2,
       highlightTerms: ['visited', 'add'],
+      tips: ['入队时就标记已访问，而不是出队时，可以避免重复入队'],
     },
     {
       id: 'neighbors',
@@ -47,6 +51,7 @@ export const bfsConfig: LearningModeConfig = {
   }`,
       highlightedLine: 4,
       highlightTerms: ['push', 'queue'],
+      tips: ['BFS 常用于：最短路径（无权图）、层序遍历、社交网络中找一度/二度好友'],
     },
   ],
 }

@@ -17,6 +17,8 @@ export const stackConfig: LearningModeConfig = {
 //    └───┘ ← 栈底 (Bottom)`,
       highlightedLine: 2,
       highlightTerms: ['LIFO', '栈顶'],
+      tips: ['栈的应用：函数调用栈、括号匹配、表达式求值、浏览器前进/后退'],
+      complexity: { time: '所有操作 O(1)', space: 'O(n)' },
     },
     {
       id: 'push',
@@ -29,6 +31,7 @@ export const stackConfig: LearningModeConfig = {
 }`,
       highlightedLine: 3,
       highlightTerms: ['stack.top', 'O(1)'],
+      tips: ['入栈前应检查是否栈满（固定大小数组实现时）'],
     },
     {
       id: 'pop',
@@ -42,6 +45,7 @@ export const stackConfig: LearningModeConfig = {
 }`,
       highlightedLine: 4,
       highlightTerms: ['stack.top--', '栈空'],
+      tips: ['出栈前必须检查栈是否为空，否则会产生下溢错误'],
     },
     {
       id: 'peek',
@@ -54,6 +58,7 @@ export const stackConfig: LearningModeConfig = {
 }`,
       highlightedLine: 3,
       highlightTerms: ['items[stack.top]', '只读取'],
+      tips: ['JavaScript 中用数组模拟栈：push/pop 对应入栈/出栈'],
     },
   ],
 }

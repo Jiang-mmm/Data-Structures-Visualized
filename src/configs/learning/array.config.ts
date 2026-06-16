@@ -13,6 +13,8 @@ export const arrayConfig: LearningModeConfig = {
 // 地址: base + index * sizeof(int)`,
       highlightedLine: 2,
       highlightTerms: ['索引', '连续'],
+      tips: ['数组的连续存储使得缓存命中率高，这是数组遍历速度快的根本原因'],
+      complexity: { time: '随机访问 O(1)', space: 'O(n)' },
     },
     {
       id: 'insert',
@@ -26,6 +28,7 @@ export const arrayConfig: LearningModeConfig = {
 }`,
       highlightedLine: 3,
       highlightTerms: ['arr[i - 1]', '后移'],
+      tips: ['尾部插入 O(1)，中间/头部插入 O(n)，这是数组的主要劣势'],
     },
     {
       id: 'delete',
@@ -41,6 +44,7 @@ export const arrayConfig: LearningModeConfig = {
 }`,
       highlightedLine: 4,
       highlightTerms: ['arr[i + 1]', '前移'],
+      tips: ['删除时如果不关心顺序，可以用 arr[i] = arr[arr.length-1] 来 O(1) 删除'],
     },
     {
       id: 'search',
@@ -54,6 +58,7 @@ export const arrayConfig: LearningModeConfig = {
 }`,
       highlightedLine: 3,
       highlightTerms: ['arr[i] === target', 'O(n)'],
+      tips: ['数组是最基础的数据结构，几乎所有其他数据结构都建立在数组之上'],
     },
   ],
 }

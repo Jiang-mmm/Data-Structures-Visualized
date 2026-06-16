@@ -15,6 +15,8 @@ export const linkedlistConfig: LearningModeConfig = {
 }`,
       highlightedLine: 3,
       highlightTerms: ['value', 'next'],
+      tips: ['链表不需要连续内存，插入/删除只需修改指针，但随机访问需要 O(n)'],
+      complexity: { time: '访问 O(n)，插入/删除 O(1)', space: 'O(n)' },
     },
     {
       id: 'insert-head',
@@ -27,6 +29,7 @@ export const linkedlistConfig: LearningModeConfig = {
 }`,
       highlightedLine: 3,
       highlightTerms: ['node.next', 'head'],
+      tips: ['头插法 O(1) 时间复杂度，但会使元素顺序反转'],
     },
     {
       id: 'insert-tail',
@@ -40,6 +43,7 @@ export const linkedlistConfig: LearningModeConfig = {
 }`,
       highlightedLine: 4,
       highlightTerms: ['curr.next', 'while'],
+      tips: ['维护 tail 指针可以将尾插法优化到 O(1)，但增加维护成本'],
     },
     {
       id: 'delete',
@@ -54,6 +58,7 @@ export const linkedlistConfig: LearningModeConfig = {
 }`,
       highlightedLine: 6,
       highlightTerms: ['curr.next.next'],
+      tips: ['链表删除的关键是找到前驱节点，然后"跳过"目标节点'],
     },
   ],
 }

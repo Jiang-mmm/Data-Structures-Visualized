@@ -27,6 +27,12 @@ export interface LearningStep {
 
   /** 高亮关键词列表，用于 UI 视觉强调 */
   highlightTerms: string[];
+
+  /** 可选的学习提示或常见陷阱，帮助加深理解 */
+  tips?: string[];
+
+  /** 可选的复杂度信息，如 { time: 'O(n²)', space: 'O(1)' } */
+  complexity?: { time?: string; space?: string };
 }
 
 /**

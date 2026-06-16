@@ -6,6 +6,10 @@ import { bubbleConfig } from './bubble.config'
 import { quickConfig } from './quick.config'
 import { mergeConfig } from './merge.config'
 import { heapConfig } from './heap.config'
+import { selectionConfig } from './selection.config'
+import { insertionConfig } from './insertion.config'
+import { radixConfig } from './radix.config'
+import { bucketConfig } from './bucket.config'
 import { linkedlistConfig } from './linkedlist.config'
 import { doublyLinkedListConfig } from './doublyLinkedList.config'
 import { treeConfig } from './tree.config'
@@ -26,6 +30,10 @@ export const learningConfigs = {
   quick: quickConfig,
   merge: mergeConfig,
   heap: heapConfig,
+  selection: selectionConfig,
+  insertion: insertionConfig,
+  radix: radixConfig,
+  bucket: bucketConfig,
   linkedlist: linkedlistConfig,
   doublyLinkedList: doublyLinkedListConfig,
   tree: treeConfig,

@@ -16,6 +16,8 @@ export const doublyLinkedListConfig: LearningModeConfig = {
 }`,
       highlightedLine: 4,
       highlightTerms: ['prev', 'next'],
+      tips: ['双向链表比单链表多一个指针，但支持反向遍历和 O(1) 删除已知节点'],
+      complexity: { time: '访问 O(n)，插入/删除 O(1)', space: 'O(n)' },
     },
     {
       id: 'insert-head',
@@ -31,6 +33,7 @@ export const doublyLinkedListConfig: LearningModeConfig = {
 }`,
       highlightedLine: 4,
       highlightTerms: ['this.head.prev', 'node'],
+      tips: ['头插法需要处理链表为空的特殊情况（head 为 null）'],
     },
     {
       id: 'insert-tail',
@@ -47,6 +50,7 @@ export const doublyLinkedListConfig: LearningModeConfig = {
 }`,
       highlightedLine: 6,
       highlightTerms: ['node.prev', 'curr'],
+      tips: ['维护 tail 指针可以将尾插法优化到 O(1)，双向链表更容易维护'],
     },
     {
       id: 'delete',
@@ -64,6 +68,7 @@ export const doublyLinkedListConfig: LearningModeConfig = {
 }`,
       highlightedLine: 6,
       highlightTerms: ['curr.prev.next', 'curr.next.prev'],
+      tips: ['双向链表删除不需要找前驱节点，因为节点自带 prev 指针'],
     },
   ],
 }

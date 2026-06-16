@@ -97,13 +97,13 @@ describe('useLearningMode', () => {
   it('应该支持 Dijkstra 算法', () => {
     const { result } = renderHook(() => useLearningMode('dijkstra'))
     expect(result.current.hasSteps).toBe(true)
-    expect(result.current.totalSteps).toBe(3)
+    expect(result.current.totalSteps).toBe(5)
   })
 
   it('应该支持拓扑排序算法', () => {
     const { result } = renderHook(() => useLearningMode('topoSort'))
     expect(result.current.hasSteps).toBe(true)
-    expect(result.current.totalSteps).toBe(3)
+    expect(result.current.totalSteps).toBe(5)
   })
 
   it('应该支持冒泡排序算法', () => {
@@ -126,6 +126,30 @@ describe('useLearningMode', () => {
 
   it('应该支持堆排序算法', () => {
     const { result } = renderHook(() => useLearningMode('heap'))
+    expect(result.current.hasSteps).toBe(true)
+    expect(result.current.totalSteps).toBe(4)
+  })
+
+  it('应该支持选择排序算法', () => {
+    const { result } = renderHook(() => useLearningMode('selection'))
+    expect(result.current.hasSteps).toBe(true)
+    expect(result.current.totalSteps).toBe(4)
+  })
+
+  it('应该支持插入排序算法', () => {
+    const { result } = renderHook(() => useLearningMode('insertion'))
+    expect(result.current.hasSteps).toBe(true)
+    expect(result.current.totalSteps).toBe(4)
+  })
+
+  it('应该支持基数排序算法', () => {
+    const { result } = renderHook(() => useLearningMode('radix'))
+    expect(result.current.hasSteps).toBe(true)
+    expect(result.current.totalSteps).toBe(4)
+  })
+
+  it('应该支持桶排序算法', () => {
+    const { result } = renderHook(() => useLearningMode('bucket'))
     expect(result.current.hasSteps).toBe(true)
     expect(result.current.totalSteps).toBe(4)
   })

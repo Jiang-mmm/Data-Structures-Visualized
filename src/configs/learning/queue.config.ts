@@ -12,6 +12,8 @@ export const queueConfig: LearningModeConfig = {
 //        队首(Front)    队尾(Rear)`,
       highlightedLine: 2,
       highlightTerms: ['FIFO', '队首', '队尾'],
+      tips: ['队列的应用：BFS 遍历、任务调度、消息队列、打印队列、缓冲区'],
+      complexity: { time: '所有操作 O(1)', space: 'O(n)' },
     },
     {
       id: 'enqueue',
@@ -24,6 +26,7 @@ export const queueConfig: LearningModeConfig = {
 }`,
       highlightedLine: 2,
       highlightTerms: ['push', 'O(1)'],
+      tips: ['循环队列可以避免"假溢出"问题，充分利用数组空间'],
     },
     {
       id: 'dequeue',
@@ -37,6 +40,7 @@ export const queueConfig: LearningModeConfig = {
 }`,
       highlightedLine: 4,
       highlightTerms: ['queue.front++', '队空'],
+      tips: ['JavaScript 数组的 shift() 是 O(n)，用双指针可以避免这个问题'],
     },
     {
       id: 'front',
@@ -49,6 +53,7 @@ export const queueConfig: LearningModeConfig = {
 }`,
       highlightedLine: 3,
       highlightTerms: ['items[queue.front]', '只读取'],
+      tips: ['优先队列（堆）是队列的扩展：出队时返回优先级最高的元素'],
     },
   ],
 }

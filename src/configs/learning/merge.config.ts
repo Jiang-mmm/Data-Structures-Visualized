@@ -13,6 +13,8 @@ export const mergeConfig: LearningModeConfig = {
 }`,
       highlightedLine: 3,
       highlightTerms: ['mid'],
+      tips: ['归并排序采用分治策略，分割阶段不涉及任何比较或交换'],
+      complexity: { time: 'O(n log n)', space: 'O(n)' },
     },
     {
       id: 'split',
@@ -23,6 +25,7 @@ export const mergeConfig: LearningModeConfig = {
   // 左右两部分各自有序`,
       highlightedLine: 1,
       highlightTerms: ['mergeSort'],
+      tips: ['递归深度为 log n，每层总共需要 n 次操作，因此总复杂度 O(n log n)'],
     },
     {
       id: 'merge',
@@ -40,15 +43,19 @@ export const mergeConfig: LearningModeConfig = {
   }`,
       highlightedLine: 5,
       highlightTerms: ['leftArr[i]', 'rightArr[j]'],
+      tips: ['使用 <= 而非 < 可以保证归并排序的稳定性'],
     },
     {
       id: 'copy',
       title: '复制剩余',
       description: '将两个子数组中剩余的元素复制回原数组',
       codeSnippet: `  while (i < leftArr.length) arr[k++] = leftArr[i++]
-  while (j < rightArr.length) arr[k++] = rightArr[j++]`,
+  while (j < rightArr.length) arr[k++] = rightArr[j++]
+  // 合并完成，arr[left..right] 有序`,
       highlightedLine: 1,
       highlightTerms: ['leftArr[i]', 'arr[k]'],
+      tips: ['归并排序缺点是需要 O(n) 额外空间，但在链表排序和外部排序中优势明显'],
+      complexity: { time: 'O(n log n) 稳定', space: 'O(n)' },
     },
   ],
 }
