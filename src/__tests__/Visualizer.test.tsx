@@ -65,7 +65,7 @@ describe('Visualizer', () => {
   // Snapshot Tests
   // ============================================================
   describe('Snapshots', () => {
-    it('should render default visualizer with grid visible', () => {
+    it('should render default visualizer with grid hidden', () => {
       const { container, unmount } = render(
         <Visualizer
           data={mockData}
@@ -259,7 +259,7 @@ describe('Visualizer', () => {
   // Grid Toggle
   // ============================================================
   describe('Grid Toggle', () => {
-    it('should show grid by default', () => {
+    it('should hide grid by default', () => {
       const { container, unmount } = render(
         <Visualizer
           data={mockData}
@@ -271,33 +271,33 @@ describe('Visualizer', () => {
       )
 
       const gridBtn = screen.getByText('#')
-      const wrapper = container.firstChild as HTMLElement
-      expect(wrapper.className).toContain('dot-grid')
-      expect(gridBtn.getAttribute('title')).toBe('visualizer.hideGrid')
-      unmount()
-    })
-
-    it('should toggle grid when # button clicked', () => {
-      const { container, unmount } = render(
-        <Visualizer
-          data={mockData}
-          renderFn={mockRenderFn}
-          svgRef={svgRef}
-          dimensions={mockDimensions}
-          containerRef={containerRef}
-        />
-      )
-
-      const gridBtn = screen.getByText('#')
-      fireEvent.click(gridBtn)
-
       const wrapper = container.firstChild as HTMLElement
       expect(wrapper.className).not.toContain('dot-grid')
       expect(gridBtn.getAttribute('title')).toBe('visualizer.showGrid')
       unmount()
     })
 
-    it('should toggle grid back on after two clicks', () => {
+    it('should toggle grid on when # button clicked', () => {
+      const { container, unmount } = render(
+        <Visualizer
+          data={mockData}
+          renderFn={mockRenderFn}
+          svgRef={svgRef}
+          dimensions={mockDimensions}
+          containerRef={containerRef}
+        />
+      )
+
+      const gridBtn = screen.getByText('#')
+      fireEvent.click(gridBtn)
+
+      const wrapper = container.firstChild as HTMLElement
+      expect(wrapper.className).toContain('dot-grid')
+      expect(gridBtn.getAttribute('title')).toBe('visualizer.hideGrid')
+      unmount()
+    })
+
+    it('should toggle grid back off after two clicks', () => {
       const { container, unmount } = render(
         <Visualizer
           data={mockData}
@@ -313,7 +313,7 @@ describe('Visualizer', () => {
       fireEvent.click(gridBtn)
 
       const wrapper = container.firstChild as HTMLElement
-      expect(wrapper.className).toContain('dot-grid')
+      expect(wrapper.className).not.toContain('dot-grid')
       unmount()
     })
   })

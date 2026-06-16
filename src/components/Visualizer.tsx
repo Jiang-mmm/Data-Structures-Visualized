@@ -34,7 +34,7 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
   const { t } = useGlobalSettings()
   const isDark = themeResolved === 'dark'
   const [zoom, setZoom] = useState(() => loadNumber(ZOOM_KEY, 1))
-  const [showGrid, setShowGrid] = useState(() => loadBool(GRID_KEY, true))
+  const [showGrid, setShowGrid] = useState(() => loadBool(GRID_KEY, false))
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const pinchRef = useRef({ initialDistance: 0, initialZoom: 1 })
   const dragRef = useRef({ dragging: false, startX: 0, startY: 0, startPanX: 0, startPanY: 0 })

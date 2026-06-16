@@ -47,8 +47,8 @@ describe('OperationBar', () => {
       const bar = container.firstChild as HTMLElement
       expect(bar.className).toContain('px-3')
       expect(bar.className).toContain('sm:px-6')
-      expect(bar.className).toContain('py-2')
-      expect(bar.className).toContain('sm:py-3')
+      expect(bar.className).toContain('py-1.5')
+      expect(bar.className).toContain('sm:py-2.5')
     })
 
     it('内部 flex 容器应有 flex-wrap 和最小触摸高度', () => {

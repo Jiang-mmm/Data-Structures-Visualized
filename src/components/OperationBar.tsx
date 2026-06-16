@@ -39,7 +39,7 @@ function OperationBar({ children, className = '' }: OperationBarProps) {
       aria-label={t('page.operations')}
       className={`
         bg-paper-warm dark:bg-slate-light border-b-2 border-ink dark:border-dark-border
-        px-3 sm:px-6 py-2.5 sm:py-3.5
+        px-3 sm:px-6 py-1.5 sm:py-2.5
         operation-bar operation-bar-scroll-hint
         ${className}
       `}
