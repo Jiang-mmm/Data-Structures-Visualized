@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
-import OperationBar, { OperationButton, OperationDivider } from '../components/OperationBar'
+import PageHeader from '../components/PageHeader'
+import OperationBar, { OperationButton } from '../components/OperationBar'
 import SpeedControl from '../components/SpeedControl'
 import LogPanel from '../components/LogPanel'
 import Visualizer from '../components/Visualizer'
@@ -160,12 +161,15 @@ export default function GraphAlgorithmPage() {
   
   return (
     <div className="h-full flex flex-col bg-paper dark:bg-dark-paper grain">
-      <OperationBar>
-        <span className="font-black text-sm text-ink dark:text-dark-ink whitespace-nowrap">{t('graphAlgorithm.title')}</span>
-        <OperationDivider />
-        <OperationButton variant="danger" onClick={reset} disabled={isAnimating}>{t('common.reset')}</OperationButton>
-      </OperationBar>
-
+      <PageHeader
+        title={t('graphAlgorithm.title')}
+        subtitle={t('graphAlgorithm.subtitle')}
+      >
+        <OperationButton variant="outline" onClick={reset} disabled={isAnimating}>
+          {t('common.reset')}
+        </OperationButton>
+      </PageHeader>
+      
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
         <div className="flex-1 flex flex-col gap-4">
           <OperationBar label={t('graphAlgorithm.algorithm')}>

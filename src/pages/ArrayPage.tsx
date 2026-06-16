@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { handleAnimationError } from '../utils/errorHandler'
-import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo, OperationDivider } from '../components/OperationBar'
+import PageHeader from '../components/PageHeader'
+import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import UndoPreviewButton from '../components/UndoPreviewButton'
 import ShareButton from '../components/ShareButton'
 import Visualizer from '../components/Visualizer'
@@ -129,24 +130,51 @@ export default function ArrayPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+      <PageHeader title={t('array.title')} subtitle={t('array.subtitle')}>
+        <ExportImport dataType="array" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
+          const result = validateImportData(imported)
+          if (result.valid) {
+            loadData(result.data)
+          } else {
+            showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` })
+          }
+        }} />
+        <ShareButton data={data} dataType="array" disabled={isAnimating} />
+        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+        <OperationButton variant="primary" onClick={randomize}>{t('common.randomize')}</OperationButton>
+      </PageHeader>
       <OperationBar>
-        <span className="font-black text-sm text-ink dark:text-dark-ink whitespace-nowrap">{t('array.title')}</span>
-        <OperationDivider />
         <SpeedControl />
-        <OperationDivider />
+        <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationInput type="number" placeholder={t('array.indexPlaceholder')} value={inputIndex} onChange={setInputIndex} className="w-20" />
         <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('array.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('common.delete')}</OperationButton>
         <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('common.search')}</OperationButton>
-        <OperationButton variant="primary" onClick={randomize} disabled={isAnimating}>{t('common.randomize')}</OperationButton>
         {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
-        <UndoPreviewButton variant="outline" onClick={undo} disabled={isAnimating || !canUndo()} previewData={getUndoPreview()} previewLabel={t('shortcuts.undo')}>{t('common.undo')}</UndoPreviewButton>
-        <UndoPreviewButton variant="outline" onClick={redo} disabled={isAnimating || !canRedo()} previewData={getRedoPreview()} previewLabel={t('shortcuts.redo')}>{t('common.redo')}</UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={undo}
+          disabled={isAnimating || !canUndo()}
+          previewData={getUndoPreview()}
+          previewLabel={t('shortcuts.undo')}
+        >
+          {t('common.undo')}
+        </UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={redo}
+          disabled={isAnimating || !canRedo()}
+          previewData={getRedoPreview()}
+          previewLabel={t('shortcuts.redo')}
+        >
+          {t('common.redo')}
+        </UndoPreviewButton>
         <OperationInfo>
-          <ExportImport dataType="array" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => { const result = validateImportData(imported); if (result.valid) { loadData(result.data) } else { showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` }) } }} />
-          <ShareButton data={data} dataType="array" disabled={isAnimating} />
-          <OperationButton variant="danger" onClick={reset}>{t('common.reset')}</OperationButton>
+          <ColorLegend items={[
+            { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
+            { color: getColors().nodeActive, labelKey: 'nodeLegend.active' },
+          ]} />
         </OperationInfo>
       </OperationBar>
       <div className="relative flex flex-col flex-1 min-h-0">

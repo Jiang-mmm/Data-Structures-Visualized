@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
-import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo, OperationDivider } from '../components/OperationBar'
+import PageHeader from '../components/PageHeader'
+import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
@@ -129,11 +130,21 @@ export default function TreePage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+      <PageHeader title={t('tree.title')} subtitle={t('tree.subtitle')}>
+        <ExportImport dataType="tree" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
+          const result = validateImportData(imported)
+          if (result.valid && result.data) {
+            loadData(result.data)
+          } else {
+            showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` })
+          }
+        }} />
+        <ShareButton data={data} dataType="tree" disabled={isAnimating} />
+        <OperationButton variant="outline" onClick={handleReset}>{t('common.reset')}</OperationButton>
+      </PageHeader>
       <OperationBar>
-        <span className="font-black text-sm text-ink dark:text-dark-ink whitespace-nowrap">{t('tree.title')}</span>
-        <OperationDivider />
         <SpeedControl />
-        <OperationDivider />
+        <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('tree.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('common.delete')}</OperationButton>
@@ -145,15 +156,42 @@ export default function TreePage() {
         <OperationGroup label={t('common.more')}>
           <OperationButton variant="purple" onClick={() => handleTraversal(postorder)} disabled={isAnimating} popAnimation>{t('tree.postorder')}</OperationButton>
           <OperationButton variant="purple" onClick={handleLevelOrder} disabled={isAnimating} popAnimation>{t('tree.levelorder')}</OperationButton>
-          <OperationButton variant="outline" onClick={() => { const next = edgeStyle === 'straight' ? 'curved' : edgeStyle === 'curved' ? 'orthogonal' : 'straight'; setEdgeStyle(next); localStorage.setItem('ds-tree-edge-style', next) }} disabled={isAnimating}>{edgeStyle === 'straight' ? '⤿ ' : edgeStyle === 'curved' ? '⌇ ' : '⊞ '}{t('tree.edgeStyle')}</OperationButton>
-          <UndoPreviewButton variant="outline" onClick={undo} disabled={isAnimating || !canUndo()} previewData={getUndoPreview()} previewLabel={t('shortcuts.undo')}>{t('common.undo')}</UndoPreviewButton>
-          <UndoPreviewButton variant="outline" onClick={redo} disabled={isAnimating || !canRedo()} previewData={getRedoPreview()} previewLabel={t('shortcuts.redo')}>{t('common.redo')}</UndoPreviewButton>
+          <OperationButton
+            variant="outline"
+            onClick={() => {
+              const next = edgeStyle === 'straight' ? 'curved' : edgeStyle === 'curved' ? 'orthogonal' : 'straight'
+              setEdgeStyle(next)
+              localStorage.setItem('ds-tree-edge-style', next)
+            }}
+            disabled={isAnimating}
+          >
+            {edgeStyle === 'straight' ? '⤿ ' : edgeStyle === 'curved' ? '⌇ ' : '⊞ '}{t('tree.edgeStyle')}
+          </OperationButton>
+          <UndoPreviewButton
+            variant="outline"
+            onClick={undo}
+            disabled={isAnimating || !canUndo()}
+            previewData={getUndoPreview()}
+            previewLabel={t('shortcuts.undo')}
+          >
+            {t('common.undo')}
+          </UndoPreviewButton>
+          <UndoPreviewButton
+            variant="outline"
+            onClick={redo}
+            disabled={isAnimating || !canRedo()}
+            previewData={getRedoPreview()}
+            previewLabel={t('shortcuts.redo')}
+          >
+            {t('common.redo')}
+          </UndoPreviewButton>
         </OperationGroup>
         <OperationInfo>
-          <ExportImport dataType="tree" data={data} disabled={isAnimating} onImport={({ data: imported }) => { const result = validateImportData(imported); if (result.valid && result.data) { loadData(result.data) } else { showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` }) } }} />
-          <ShareButton data={data} dataType="tree" disabled={isAnimating} />
-          <OperationButton variant="danger" onClick={handleReset}>{t('common.reset')}</OperationButton>
-          <ColorLegend items={[ { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' }, { color: getColors().nodeRoot, labelKey: 'nodeLegend.root' }, { color: getColors().nodeLeaf, labelKey: 'nodeLegend.leaf' } ]} />
+          <ColorLegend items={[
+            { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
+            { color: getColors().nodeRoot, labelKey: 'nodeLegend.root' },
+            { color: getColors().nodeLeaf, labelKey: 'nodeLegend.leaf' },
+          ]} />
           <span className="font-mono text-xs text-ink-light">NODES: {nodeCount}</span>
         </OperationInfo>
       </OperationBar>

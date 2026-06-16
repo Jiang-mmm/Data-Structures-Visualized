@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
-import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo, OperationDivider } from '../components/OperationBar'
+import PageHeader from '../components/PageHeader'
+import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
@@ -93,22 +94,46 @@ export default function HeapPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+      <PageHeader title={t('heap.title')} subtitle={t('heap.subtitle')}>
+        <ExportImport dataType="heap" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
+          const result = validateImportData(imported)
+          if (result.valid && result.data) {
+            loadData(result.data)
+          } else {
+            showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` })
+          }
+        }} />
+        <ShareButton data={data} dataType="heap" disabled={isAnimating} />
+        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+      </PageHeader>
+
       <OperationBar>
-        <span className="font-black text-sm text-ink dark:text-dark-ink whitespace-nowrap">{t('heap.title')}</span>
-        <OperationDivider />
         <SpeedControl />
-        <OperationDivider />
+        <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('heap.inputPlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('heap.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleExtract} disabled={isAnimating || data.length === 0}>{t('heap.extractMax')}</OperationButton>
         <OperationButton variant="outline" onClick={handlePeek} disabled={isAnimating || data.length === 0} popAnimation>{t('heap.peek')}</OperationButton>
         {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
-        <UndoPreviewButton variant="outline" onClick={undo} disabled={isAnimating || !canUndo()} previewData={getUndoPreview()} previewLabel={t('shortcuts.undo')}>{t('common.undo')}</UndoPreviewButton>
-        <UndoPreviewButton variant="outline" onClick={redo} disabled={isAnimating || !canRedo()} previewData={getRedoPreview()} previewLabel={t('shortcuts.redo')}>{t('common.redo')}</UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={undo}
+          disabled={isAnimating || !canUndo()}
+          previewData={getUndoPreview()}
+          previewLabel={t('shortcuts.undo')}
+        >
+          {t('common.undo')}
+        </UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={redo}
+          disabled={isAnimating || !canRedo()}
+          previewData={getRedoPreview()}
+          previewLabel={t('shortcuts.redo')}
+        >
+          {t('common.redo')}
+        </UndoPreviewButton>
         <OperationInfo>
-          <ExportImport dataType="heap" data={data} disabled={isAnimating} onImport={({ data: imported }) => { const result = validateImportData(imported); if (result.valid && result.data) { loadData(result.data) } else { showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` }) } }} />
-          <ShareButton data={data} dataType="heap" disabled={isAnimating} />
-          <OperationButton variant="danger" onClick={reset}>{t('common.reset')}</OperationButton>
           <ColorLegend items={[
             { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
             { color: getColors().nodeRoot, labelKey: 'nodeLegend.root' },

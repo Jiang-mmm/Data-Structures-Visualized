@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
-import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo, OperationDivider } from '../components/OperationBar'
+import PageHeader from '../components/PageHeader'
+import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
@@ -83,24 +84,50 @@ export default function StackPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+      <PageHeader title={t('stack.title')} subtitle={t('stack.subtitle')}>
+        <ExportImport dataType="stack" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
+          const result = validateImportData(imported)
+          if (result.valid && result.data) {
+            loadData(result.data)
+          } else {
+            showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` })
+          }
+        }} />
+        <ShareButton data={data} dataType="stack" disabled={isAnimating} />
+        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+      </PageHeader>
       <OperationBar>
-        <span className="font-black text-sm text-ink dark:text-dark-ink whitespace-nowrap">{t('stack.title')}</span>
-        <OperationDivider />
         <SpeedControl />
-        <OperationDivider />
+        <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationButton variant="primary" onClick={handlePush} disabled={isAnimating}>{'+ ' + t('stack.push')}</OperationButton>
         <OperationButton variant="danger" onClick={handlePop} disabled={isAnimating || data.length === 0}>{'- ' + t('stack.pop')}</OperationButton>
         <OperationButton variant="outline" onClick={handlePeek} popAnimation>{t('stack.peek')}</OperationButton>
         <OperationButton variant="outline" onClick={() => { if (window.confirm(t('common.confirmClear'))) clear() }} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
         {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
-        <UndoPreviewButton variant="outline" onClick={undo} disabled={isAnimating || !canUndo()} previewData={getUndoPreview()} previewLabel={t('shortcuts.undo')}>{t('common.undo')}</UndoPreviewButton>
-        <UndoPreviewButton variant="outline" onClick={redo} disabled={isAnimating || !canRedo()} previewData={getRedoPreview()} previewLabel={t('shortcuts.redo')}>{t('common.redo')}</UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={undo}
+          disabled={isAnimating || !canUndo()}
+          previewData={getUndoPreview()}
+          previewLabel={t('shortcuts.undo')}
+        >
+          {t('common.undo')}
+        </UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={redo}
+          disabled={isAnimating || !canRedo()}
+          previewData={getRedoPreview()}
+          previewLabel={t('shortcuts.redo')}
+        >
+          {t('common.redo')}
+        </UndoPreviewButton>
         <OperationInfo>
-          <ExportImport dataType="stack" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => { const result = validateImportData(imported); if (result.valid && result.data) { loadData(result.data) } else { showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` }) } }} />
-          <ShareButton data={data} dataType="stack" disabled={isAnimating} />
-          <OperationButton variant="danger" onClick={reset}>{t('common.reset')}</OperationButton>
-          <ColorLegend items={[ { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' }, { color: getColors().nodeRoot, labelKey: 'nodeLegend.top' } ]} />
+          <ColorLegend items={[
+            { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
+            { color: getColors().nodeRoot, labelKey: 'nodeLegend.top' },
+          ]} />
         </OperationInfo>
       </OperationBar>
       <Visualizer data={data} renderFn={renderStack} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.stackLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: size }]} />} />

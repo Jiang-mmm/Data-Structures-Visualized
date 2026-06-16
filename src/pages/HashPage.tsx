@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
-import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo, OperationDivider } from '../components/OperationBar'
+import PageHeader from '../components/PageHeader'
+import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
@@ -103,23 +104,50 @@ export default function HashPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+      <PageHeader title={t('hash.title')} subtitle={t('hash.subtitle')}>
+        <ExportImport dataType="hash" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
+          if (Array.isArray(imported) && imported.length > 0 && imported.length <= 200 && imported.every(item =>
+            typeof item === 'object' && item !== null &&
+            typeof item.key === 'number' && Number.isFinite(item.key) &&
+            typeof item.value === 'string' && item.value.length <= 100
+          )) {
+            loadData(imported)
+          } else {
+            showToast({ type: 'error', message: t('errors.importFailed') })
+          }
+        }} />
+        <ShareButton data={data} dataType="hash" disabled={isAnimating} />
+        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+      </PageHeader>
+
       <OperationBar>
-        <span className="font-black text-sm text-ink dark:text-dark-ink whitespace-nowrap">{t('hash.title')}</span>
-        <OperationDivider />
         <SpeedControl />
-        <OperationDivider />
+        <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('hash.keyPlaceholder')} value={keyValue} onChange={setKeyValue} />
         <OperationInput type="text" placeholder={t('hash.valuePlaceholder')} value={valueInput} onChange={setValueInput} />
         <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('hash.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('hash.remove')}</OperationButton>
         <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('hash.search')}</OperationButton>
         {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
-        <UndoPreviewButton variant="outline" onClick={undo} disabled={isAnimating || !canUndo()} previewData={getUndoPreview()} previewLabel={t('shortcuts.undo')}>{t('common.undo')}</UndoPreviewButton>
-        <UndoPreviewButton variant="outline" onClick={redo} disabled={isAnimating || !canRedo()} previewData={getRedoPreview()} previewLabel={t('shortcuts.redo')}>{t('common.redo')}</UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={undo}
+          disabled={isAnimating || !canUndo()}
+          previewData={getUndoPreview()}
+          previewLabel={t('shortcuts.undo')}
+        >
+          {t('common.undo')}
+        </UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={redo}
+          disabled={isAnimating || !canRedo()}
+          previewData={getRedoPreview()}
+          previewLabel={t('shortcuts.redo')}
+        >
+          {t('common.redo')}
+        </UndoPreviewButton>
         <OperationInfo>
-          <ExportImport dataType="hash" data={data} disabled={isAnimating} onImport={({ data: imported }) => { if (Array.isArray(imported) && imported.length > 0 && imported.length <= 200 && imported.every(item => typeof item === 'object' && item !== null && typeof item.key === 'number' && Number.isFinite(item.key) && typeof item.value === 'string' && item.value.length <= 100)) { loadData(imported) } else { showToast({ type: 'error', message: t('errors.importFailed') }) } }} />
-          <ShareButton data={data} dataType="hash" disabled={isAnimating} />
-          <OperationButton variant="danger" onClick={reset}>{t('common.reset')}</OperationButton>
           <ColorLegend items={[
             { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
             { color: getColors().nodeActive, labelKey: 'nodeLegend.active' },

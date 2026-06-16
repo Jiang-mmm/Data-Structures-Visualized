@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
-import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo, OperationDivider } from '../components/OperationBar'
+import PageHeader from '../components/PageHeader'
+import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
@@ -83,24 +84,50 @@ export default function QueuePage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+      <PageHeader title={t('queue.title')} subtitle={t('queue.subtitle')}>
+        <ExportImport dataType="queue" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
+          const result = validateImportData(imported)
+          if (result.valid && result.data) {
+            loadData(result.data)
+          } else {
+            showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` })
+          }
+        }} />
+        <ShareButton data={data} dataType="queue" disabled={isAnimating} />
+        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+      </PageHeader>
       <OperationBar>
-        <span className="font-black text-sm text-ink dark:text-dark-ink whitespace-nowrap">{t('queue.title')}</span>
-        <OperationDivider />
         <SpeedControl />
-        <OperationDivider />
+        <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationButton variant="primary" onClick={handleEnqueue} disabled={isAnimating}>{'+ ' + t('queue.enqueue')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDequeue} disabled={isAnimating || data.length === 0}>{'- ' + t('queue.dequeue')}</OperationButton>
         <OperationButton variant="outline" onClick={handleFront} popAnimation>{t('queue.peek')}</OperationButton>
         <OperationButton variant="outline" onClick={() => { if (window.confirm(t('common.confirmClear'))) clear() }} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
         {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
-        <UndoPreviewButton variant="outline" onClick={undo} disabled={isAnimating || !canUndo()} previewData={getUndoPreview()} previewLabel={t('shortcuts.undo')}>{t('common.undo')}</UndoPreviewButton>
-        <UndoPreviewButton variant="outline" onClick={redo} disabled={isAnimating || !canRedo()} previewData={getRedoPreview()} previewLabel={t('shortcuts.redo')}>{t('common.redo')}</UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={undo}
+          disabled={isAnimating || !canUndo()}
+          previewData={getUndoPreview()}
+          previewLabel={t('shortcuts.undo')}
+        >
+          {t('common.undo')}
+        </UndoPreviewButton>
+        <UndoPreviewButton
+          variant="outline"
+          onClick={redo}
+          disabled={isAnimating || !canRedo()}
+          previewData={getRedoPreview()}
+          previewLabel={t('shortcuts.redo')}
+        >
+          {t('common.redo')}
+        </UndoPreviewButton>
         <OperationInfo>
-          <ExportImport dataType="queue" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => { const result = validateImportData(imported); if (result.valid && result.data) { loadData(result.data) } else { showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` }) } }} />
-          <ShareButton data={data} dataType="queue" disabled={isAnimating} />
-          <OperationButton variant="danger" onClick={reset}>{t('common.reset')}</OperationButton>
-          <ColorLegend items={[ { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' }, { color: getColors().nodeLeaf, labelKey: 'queue.front' } ]} />
+          <ColorLegend items={[
+            { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
+            { color: getColors().nodeLeaf, labelKey: 'queue.front' },
+          ]} />
         </OperationInfo>
       </OperationBar>
       <Visualizer data={data} renderFn={renderQueue} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.queueLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: size }]} />} />

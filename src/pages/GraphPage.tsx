@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
-import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo, OperationDivider } from '../components/OperationBar'
+import PageHeader from '../components/PageHeader'
+import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
@@ -136,19 +137,59 @@ export default function GraphPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <OperationBar>
-        <span className="font-black text-sm text-ink dark:text-dark-ink whitespace-nowrap">{t('graph.title')}</span>
-        <OperationDivider />
-        <SpeedControl />
-        <OperationDivider />
+      <PageHeader title={t('graph.title')} subtitle={t('graph.subtitle')}>
+        <ExportImport dataType="graph" data={{ nodes, links }} disabled={isAnimating} onImport={({ data: imported }) => {
+          if (imported && typeof imported === 'object' && 'nodes' in imported) {
+            const g = imported as Record<string, unknown>
+            if (Array.isArray(g.nodes) && g.nodes.every((n: unknown) =>
+              n && typeof n === 'object' && 'id' in (n as object) && 'label' in (n as object)
+            )) {
+              loadData(imported as { nodes: typeof nodes })
+            } else {
+              showToast({ type: 'error', message: t('errors.importFailed') })
+            }
+          } else {
+            showToast({ type: 'error', message: t('errors.importFailed') })
+          }
+        }} />
+        <ShareButton data={{ nodes, links }} dataType="graph" disabled={isAnimating} />
+        <OperationButton variant="outline" onClick={handleReset}>{t('common.reset')}</OperationButton>
         <OperationButton variant="primary" onClick={handleAddNode} disabled={isAnimating}>{t('graph.addNode')}</OperationButton>
+      </PageHeader>
+
+      <OperationBar>
+        <SpeedControl />
+        <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput placeholder={t('graph.source')} value={sourceInput} onChange={setSourceInput} className="w-16" />
         <OperationInput placeholder={t('graph.target')} value={targetInput} onChange={setTargetInput} className="w-16" />
         <OperationInput type="number" placeholder={t('graph.weight')} value={weightInput} onChange={setWeightInput} className="w-14" />
         <OperationButton variant="primary" onClick={handleAddEdge} disabled={isAnimating}>{t('graph.addEdge')}</OperationButton>
-        <OperationButton variant="danger" onClick={handleDeleteEdge} disabled={isAnimating}>{t('graph.removeEdge')}</OperationButton>
-        <OperationButton variant="danger" onClick={handleDeleteNode} disabled={isAnimating}>{t('graph.removeNode')}</OperationButton>
-        <OperationDivider />
+        <OperationGroup label={t('common.more')}>
+          <OperationButton variant="danger" onClick={handleDeleteEdge} disabled={isAnimating}>{t('graph.removeEdge')}</OperationButton>
+          <OperationButton variant="danger" onClick={handleDeleteNode} disabled={isAnimating}>{t('graph.removeNode')}</OperationButton>
+          <UndoPreviewButton
+            variant="outline"
+            onClick={undo}
+            disabled={isAnimating || !canUndo()}
+            previewData={getUndoPreview()}
+            previewLabel={t('shortcuts.undo')}
+          >
+            {t('common.undo')}
+          </UndoPreviewButton>
+          <UndoPreviewButton
+            variant="outline"
+            onClick={redo}
+            disabled={isAnimating || !canRedo()}
+            previewData={getRedoPreview()}
+            previewLabel={t('shortcuts.redo')}
+          >
+            {t('common.redo')}
+          </UndoPreviewButton>
+        </OperationGroup>
+      </OperationBar>
+
+      <OperationBar className="border-t-0">
+        <OperationLabel>{t('page.algorithms')}</OperationLabel>
         <OperationInput placeholder={t('graph.source')} value={algorithmStart} onChange={setAlgorithmStart} className="w-16" />
         <OperationInput placeholder={t('graph.target')} value={algorithmEnd} onChange={setAlgorithmEnd} className="w-16" />
         <OperationButton variant="purple" onClick={handleBFS} disabled={isAnimating} popAnimation>{t('graph.bfs')}</OperationButton>
@@ -165,12 +206,8 @@ export default function GraphPage() {
                 }`}>{l}</button>
           ))}
         </div>
-        <UndoPreviewButton variant="outline" onClick={undo} disabled={isAnimating || !canUndo()} previewData={getUndoPreview()} previewLabel={t('shortcuts.undo')}>{t('common.undo')}</UndoPreviewButton>
-        <UndoPreviewButton variant="outline" onClick={redo} disabled={isAnimating || !canRedo()} previewData={getRedoPreview()} previewLabel={t('shortcuts.redo')}>{t('common.redo')}</UndoPreviewButton>
         <OperationInfo>
-          <ExportImport dataType="graph" data={{ nodes, links }} disabled={isAnimating} onImport={({ data: imported }) => { if (imported && typeof imported === 'object' && 'nodes' in imported) { const g = imported as Record<string, unknown>; if (Array.isArray(g.nodes) && g.nodes.every((n: unknown) => n && typeof n === 'object' && 'id' in (n as object) && 'label' in (n as object))) { loadData(imported as { nodes: typeof nodes }) } else { showToast({ type: 'error', message: t('errors.importFailed') }) } } else { showToast({ type: 'error', message: t('errors.importFailed') }) } }} />
-          <ShareButton data={{ nodes, links }} dataType="graph" disabled={isAnimating} />
-          <OperationButton variant="danger" onClick={handleReset}>{t('common.reset')}</OperationButton>
+          <span className="font-mono text-xs text-ink-light">{viewMode === 'force' ? t('graphView.force') : viewMode === 'matrix' ? t('graphView.matrix') : t('graphView.list')}</span>
         </OperationInfo>
       </OperationBar>
 
