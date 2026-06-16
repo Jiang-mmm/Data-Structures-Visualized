@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import OperationBar, { OperationButton, OperationDivider } from '../components/OperationBar'
+import OperationBar, { OperationButton, OperationDivider, OperationInfo } from '../components/OperationBar'
 import OperationGroup from '../components/OperationGroup'
 import UndoPreviewButton from '../components/UndoPreviewButton'
 import ShareButton from '../components/ShareButton'

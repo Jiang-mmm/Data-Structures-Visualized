@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
-import OperationBar, { OperationButton } from '../components/OperationBar'
+import OperationBar, { OperationButton, OperationDivider } from '../components/OperationBar'
 import SpeedControl from '../components/SpeedControl'
 import LogPanel from '../components/LogPanel'
 import Visualizer from '../components/Visualizer'

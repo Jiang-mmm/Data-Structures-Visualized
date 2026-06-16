@@ -75,8 +75,6 @@ describe('GraphPage', () => {
     expect(screen.getByText('graph.dfs')).toBeInTheDocument()
     expect(screen.getByText('graph.dijkstra')).toBeInTheDocument()
     expect(screen.getByText('common.reset')).toBeInTheDocument()
-    // Buttons inside collapsed OperationGroup
-    fireEvent.click(screen.getByText(/common\.more/))
     expect(screen.getByText('graph.removeEdge')).toBeInTheDocument()
     expect(screen.getByText('graph.removeNode')).toBeInTheDocument()
     expect(screen.getByText('common.undo')).toBeInTheDocument()
@@ -121,7 +119,6 @@ describe('GraphPage', () => {
 
     fireEvent.change(sourceInput, { target: { value: 'A' } })
     fireEvent.change(targetInput, { target: { value: 'B' } })
-    fireEvent.click(screen.getByText(/common\.more/))
     fireEvent.click(screen.getByText('graph.removeEdge'))
 
     await waitFor(() => {
@@ -136,7 +133,6 @@ describe('GraphPage', () => {
 
     const sourceInput = screen.getAllByPlaceholderText('graph.source')[0]
     fireEvent.change(sourceInput, { target: { value: 'B' } })
-    fireEvent.click(screen.getByText(/common\.more/))
     fireEvent.click(screen.getByText('graph.removeNode'))
 
     await waitFor(() => {
@@ -203,7 +199,6 @@ describe('GraphPage', () => {
     mockedUseGraphState.mockReturnValue(mockState)
     renderWithRouter(<GraphPage />)
 
-    fireEvent.click(screen.getByText(/common\.more/))
     fireEvent.click(screen.getByText('common.undo'))
     expect(mockState.undo).toHaveBeenCalled()
   })
@@ -213,7 +208,6 @@ describe('GraphPage', () => {
     mockedUseGraphState.mockReturnValue(mockState)
     renderWithRouter(<GraphPage />)
 
-    fireEvent.click(screen.getByText(/common\.more/))
     fireEvent.click(screen.getByText('common.redo'))
     expect(mockState.redo).toHaveBeenCalled()
   })
@@ -228,7 +222,6 @@ describe('GraphPage', () => {
     expect(screen.getByText('graph.bfs')).toBeDisabled()
     expect(screen.getByText('graph.dfs')).toBeDisabled()
     expect(screen.getByText('graph.dijkstra')).toBeDisabled()
-    fireEvent.click(screen.getByText(/common\.more/))
     expect(screen.getByText('graph.removeEdge')).toBeDisabled()
     expect(screen.getByText('graph.removeNode')).toBeDisabled()
     expect(screen.getByText('common.undo')).toBeDisabled()
