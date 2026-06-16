@@ -102,8 +102,8 @@ export default function StackPage() {
         <OperationButton variant="primary" onClick={handlePush} disabled={isAnimating}>{'+ ' + t('stack.push')}</OperationButton>
         <OperationButton variant="danger" onClick={handlePop} disabled={isAnimating || data.length === 0}>{'- ' + t('stack.pop')}</OperationButton>
         <OperationButton variant="outline" onClick={handlePeek} popAnimation>{t('stack.peek')}</OperationButton>
-        <OperationButton variant="outline" onClick={clear} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
-        {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        <OperationButton variant="outline" onClick={() => { if (window.confirm(t('common.confirmClear'))) clear() }} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
+        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
           onClick={undo}

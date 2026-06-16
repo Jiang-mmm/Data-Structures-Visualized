@@ -9,6 +9,7 @@ export interface Locale {
     undo: string
     redo: string
     clear: string
+    confirmClear: string
     more: string
     close: string
     running: string
@@ -563,6 +564,7 @@ export const zh: Locale = {
     undo: '撤销',
     redo: '重做',
     clear: '清空',
+    confirmClear: '确定要清空所有数据吗？',
     more: '更多',
     close: '关闭',
     running: '运行中',
@@ -1117,6 +1119,7 @@ export const en: Locale = {
     undo: 'Undo',
     redo: 'Redo',
     clear: 'Clear',
+    confirmClear: 'Are you sure you want to clear all data?',
     more: 'More',
     close: 'Close',
     running: 'Running',

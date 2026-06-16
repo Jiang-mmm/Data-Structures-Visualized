@@ -98,6 +98,7 @@ describe('StackPage', () => {
     mockedUseStackState.mockReturnValue(mockState)
     renderWithRouter(<StackPage />)
 
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
     fireEvent.click(screen.getByText('common.clear'))
     expect(mockState.clear).toHaveBeenCalled()
   })

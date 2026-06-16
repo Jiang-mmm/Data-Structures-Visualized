@@ -98,6 +98,7 @@ describe('QueuePage', () => {
     mockedUseQueueState.mockReturnValue(mockState)
     renderWithRouter(<QueuePage />)
 
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
     fireEvent.click(screen.getByText('common.clear'))
     expect(mockState.clear).toHaveBeenCalled()
   })
