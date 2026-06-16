@@ -217,7 +217,7 @@ export default function Sidebar() {
                 ${collapsed && !isMobile ? 'justify-center px-0' : ''}
               `}
             >
-              <span className="w-5 h-5 flex items-center justify-center flex-shrink-0 text-base">
+              <span className="w-5 h-5 flex items-center justify-center flex-shrink-0 text-sm leading-none">
                 {item.icon}
               </span>
               {(!collapsed || isMobile) && <span>{item.name}</span>}
