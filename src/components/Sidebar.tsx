@@ -222,7 +222,7 @@ export default function Sidebar() {
               </span>
               {(!collapsed || isMobile) && <span>{item.name}</span>}
               {(!collapsed || isMobile) && isActive && (
-                <span className="ml-auto mr-1 font-mono text-[10px] opacity-50 text-accent-blue">●</span>
+                <span className="ml-2 font-mono text-[10px] opacity-50 text-accent-blue">●</span>
               )}
             </Link>
           )
