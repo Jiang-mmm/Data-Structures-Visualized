@@ -61,19 +61,22 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
     filter.append('feDropShadow').attr('dx', 1).attr('dy', 2).attr('stdDeviation', 2).attr('flood-opacity', 0.15)
   }
 
-  // Horizontal grid lines
+  // Grid lines + axis labels
   container.selectAll('g.sort-grid').remove()
   const gridGroup = container.append('g').attr('class', 'sort-grid')
   const gridSteps = 4
+  const barBottom = height - 45
+
+  // Horizontal grid lines with Y-axis values
   for (let i = 1; i <= gridSteps; i++) {
     const ratio = i / gridSteps
-    const y = height - 45 - ratio * maxBarHeight
+    const y = barBottom - ratio * maxBarHeight
     const gridVal = Math.round(maxVal * ratio)
     gridGroup.append('line')
       .attr('x1', offsetX - 4).attr('y1', y)
       .attr('x2', width - 10).attr('y2', y)
       .attr('stroke', C.containerStroke).attr('stroke-width', 1)
-      .attr('stroke-dasharray', '3,3').attr('opacity', 0.6)
+      .attr('stroke-dasharray', '4,4').attr('opacity', 0.35)
     gridGroup.append('text')
       .attr('x', offsetX - 8).attr('y', y + 3)
       .attr('text-anchor', 'end')
@@ -81,6 +84,37 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
       .attr('font-family', 'monospace')
       .text(gridVal)
   }
+
+  // Vertical grid lines (every 5th index)
+  const vertStep = n > 20 ? 5 : n > 10 ? 2 : 1
+  for (let i = vertStep; i < n; i += vertStep) {
+    const x = indexToX(i, barWidth, gap, offsetX) + barWidth / 2
+    gridGroup.append('line')
+      .attr('x1', x).attr('y1', barBottom)
+      .attr('x2', x).attr('y2', barBottom - maxBarHeight)
+      .attr('stroke', C.containerStroke).attr('stroke-width', 1)
+      .attr('stroke-dasharray', '2,4').attr('opacity', 0.2)
+  }
+
+  // Baseline
+  gridGroup.append('line')
+    .attr('x1', offsetX - 4).attr('y1', barBottom)
+    .attr('x2', width - 10).attr('y2', barBottom)
+    .attr('stroke', C.textMuted).attr('stroke-width', 1).attr('opacity', 0.4)
+
+  // Axis labels
+  gridGroup.append('text')
+    .attr('x', (offsetX + width - 10) / 2).attr('y', height - 4)
+    .attr('text-anchor', 'middle')
+    .attr('fill', C.textMuted).attr('font-size', '10px')
+    .attr('font-family', "'JetBrains Mono', monospace")
+    .text(tStatic('sort.axisX'))
+  gridGroup.append('text')
+    .attr('x', 10).attr('y', barBottom - maxBarHeight - 8)
+    .attr('text-anchor', 'start')
+    .attr('fill', C.textMuted).attr('font-size', '10px')
+    .attr('font-family', "'JetBrains Mono', monospace")
+    .text(tStatic('sort.axisY'))
 
   if (data.length > 100) {
     renderSortBarsImmediate(svg, data, options, container, { barWidth, maxBarHeight, maxVal, gap, offsetX, n, C })
@@ -114,6 +148,23 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
             .attr('font-weight', '700')
             .attr('font-family', 'monospace')
             .text(n > 50 ? '' : (_d: number, i: number) => i)
+
+          // Bar value label on top
+          if (n <= 30) {
+            g.append('text')
+              .attr('class', 'bar-value')
+              .attr('x', barWidth / 2)
+              .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight - 6)
+              .attr('text-anchor', 'middle')
+              .attr('fill', C.textMuted)
+              .attr('font-size', n > 15 ? '8px' : '10px')
+              .attr('font-weight', '600')
+              .attr('font-family', 'monospace')
+              .text((d: number) => d)
+          }
+
+          // Tooltip
+          g.append('title').text((d: number, i: number) => `[${i}] = ${d}`)
 
           return g
         },
