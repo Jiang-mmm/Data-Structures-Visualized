@@ -137,7 +137,7 @@ export default function GraphPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('graph.title')} subtitle={t('graph.subtitle')} icon="⬡">
+      <PageHeader title={t('graph.title')} subtitle={t('graph.subtitle')}>
         <ExportImport dataType="graph" data={{ nodes, links }} disabled={isAnimating} onImport={({ data: imported }) => {
           if (imported && typeof imported === 'object' && 'nodes' in imported) {
             const g = imported as Record<string, unknown>

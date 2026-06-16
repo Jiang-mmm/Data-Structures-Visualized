@@ -292,7 +292,7 @@ export default function SortComparePage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('compare.title')} subtitle={t('compare.subtitle')} icon="⊞">
+      <PageHeader title={t('compare.title')} subtitle={t('compare.subtitle')}>
         <OperationButton variant="outline" onClick={handleReset}>{t('compare.reset')}</OperationButton>
       </PageHeader>
 

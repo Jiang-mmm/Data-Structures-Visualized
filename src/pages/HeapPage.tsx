@@ -93,7 +93,7 @@ export default function HeapPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('heap.title')} subtitle={t('heap.subtitle')} icon="▲">
+      <PageHeader title={t('heap.title')} subtitle={t('heap.subtitle')}>
         <ExportImport dataType="heap" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           const result = validateImportData(imported)
           if (result.valid && result.data) {

@@ -129,7 +129,7 @@ export default function ArrayPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('array.title')} subtitle={t('array.subtitle')} icon="▦">
+      <PageHeader title={t('array.title')} subtitle={t('array.subtitle')}>
         <ExportImport dataType="array" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
           if (result.valid) {

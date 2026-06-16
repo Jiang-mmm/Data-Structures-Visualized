@@ -183,7 +183,7 @@ export default function LinkedListPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('linkedlist.title')} subtitle={t('linkedlist.subtitle')} icon="◎">
+      <PageHeader title={t('linkedlist.title')} subtitle={t('linkedlist.subtitle')}>
         <ExportImport dataType="linkedlist" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           const result = validateImportData(imported)
           if (result.valid && result.data) {

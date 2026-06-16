@@ -83,7 +83,7 @@ export default function QueuePage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('queue.title')} subtitle={t('queue.subtitle')} icon="⇒">
+      <PageHeader title={t('queue.title')} subtitle={t('queue.subtitle')}>
         <ExportImport dataType="queue" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
           if (result.valid && result.data) {

@@ -104,7 +104,7 @@ export default function HashPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('hash.title')} subtitle={t('hash.subtitle')} icon="#">
+      <PageHeader title={t('hash.title')} subtitle={t('hash.subtitle')}>
         <ExportImport dataType="hash" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           if (Array.isArray(imported) && imported.length > 0 && imported.length <= 200 && imported.every(item =>
             typeof item === 'object' && item !== null &&

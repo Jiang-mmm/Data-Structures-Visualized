@@ -131,7 +131,7 @@ export default function TriePage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('trie.title')} subtitle={t('trie.subtitle')} icon="◈">
+      <PageHeader title={t('trie.title')} subtitle={t('trie.subtitle')}>
         <ExportImport dataType="trie" data={flatData} disabled={isAnimating} onImport={({ data: imported }) => {
           if (imported && typeof imported === 'object' && 'children' in (imported as object)) {
             const node = imported as Record<string, unknown>

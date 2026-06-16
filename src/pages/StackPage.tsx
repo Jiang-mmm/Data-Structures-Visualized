@@ -83,7 +83,7 @@ export default function StackPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('stack.title')} subtitle={t('stack.subtitle')} icon="☰">
+      <PageHeader title={t('stack.title')} subtitle={t('stack.subtitle')}>
         <ExportImport dataType="stack" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
           if (result.valid && result.data) {

@@ -164,7 +164,6 @@ export default function GraphAlgorithmPage() {
       <PageHeader
         title={t('graphAlgorithm.title')}
         subtitle={t('graphAlgorithm.subtitle')}
-        icon="⊕"
       >
         <OperationButton variant="outline" onClick={reset} disabled={isAnimating}>
           {t('common.reset')}

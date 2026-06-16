@@ -130,7 +130,7 @@ export default function TreePage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('tree.title')} subtitle={t('tree.subtitle')} icon="◆">
+      <PageHeader title={t('tree.title')} subtitle={t('tree.subtitle')}>
         <ExportImport dataType="tree" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           const result = validateImportData(imported)
           if (result.valid && result.data) {

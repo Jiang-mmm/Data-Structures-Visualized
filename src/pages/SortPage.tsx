@@ -79,7 +79,7 @@ export default function SortPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('sort.title')} subtitle={t('sort.subtitle')} icon="⇚">
+      <PageHeader title={t('sort.title')} subtitle={t('sort.subtitle')}>
         <ExportImport dataType="sort" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
           if (result.valid) {
