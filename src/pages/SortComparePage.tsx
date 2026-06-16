@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import PageHeader from '../components/PageHeader'
-import OperationBar, { OperationButton, OperationInfo } from '../components/OperationBar'
+import OperationBar, { OperationButton, OperationInfo, OperationDivider } from '../components/OperationBar'
 import LogPanel from '../components/LogPanel'
 import SpeedControl from '../components/SpeedControl'
 import PerformanceChart from '../components/PerformanceChart'
@@ -292,21 +291,14 @@ export default function SortComparePage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('compare.title')} subtitle={t('compare.subtitle')}>
-        <OperationButton variant="outline" onClick={handleReset}>{t('compare.reset')}</OperationButton>
-      </PageHeader>
-
       <OperationBar>
+        <span className="font-black text-sm text-ink dark:text-dark-ink whitespace-nowrap">{t('compare.title')}</span>
+        <OperationDivider />
         <SpeedControl />
-        <OperationButton variant="primary" onClick={handleRunAll} disabled={isRunning || selectedAlgos.length === 0}>
-          {t('compare.runAll')}
-        </OperationButton>
-        <OperationButton variant="outline" onClick={handleStop} disabled={!isRunning}>
-          {t('common.stop')}
-        </OperationButton>
-        <OperationButton variant="outline" onClick={handleRandomize} disabled={isRunning}>
-          {t('compare.randomize')}
-        </OperationButton>
+        <OperationDivider />
+        <OperationButton variant="primary" onClick={handleRunAll} disabled={isRunning || selectedAlgos.length === 0}>{t('compare.runAll')}</OperationButton>
+        <OperationButton variant="outline" onClick={handleStop} disabled={!isRunning}>{t('common.stop')}</OperationButton>
+        <OperationButton variant="outline" onClick={handleRandomize} disabled={isRunning}>{t('compare.randomize')}</OperationButton>
         {allDone && (
           <div className="relative" ref={exportMenuRef}>
             <OperationButton variant="outline" onClick={() => setShowExportMenu(!showExportMenu)}>
@@ -331,6 +323,7 @@ export default function SortComparePage() {
           </div>
         )}
         <OperationInfo>
+          <OperationButton variant="danger" onClick={handleReset}>{t('compare.reset')}</OperationButton>
           <span className="font-mono text-xs text-ink-light">
             {allDone ? `✓ ${t('page.done')}` : isRunning ? t('page.running') : `${selectedAlgos.length} ${t('page.selected')}`}
           </span>

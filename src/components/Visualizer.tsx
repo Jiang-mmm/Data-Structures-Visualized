@@ -181,7 +181,7 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
 
       {overlay}
 
-      <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white/90 dark:bg-slate/90 backdrop-blur-sm border-2 border-ink/20 dark:border-dark-border/40 px-2 py-1 shadow-soft z-10 rounded-sm"
+      <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-white/90 dark:bg-slate/90 backdrop-blur-sm border-2 border-ink/20 dark:border-dark-border/40 px-2 py-1 shadow-soft z-10 rounded-sm"
         onMouseDown={(e) => e.stopPropagation()}
         onMouseMove={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}

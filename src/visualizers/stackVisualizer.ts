@@ -114,12 +114,12 @@ export function renderStack(svg: SVGSVGElement, data: number[], options: StackVi
   container.append('rect')
     .attr('x', startX + RECT_WIDTH + 12).attr('y', topLabelY - 11)
     .attr('width', 100).attr('height', 22).attr('rx', 4)
-    .attr('fill', C.nodeRoot).attr('opacity', 0.15)
+    .attr('fill', C.nodeRoot).attr('opacity', 0.25)
   container.append('text')
     .attr('x', startX + RECT_WIDTH + 18)
     .attr('y', topLabelY + 1)
-    .attr('dy', '0.35em').attr('fill', C.nodeRoot)
-    .attr('font-size', '12px').attr('font-weight', 'bold')
+    .attr('dy', '0.35em').attr('fill', C.nodeRootStroke)
+    .attr('font-size', '13px').attr('font-weight', 'bold')
     .text('← ' + tStatic('visualizer.stackTop'))
 
   // Stack Bottom label with colored badge

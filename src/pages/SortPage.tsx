@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
-import PageHeader from '../components/PageHeader'
-import OperationBar, { OperationButton } from '../components/OperationBar'
+import OperationBar, { OperationButton, OperationDivider } from '../components/OperationBar'
 import OperationGroup from '../components/OperationGroup'
 import UndoPreviewButton from '../components/UndoPreviewButton'
 import ShareButton from '../components/ShareButton'
@@ -79,70 +78,27 @@ export default function SortPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('sort.title')} subtitle={t('sort.subtitle')}>
-        <ExportImport dataType="sort" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
-          const result = validateImportData(imported)
-          if (result.valid) {
-            loadData(result.data)
-          } else {
-            showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` })
-          }
-        }} />
-        <ShareButton data={data} dataType="sort" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
-        <OperationButton variant="primary" onClick={randomize}>{t('sort.randomize')}</OperationButton>
-      </PageHeader>
-
       <OperationBar>
-        {algorithms
-          .filter(([key]) => ['bubble', 'quick', 'merge', 'heap'].includes(key))
-          .map(([key, algo]) => (
-            <OperationButton
-              key={key}
-              variant={(VARIANT_MAP[algo.variant] || 'primary') as any}
-              onClick={() => handleSort(key)}
-              disabled={isAnimating}
-              title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}
-            >
-              {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
-              <span className="hidden lg:inline ml-1 font-mono text-[9px] opacity-60">{algo.timeComplexity}</span>
-            </OperationButton>
-          ))}
+        <span className="font-black text-sm text-ink dark:text-dark-ink whitespace-nowrap">{t('sort.title')}</span>
+        <OperationDivider />
+        {algorithms.filter(([key]) => ['bubble', 'quick', 'merge', 'heap'].includes(key)).map(([key, algo]) => (
+          <OperationButton key={key} variant={(VARIANT_MAP[algo.variant] || 'primary') as any} onClick={() => handleSort(key)} disabled={isAnimating} title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}>{algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}<span className="hidden lg:inline ml-1 font-mono text-[9px] opacity-60">{algo.timeComplexity}</span></OperationButton>
+        ))}
         <OperationGroup label={t('common.more')}>
-          {algorithms
-            .filter(([key]) => ['selection', 'insertion', 'counting', 'shell'].includes(key))
-            .map(([key, algo]) => (
-              <OperationButton
-                key={key}
-                variant={(VARIANT_MAP[algo.variant] || 'primary') as any}
-                onClick={() => handleSort(key)}
-                disabled={isAnimating}
-                title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}
-              >
-                {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
-                <span className="hidden lg:inline ml-1 font-mono text-[9px] opacity-60">{algo.timeComplexity}</span>
-              </OperationButton>
-            ))}
+          {algorithms.filter(([key]) => ['selection', 'insertion', 'counting', 'shell'].includes(key)).map(([key, algo]) => (
+            <OperationButton key={key} variant={(VARIANT_MAP[algo.variant] || 'primary') as any} onClick={() => handleSort(key)} disabled={isAnimating} title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}>{algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}<span className="hidden lg:inline ml-1 font-mono text-[9px] opacity-60">{algo.timeComplexity}</span></OperationButton>
+          ))}
         </OperationGroup>
         {isAnimating && <OperationButton variant="outline" onClick={stop}>{t('sort.stop')}</OperationButton>}
-        <UndoPreviewButton
-          variant="outline"
-          onClick={undo}
-          disabled={isAnimating || !canUndo()}
-          previewData={getUndoPreview()}
-          previewLabel={t('shortcuts.undo')}
-        >
-          {t('common.undo')}
-        </UndoPreviewButton>
-        <UndoPreviewButton
-          variant="outline"
-          onClick={redo}
-          disabled={isAnimating || !canRedo()}
-          previewData={getRedoPreview()}
-          previewLabel={t('shortcuts.redo')}
-        >
-          {t('common.redo')}
-        </UndoPreviewButton>
+        <UndoPreviewButton variant="outline" onClick={undo} disabled={isAnimating || !canUndo()} previewData={getUndoPreview()} previewLabel={t('shortcuts.undo')}>{t('common.undo')}</UndoPreviewButton>
+        <UndoPreviewButton variant="outline" onClick={redo} disabled={isAnimating || !canRedo()} previewData={getRedoPreview()} previewLabel={t('shortcuts.redo')}>{t('common.redo')}</UndoPreviewButton>
+        <OperationInfo>
+          <SpeedControl />
+          <ExportImport dataType="sort" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => { const result = validateImportData(imported); if (result.valid) { loadData(result.data) } else { showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` }) } }} />
+          <ShareButton data={data} dataType="sort" disabled={isAnimating} />
+          <OperationButton variant="danger" onClick={reset}>{t('common.reset')}</OperationButton>
+          <OperationButton variant="primary" onClick={randomize}>{t('sort.randomize')}</OperationButton>
+        </OperationInfo>
       </OperationBar>
 
       <div className="flex flex-wrap items-center gap-2 sm:gap-4 px-3 sm:px-4 py-2 bg-ink/5 dark:bg-dark-ink/10 border-b border-ink/10 dark:border-dark-border/30 text-sm stats-bar">

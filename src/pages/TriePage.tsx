@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react'
-import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
@@ -131,51 +130,23 @@ export default function TriePage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('trie.title')} subtitle={t('trie.subtitle')}>
-        <ExportImport dataType="trie" data={flatData} disabled={isAnimating} onImport={({ data: imported }) => {
-          if (imported && typeof imported === 'object' && 'children' in (imported as object)) {
-            const node = imported as Record<string, unknown>
-            if (typeof node.children === 'object' && node.children !== null && typeof node.isEndOfWord === 'boolean') {
-              loadData(imported as Parameters<typeof loadData>[0])
-            } else {
-              showToast({ type: 'error', message: t('errors.importFailed') })
-            }
-          } else {
-            showToast({ type: 'error', message: t('errors.importFailed') })
-          }
-        }} />
-        <ShareButton data={flatData} dataType="trie" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
-      </PageHeader>
-
       <OperationBar>
+        <span className="font-black text-sm text-ink dark:text-dark-ink whitespace-nowrap">{t('trie.title')}</span>
+        <OperationDivider />
         <SpeedControl />
-        <OperationLabel>{t('page.operations')}</OperationLabel>
+        <OperationDivider />
         <OperationInput type="text" placeholder={t('trie.inputPlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('trie.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('trie.delete')}</OperationButton>
         <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating}>{t('trie.search')}</OperationButton>
         <OperationButton variant="amber" onClick={handlePrefixSearch} disabled={isAnimating}>{t('trie.prefixSearch')}</OperationButton>
         {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
-        <UndoPreviewButton
-          variant="outline"
-          onClick={undo}
-          disabled={isAnimating || !canUndo()}
-          previewData={getUndoPreview()}
-          previewLabel={t('shortcuts.undo')}
-        >
-          {t('common.undo')}
-        </UndoPreviewButton>
-        <UndoPreviewButton
-          variant="outline"
-          onClick={redo}
-          disabled={isAnimating || !canRedo()}
-          previewData={getRedoPreview()}
-          previewLabel={t('shortcuts.redo')}
-        >
-          {t('common.redo')}
-        </UndoPreviewButton>
+        <UndoPreviewButton variant="outline" onClick={undo} disabled={isAnimating || !canUndo()} previewData={getUndoPreview()} previewLabel={t('shortcuts.undo')}>{t('common.undo')}</UndoPreviewButton>
+        <UndoPreviewButton variant="outline" onClick={redo} disabled={isAnimating || !canRedo()} previewData={getRedoPreview()} previewLabel={t('shortcuts.redo')}>{t('common.redo')}</UndoPreviewButton>
         <OperationInfo>
+          <ExportImport dataType="trie" data={flatData} disabled={isAnimating} onImport={({ data: imported }) => { if (imported && typeof imported === 'object' && 'children' in (imported as object)) { const node = imported as Record<string, unknown>; if (typeof node.children === 'object' && node.children !== null && typeof node.isEndOfWord === 'boolean') { loadData(imported as Parameters<typeof loadData>[0]) } else { showToast({ type: 'error', message: t('errors.importFailed') }) } } else { showToast({ type: 'error', message: t('errors.importFailed') }) } }} />
+          <ShareButton data={flatData} dataType="trie" disabled={isAnimating} />
+          <OperationButton variant="danger" onClick={reset}>{t('common.reset')}</OperationButton>
           <ColorLegend items={[
             { color: getColors().nodeRoot, labelKey: 'nodeLegend.root' },
             { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },

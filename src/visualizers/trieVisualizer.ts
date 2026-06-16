@@ -161,7 +161,7 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
       .attr('class', `trie-edge-label-text from-${edge.from}-to-${edge.to}`)
       .attr('x', labelX).attr('y', labelY + 1)
       .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
-      .attr('fill', C.nodeActive).attr('font-size', '13px').attr('font-weight', 'bold')
+      .attr('fill', C.nodeActiveStroke).attr('font-size', '14px').attr('font-weight', 'bold')
       .text(edge.char)
   }
 
