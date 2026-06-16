@@ -92,7 +92,7 @@ export default memo(function SpeedControl() {
             aria-pressed={animationSpeed === opt.value}
             className={`px-2 py-0.5 font-mono text-xs transition-all duration-200 border-2
               ${animationSpeed === opt.value
-                ? 'bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper border-ink dark:border-dark-ink shadow-button dark:shadow-button-dark'
+                ? 'bg-accent-blue border-accent-blue text-paper shadow-button dark:shadow-button-dark'
                 : 'bg-white dark:bg-slate text-ink-light dark:text-dark-ink-light border-ink/20 dark:border-dark-border hover:bg-ink/5 dark:hover:bg-dark-ink/5 hover:border-ink/40 dark:hover:border-dark-ink/40'
               }`}
           >
