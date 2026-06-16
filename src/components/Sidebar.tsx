@@ -58,6 +58,8 @@ export default function Sidebar() {
   const { t, lang, setLanguage, supportedLanguages } = useGlobalSettings()
   const sidebarElRef = useRef<HTMLElement | null>(null)
   const swipeRef = useRef<SwipeState>({ startX: 0, startY: 0, isSwiping: false })
+  const [showThemePopover, setShowThemePopover] = useState<boolean>(false)
+  const themePopoverRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 768px)')
@@ -112,6 +114,24 @@ export default function Sidebar() {
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
   }, [mobileOpen])
+
+  useEffect(() => {
+    if (!showThemePopover) return
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowThemePopover(false)
+    }
+    const handleClickOutside = (e: MouseEvent) => {
+      if (themePopoverRef.current && !themePopoverRef.current.contains(e.target as Node)) {
+        setShowThemePopover(false)
+      }
+    }
+    window.addEventListener('keydown', handleEscape)
+    window.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      window.removeEventListener('keydown', handleEscape)
+      window.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showThemePopover])
 
   const themeIcon = mode === 'light' ? '☀' : mode === 'dark' ? '☾' : '◐'
 
@@ -210,41 +230,50 @@ export default function Sidebar() {
       </nav>
 
       <div className="p-4 border-t-2 border-ink dark:border-dark-border">
-        {(!collapsed || isMobile) && (
-          <>
-            <div className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light tracking-[0.15em] uppercase mb-2">
-              {t('sidebar.themeTooltip')}
-            </div>
-            <div className="flex gap-1 mb-3">
-              {themes.map((theme) => (
-                <button
-                  key={theme.key}
-                  onClick={() => handleColorThemeChange(theme.key)}
-                  title={theme.nameKey ? t(theme.nameKey) : theme.name}
-                  className={`
-                    flex-1 h-7 flex items-center justify-center
-                    border-2 transition-all duration-200
-                    ${colorTheme === theme.key
-                      ? 'border-ink dark:border-dark-border shadow-button dark:shadow-button-dark'
-                      : 'border-border dark:border-dark-border bg-paper dark:bg-slate hover:border-ink dark:hover:border-dark-border hover:translate-y-[-1px]'
-                    }
-                  `}
-                >
-                  <span
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: THEME_SWATCH_COLORS[theme.key] || '#6b7280' }}
-                  />
-                </button>
-              ))}
-            </div>
-            <div className="h-px bg-ink/10 dark:bg-dark-ink/10 mb-3" />
-          </>
-        )}
         <div className={`flex items-center ${collapsed && !isMobile ? 'justify-center' : 'justify-between'}`}>
           {(!collapsed || isMobile) && (
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-accent-emerald inline-block" />
-              <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light tracking-wide">V{__APP_VERSION__}</span>
+            <div className="relative" ref={themePopoverRef}>
+              <button
+                onClick={() => setShowThemePopover(!showThemePopover)}
+                title={t('sidebar.themeTooltip')}
+                aria-label={t('sidebar.themeTooltip')}
+                aria-expanded={showThemePopover}
+                className="w-7 h-7 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-slate hover:border-accent-blue dark:hover:border-accent-blue transition-colors"
+              >
+                <span
+                  className="w-3.5 h-3.5 rounded-full border border-ink/20 dark:border-dark-border"
+                  style={{ backgroundColor: THEME_SWATCH_COLORS[colorTheme] || '#6b7280' }}
+                />
+              </button>
+              {showThemePopover && (
+                <div className="absolute bottom-full left-0 mb-2 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark p-2 min-w-[120px] animate-slide-down z-50">
+                  <div className="font-mono text-[9px] text-ink-light dark:text-dark-ink-light tracking-[0.15em] uppercase mb-1.5 px-1">
+                    {t('sidebar.themeTooltip')}
+                  </div>
+                  <div className="flex gap-1.5">
+                    {themes.map((theme) => (
+                      <button
+                        key={theme.key}
+                        onClick={() => { handleColorThemeChange(theme.key); setShowThemePopover(false) }}
+                        title={theme.nameKey ? t(theme.nameKey) : theme.name}
+                        className={`
+                          flex-1 h-7 flex items-center justify-center
+                          border-2 transition-all duration-200
+                          ${colorTheme === theme.key
+                            ? 'border-ink dark:border-dark-border shadow-button dark:shadow-button-dark'
+                            : 'border-border dark:border-dark-border bg-paper dark:bg-slate hover:border-ink dark:hover:border-dark-border hover:translate-y-[-1px]'
+                          }
+                        `}
+                      >
+                        <span
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: THEME_SWATCH_COLORS[theme.key] || '#6b7280' }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
           <div className="flex items-center gap-1">

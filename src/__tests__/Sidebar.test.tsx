@@ -60,10 +60,10 @@ describe('Sidebar', () => {
       expect(nav).toBeTruthy()
     })
 
-    it('应该包含版本号', () => {
-      const { container } = renderSidebar()
-      const versionText = container.textContent || ''
-      expect(versionText).toMatch(/V\d/)
+    it('应该包含语言切换按钮', () => {
+      renderSidebar()
+      const langButton = screen.getByLabelText(/langTooltip/)
+      expect(langButton).toBeTruthy()
     })
   })
 
