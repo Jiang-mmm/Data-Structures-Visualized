@@ -21,6 +21,7 @@ interface OperationInputProps {
   type?: string
   className?: string
   'aria-label'?: string
+  error?: boolean
 }
 
 interface OperationLabelProps {
@@ -57,7 +58,7 @@ export const OperationDivider = memo(() => (
 
 export default memo(OperationBar)
 
-export const OperationInput = memo(({ value, onChange, placeholder, type = 'text', className = '', 'aria-label': ariaLabel }: OperationInputProps) => {
+export const OperationInput = memo(({ value, onChange, placeholder, type = 'text', className = '', 'aria-label': ariaLabel, error }: OperationInputProps) => {
   return (
     <input
       type={type}
@@ -65,16 +66,20 @@ export const OperationInput = memo(({ value, onChange, placeholder, type = 'text
       value={value}
       onChange={(e) => onChange?.(e.target.value)}
       aria-label={ariaLabel || placeholder}
+      aria-invalid={error || undefined}
       className={`
         w-20 sm:w-24 px-2.5 py-1.5 text-sm font-mono whitespace-nowrap shrink-0
-        border-2 border-ink/80 dark:border-dark-border bg-paper dark:bg-slate
+        border-2 bg-paper dark:bg-slate
         outline-none rounded-none
         text-ink dark:text-dark-ink
         placeholder:text-ink-light/30 dark:placeholder:text-dark-ink-light/30
-        focus:border-accent-blue focus:shadow-[0_0_0_3px_rgba(37,99,235,0.12)]
         hover:border-ink dark:hover:border-dark-ink
         transition-all duration-200
         touch-manipulation
+        ${error
+          ? 'border-accent-rose dark:border-accent-rose focus:border-accent-rose focus:shadow-[0_0_0_3px_rgba(220,38,38,0.12)]'
+          : 'border-ink/80 dark:border-dark-border focus:border-accent-blue focus:shadow-[0_0_0_3px_rgba(37,99,235,0.12)]'
+        }
         ${className}
       `}
     />
