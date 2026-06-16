@@ -118,20 +118,32 @@ function getTreeLayout(data: number[]): TreeNodeData[] {
   return nodes
 }
 
-function calculateDefaultPosition(node: TreeNodeData, width: number) {
+function calculateDefaultPosition(node: TreeNodeData, width: number, height?: number) {
   const safeWidth = width && width > 0 ? width : 800
+  const safeHeight = height && height > 0 ? height : 400
   const levelWidth = Math.pow(2, node.level)
   const spacing = safeWidth / (levelWidth + 1)
+
+  // Adaptive vertical spacing: shrink LEVEL_HEIGHT if tree overflows
+  const maxLevel = node.level
+  const topMargin = 50
+  const bottomMargin = 30
+  const neededHeight = topMargin + maxLevel * LEVEL_HEIGHT + NODE_RADIUS + bottomMargin
+  let effectiveLevelHeight = LEVEL_HEIGHT
+  if (neededHeight > safeHeight && maxLevel > 0) {
+    effectiveLevelHeight = Math.max(30, (safeHeight - topMargin - NODE_RADIUS - bottomMargin) / maxLevel)
+  }
+
   return {
     x: spacing * (node.index + 1),
-    y: 50 + node.level * LEVEL_HEIGHT
+    y: topMargin + node.level * effectiveLevelHeight
   }
 }
 
-function getNodePosition(node: TreeNodeData, width: number) {
+function getNodePosition(node: TreeNodeData, width: number, height?: number) {
   const stored = getStoredPosition(node.dataIndex)
   if (stored && !isNaN(stored.x) && !isNaN(stored.y)) return { x: stored.x, y: stored.y }
-  return calculateDefaultPosition(node, width)
+  return calculateDefaultPosition(node, width, height)
 }
 
 function dragBehavior() {
@@ -246,7 +258,7 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
   const nodes = getTreeLayout(data)
 
   nodes.forEach((node) => {
-    const pos = getNodePosition(node, width)
+    const pos = getNodePosition(node, width, height)
     node.x = pos.x
     node.y = pos.y
   })
@@ -358,7 +370,7 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
-  const { width, edgeStyle = 'straight' } = options
+  const { width, height, edgeStyle = 'straight' } = options
   const newData = [...data]
   let insertIndex
   if (newData.length === 0) {
@@ -392,7 +404,7 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
   const newNode = nodes.find(n => n.dataIndex === insertIndex)
   if (!newNode) return
 
-  const pos = getNodePosition(newNode, width)
+  const pos = getNodePosition(newNode, width, height)
   const x = pos.x
   const y = pos.y
 
