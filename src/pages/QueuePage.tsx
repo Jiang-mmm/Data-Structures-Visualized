@@ -20,6 +20,8 @@ import { getColors, detectDarkMode } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { useSharedData } from '../hooks/useSharedData'
+import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function QueuePage() {
   const { t } = useGlobalSettings()
@@ -28,6 +30,8 @@ export default function QueuePage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('queue')
+  useSharedData({ dataType: 'queue', loadData, validator: Array.isArray })
+  usePageTracker('queue')
 
   useKeyboard({
     'ctrl+z': undo,

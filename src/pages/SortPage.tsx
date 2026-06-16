@@ -16,6 +16,8 @@ import { useSortState } from '../hooks/useSortState'
 import { useVisualizer } from '../hooks/useVisualizer'
 import { useKeyboard } from '../hooks/useKeyboard'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { useSharedData } from '../hooks/useSharedData'
+import { usePageTracker } from '../hooks/usePageTracker'
 import { getAllSortAlgorithms } from '../algorithms/sorting'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { validateImportData } from '../utils/validate'
@@ -33,6 +35,8 @@ export default function SortPage() {
   const { t } = useGlobalSettings()
   const { data, logs, isAnimating, setIsAnimating, stats, progress, randomize, reset, loadData, stop, runAlgorithm, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useSortState()
   const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  useSharedData({ dataType: 'sort', loadData, validator: Array.isArray })
+  usePageTracker('sort')
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('bubble')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode(selectedAlgorithm)

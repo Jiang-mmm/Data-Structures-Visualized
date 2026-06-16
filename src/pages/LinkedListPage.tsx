@@ -21,6 +21,8 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors, detectDarkMode } from '../utils/themeColors'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { useSharedData } from '../hooks/useSharedData'
+import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function LinkedListPage() {
   const { t } = useGlobalSettings()
@@ -30,6 +32,8 @@ export default function LinkedListPage() {
   const [inputIndex, setInputIndex] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('linkedlist')
+  useSharedData({ dataType: 'linkedlist', loadData, validator: Array.isArray })
+  usePageTracker('linkedlist')
 
   useKeyboard({
     'ctrl+z': undo,

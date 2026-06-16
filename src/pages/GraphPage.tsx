@@ -17,7 +17,9 @@ import { showToast } from '../components/toastStore'
 import { handleAnimationError } from '../utils/errorHandler'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { usePageTracker } from '../hooks/usePageTracker'
 import OperationGroup from '../components/OperationGroup'
+import { useSharedData } from '../hooks/useSharedData'
 
 export default function GraphPage() {
   const { t } = useGlobalSettings()
@@ -38,6 +40,8 @@ export default function GraphPage() {
   const [algorithmEnd, setAlgorithmEnd] = useState<string>('F')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('graph')
+  useSharedData({ dataType: 'graph', loadData, validator: (d) => d && typeof d === 'object' && 'nodes' in d && 'links' in d && Array.isArray((d as Record<string, unknown>).nodes) && Array.isArray((d as Record<string, unknown>).links) })
+  usePageTracker('graph')
 
   useKeyboard({
     'ctrl+z': undo,

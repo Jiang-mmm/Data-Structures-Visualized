@@ -20,6 +20,8 @@ import { getColors } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { useSharedData } from '../hooks/useSharedData'
+import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function HashPage() {
   const { t } = useGlobalSettings()
@@ -29,6 +31,8 @@ export default function HashPage() {
   const [valueInput, setValueInput] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('hash')
+  useSharedData({ dataType: 'hash', loadData, validator: (d) => Array.isArray(d) })
+  usePageTracker('hash')
 
   useKeyboard({
     'ctrl+z': undo,

@@ -254,6 +254,9 @@ export interface Locale {
     copyManually: string
     generateLink: string
     linkCopied: string
+    decodeFailed: string
+    invalidData: string
+    loaded: string
   }
   network: {
     offline: string
@@ -264,6 +267,40 @@ export interface Locale {
     open: string
     close: string
     title: string
+  }
+  learningPath: {
+    title: string
+    progress: string
+    reset: string
+    completed: string
+    locked: string
+    startLearning: string
+    continueLearning: string
+    allCompleted: string
+    category: {
+      linear: string
+      tree: string
+      hash: string
+      graph: string
+      sort: string
+    }
+    difficulty: {
+      beginner: string
+      intermediate: string
+      advanced: string
+    }
+    desc: {
+      array: string
+      stack: string
+      queue: string
+      linkedlist: string
+      tree: string
+      heap: string
+      trie: string
+      hash: string
+      graph: string
+      sort: string
+    }
   }
   undoPreview: {
     noData: string
@@ -841,6 +878,9 @@ export const zh: Locale = {
     copyManually: '请手动复制链接',
     generateLink: '生成分享链接',
     linkCopied: '链接已复制',
+    decodeFailed: '分享链接数据无效',
+    invalidData: '分享数据格式不匹配',
+    loaded: '已加载分享数据',
   },
   network: {
     offline: '网络已断开',
@@ -851,6 +891,40 @@ export const zh: Locale = {
     open: '◇ 学习模式',
     close: '◇ 关闭学习模式',
     title: '学习模式',
+  },
+  learningPath: {
+    title: '学习路径',
+    progress: '学习进度',
+    reset: '重置进度',
+    completed: '已完成',
+    locked: '未解锁',
+    startLearning: '开始学习',
+    continueLearning: '继续学习',
+    allCompleted: '恭喜！全部学完',
+    category: {
+      linear: '线性结构',
+      tree: '树形结构',
+      hash: '哈希结构',
+      graph: '图结构',
+      sort: '排序算法',
+    },
+    difficulty: {
+      beginner: '入门',
+      intermediate: '进阶',
+      advanced: '高级',
+    },
+    desc: {
+      array: '连续存储，O(1) 随机访问，所有数据结构的基础',
+      stack: '后进先出，函数调用与表达式求值的核心',
+      queue: '先进先出，BFS 遍历与任务调度的基础',
+      linkedlist: '动态增删，理解指针与引用的第一步',
+      tree: '层次结构，二叉搜索树是高效查找的基石',
+      heap: '优先队列，堆排序与 Top-K 问题的利器',
+      trie: '前缀树，自动补全与字符串搜索的利器',
+      hash: 'O(1) 查找，理解哈希函数与冲突处理',
+      graph: '关系建模，最短路径与拓扑排序的核心',
+      sort: '算法基石，理解时间与空间复杂度的必经之路',
+    },
   },
   undoPreview: {
     noData: '无数据',
@@ -1358,6 +1432,9 @@ export const en: Locale = {
     copyManually: 'Please copy the link manually',
     generateLink: 'Generate share link',
     linkCopied: 'Link copied',
+    decodeFailed: 'Invalid share link data',
+    invalidData: 'Share data format mismatch',
+    loaded: 'Shared data loaded',
   },
   network: {
     offline: 'Network disconnected',
@@ -1368,6 +1445,40 @@ export const en: Locale = {
     open: '◇ Learning Mode',
     close: '◇ Close Learning Mode',
     title: 'Learning Mode',
+  },
+  learningPath: {
+    title: 'Learning Path',
+    progress: 'Progress',
+    reset: 'Reset Progress',
+    completed: 'Completed',
+    locked: 'Locked',
+    startLearning: 'Start Learning',
+    continueLearning: 'Continue Learning',
+    allCompleted: 'Congratulations! All completed',
+    category: {
+      linear: 'Linear',
+      tree: 'Tree',
+      hash: 'Hash',
+      graph: 'Graph',
+      sort: 'Sorting',
+    },
+    difficulty: {
+      beginner: 'Beginner',
+      intermediate: 'Intermediate',
+      advanced: 'Advanced',
+    },
+    desc: {
+      array: 'Contiguous storage, O(1) random access, foundation of all data structures',
+      stack: 'LIFO, core of function calls and expression evaluation',
+      queue: 'FIFO, foundation of BFS traversal and task scheduling',
+      linkedlist: 'Dynamic insert/delete, first step to understanding pointers',
+      tree: 'Hierarchical structure, BST is the cornerstone of efficient search',
+      heap: 'Priority queue, essential for heap sort and Top-K problems',
+      trie: 'Prefix tree, essential for autocomplete and string search',
+      hash: 'O(1) lookup, understand hash functions and collision handling',
+      graph: 'Relationship modeling, core of shortest path and topological sort',
+      sort: 'Algorithm cornerstone, essential for understanding time/space complexity',
+    },
   },
   undoPreview: {
     noData: 'No data',

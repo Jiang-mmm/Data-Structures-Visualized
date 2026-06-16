@@ -20,6 +20,8 @@ import { getColors, detectDarkMode } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { useSharedData } from '../hooks/useSharedData'
+import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function ArrayPage() {
   const { t } = useGlobalSettings()
@@ -29,6 +31,8 @@ export default function ArrayPage() {
   const [inputIndex, setInputIndex] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('array')
+  useSharedData({ dataType: 'array', loadData, validator: Array.isArray })
+  usePageTracker('array')
 
   useKeyboard({
     'ctrl+z': undo,

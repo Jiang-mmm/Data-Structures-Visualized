@@ -20,6 +20,8 @@ import { getColors, detectDarkMode } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { useSharedData } from '../hooks/useSharedData'
+import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function StackPage() {
   const { t } = useGlobalSettings()
@@ -28,6 +30,8 @@ export default function StackPage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('stack')
+  useSharedData({ dataType: 'stack', loadData, validator: Array.isArray })
+  usePageTracker('stack')
 
   useKeyboard({
     'ctrl+z': undo,

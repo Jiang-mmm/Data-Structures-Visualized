@@ -20,6 +20,8 @@ import { getColors, detectDarkMode } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { useSharedData } from '../hooks/useSharedData'
+import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function HeapPage() {
   const { t } = useGlobalSettings()
@@ -28,6 +30,8 @@ export default function HeapPage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('heapStructure')
+  useSharedData({ dataType: 'heap', loadData, validator: Array.isArray })
+  usePageTracker('heap')
 
   useKeyboard({
     'ctrl+z': undo,

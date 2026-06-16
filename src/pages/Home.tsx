@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import LearningPath from '../components/LearningPath'
 
 const ACCENT_COLORS = [
   { bg: 'bg-accent-blue/5', border: 'border-l-accent-blue', badge: 'bg-accent-blue/10 text-accent-blue', iconBg: 'bg-accent-blue/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(37,99,235,0.15)]' },
@@ -80,6 +81,9 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Learning Path */}
+        <LearningPath />
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

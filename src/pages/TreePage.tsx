@@ -21,6 +21,8 @@ import { getColors, detectDarkMode } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { useSharedData } from '../hooks/useSharedData'
+import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function TreePage() {
   const { t } = useGlobalSettings()
@@ -34,6 +36,8 @@ export default function TreePage() {
     return (stored === 'curved' || stored === 'straight' || stored === 'orthogonal') ? stored as EdgeStyle : 'straight'
   })
   const learningMode = useLearningMode('tree')
+  useSharedData({ dataType: 'tree', loadData, validator: Array.isArray })
+  usePageTracker('tree')
 
   useKeyboard({
     'ctrl+z': undo,

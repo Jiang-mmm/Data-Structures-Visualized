@@ -19,6 +19,8 @@ import { getColors, detectDarkMode } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { useSharedData } from '../hooks/useSharedData'
+import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function TriePage() {
   const { t } = useGlobalSettings()
@@ -27,6 +29,8 @@ export default function TriePage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('trie')
+  useSharedData({ dataType: 'trie', loadData, validator: (d) => d && typeof d === 'object' && !Array.isArray(d) })
+  usePageTracker('trie')
 
   useKeyboard({
     'ctrl+z': undo,
