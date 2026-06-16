@@ -64,7 +64,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
     defsEl.append('marker')
       .attr('id', 'hash-arrow').attr('viewBox', '0 0 10 10')
       .attr('refX', 10).attr('refY', 5)
-      .attr('markerWidth', 5).attr('markerHeight', 5)
+      .attr('markerWidth', 4).attr('markerHeight', 4)
       .attr('orient', 'auto')
       .append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('fill', C.arrowStroke)
   }

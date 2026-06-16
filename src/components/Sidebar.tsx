@@ -44,8 +44,8 @@ const THEME_SWATCH_COLORS: Record<string, string> = {
 
 const SIDEBAR_CONTAINER_BASE = 'bg-white dark:bg-slate border-r-2 border-ink dark:border-dark-border flex flex-col h-screen transition-all duration-300 ease-out'
 const NAV_ITEM_BASE = 'flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-sm font-medium transition-all duration-200 ease-out border-l-4'
-const NAV_ITEM_ACTIVE = 'border-l-accent-blue bg-accent-blue/8 dark:bg-accent-blue/15 text-accent-blue font-semibold'
-const NAV_ITEM_INACTIVE = 'border-l-transparent text-ink-light dark:text-dark-ink-light hover:border-l-ink/20 dark:hover:border-l-dark-border/50 hover:bg-paper-warm/50 dark:hover:bg-slate-light/50 hover:translate-x-1 hover:text-ink dark:hover:text-dark-ink'
+const NAV_ITEM_ACTIVE = 'border-l-accent-blue bg-accent-blue/12 dark:bg-accent-blue/20 text-accent-blue font-semibold'
+const NAV_ITEM_INACTIVE = 'border-l-transparent text-ink-light dark:text-dark-ink-light hover:border-l-ink/20 dark:hover:border-l-dark-border/50 hover:bg-paper-warm/60 dark:hover:bg-slate-light/60 hover:translate-x-0.5 hover:text-ink dark:hover:text-dark-ink'
 
 export default function Sidebar() {
   const location = useLocation()
@@ -221,9 +221,6 @@ export default function Sidebar() {
                 {item.icon}
               </span>
               {(!collapsed || isMobile) && <span>{item.name}</span>}
-              {(!collapsed || isMobile) && isActive && (
-                <span className="ml-2 font-mono text-[10px] opacity-50 text-accent-blue">●</span>
-              )}
             </Link>
           )
         })}

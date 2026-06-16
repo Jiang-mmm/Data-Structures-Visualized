@@ -61,6 +61,27 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
     filter.append('feDropShadow').attr('dx', 1).attr('dy', 2).attr('stdDeviation', 2).attr('flood-opacity', 0.15)
   }
 
+  // Horizontal grid lines
+  container.selectAll('g.sort-grid').remove()
+  const gridGroup = container.append('g').attr('class', 'sort-grid')
+  const gridSteps = 4
+  for (let i = 1; i <= gridSteps; i++) {
+    const ratio = i / gridSteps
+    const y = height - 45 - ratio * maxBarHeight
+    const gridVal = Math.round(maxVal * ratio)
+    gridGroup.append('line')
+      .attr('x1', offsetX - 4).attr('y1', y)
+      .attr('x2', width - 10).attr('y2', y)
+      .attr('stroke', C.containerStroke).attr('stroke-width', 1)
+      .attr('stroke-dasharray', '3,3').attr('opacity', 0.6)
+    gridGroup.append('text')
+      .attr('x', offsetX - 8).attr('y', y + 3)
+      .attr('text-anchor', 'end')
+      .attr('fill', C.textMuted).attr('font-size', '9px')
+      .attr('font-family', 'monospace')
+      .text(gridVal)
+  }
+
   if (data.length > 100) {
     renderSortBarsImmediate(svg, data, options, container, { barWidth, maxBarHeight, maxVal, gap, offsetX, n, C })
   } else {

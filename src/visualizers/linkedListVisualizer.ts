@@ -44,7 +44,7 @@ function ensureArrowDef(container: ReturnType<typeof select>, C: ReturnType<type
   container.append('defs').append('marker')
     .attr('id', 'll-arrow').attr('viewBox', '0 0 10 10')
     .attr('refX', 8).attr('refY', 5)
-    .attr('markerWidth', 5).attr('markerHeight', 5)
+    .attr('markerWidth', 4).attr('markerHeight', 4)
     .attr('orient', 'auto')
     .append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('fill', C.arrowStroke)
 }
