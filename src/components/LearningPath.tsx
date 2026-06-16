@@ -83,7 +83,7 @@ function LearningPath() {
                 </span>
 
                 {/* Difficulty badge */}
-                <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 bg-ink/5 dark:bg-dark-ink/10 text-ink-light dark:text-dark-ink-light">
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 bg-ink/5 dark:bg-dark-ink/10 text-ink-light dark:text-dark-ink-light">
                   {t(diffKey)}
                 </span>
 

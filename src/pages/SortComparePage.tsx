@@ -81,12 +81,12 @@ function ComparePanel({ algoKey, algorithm, data, svgRef, onDimensions, result }
         <div className="flex items-center gap-2">
           <span className="text-base">{algorithm.icon}</span>
           <span className="font-bold text-xs text-ink dark:text-dark-ink">{algorithm.nameKey ? t(algorithm.nameKey) : algorithm.name}</span>
-          <span className="font-mono text-[9px] text-accent-blue ml-auto">{algorithm.timeComplexity}</span>
-          <span className="font-mono text-[9px] text-accent-amber">{algorithm.spaceComplexity}</span>
+          <span className="font-mono text-[10px] text-accent-blue ml-auto">{algorithm.timeComplexity}</span>
+          <span className="font-mono text-[10px] text-accent-amber">{algorithm.spaceComplexity}</span>
           {result?.done && !result?.error && <span className="text-accent-emerald text-xs">✓</span>}
           {result?.error && <span className="text-accent-rose text-xs">✗</span>}
         </div>
-        <div className="font-mono text-[9px] text-ink-light">
+        <div className="font-mono text-[10px] text-ink-light">
           {result && (
             <>
               {result.comparisons && result.comparisons > 0 && `C: ${result.comparisons}`}

@@ -107,7 +107,7 @@ export default function SortPage() {
               title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}
             >
               {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
-              <span className="hidden lg:inline ml-1 font-mono text-[9px] opacity-60">{algo.timeComplexity}</span>
+              <span className="hidden lg:inline ml-1 font-mono text-[10px] opacity-60">{algo.timeComplexity}</span>
             </OperationButton>
           ))}
         <OperationGroup label={t('common.more')}>
@@ -122,7 +122,7 @@ export default function SortPage() {
                 title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}
               >
                 {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
-                <span className="hidden lg:inline ml-1 font-mono text-[9px] opacity-60">{algo.timeComplexity}</span>
+                <span className="hidden lg:inline ml-1 font-mono text-[10px] opacity-60">{algo.timeComplexity}</span>
               </OperationButton>
             ))}
         </OperationGroup>
