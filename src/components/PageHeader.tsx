@@ -15,7 +15,7 @@ function PageHeader({ title, subtitle, children }: PageHeaderProps) {
             {title}
           </h1>
           {subtitle && (
-            <p className="text-xs sm:text-sm text-ink-light dark:text-dark-ink-light mt-0.5 font-mono tracking-wide">
+            <p className="text-xs sm:text-sm text-ink-light dark:text-dark-ink-light mt-1 font-mono tracking-wide">
               {subtitle}
             </p>
           )}

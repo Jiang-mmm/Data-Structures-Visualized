@@ -85,6 +85,15 @@ function ComplexityChart({ algorithms, maxN = 50 }: ComplexityChartProps) {
     <div ref={containerRef} className="w-full h-full min-h-[200px]">
       <svg ref={svgRef} width="100%" height="100%" viewBox={`0 0 ${dimensions.width} ${dimensions.height}`} role="img" aria-label={t('performanceChart.title')}>
         <g transform={`translate(50, 20)`}>
+          <text
+            x={-((dimensions.height - 60) / 2)}
+            y={-35}
+            textAnchor="middle"
+            transform="rotate(-90)"
+            className="text-[11px] fill-ink-light dark:fill-dark-ink-light font-mono"
+          >
+            f(n)
+          </text>
           <line x1="0" y1="0" x2="0" y2={dimensions.height - 60} stroke="currentColor" className="text-ink/20 dark:text-dark-ink/20" />
           <line x1="0" y1={dimensions.height - 60} x2={dimensions.width - 70} y2={dimensions.height - 60} stroke="currentColor" className="text-ink/20 dark:text-dark-ink/20" />
 
@@ -118,6 +127,15 @@ function ComplexityChart({ algorithms, maxN = 50 }: ComplexityChartProps) {
               </text>
             )
           })}
+
+          <text
+            x={(dimensions.width - 70) / 2}
+            y={dimensions.height - 25}
+            textAnchor="middle"
+            className="text-[11px] fill-ink-light dark:fill-dark-ink-light font-mono"
+          >
+            n
+          </text>
 
           {paths.map((path, i) => (
             <path
