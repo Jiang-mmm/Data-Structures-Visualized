@@ -124,7 +124,7 @@ export default function SortPage() {
               </OperationButton>
             ))}
         </OperationGroup>
-        {isAnimating && <OperationButton variant="danger" onClick={stop}>{t('sort.stop')}</OperationButton>}
+        {isAnimating && <OperationButton variant="outline" onClick={stop}>{t('sort.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
           onClick={undo}

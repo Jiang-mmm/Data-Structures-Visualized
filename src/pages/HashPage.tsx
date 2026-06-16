@@ -128,7 +128,7 @@ export default function HashPage() {
         <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('hash.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('hash.remove')}</OperationButton>
         <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('hash.search')}</OperationButton>
-        {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="outline"
           onClick={undo}

@@ -301,7 +301,7 @@ export default function SortComparePage() {
         <OperationButton variant="primary" onClick={handleRunAll} disabled={isRunning || selectedAlgos.length === 0}>
           {t('compare.runAll')}
         </OperationButton>
-        <OperationButton variant="danger" onClick={handleStop} disabled={!isRunning}>
+        <OperationButton variant="outline" onClick={handleStop} disabled={!isRunning}>
           {t('common.stop')}
         </OperationButton>
         <OperationButton variant="outline" onClick={handleRandomize} disabled={isRunning}>

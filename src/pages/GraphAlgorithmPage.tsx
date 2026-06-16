@@ -203,7 +203,7 @@ export default function GraphAlgorithmPage() {
             <OperationButton variant="primary" onClick={handleRun} disabled={isAnimating}>
               {isAnimating ? t('common.running') : t('common.run')}
             </OperationButton>
-            {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+            {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
             <OperationButton
               variant={learningMode.isLearning ? 'primary' : 'outline'}
               onClick={() => learningMode.isLearning ? learningMode.stopLearning() : learningMode.startLearning()}

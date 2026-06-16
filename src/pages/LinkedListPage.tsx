@@ -227,7 +227,7 @@ export default function LinkedListPage() {
             {t('common.redo')}
           </UndoPreviewButton>
         </OperationGroup>
-        {isAnimating && <OperationButton variant="danger" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <OperationInfo>
           <ColorLegend items={[
             { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
