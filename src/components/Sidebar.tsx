@@ -244,7 +244,7 @@ export default function Sidebar() {
           {(!collapsed || isMobile) && (
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 bg-accent-emerald inline-block" />
-              <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light tracking-wide">V6.4</span>
+              <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light tracking-wide">V{__APP_VERSION__}</span>
             </div>
           )}
           <div className="flex items-center gap-1">

@@ -1,3 +1,5 @@
+declare const __APP_VERSION__: string
+
 export interface HistoryState<T> {
   state: T;
   setState: (value: T) => void;
