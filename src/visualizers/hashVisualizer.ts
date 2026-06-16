@@ -6,7 +6,7 @@ import { tStatic } from '../i18n/useI18n'
 const BUCKET_HEIGHT = 48
 const BUCKET_WIDTH = 56
 const ENTRY_RADIUS = 18
-const GAP_Y = 44
+const GAP_Y = 52
 const BUCKET_GROUP_GAP = 20
 const LARGE_DATA_THRESHOLD = 50
 const MAX_CHAIN_DISPLAY = 5
@@ -93,22 +93,14 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       .attr('rx', 6)
       .attr('fill', C.bucketBg).attr('stroke', bucket.entries.length > 0 ? C.nodeDefaultStroke : C.bucketStroke).attr('stroke-width', bucket.entries.length > 0 ? 2 : 1.5)
 
-    // Bucket index inside box
-    bucketGroup.append('text')
-      .attr('x', BUCKET_WIDTH / 2).attr('y', BUCKET_HEIGHT / 2 + 1)
-      .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
-      .attr('fill', C.bucketText).attr('font-size', '14px').attr('font-weight', 'bold')
-      .attr('font-family', 'JetBrains Mono, monospace')
-      .text(bi)
-
     // Entry count badge
     if (bucket.entries.length > 0) {
       bucketGroup.append('rect')
-        .attr('x', BUCKET_WIDTH - 16).attr('y', -10)
+        .attr('x', BUCKET_WIDTH - 12).attr('y', -12)
         .attr('width', 20).attr('height', 16).attr('rx', 8)
         .attr('fill', C.nodeDefault).attr('opacity', 0.9)
       bucketGroup.append('text')
-        .attr('x', BUCKET_WIDTH - 6).attr('y', -1)
+        .attr('x', BUCKET_WIDTH - 2).attr('y', -3)
         .attr('text-anchor', 'middle')
         .attr('fill', C.textWhite).attr('font-size', '9px').attr('font-weight', 'bold')
         .text(bucket.entries.length)
@@ -120,7 +112,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
 
     for (let ei = 0; ei < displayCount; ei++) {
       const entry = bucket.entries[ei]
-      const ey = entryStartY + ei * (ENTRY_RADIUS * 2 + 14)
+      const ey = entryStartY + ei * (ENTRY_RADIUS * 2 + 24)
 
       // Connector line from bucket to first entry (with arrow)
       if (ei === 0) {
@@ -133,7 +125,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
 
       // Connector between entries (with arrow)
       if (ei > 0) {
-        const prevEy = entryStartY + (ei - 1) * (ENTRY_RADIUS * 2 + 14)
+        const prevEy = entryStartY + (ei - 1) * (ENTRY_RADIUS * 2 + 24)
         container.append('line')
           .attr('x1', centerX).attr('y1', prevEy + ENTRY_RADIUS)
           .attr('x2', centerX).attr('y2', ey - ENTRY_RADIUS)
@@ -183,16 +175,18 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
         .text(entry.key)
 
       // Value text (below circle, not inside)
-      const displayValue = String(entry.value).length > 6 ? String(entry.value).slice(0, 5) + '…' : String(entry.value)
+      const fullValue = String(entry.value)
+      const displayValue = fullValue.length > 10 ? fullValue.slice(0, 9) + '…' : fullValue
       entryGroup.append('text')
         .attr('dy', ENTRY_RADIUS + 14).attr('text-anchor', 'middle')
         .attr('fill', C.textSecondary).attr('font-size', '11px').attr('font-weight', '500')
         .text(displayValue)
+        .append('title').text(fullValue)
     }
 
     // Show "..." if chain is truncated
     if (bucket.entries.length > MAX_CHAIN_DISPLAY) {
-      const moreY = entryStartY + displayCount * (ENTRY_RADIUS * 2 + 14)
+      const moreY = entryStartY + displayCount * (ENTRY_RADIUS * 2 + 24)
       container.append('text')
         .attr('x', centerX).attr('y', moreY)
         .attr('text-anchor', 'middle')
