@@ -109,30 +109,32 @@ export function renderStack(svg: SVGSVGElement, data: number[], options: StackVi
     .attr('font-size', '16px').attr('font-weight', 'bold')
     .text((d: number) => d)
 
-  // Stack Top label with colored badge
+  // Stack Top label
   const topLabelY = startY - (data.length - 1) * (RECT_HEIGHT + GAP) + RECT_HEIGHT / 2
   container.append('rect')
-    .attr('x', startX + RECT_WIDTH + 12).attr('y', topLabelY - 11)
-    .attr('width', 100).attr('height', 22).attr('rx', 4)
-    .attr('fill', C.nodeRoot).attr('opacity', 0.15)
+    .attr('x', startX + RECT_WIDTH + 12).attr('y', topLabelY - 12)
+    .attr('width', 110).attr('height', 24).attr('rx', 4)
+    .attr('fill', C.containerStroke).attr('opacity', 0.3)
   container.append('text')
     .attr('x', startX + RECT_WIDTH + 18)
     .attr('y', topLabelY + 1)
-    .attr('dy', '0.35em').attr('fill', C.nodeRoot)
+    .attr('dy', '0.35em').attr('fill', C.textSecondary)
     .attr('font-size', '12px').attr('font-weight', 'bold')
+    .attr('font-family', "'JetBrains Mono', monospace")
     .text('← ' + tStatic('visualizer.stackTop'))
 
-  // Stack Bottom label with colored badge
+  // Stack Bottom label
   const bottomLabelY = startY + RECT_HEIGHT / 2
   container.append('rect')
-    .attr('x', startX + RECT_WIDTH + 12).attr('y', bottomLabelY - 11)
-    .attr('width', 108).attr('height', 22).attr('rx', 4)
-    .attr('fill', C.nodeDefault).attr('opacity', 0.15)
+    .attr('x', startX + RECT_WIDTH + 12).attr('y', bottomLabelY - 12)
+    .attr('width', 110).attr('height', 24).attr('rx', 4)
+    .attr('fill', C.containerStroke).attr('opacity', 0.3)
   container.append('text')
     .attr('x', startX + RECT_WIDTH + 18)
     .attr('y', bottomLabelY + 1)
-    .attr('dy', '0.35em').attr('fill', C.nodeDefault)
+    .attr('dy', '0.35em').attr('fill', C.textSecondary)
     .attr('font-size', '12px').attr('font-weight', 'bold')
+    .attr('font-family', "'JetBrains Mono', monospace")
     .text('← ' + tStatic('visualizer.stackBottom'))
 }
 
