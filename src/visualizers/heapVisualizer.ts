@@ -12,7 +12,7 @@ interface HeapOptions {
   isDark?: boolean
 }
 
-function layout(data: number[], width: number) {
+function layout(data: number[], width: number, height?: number) {
   const n = data.length
   if (n === 0) return { positions: [] }
 
@@ -32,9 +32,16 @@ function layout(data: number[], width: number) {
     level++
   }
 
-
-  const levelHeight = 80
+  const safeHeight = height && height > 0 ? height : 400
+  const maxLevel = levels.length - 1
   const startY = 30
+  const bottomMargin = 30
+  const NODE_R = 22
+  const baseLevelHeight = 80
+  const neededHeight = startY + maxLevel * baseLevelHeight + NODE_R + bottomMargin
+  const levelHeight = (neededHeight > safeHeight && maxLevel > 0)
+    ? Math.max(30, (safeHeight - startY - NODE_R - bottomMargin) / maxLevel)
+    : baseLevelHeight
 
   for (let l = 0; l < levels.length; l++) {
     const levelIndices = levels[l]
@@ -79,7 +86,7 @@ export function renderHeap(svg: SVGSVGElement, data: number[], options: HeapOpti
     return
   }
 
-  const { positions } = layout(data, width)
+  const { positions } = layout(data, width, height)
 
   for (let i = 0; i < positions.length; i++) {
     const pos = positions[i]
