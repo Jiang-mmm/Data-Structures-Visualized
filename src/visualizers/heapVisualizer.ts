@@ -97,8 +97,8 @@ export function renderHeap(svg: SVGSVGElement, data: number[], options: HeapOpti
       const isHeapViolation = pos.index < data.length && parentIndex < data.length && data[pos.index] > data[parentIndex]
 
       const edgeLine = container.append('line')
-        .attr('x1', parentPos.x).attr('y1', parentPos.y)
-        .attr('x2', pos.x).attr('y2', pos.y)
+        .attr('x1', parentPos.x).attr('y1', parentPos.y + NODE_RADIUS)
+        .attr('x2', pos.x).attr('y2', pos.y - NODE_RADIUS)
         .attr('stroke', isHeapViolation ? C.nodeError : C.edgeDefault)
         .attr('stroke-width', isHeapViolation ? 3 : 2)
         .attr('stroke-dasharray', isHeapViolation ? '5,3' : 'none')
