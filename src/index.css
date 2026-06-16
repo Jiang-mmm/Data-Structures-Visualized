@@ -130,7 +130,7 @@
 
 html {
   scroll-behavior: smooth;
-  text-rendering: optimizeLegibility;
+  text-rendering: geometricPrecision;
 }
 
 body {
@@ -138,6 +138,7 @@ body {
   margin: 0;
   background-color: var(--color-paper);
   color: var(--color-ink);
+  text-shadow: 0 0 0 currentColor;
 }
 
 html.dark body {

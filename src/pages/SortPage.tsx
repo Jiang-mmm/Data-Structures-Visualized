@@ -23,6 +23,7 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { validateImportData } from '../utils/validate'
 import { showToast } from '../components/toastStore'
 import { getColors, detectDarkMode } from '../utils/themeColors'
+import AlgorithmInfo from '../components/AlgorithmInfo'
 
 const VARIANT_MAP: Record<string, string> = {
   primary: 'primary',
@@ -76,6 +77,7 @@ export default function SortPage() {
   }
 
   const algorithms = useMemo(() => Array.from(getAllSortAlgorithms()), [])
+  const selectedAlgo = algorithms.find(([key]) => key === selectedAlgorithm)?.[1]
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
@@ -182,6 +184,16 @@ export default function SortPage() {
       <Visualizer data={data} renderFn={renderSortBars} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.sortLabel")} />
       {data.length === 0 && (
         <EmptyState icon="⇚" titleKey="emptyState.emptySort" descriptionKey="emptyState.emptySortDesc" onFill={randomize} />
+      )}
+
+      {selectedAlgo && (
+        <AlgorithmInfo
+          algorithmKey={selectedAlgorithm}
+          name={selectedAlgo.nameKey ? t(selectedAlgo.nameKey) : selectedAlgo.name}
+          timeComplexity={selectedAlgo.timeComplexity}
+          spaceComplexity={selectedAlgo.spaceComplexity}
+          isAnimating={isAnimating}
+        />
       )}
 
       <LearningModeToggle
