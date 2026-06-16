@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { useColorTheme } from '../hooks/useColorTheme'
@@ -33,7 +33,47 @@ const STRUCTURE_KEYS: StructureItem[] = [
   { path: '/graph-algorithm', key: 'graphAlgorithm' },
 ]
 
-const ICONS: string[] = ['◉', '▦', '☰', '⇒', '◎', '◆', '⬡', '⇚', '#', '▲', '◈', '⊞', '⊕']
+function getIconSvg(index: number): React.ReactNode {
+  const p = {
+    className: 'w-4 h-4 flex-shrink-0',
+    viewBox: '0 0 20 20',
+    fill: 'none' as const,
+    stroke: 'currentColor',
+    strokeWidth: '1.5',
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+  }
+  switch (index) {
+    case 0: // Home
+      return <svg {...p}><path d="M3 10L10 3l7 7" /><path d="M5 8.5V16a1 1 0 001 1h3v-4h2v4h3a1 1 0 001-1V8.5" /></svg>
+    case 1: // Array - horizontal bars
+      return <svg {...p}><rect x="3" y="4" width="14" height="2.5" rx="0.5" /><rect x="3" y="8.75" width="10" height="2.5" rx="0.5" /><rect x="3" y="13.5" width="7" height="2.5" rx="0.5" /></svg>
+    case 2: // Stack - layers
+      return <svg {...p}><rect x="4" y="13" width="12" height="3" rx="0.5" /><rect x="4" y="8.5" width="12" height="3" rx="0.5" /><rect x="4" y="4" width="12" height="3" rx="0.5" /></svg>
+    case 3: // Queue - arrow
+      return <svg {...p}><line x1="4" y1="10" x2="15" y2="10" /><polyline points="12,6 16,10 12,14" /></svg>
+    case 4: // Linked List - two circles connected
+      return <svg {...p}><circle cx="5" cy="10" r="2.5" /><circle cx="15" cy="10" r="2.5" /><line x1="7.5" y1="10" x2="12.5" y2="10" /></svg>
+    case 5: // Tree
+      return <svg {...p}><circle cx="10" cy="4.5" r="2" /><circle cx="5" cy="14" r="2" /><circle cx="15" cy="14" r="2" /><line x1="8.5" y1="6.2" x2="6.2" y2="12.2" /><line x1="11.5" y1="6.2" x2="13.8" y2="12.2" /></svg>
+    case 6: // Graph - triangle network
+      return <svg {...p}><circle cx="10" cy="4.5" r="2" /><circle cx="4.5" cy="15" r="2" /><circle cx="15.5" cy="15" r="2" /><line x1="8.5" y1="6.2" x2="5.8" y2="13.2" /><line x1="11.5" y1="6.2" x2="14.2" y2="13.2" /><line x1="6.5" y1="15" x2="13.5" y2="15" /></svg>
+    case 7: // Sort - ascending bars
+      return <svg {...p}><rect x="3" y="13" width="3" height="4" rx="0.5" /><rect x="7.5" y="9" width="3" height="8" rx="0.5" /><rect x="12" y="5" width="3" height="12" rx="0.5" /></svg>
+    case 8: // Hash
+      return <svg {...p}><line x1="7" y1="3" x2="6" y2="17" /><line x1="13" y1="3" x2="12" y2="17" /><line x1="3" y1="7" x2="17" y2="7" /><line x1="3" y1="13" x2="17" y2="13" /></svg>
+    case 9: // Heap - pyramid
+      return <svg {...p}><circle cx="10" cy="4.5" r="2" /><circle cx="5.5" cy="14" r="2" /><circle cx="14.5" cy="14" r="2" /><line x1="8.5" y1="6.2" x2="6.8" y2="12.2" /><line x1="11.5" y1="6.2" x2="13.2" y2="12.2" /></svg>
+    case 10: // Trie - root with branches
+      return <svg {...p}><circle cx="10" cy="4" r="2" /><circle cx="5" cy="13" r="1.5" /><circle cx="10" cy="15" r="1.5" /><circle cx="15" cy="13" r="1.5" /><line x1="8.8" y1="5.7" x2="5.6" y2="11.6" /><line x1="10" y1="6" x2="10" y2="13.5" /><line x1="11.2" y1="5.7" x2="14.4" y2="11.6" /></svg>
+    case 11: // Compare - two bar charts
+      return <svg {...p}><rect x="3" y="9" width="3" height="8" rx="0.5" /><rect x="7.5" y="5" width="3" height="12" rx="0.5" /><rect x="12.5" y="7" width="3" height="10" rx="0.5" /><line x1="2" y1="17" x2="17" y2="17" /></svg>
+    case 12: // Graph Algorithm - node with circular arrow
+      return <svg {...p}><circle cx="10" cy="10" r="6" /><polyline points="10,6 12,8 10,10" /><path d="M7 15a6 6 0 016-6" /></svg>
+    default:
+      return <svg {...p}><circle cx="10" cy="10" r="6" /></svg>
+  }
+}
 
 const THEME_SWATCH_COLORS: Record<string, string> = {
   default: '#2563eb',
@@ -141,11 +181,11 @@ export default function Sidebar() {
     showToast({ type: 'info', message: `${t('sidebar.themeTooltip')}: ${theme?.nameKey ? t(theme.nameKey) : theme?.name || themeKey}` })
   }
 
-  const structures = useMemo(() => 
+  const structures = useMemo(() =>
     STRUCTURE_KEYS.map((item, idx) => ({
       path: item.path,
       name: t(`sidebar.${item.key}`),
-      icon: ICONS[idx],
+      icon: getIconSvg(idx),
     })), [t]
   )
 
@@ -217,9 +257,7 @@ export default function Sidebar() {
                 ${collapsed && !isMobile ? 'justify-center px-0' : ''}
               `}
             >
-              <span className="w-5 h-5 flex items-center justify-center flex-shrink-0 text-sm leading-none">
-                {item.icon}
-              </span>
+              {item.icon}
               {(!collapsed || isMobile) && <span>{item.name}</span>}
             </Link>
           )
