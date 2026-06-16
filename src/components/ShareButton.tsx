@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef, memo } from 'react'
 import { showToast } from './toastStore'
 import { encodeData } from '../utils/shareUtils'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { OperationButton } from './OperationBar'
 
 interface ShareButtonProps {
   data: unknown
@@ -49,27 +50,12 @@ export default memo(function ShareButton({ data, dataType, disabled = false }: S
 
   return (
     <div className="relative inline-block">
-      <button
-        onClick={handleShare}
-        disabled={disabled}
-        title={t('share.generateLink')}
-        aria-label={t('share.generateLink')}
-        className={`
-          px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold
-          border-2 border-ink dark:border-dark-border
-          bg-white dark:bg-slate text-ink dark:text-dark-ink
-          shadow-button dark:shadow-button-dark
-          transition-all duration-200
-          hover:bg-paper-warm dark:hover:bg-slate-light hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover
-          active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
-          disabled:opacity-40 disabled:cursor-not-allowed
-        `}
-      >
+      <OperationButton variant="outline" onClick={handleShare} disabled={disabled} title={t('share.generateLink')} aria-label={t('share.generateLink')}>
         <span className="flex items-center gap-1.5">
           <span className="text-sm">⛓</span>
           <span className="hidden sm:inline">{t('share.label')}</span>
         </span>
-      </button>
+      </OperationButton>
 
       {showTooltip && (
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50">
