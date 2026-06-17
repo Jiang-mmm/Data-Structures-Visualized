@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
 import { learningConfigs } from '../configs/learning'
-import type { LearningStep, LearningModeConfig } from '../configs/learning'
 
 const STORAGE_PREFIX = 'ds-learning-step-'
 

@@ -534,7 +534,7 @@ describe('animationEngine.ts', () => {
       const anim = createAnimation()
       const originalAbort = anim.abort
 
-      const waitPromise = wait(5000, anim)
+      wait(5000, anim)
 
       expect(anim.abort).not.toBe(originalAbort)
 
@@ -647,7 +647,7 @@ describe('animationEngine.ts', () => {
       const chain = buildTransitionMock()
       d3TransitionMock.mockReturnValue(chain)
 
-      const tweenFn = () => (t: number) => {}
+      const tweenFn = () => (_t: number) => {}
       const selFn = () => ({ empty: () => false, transition: () => d3TransitionMock() })
       await transition(selFn, { tween: { name: 'test', fn: tweenFn } }, 300)
 

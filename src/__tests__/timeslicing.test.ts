@@ -44,7 +44,7 @@ describe('timeslicing', () => {
 
     it('应该按索引顺序处理', async () => {
       const calls: number[] = []
-      const processItem = vi.fn().mockImplementation(async (item: number, index: number) => {
+      const processItem = vi.fn().mockImplementation(async (_item: number, index: number) => {
         calls.push(index)
       })
       const promise = runWithTimeSlicing([1, 2, 3], processItem)

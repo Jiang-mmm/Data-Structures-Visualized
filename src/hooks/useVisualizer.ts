@@ -1,4 +1,4 @@
-import { useRef, useEffect, useLayoutEffect, useState, useCallback, type RefObject } from 'react'
+import { useRef, useEffect, useLayoutEffect, useState, useCallback } from 'react'
 import { createAnimation, type Animation } from '../utils/animationEngine'
 import { debounce } from '../utils/debounce'
 

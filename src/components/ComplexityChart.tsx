@@ -48,7 +48,7 @@ function ComplexityChart({ algorithms, maxN = 50 }: ComplexityChartProps) {
     return () => observer.disconnect()
   }, [])
 
-  const { paths, maxY, xScale, yScale } = useMemo(() => {
+  const { paths, maxY, xScale: _xScale, yScale: _yScale } = useMemo(() => {
     const padding = { top: 20, right: 20, bottom: 40, left: 50 }
     const chartWidth = dimensions.width - padding.left - padding.right
     const chartHeight = dimensions.height - padding.top - padding.bottom

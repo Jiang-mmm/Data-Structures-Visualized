@@ -231,7 +231,7 @@ function drag(sim: ReturnType<typeof forceSimulation>) {
   return d3Drag().on('start', dragstarted).on('drag', dragged).on('end', dragended)
 }
 
-export async function animateBFS(svg: SVGWithSimulation, startId: string, nodes: GraphNode[], links: GraphLink[], options: GraphOptions, anim?: Animation): Promise<string[]> {
+export async function animateBFS(svg: SVGWithSimulation, startId: string, nodes: GraphNode[], links: GraphLink[], _options: GraphOptions, anim?: Animation): Promise<string[]> {
   if (nodes.length >= LARGE_DATA_THRESHOLD) return []
   const adj = buildAdjacencyList(nodes, links)
   const visited = new Set<string>()
@@ -252,7 +252,7 @@ export async function animateBFS(svg: SVGWithSimulation, startId: string, nodes:
   return order
 }
 
-export async function animateDFS(svg: SVGWithSimulation, startId: string, nodes: GraphNode[], links: GraphLink[], options: GraphOptions, anim?: Animation): Promise<string[]> {
+export async function animateDFS(svg: SVGWithSimulation, startId: string, nodes: GraphNode[], links: GraphLink[], _options: GraphOptions, anim?: Animation): Promise<string[]> {
   if (nodes.length >= LARGE_DATA_THRESHOLD) return []
   const adj = buildAdjacencyList(nodes, links)
   const visited = new Set<string>()
@@ -270,7 +270,7 @@ export async function animateDFS(svg: SVGWithSimulation, startId: string, nodes:
   return order
 }
 
-export async function animateDijkstra(svg: SVGWithSimulation, startId: string, targetId: string, nodes: GraphNode[], links: GraphLink[], options: GraphOptions, anim?: Animation): Promise<string[]> {
+export async function animateDijkstra(svg: SVGWithSimulation, startId: string, targetId: string, nodes: GraphNode[], links: GraphLink[], _options: GraphOptions, anim?: Animation): Promise<string[]> {
   if (nodes.length >= LARGE_DATA_THRESHOLD) return []
   const adj = buildWeightedAdjacency(nodes, links)
   const dist = new Map<string, number>()

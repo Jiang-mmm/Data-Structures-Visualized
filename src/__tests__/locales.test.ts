@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { zh, en, type Locale } from '../i18n/locales'
+import { zh, en } from '../i18n/locales'
 
 function getKeys(obj: unknown, prefix = ''): string[] {
   const keys: string[] = []

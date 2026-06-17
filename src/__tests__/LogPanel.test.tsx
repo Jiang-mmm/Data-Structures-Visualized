@@ -31,7 +31,7 @@ describe('LogPanel', () => {
     })
 
     it('logs 为空时不应显示日志条目', () => {
-      const { container } = renderLogPanel({ logs: [] })
+      const { container: _container } = renderLogPanel({ logs: [] })
       expect(screen.queryByText('操作日志1')).not.toBeInTheDocument()
     })
   })

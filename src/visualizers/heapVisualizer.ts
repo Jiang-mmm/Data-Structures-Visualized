@@ -178,7 +178,7 @@ export function renderHeap(svg: SVGSVGElement, data: number[], options: HeapOpti
  * @param {Array} data - 当前堆数据
  * @param {Object} [anim] - 动画上下文
  */
-export async function animateInsertHeap(svg: SVGSVGElement, value: number, data: number[], anim?: Animation) {
+export async function animateInsertHeap(svg: SVGSVGElement, _value: number, data: number[], anim?: Animation) {
   if (data.length >= LARGE_DATA_THRESHOLD) return
   const container = select(svg)
   const defaultEase = getDefaultEasing()

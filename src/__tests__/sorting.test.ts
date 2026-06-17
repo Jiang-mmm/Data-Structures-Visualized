@@ -1,8 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import {
   getAllSortAlgorithms,
-  getSortAlgorithm,
-  registerSortAlgorithm
+  getSortAlgorithm
 } from '../algorithms/sorting'
 
 const mockAnimFns = {

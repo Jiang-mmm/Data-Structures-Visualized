@@ -41,7 +41,7 @@ describe('toastStore', () => {
 
   describe('dismissToast', () => {
     it('应该手动移除指定 toast', () => {
-      const { id, cleanup } = showToast({ type: 'info', message: 'to dismiss' })
+      const { id, cleanup: _cleanup } = showToast({ type: 'info', message: 'to dismiss' })
       dismissToast(id)
     })
   })

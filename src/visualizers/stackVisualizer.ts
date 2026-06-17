@@ -194,7 +194,7 @@ export async function animatePush(svg: SVGSVGElement, value: number, data: numbe
   )
 }
 
-export async function animatePop(svg: SVGSVGElement, data: number[], options?: StackVisualizerOptions, anim?: Animation) {
+export async function animatePop(svg: SVGSVGElement, data: number[], _options?: StackVisualizerOptions, anim?: Animation) {
   if (data.length >= LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
@@ -222,7 +222,7 @@ export async function animatePop(svg: SVGSVGElement, data: number[], options?: S
   )
 }
 
-export async function animatePeek(svg: SVGSVGElement, data: number[], options?: StackVisualizerOptions, anim?: Animation) {
+export async function animatePeek(svg: SVGSVGElement, data: number[], _options?: StackVisualizerOptions, anim?: Animation) {
   if (data.length >= LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)

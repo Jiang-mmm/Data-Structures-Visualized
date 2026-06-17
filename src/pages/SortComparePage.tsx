@@ -5,7 +5,7 @@ import LogPanel from '../components/LogPanel'
 import SpeedControl from '../components/SpeedControl'
 import PerformanceChart from '../components/PerformanceChart'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
-import { getAnimationSpeed, createAnimation } from '../utils/animationEngine'
+import { createAnimation } from '../utils/animationEngine'
 import { renderSortBars, animateCompare, animateSwap, animateSorted } from '../visualizers/sortVisualizer'
 import { getSortAlgorithm, getAllSortAlgorithms } from '../algorithms/sorting'
 import { yieldToMain } from '../utils/timeslicing'
@@ -118,7 +118,6 @@ export default function SortComparePage() {
   const [isRunning, setIsRunning] = useState<boolean>(false)
   const [selectedAlgos, setSelectedAlgos] = useState<string[]>(DEFAULT_ALGOS)
   const [algoResults, setAlgoResults] = useState<Record<string, AlgoResult>>({})
-  const abortControllerRef = useRef<{ abort: () => void } | null>(null)
   const animationRefs = useRef<Record<string, { abort: () => void }>>({})
   const stoppedRef = useRef(false)
   const [logs, setLogs] = useState<Log[]>([])
@@ -180,8 +179,6 @@ export default function SortComparePage() {
     setAlgoResults({})
     setLogs([])
     addLog('info', `${t('page.comparing')}: ${selectedAlgos.join(', ')}`)
-
-    const speed = getAnimationSpeed()
 
     const promises = selectedAlgos.map(async (key) => {
       const algorithm = getSortAlgorithm(key)

@@ -171,7 +171,7 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
   }
 }
 
-function renderSortBarsImmediate(svg: SVGSVGElement, data: number[], options: SortOptions, container: ReturnType<typeof select>, layout: LayoutResult & { C: ReturnType<typeof getColors> }): void {
+function renderSortBarsImmediate(_svg: SVGSVGElement, data: number[], options: SortOptions, container: ReturnType<typeof select>, layout: LayoutResult & { C: ReturnType<typeof getColors> }): void {
   const { height } = options
   const { barWidth, maxBarHeight, maxVal, gap, offsetX, C } = layout
 
@@ -223,7 +223,7 @@ function renderSortBarsImmediate(svg: SVGSVGElement, data: number[], options: So
     )
 }
 
-export async function animateCompare(svg: SVGSVGElement, i: number, j: number, data: number[], options: SortOptions, anim?: Animation): Promise<void> {
+export async function animateCompare(svg: SVGSVGElement, i: number, j: number, _data: number[], _options: SortOptions, anim?: Animation): Promise<void> {
   const container = select(svg)
   const isDark = detectDarkMode()
   const C = getColors(isDark)
@@ -351,7 +351,7 @@ export async function animateSorted(svg: SVGSVGElement, data: number[], options:
   const defaultEase = getDefaultEasing()
   const bars = container.selectAll('g.bar')
   const { width, height } = options
-  const { barWidth, maxBarHeight, maxVal, gap, offsetX, n } = getLayout(data, width, height)
+  const { barWidth, maxBarHeight, maxVal, gap, offsetX, n: _n } = getLayout(data, width, height)
 
   // Wave-fill effect: bars light up with staggered delays for a true wave
   const staggerDelay = duration(40)

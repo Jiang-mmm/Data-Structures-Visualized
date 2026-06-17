@@ -1,6 +1,6 @@
 import { select } from '../utils/d3Imports'
-import { getColors, detectDarkMode, ensureGradientDefs, gradUrl, type ThemeColors } from '../utils/themeColors'
-import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
+import { getColors, detectDarkMode, gradUrl } from '../utils/themeColors'
+import { duration, EASING, transitionEnd, type Animation } from '../utils/animationEngine'
 import type { TrieFlattened } from '../hooks/useTrieState'
 import { tStatic } from '../i18n/useI18n'
 
@@ -42,7 +42,7 @@ function layout(data: TrieFlattened, width: number): { positions: TriePosition[]
     nodesByParent.get(parentId)!.push(node)
   }
 
-  function layoutLevel(parentId: string, parentX: number, level: number, minX: number, maxX: number) {
+  function layoutLevel(parentId: string, _parentX: number, level: number, minX: number, maxX: number) {
     const children = nodesByParent.get(parentId) || []
     if (children.length === 0) return
 

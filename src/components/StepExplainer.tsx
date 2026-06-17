@@ -14,7 +14,7 @@ interface StepExplainerProps {
   isAnimating: boolean
 }
 
-function highlightCode(line: string, terms: string[], isHighlighted: boolean): React.ReactNode {
+function highlightCode(line: string, terms: string[], _isHighlighted: boolean): React.ReactNode {
   if (!terms.length || !line.trim()) return line
 
   const escaped = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))

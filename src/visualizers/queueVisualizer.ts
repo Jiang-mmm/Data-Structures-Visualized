@@ -132,7 +132,7 @@ export async function animateEnqueue(svg: SVGSVGElement, value: number, data: nu
   )
 }
 
-export async function animateDequeue(svg: SVGSVGElement, data: number[], options?: QueueVisualizerOptions, anim?: Animation) {
+export async function animateDequeue(svg: SVGSVGElement, data: number[], _options?: QueueVisualizerOptions, anim?: Animation) {
   if (data.length >= LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
@@ -159,7 +159,7 @@ export async function animateDequeue(svg: SVGSVGElement, data: number[], options
   )
 }
 
-export async function animateFront(svg: SVGSVGElement, data: number[], options?: QueueVisualizerOptions, anim?: Animation) {
+export async function animateFront(svg: SVGSVGElement, data: number[], _options?: QueueVisualizerOptions, anim?: Animation) {
   if (data.length >= LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)

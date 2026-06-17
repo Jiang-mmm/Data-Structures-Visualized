@@ -196,7 +196,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
   }
 }
 
-export async function animateInsertHash(svg: SVGSVGElement, key: number | string, value: string, options: HashVisualizerOptions = {} as HashVisualizerOptions, anim?: Animation) {
+export async function animateInsertHash(svg: SVGSVGElement, key: number | string, _value: string, options: HashVisualizerOptions = {} as HashVisualizerOptions, anim?: Animation) {
   if (anim?.isAborted?.()) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)

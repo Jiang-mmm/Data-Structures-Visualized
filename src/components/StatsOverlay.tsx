@@ -1,4 +1,4 @@
-import { memo, ReactNode } from 'react'
+import { memo } from 'react'
 
 interface StatItem {
   label: string

@@ -534,7 +534,7 @@ describe('Visualizer', () => {
   // ============================================================
   describe('Zoom Controls Touch Targets', () => {
     it('缩放按钮应有移动端触摸友好尺寸', () => {
-      const { container } = render(
+      const { container: _container } = render(
         <Visualizer
           data={mockData}
           renderFn={mockRenderFn}
@@ -553,7 +553,7 @@ describe('Visualizer', () => {
     })
 
     it('网格切换按钮应有移动端触摸友好尺寸', () => {
-      const { container } = render(
+      const { container: _container } = render(
         <Visualizer
           data={mockData}
           renderFn={mockRenderFn}

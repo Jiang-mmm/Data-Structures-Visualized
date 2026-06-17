@@ -1,5 +1,5 @@
 import { select, d3Drag } from '../utils/d3Imports'
-import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
+import { duration, EASING, transitionEnd, type Animation } from '../utils/animationEngine'
 import { showToast } from '../components/toastStore'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
@@ -355,7 +355,7 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
         .attr('stroke-width', 3)
         .attr('filter', 'drop-shadow(0 2px 6px rgba(0,0,0,0.25))')
     })
-    .on('mouseout', function(this: SVGGElement, _event: any, d: TreeNodeData) {
+    .on('mouseout', function(this: SVGGElement, _event: any, _d: TreeNodeData) {
       const g = select(this)
       g.select('circle')
         .transition().duration(200).ease(EASING.easeOutCubic)
@@ -480,7 +480,7 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
   )
 }
 
-export async function animateTraversal(svg: SVGSVGElement, order: number[], data: number[], options: TreeOptions, anim?: Animation) {
+export async function animateTraversal(svg: SVGSVGElement, order: number[], data: number[], _options: TreeOptions, anim?: Animation) {
   if (data && data.length > LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
@@ -599,7 +599,7 @@ function addVisitOrderLabel(nodeGroup: any, order: number | string, C: ReturnTyp
     .attr('opacity', 1))
 }
 
-export async function animateLevelOrder(svg: SVGSVGElement, order: number[], data: number[], options: TreeOptions, anim?: Animation) {
+export async function animateLevelOrder(svg: SVGSVGElement, order: number[], data: number[], _options: TreeOptions, anim?: Animation) {
   if (data && data.length > LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
@@ -638,7 +638,7 @@ export async function animateLevelOrder(svg: SVGSVGElement, order: number[], dat
   }
 }
 
-export async function animateSearch(svg: SVGSVGElement, path: number[], found: number, data: number[], options: TreeOptions, anim?: Animation) {
+export async function animateSearch(svg: SVGSVGElement, path: number[], found: number, data: number[], _options: TreeOptions, anim?: Animation) {
   if (data && data.length > LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
@@ -690,7 +690,7 @@ export async function animateSearch(svg: SVGSVGElement, path: number[], found: n
   }
 }
 
-export async function animateDeleteNode(svg: SVGSVGElement, value: number, data: number[], options: TreeOptions, anim?: Animation) {
+export async function animateDeleteNode(svg: SVGSVGElement, value: number, data: number[], _options: TreeOptions, anim?: Animation) {
   if (data && data.length > LARGE_DATA_THRESHOLD) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)

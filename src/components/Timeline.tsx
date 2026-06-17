@@ -1,4 +1,4 @@
-import { memo, useRef, useCallback, useState, useEffect, useMemo } from 'react'
+import { memo, useRef, useCallback, useState, useEffect } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
 const ICONS: Record<string, string> = {
@@ -126,13 +126,6 @@ export default memo(function Timeline({ history, currentIndex, onJump, maxHeight
   const clickable = !!onJump
   const { t } = useGlobalSettings()
   const scrollRef = useRef<HTMLDivElement>(null)
-
-  const typeConfig = useMemo(() => ({
-    oper: { color: 'bg-accent-blue', labelKey: 'logPanel.type.oper' },
-    info: { color: 'bg-accent-emerald', labelKey: 'logPanel.type.info' },
-    error: { color: 'bg-accent-rose', labelKey: 'logPanel.type.error' },
-    code: { color: 'bg-accent-amber', labelKey: 'logPanel.type.code' },
-  }), [])
 
   const handleJump = useCallback((index: number) => {
     onJump?.(index)
