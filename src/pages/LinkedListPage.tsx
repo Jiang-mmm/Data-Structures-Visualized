@@ -237,7 +237,7 @@ export default function LinkedListPage() {
           ]} />
         </OperationInfo>
       </OperationBar>
-      <Visualizer data={data} renderFn={renderLinkedList} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.linkedlistLabel")} overlay={<StatsOverlay stats={[{ label: 'LEN', value: length }]} />} />
+      <Visualizer data={data} renderFn={renderLinkedList as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.linkedlistLabel")} overlay={<StatsOverlay stats={[{ label: 'LEN', value: length }]} />} />
       {data.length === 0 && (
         <EmptyState icon="◎" titleKey="emptyState.emptyLinkedList" descriptionKey="emptyState.emptyLinkedListDesc" onFill={reset} />
       )}

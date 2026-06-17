@@ -185,7 +185,7 @@ export default function TriePage() {
         </OperationInfo>
       </OperationBar>
 
-      <Visualizer data={flatData} renderFn={renderTrie} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.trieLabel")} />
+      <Visualizer data={flatData} renderFn={renderTrie as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.trieLabel")} />
       {flatData.nodes.length === 0 && (
         <EmptyState icon="◈" titleKey="emptyState.emptyTrie" descriptionKey="emptyState.emptyTrieDesc" onFill={reset} />
       )}

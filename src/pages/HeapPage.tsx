@@ -141,7 +141,7 @@ export default function HeapPage() {
         </OperationInfo>
       </OperationBar>
 
-      <Visualizer data={data} renderFn={renderHeap} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.heapLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: heapSize }]} />} />
+      <Visualizer data={data} renderFn={renderHeap as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.heapLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: heapSize }]} />} />
       {data.length === 0 && (
         <EmptyState icon="▲" titleKey="emptyState.emptyHeap" descriptionKey="emptyState.emptyHeapDesc" onFill={reset} />
       )}

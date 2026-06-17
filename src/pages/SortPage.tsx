@@ -181,7 +181,7 @@ export default function SortPage() {
         </div>
       </div>
 
-      <Visualizer data={data} renderFn={renderSortBars} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.sortLabel")} />
+      <Visualizer data={data} renderFn={renderSortBars as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.sortLabel")} />
       {data.length === 0 && (
         <EmptyState icon="⇚" titleKey="emptyState.emptySort" descriptionKey="emptyState.emptySortDesc" onFill={randomize} />
       )}

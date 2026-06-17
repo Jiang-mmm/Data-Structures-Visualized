@@ -195,7 +195,7 @@ export default function TreePage() {
           <span className="font-mono text-xs text-ink-light">NODES: {nodeCount}</span>
         </OperationInfo>
       </OperationBar>
-      <Visualizer data={data} renderFn={renderTree} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.treeLabel")} renderOptions={{ edgeStyle }} />
+      <Visualizer data={data} renderFn={renderTree as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.treeLabel")} renderOptions={{ edgeStyle }} />
       {data.length === 0 && (
         <EmptyState icon="◆" titleKey="emptyState.emptyTree" descriptionKey="emptyState.emptyTreeDesc" onFill={reset} />
       )}
