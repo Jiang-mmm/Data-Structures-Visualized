@@ -33,7 +33,7 @@ export default function LinkedListPage() {
   const [inputIndex, setInputIndex] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('linkedlist')
-  useSharedData({ dataType: 'linkedlist', loadData, validator: Array.isArray })
+  useSharedData({ dataType: 'linkedlist', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
   usePageTracker('linkedlist')
 
   useKeyboard({

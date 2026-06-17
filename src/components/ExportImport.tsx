@@ -7,7 +7,8 @@ import { OperationButton } from './OperationBar'
 interface ExportImportProps {
   dataType: string
   data: unknown
-  onImport?: (result: unknown) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onImport?: (result: any) => void
   disabled?: boolean
 }
 

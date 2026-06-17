@@ -31,7 +31,7 @@ export default function HeapPage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('heapStructure')
-  useSharedData({ dataType: 'heap', loadData, validator: Array.isArray })
+  useSharedData({ dataType: 'heap', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
   usePageTracker('heap')
 
   useKeyboard({

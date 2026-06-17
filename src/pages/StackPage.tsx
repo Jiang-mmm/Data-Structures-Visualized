@@ -31,7 +31,7 @@ export default function StackPage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('stack')
-  useSharedData({ dataType: 'stack', loadData, validator: Array.isArray })
+  useSharedData({ dataType: 'stack', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
   usePageTracker('stack')
 
   useKeyboard({

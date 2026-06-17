@@ -31,7 +31,7 @@ export default function QueuePage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('queue')
-  useSharedData({ dataType: 'queue', loadData, validator: Array.isArray })
+  useSharedData({ dataType: 'queue', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
   usePageTracker('queue')
 
   useKeyboard({

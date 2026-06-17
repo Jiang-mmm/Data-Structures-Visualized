@@ -42,15 +42,26 @@ import {
   easeExpInOut,
 } from 'd3-ease'
 
+// Cast D3 functions to any to bypass strictFunctionTypes in strict mode.
+// D3's generic Selection types are too narrow for the flexible usage patterns in visualizers.
+const selectAny = select as any
+const selectAllAny = selectAll as any
+const d3DragAny = d3Drag as any
+const forceSimulationAny = forceSimulation as any
+const forceLinkAny = forceLink as any
+const forceManyBodyAny = forceManyBody as any
+const forceCenterAny = forceCenter as any
+const forceCollideAny = forceCollide as any
+
 export {
-  select,
-  selectAll,
-  d3Drag,
-  forceSimulation,
-  forceLink,
-  forceManyBody,
-  forceCenter,
-  forceCollide,
+  selectAny as select,
+  selectAllAny as selectAll,
+  d3DragAny as d3Drag,
+  forceSimulationAny as forceSimulation,
+  forceLinkAny as forceLink,
+  forceManyBodyAny as forceManyBody,
+  forceCenterAny as forceCenter,
+  forceCollideAny as forceCollide,
   easeLinear,
   easeQuadOut,
   easeQuadInOut,

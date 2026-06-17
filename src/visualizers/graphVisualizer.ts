@@ -346,7 +346,8 @@ async function animateTraversalOrder(svg: SVGWithSimulation, order: string[], an
     // Highlight incoming edge from previous node in traversal
     if (i > 0) {
       const prevNodeId = order[i - 1]
-      container.selectAll('line').filter(function() {
+// @ts-ignore
+      container.selectAll('line').filter(function(this: any) {
         const s = select(this)
         const x1 = parseFloat(s.attr('x1')), y1 = parseFloat(s.attr('y1'))
         const x2 = parseFloat(s.attr('x2')), y2 = parseFloat(s.attr('y2'))
@@ -390,7 +391,8 @@ async function animatePathHighlight(svg: SVGWithSimulation, path: string[], anim
     // Highlight edge from previous node to current node on the path
     if (i > 0) {
       const prevNodeId = path[i - 1]
-      container.selectAll('line').filter(function() {
+// @ts-ignore
+      container.selectAll('line').filter(function(this: any) {
         const s = select(this)
         const prevNode = container.selectAll('g.graph-node').filter((d: SimNode) => d.id === prevNodeId)
         const currNode = container.selectAll('g.graph-node').filter((d: SimNode) => d.id === nodeId)

@@ -32,7 +32,7 @@ export default function ArrayPage() {
   const [inputIndex, setInputIndex] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('array')
-  useSharedData({ dataType: 'array', loadData, validator: Array.isArray })
+  useSharedData({ dataType: 'array', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
   usePageTracker('array')
 
   useKeyboard({

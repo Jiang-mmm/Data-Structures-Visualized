@@ -29,7 +29,7 @@ export default function TriePage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('trie')
-  useSharedData({ dataType: 'trie', loadData, validator: (d): d is unknown => !!(d && typeof d === 'object' && !Array.isArray(d)) })
+  useSharedData({ dataType: 'trie', loadData: ((d: unknown) => loadData(d as any)) as any, validator: (d): d is unknown => !!(d && typeof d === 'object' && !Array.isArray(d)) })
   usePageTracker('trie')
 
   useKeyboard({

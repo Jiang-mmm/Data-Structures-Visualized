@@ -165,7 +165,7 @@ function dragBehavior() {
     setStoredPosition(d.dataIndex, _event.x, _event.y)
   }
 
-  return d3Drag<SVGGElement, TreeNodeData>()
+  return d3Drag()
     .on('start', dragstarted)
     .on('drag', dragged)
     .on('end', dragended)
@@ -537,6 +537,7 @@ function highlightEntryEdge(container: any, childDataIndex: number, C: ReturnTyp
   if (parentGroup.empty()) return
 
   container.selectAll('.tree-edge').filter(function() {
+// @ts-ignore
     const el = select(this)
     const childTransform = childGroup.attr('transform')
     const parentTransform = parentGroup.attr('transform')
@@ -719,7 +720,8 @@ export async function animateDeleteNode(svg: SVGSVGElement, value: number, data:
   // Phase 2: Shrink and fade out
   await transitionEnd(
     nodeGroup.transition().duration(duration(300)).ease(EASING.easeInCubic)
-      .attr('transform', function() {
+// @ts-ignore
+      .attr('transform', function(this: any) {
         const current = select(this).attr('transform')
         const match = current?.match(/translate\(([^,]+),\s*([^)]+)\)/)
         if (!match) return current

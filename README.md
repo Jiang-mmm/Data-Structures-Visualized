@@ -1,7 +1,7 @@
 # 数据结构学习助手
 
-> **版本:** v6.5
-> **更新日期:** 2026-06-15
+> **版本:** v8.0
+> **更新日期:** 2026-06-17
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 
@@ -50,11 +50,13 @@
 - **响应式布局** — 适配不同屏幕尺寸，侧边栏可折叠，移动端触控优化
 - **性能监控面板** — FPS/内存实时显示，帧率自适应动画降级
 - **网络离线检测** — 离线状态实时提示
-- **单元测试覆盖** — 1234 tests（83 个测试文件），核心逻辑覆盖率 > 70%
-- **E2E 测试覆盖** — 8 文件 100+ 用例，Playwright 自动化测试
+- **单元测试覆盖** — 2548 tests（174 个测试文件），核心逻辑覆盖率 > 80%
+- **E2E 测试覆盖** — 9 文件 282 用例，Chromium + Firefox 双浏览器，Playwright 自动化
+- **无障碍（a11y）** — axe-core WCAG 2 AA 零 violations，全局焦点可见性
 - **错误边界恢复** — ErrorBoundary 异常 UI + safeAnimate 统一错误恢复
 - **路由懒加载** — React.lazy + Suspense，主 bundle 321 KB，23 个独立 chunk
-- **TypeScript 全栈** — 100% TypeScript 覆盖（.ts/.tsx）
+- **TypeScript 严格模式** — 100% TypeScript 覆盖，strict 模式（noImplicitAny + strictNullChecks + noUnused）
+- **CI/CD** — GitHub Actions 自动 lint + typecheck + build + coverage + E2E，Playwright 浏览器缓存
 
 ## 快速开始
 
@@ -78,6 +80,9 @@ npm run build
 # 运行代码检查
 npm run lint
 
+# TypeScript 类型检查
+npm run typecheck
+
 # 运行单元测试
 npm run test:run
 
@@ -86,6 +91,10 @@ npm run test:coverage
 
 # 构建分析
 npm run build:analyze
+
+# E2E 测试（需要 dev server 运行中）
+npm run dev &
+node e2e/run-all-tests.js
 ```
 
 ## 项目结构

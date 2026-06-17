@@ -36,7 +36,7 @@ export default function TreePage() {
     return (stored === 'curved' || stored === 'straight' || stored === 'orthogonal') ? stored as EdgeStyle : 'straight'
   })
   const learningMode = useLearningMode('tree')
-  useSharedData({ dataType: 'tree', loadData, validator: Array.isArray })
+  useSharedData({ dataType: 'tree', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
   usePageTracker('tree')
 
   useKeyboard({

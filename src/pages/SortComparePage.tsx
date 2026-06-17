@@ -225,7 +225,7 @@ export default function SortComparePage() {
       }
 
       try {
-        const result = await algorithm.execute(arr, animateFns, { current: svgRef }, dims, anim, callbacks)
+        const result = await algorithm.execute(arr, animateFns as any, { current: svgRef }, dims, anim, callbacks)
         if (result?.aborted) {
           setAlgoResults(prev => ({ ...prev, [key]: { ...(prev[key] || {}), done: true, progress: prev[key]?.progress || 0 } }))
           return
