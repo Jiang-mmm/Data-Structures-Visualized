@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const SCREENSHOT_DIR = join(__dirname, 'screenshots', 'quality-check');
 mkdirSync(SCREENSHOT_DIR, { recursive: true });
 
-const BASE_URL = 'http://localhost:3000/ds-visualizer/';
+const BASE_URL = 'http://localhost:3000/Data-Structures-Visualized/';
 const PAGE_TIMEOUT = 20000;
 const ACTION_DELAY = 250;
 

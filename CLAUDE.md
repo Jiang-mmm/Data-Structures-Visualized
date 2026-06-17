@@ -52,13 +52,14 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 
 ## Testing
 
-- **Unit tests:** Vitest + React Testing Library. 1133 tests across 86 files in `src/__tests__/`. Test files mirror source: `useArrayState.test.ts`, `arrayVisualizer.test.ts`, etc.
-- **Known failures:** 0 unit test failures. All 1133 pass.
+- **Unit tests:** Vitest + React Testing Library. 1274 tests across 87 files in `src/__tests__/`. Test files mirror source: `useArrayState.test.ts`, `arrayVisualizer.test.ts`, etc.
+- **Known failures:** 0 unit test failures. All 1274 pass.
 - **Test setup:** `src/__tests__/setup.js` (jsdom environment, jest-dom matchers, SVG mocks).
 - **E2E:** Playwright in `e2e/` directory. Run with `node e2e/run-all-tests.js` (requires dev server at `http://localhost:3000/Data-Structures-Visualized/`). Uses `domcontentloaded` wait strategy.
 - **Cross-browser:** E2E supports `BROWSER=firefox` env var. Run with `BROWSER=firefox node e2e/test-home.js`.
 - **Comprehensive suites:** `test-comprehensive.js` (all 11 data structures), `test-interactions.js` (cross-module), `test-persistence.js` (localStorage + boundaries). Run after core E2E.
 - **Screenshot assertions:** `verifyScreenshot()` helper in `test-helpers.js` checks file existence + 5KB minimum size.
+- **A11y testing:** `test-a11y.js` uses `@axe-core/playwright` to scan all 12 pages for WCAG 2 AA violations. Run with `node e2e/test-a11y.js` (requires dev server).
 
 ## Conventions
 

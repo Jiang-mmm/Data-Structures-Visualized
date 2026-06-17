@@ -2,6 +2,80 @@
 
 ---
 
+## 2026-06-17 | v7.0 Code Wiki 全面重构与优化迭代
+
+### 执行概要
+
+对项目进行全面系统审查，生成完整的 CODE_WIKI.md 文档（v7.0，1500 行），并基于审查结果执行 7 项优化迭代（5 项高优先级 + 2 项中优先级），全部验证通过。
+
+### 完成内容
+
+#### 1. CODE_WIKI.md 全面重构（v6.4 → v7.0）
+- **修改原因：** 旧版文档（v6.4, 2026-06-01）与当前代码状态存在偏差，且结构不够完整
+- **修改内容：** 基于 4 个并行子代理的全面审查结果，重写 12 章节文档：
+  - 项目概述与背景、整体架构设计、模块划分与职责
+  - 关键类与核心函数详解（animationEngine/validate/useHistory/useDataStructureState 等 API 表格）
+  - 依赖关系图、环境配置、构建运行步骤、测试策略
+  - 代码规范、常见问题、未来优化建议、文件路径索引
+- **验证方式：** 文档结构完整性检查
+
+#### 2. 修复 e2e/quality-check.mjs 的 BASE_URL 错误
+- **修改原因：** BASE_URL 为 `http://localhost:3000/ds-visualizer/`，与项目实际 base path `/Data-Structures-Visualized/` 不一致，导致脚本无法运行
+- **修改内容：** `e2e/quality-check.mjs` 第 10 行 BASE_URL 修正
+- **风险说明：** 无，仅修正字符串常量
+
+#### 3. .gitignore 排除测试产物
+- **修改原因：** `e2e/test-report.txt` 和 `quality-check-report.json` 被提交进仓库，属于测试产物
+- **修改内容：** `.gitignore` 新增 2 行排除规则
+- **风险说明：** 无
+
+#### 4. 调整 chunkSizeWarningLimit
+- **修改原因：** 原值 80 过于激进，与 check-bundle.js 预算（vendor-react 250KB）不一致，产生大量 chunk 警告噪音
+- **修改内容：** `vite.config.js` `chunkSizeWarningLimit: 80` → `250`
+- **风险说明：** 无，仅影响构建日志噪音级别
+
+#### 5. 添加 .nvmrc 与 engines 字段
+- **修改原因：** 无 Node 版本约束，本地可能与 CI 矩阵（20/22）不一致
+- **修改内容：** 新建 `.nvmrc`（内容 `20`）；`package.json` 新增 `engines.node: ">=20"`
+- **风险说明：** 无
+
+#### 6. deploy.yml 依赖 CI 通过
+- **修改原因：** 原 push 到 main 时 ci.yml 和 deploy.yml 并行触发，deploy 可能在测试失败时仍部署
+- **修改内容：** `.github/workflows/deploy.yml` 改为 `workflow_run` 触发（依赖 CI workflow 完成），合并为单 job，加 `if` 条件判断 CI 结论
+- **风险说明：** 部署延迟增加（需等 CI 完成）；手动部署仍可通过 `workflow_dispatch`
+
+#### 7. test-advanced.js 复用 test-helpers.js
+- **修改原因：** `test-advanced.js` 重复定义 `sleep`/`clickButtonIfEnabled`/`getVisibleInputs`，且版本较弱（无 `force: true`、无重试、无超时），可能导致 OperationGroup 动画期间点击失败
+- **修改内容：** `e2e/test-advanced.js` 删除 3 个重复函数定义，改为从 `test-helpers.js` 导入；保留特有的 `fillInputAndTrigger`
+- **风险说明：** 行为变化——`clickButtonIfEnabled` 现在用 `force: true` 且有 5s 超时重试，可能改变部分测试时序，但更健壮
+
+### 验证结果
+
+| 验证项 | 命令 | 结果 |
+|--------|------|------|
+| ESLint | `npm run lint` | ✅ 通过（exit 0） |
+| 单元测试 | `npm run test:run` | ✅ 87 文件，1274 测试，0 失败 |
+| 生产构建 | `npm run build` | ✅ 构建成功，bundle 检查通过 |
+
+### 未执行项（需用户确认）
+
+以下优化项因风险较高或属架构变更，未在本轮执行，已在 CODE_WIKI.md 第 11 章记录：
+
+1. **ESLint 覆盖 TypeScript 文件** — 需安装 `@typescript-eslint` 新依赖
+2. **启用 TypeScript 严格模式** — 可能引入大量类型错误，需逐步推进
+3. **统一 visualizer 清理策略** — 涉及核心可视化逻辑，需充分测试
+4. **综合测试三件套支持 firefox** — 需逐个文件修改浏览器启动逻辑
+5. **CI 增加覆盖率门槛** — 需配置覆盖率阈值
+6. **Sidebar 图标配置化** — 涉及 13 个图标的重构
+
+### 下一步建议
+
+1. 评估是否启用 TypeScript 严格模式（建议分阶段：先 `noUnusedLocals`，再 `strict`）
+2. 评估是否引入 `@typescript-eslint`（需权衡依赖体积与收益）
+3. 考虑统一 visualizer 的 `purgeSVG` 清理策略（提取到公共工具）
+
+---
+
 ## 2026-05-31 | v3.9 → v4.0 全面系统性评估与迭代
 
 ### 执行概要

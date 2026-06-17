@@ -20,6 +20,19 @@ async function runTest() {
     else results.failed.push(failMsg);
   }
 
+  // Read SIZE value from StatsOverlay (label and value in separate spans)
+  async function readSizeText() {
+    return page.evaluate(() => {
+      const spans = document.querySelectorAll('span');
+      for (const span of spans) {
+        if (span.textContent?.trim() === 'SIZE' && span.nextElementSibling) {
+          return `SIZE ${span.nextElementSibling.textContent?.trim()}`;
+        }
+      }
+      return 'SIZE ?';
+    });
+  }
+
   try {
     // =====================================================================
     // TEST 1: Theme Switching (light / dark / system)
@@ -243,7 +256,7 @@ async function runTest() {
     }
 
     // Check SIZE info to verify data exists
-    const sizeAfterInsert = await page.locator('text=/SIZE:/').first().textContent().catch(() => '');
+    const sizeAfterInsert = await readSizeText();
     console.log(`  After insert: ${sizeAfterInsert}`);
 
     // Press Ctrl+Z to undo
@@ -251,7 +264,7 @@ async function runTest() {
     await sleep(600);
     await closeModalIfOpen(page);
 
-    const sizeAfterUndo = await page.locator('text=/SIZE:/').first().textContent().catch(() => '');
+    const sizeAfterUndo = await readSizeText();
     console.log(`  After undo: ${sizeAfterUndo}`);
 
     // The undo should have changed the data (or at least not errored)
@@ -471,7 +484,7 @@ async function runTest() {
     }
 
     // Read array SIZE
-    const arraySize = await page.locator('text=/SIZE:/').first().textContent().catch(() => 'SIZE: ?');
+    const arraySize = await readSizeText();
     console.log(`  Array state: ${arraySize}`);
 
     // Navigate to stack page and add elements
@@ -495,7 +508,7 @@ async function runTest() {
     }
 
     // Read stack SIZE
-    const stackSize = await page.locator('text=/SIZE:/').first().textContent().catch(() => 'SIZE: ?');
+    const stackSize = await readSizeText();
     console.log(`  Stack state: ${stackSize}`);
 
     // Navigate back to array page - state should be preserved
@@ -503,7 +516,7 @@ async function runTest() {
     await sleep(800);
     await closeModalIfOpen(page);
 
-    const arraySizeAfter = await page.locator('text=/SIZE:/').first().textContent().catch(() => 'SIZE: ?');
+    const arraySizeAfter = await readSizeText();
     console.log(`  Array state after visiting stack: ${arraySizeAfter}`);
 
     await assert(
@@ -517,7 +530,7 @@ async function runTest() {
     await sleep(800);
     await closeModalIfOpen(page);
 
-    const stackSizeAfter = await page.locator('text=/SIZE:/').first().textContent().catch(() => 'SIZE: ?');
+    const stackSizeAfter = await readSizeText();
     console.log(`  Stack state after revisit: ${stackSizeAfter}`);
 
     await assert(

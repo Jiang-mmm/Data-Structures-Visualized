@@ -130,8 +130,19 @@ async function runTest() {
     await verifyScreenshot(path.join(SCREENSHOTS_DIR, 'edge-stack-full.png'));
 
     try {
-      const stackSizeAfter = await page.locator('text=/SIZE:/').first().textContent();
-      assert(stackSizeAfter.includes('SIZE: 10'), `Edge: 栈满后仍为10个 (当前: ${stackSizeAfter})`, 'Edge: 栈满后大小异常');
+      // StatsOverlay renders SIZE label and value in separate spans;
+      // use page.evaluate to extract the numeric value reliably.
+      const stackSizeNum = await page.evaluate(() => {
+        const spans = document.querySelectorAll('span');
+        for (const span of spans) {
+          if (span.textContent?.trim() === 'SIZE' && span.nextElementSibling) {
+            const m = span.nextElementSibling.textContent?.match(/(\d+)/);
+            if (m) return parseInt(m[1]);
+          }
+        }
+        return -1;
+      });
+      assert(stackSizeNum === 10, `Edge: 栈满后仍为10个 (当前: ${stackSizeNum})`, 'Edge: 栈满后大小异常');
     } catch { results.failed.push('Edge: 栈满后大小检查失败'); }
 
     // ==================== 数组满20个元素 ====================
@@ -147,7 +158,15 @@ async function runTest() {
     }
 
     await closeModalIfOpen(page);
-    const sizeInfo = await page.locator('text=/SIZE:/').first().textContent();
+    const sizeInfo = await page.evaluate(() => {
+      const spans = document.querySelectorAll('span');
+      for (const span of spans) {
+        if (span.textContent?.trim() === 'SIZE' && span.nextElementSibling) {
+          return `SIZE ${span.nextElementSibling.textContent?.trim()}`;
+        }
+      }
+      return 'SIZE ?';
+    });
     results.passed.push(`Edge: 数组多次随机生成后 ${sizeInfo}`);
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, 'edge-array-full.png'), fullPage: false });
     await verifyScreenshot(path.join(SCREENSHOTS_DIR, 'edge-array-full.png'));

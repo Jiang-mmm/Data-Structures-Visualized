@@ -1,40 +1,13 @@
 import { chromium, firefox } from 'playwright';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { verifyScreenshot } from './test-helpers.js';
+import { verifyScreenshot, sleep, clickButtonIfEnabled, getVisibleInputs } from './test-helpers.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BASE_URL = 'http://localhost:3000/Data-Structures-Visualized/';
 const SCREENSHOTS_DIR = path.join(__dirname, 'screenshots');
 
-async function sleep(ms) {
-  return new Promise(r => setTimeout(r, ms));
-}
-
-async function clickButtonIfEnabled(page, textRegex) {
-  const btn = page.locator('button').filter({ hasText: textRegex }).first();
-  const count = await btn.count();
-  if (count === 0) return false;
-  const isDisabled = await btn.isDisabled();
-  if (isDisabled) return false;
-  await btn.click({ timeout: 5000 });
-  return true;
-}
-
-async function getVisibleInputs(page) {
-  const allInputs = page.locator('input[type="number"], input[type="text"]');
-  const visible = [];
-  const count = await allInputs.count();
-  for (let i = 0; i < count; i++) {
-    const input = allInputs.nth(i);
-    const isHidden = await input.evaluate(el => {
-      return el.offsetParent === null || el.classList.contains('hidden') || el.type === 'file' || el.closest('.hidden');
-    });
-    if (!isHidden) visible.push(input);
-  }
-  return visible;
-}
-
+// test-advanced.js 特有的输入填充函数（使用 fill 而非 pressSequentially）
 async function fillInputAndTrigger(page, input, value) {
   await input.click({ clickCount: 3 });
   await input.fill(value);

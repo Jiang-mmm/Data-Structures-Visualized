@@ -31,5 +31,7 @@ dist-ssr
 coverage/
 e2e/screenshots/
 e2e/check-*.png
+e2e/test-report.txt
+e2e/quality-check-report.json
 test-output.txt
 .trae/

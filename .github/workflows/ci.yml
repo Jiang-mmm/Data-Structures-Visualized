@@ -34,3 +34,22 @@ jobs:
 
       - name: Run unit tests
         run: npm run test:run
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Start dev server
+        run: npm run dev &
+        env:
+          BROWSER: none
+
+      - name: Wait for dev server
+        run: npx wait-on http://localhost:3000/Data-Structures-Visualized/ --timeout 30000
+
+      - name: Run E2E tests (core)
+        run: node e2e/test-core.js
+        timeout-minutes: 10
+
+      - name: Run E2E tests (comprehensive)
+        run: node e2e/test-comprehensive.js
+        timeout-minutes: 10

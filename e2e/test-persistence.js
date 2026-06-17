@@ -35,14 +35,28 @@ async function runTest() {
 
   async function getSizeValue(timeout = 3000) {
     try {
-      const text = await page.locator('text=/SIZE:/').first().textContent({ timeout });
-      const m = text.match(/SIZE:\s*(\d+)/);
-      return m ? parseInt(m[1]) : -1;
+      // StatsOverlay renders "SIZE" label and value in separate <span> siblings.
+      // Find the label span, then get the value from its sibling span.
+      const value = await page.evaluate(() => {
+        const spans = document.querySelectorAll('span');
+        for (const span of spans) {
+          if (span.textContent?.trim() === 'SIZE' && span.nextElementSibling) {
+            const m = span.nextElementSibling.textContent?.match(/(\d+)/);
+            if (m) return parseInt(m[1]);
+          }
+        }
+        // Fallback: search all text for "SIZE" followed by a number
+        const allText = document.body?.textContent || '';
+        const m2 = allText.match(/SIZE\s*(\d+)/);
+        return m2 ? parseInt(m2[1]) : -1;
+      });
+      return typeof value === 'number' ? value : -1;
     } catch { return -1; }
   }
 
   async function getInfoValue(pattern, timeout = 3000) {
     try {
+      // Tree/Hash/Trie use inline text like "NODES: 7" (with colon).
       const text = await page.locator(`text=/${pattern}/`).first().textContent({ timeout });
       const m = text.match(new RegExp(`${pattern}\\s*(\\d+)`));
       return m ? parseInt(m[1]) : -1;
@@ -745,7 +759,7 @@ async function runTest() {
     }
 
     // Check page is still functional
-    const arrayPageOk = await page.locator('text=/SIZE:/').count() > 0;
+    const arrayPageOk = await page.locator('text=/SIZE/').count() > 0;
     await assert(arrayPageOk, 'Array: 快速连续插入后页面正常', 'Array: 快速连续插入后页面异常');
 
     // Check size is reasonable (should not have duplicated all 5 times due to animation guard)
