@@ -2,7 +2,7 @@
 
 > 基于 2026-06-17 全面审查结果制定，覆盖 E2E 加固、功能扩展、工程质量、体验优化、文档发布五大方向。
 >
-> **当前基线：** 1274 单元测试 / 87 文件 / Lint 零警告 / 构建 611ms / index 80KB / TypeScript 100% / axe-core 零 violations
+> **当前基线：** 2548 单元测试 / 174 文件 / Lint 零警告 / 构建 611ms / index 80KB / TypeScript strictNullChecks+noImplicitAny / axe-core 零 violations
 
 ## 进度跟踪
 
@@ -12,8 +12,8 @@
 | B. CI/CD 完善 | ✅ 完成 | 2026-06-17 | `a5e8894` |
 | C1. noUnusedLocals/Parameters | ✅ 完成 | 2026-06-17 | `f552f61` |
 | C2. noImplicitAny | ✅ 完成 | 2026-06-17 | `c352731` |
-| C3. strictNullChecks | ⬜ 待开始 | | |
-| C4. strict | ⬜ 待开始 | | |
+| C3. strictNullChecks | ✅ 完成 | 2026-06-17 | `73208e2` |
+| C4. strict | ⬜ 待开始（需修复 119 个额外错误） | | |
 | D. 功能扩展 | ⬜ 待开始 | | |
 | E. 体验优化 | ⬜ 待开始 | | |
 | F. 文档发布 | ⬜ 待开始 | | |
