@@ -158,7 +158,7 @@ export default function HashPage() {
 
       <Visualizer
         data={data}
-        renderFn={(svg: SVGSVGElement, d: unknown, dims: { width: number; height: number }) => renderHash(svg, d as Parameters<typeof renderHash>[1], { ...dims, hashFn: hashFn as any })}
+        renderFn={(svg: SVGSVGElement, d: unknown, dims: { width: number; height: number }) => renderHash(svg, d as Parameters<typeof renderHash>[1], { ...dims, hashFn: hashFn as (key: string | number) => number })}
         svgRef={svgRef}
         dimensions={dimensions}
         containerRef={containerRef}
