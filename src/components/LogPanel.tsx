@@ -15,7 +15,7 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
 
   const toggleCollapsed = useCallback(() => setCollapsed(c => !c), [])
 
-  const typeConfig = useMemo(() => ({
+  const typeConfig: Record<string, { color: string; bg: string; border: string; labelKey: string }> = useMemo(() => ({
     oper: { color: 'text-accent-blue', bg: 'bg-accent-blue/10', border: 'border-accent-blue/30', labelKey: 'logPanel.type.oper' },
     info: { color: 'text-accent-emerald', bg: 'bg-accent-emerald/10', border: 'border-accent-emerald/30', labelKey: 'logPanel.type.info' },
     error: { color: 'text-accent-rose', bg: 'bg-accent-rose/10', border: 'border-accent-rose/30', labelKey: 'logPanel.type.error' },

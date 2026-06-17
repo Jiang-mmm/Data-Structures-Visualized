@@ -95,7 +95,7 @@ describe('useSharedData', () => {
   })
 
   it('应该支持对象类型数据', () => {
-    const data = { nodes: [{ id: 'A', label: 'A' }], links: [] }
+    const data = { nodes: [{ id: 'A', label: 'A' }], links: [] as Array<{ source: string; target: string }> }
     const encoded = encodeData(data)!
     setSearch(`?data=${encoded}&type=graph`)
     const loadData = vi.fn()

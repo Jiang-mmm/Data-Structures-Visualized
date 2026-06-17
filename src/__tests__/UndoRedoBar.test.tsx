@@ -12,8 +12,8 @@ describe('UndoRedoBar', () => {
     canRedo: true,
     undo: vi.fn(),
     redo: vi.fn(),
-    getUndoPreview: () => null,
-    getRedoPreview: () => null,
+    getUndoPreview: (): null => null,
+    getRedoPreview: (): null => null,
     isAnimating: false,
   }
 

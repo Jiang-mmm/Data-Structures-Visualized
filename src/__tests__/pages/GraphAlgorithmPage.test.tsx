@@ -16,7 +16,7 @@ vi.mock('../../hooks/useVisualizer', () => ({
   }),
 }))
 vi.mock('../../components/Visualizer', () => ({
-  default: () => null,
+  default: (): null => null,
 }))
 vi.mock('../../visualizers/graphVisualizer', () => ({
   renderGraph: vi.fn(),
@@ -58,10 +58,10 @@ vi.mock('../../algorithms/graph', () => ({
   ],
 }))
 vi.mock('../../components/ComplexityChart', () => ({
-  default: () => null,
+  default: (): null => null,
 }))
 vi.mock('../../components/StepExplainer', () => ({
-  default: () => null,
+  default: (): null => null,
 }))
 
 import { useGlobalSettings } from '../../hooks/useGlobalSettings'

@@ -21,7 +21,7 @@ vi.mock('../../hooks/useLearningMode', () => ({
   }),
 }))
 vi.mock('../../components/Visualizer', () => ({
-  default: () => null,
+  default: (): null => null,
 }))
 
 import { useTreeState } from '../../hooks/useTreeState'

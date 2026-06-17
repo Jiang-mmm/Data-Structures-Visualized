@@ -6,8 +6,8 @@ function chainable() {
   const c = new Proxy(m, {
     get(t, p) {
       if (p === 'empty') return () => true
-      if (p === 'nodes') return () => []
-      if (p === 'node') return () => null
+      if (p === 'nodes') return (): unknown[] => []
+      if (p === 'node') return (): null => null
       if (p === 'size') return () => 0
       if (p === 'text') return () => c
       if (p === 'attr') return () => c

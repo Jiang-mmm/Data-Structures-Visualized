@@ -7,8 +7,8 @@ export function createD3SelectionMock() {
   const chainable = new Proxy(mock, {
     get(target, prop: string | symbol) {
       if (prop === 'empty') return () => true
-      if (prop === 'nodes') return () => []
-      if (prop === 'node') return () => null
+      if (prop === 'nodes') return (): unknown[] => []
+      if (prop === 'node') return (): null => null
       if (prop === 'size') return () => 0
       if (prop === 'text') return () => chainable
       if (prop === 'attr') return () => chainable

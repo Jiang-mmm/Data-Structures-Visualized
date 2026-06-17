@@ -33,10 +33,10 @@ vi.mock('../../utils/dataExport', () => ({
   exportPerformanceJSON: vi.fn(),
 }))
 vi.mock('../../components/PerformanceChart', () => ({
-  default: () => null,
+  default: (): null => null,
 }))
 vi.mock('../../components/ComplexityChart', () => ({
-  default: () => null,
+  default: (): null => null,
 }))
 
 import { useGlobalSettings } from '../../hooks/useGlobalSettings'

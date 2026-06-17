@@ -222,7 +222,7 @@ describe('animationEngine.ts', () => {
     })
 
     it('should handle null result', () => {
-      const result = measureRender('nullFn', () => null)
+      const result = measureRender('nullFn', (): null => null)
       expect(result).toBeNull()
     })
   })

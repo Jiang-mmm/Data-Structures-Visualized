@@ -11,7 +11,7 @@ const mockAnimFns = {
   renderSortBars: vi.fn()
 }
 
-const mockSvgRef = { current: null }
+const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
 const mockDimensions = { width: 800, height: 400 }
 const mockAnim = { promise: Promise.resolve(), abort: vi.fn(), isAborted: vi.fn().mockReturnValue(false), resolve: vi.fn(), reject: vi.fn() }
 

@@ -97,7 +97,7 @@ describe('useSortState', () => {
         animateSorted: vi.fn().mockResolvedValue(undefined),
         renderSortBars: vi.fn()
       }
-      const mockSvgRef = { current: null }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
       const mockDimensions = { width: 800, height: 400 }
       const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
@@ -116,7 +116,7 @@ describe('useSortState', () => {
         animateSorted: vi.fn().mockResolvedValue(undefined),
         renderSortBars: vi.fn()
       }
-      const mockSvgRef = { current: null }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
       const mockDimensions = { width: 800, height: 400 }
       const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
@@ -137,7 +137,7 @@ describe('useSortState', () => {
         animateSorted: vi.fn().mockResolvedValue(undefined),
         renderSortBars: vi.fn()
       }
-      const mockSvgRef = { current: null }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
       const mockDimensions = { width: 800, height: 400 }
       const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
@@ -170,7 +170,7 @@ describe('useSortState', () => {
     it('应该对未知算法显示错误', async () => {
       const { result } = renderHook(() => useSortState())
       await act(async () => {
-        await result.current.runAlgorithm('unknown', { animateCompare: vi.fn(), animateSwap: vi.fn(), animateSorted: vi.fn(), renderSortBars: vi.fn() }, { current: null }, { width: 800, height: 400 }, { isAborted: () => false, abort: () => {} })
+        await result.current.runAlgorithm('unknown', { animateCompare: vi.fn(), animateSwap: vi.fn(), animateSorted: vi.fn(), renderSortBars: vi.fn() }, { current: null } as { current: SVGSVGElement | null }, { width: 800, height: 400 }, { isAborted: () => false, abort: () => {} })
       })
       expect(showToast).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'error', message: '未知算法: unknown' })
@@ -185,7 +185,7 @@ describe('useSortState', () => {
         animateSorted: vi.fn().mockResolvedValue(undefined),
         renderSortBars: vi.fn()
       }
-      const mockSvgRef = { current: null }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
       const mockDimensions = { width: 800, height: 400 }
       const mockAnim = { isAborted: vi.fn().mockReturnValue(true), abort: vi.fn() }
 
@@ -204,7 +204,7 @@ describe('useSortState', () => {
         animateSorted: vi.fn().mockResolvedValue(undefined),
         renderSortBars: vi.fn()
       }
-      const mockSvgRef = { current: null }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
       const mockDimensions = { width: 800, height: 400 }
       const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
@@ -225,7 +225,7 @@ describe('useSortState', () => {
         animateSorted: vi.fn().mockResolvedValue(undefined),
         renderSortBars: vi.fn()
       }
-      const mockSvgRef = { current: null }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
       const mockDimensions = { width: 800, height: 400 }
       const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
@@ -246,7 +246,7 @@ describe('useSortState', () => {
         animateSorted: vi.fn().mockResolvedValue(undefined),
         renderSortBars: vi.fn()
       }
-      const mockSvgRef = { current: null }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
       const mockDimensions = { width: 800, height: 400 }
       const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
@@ -267,7 +267,7 @@ describe('useSortState', () => {
         animateSorted: vi.fn().mockResolvedValue(undefined),
         renderSortBars: vi.fn()
       }
-      const mockSvgRef = { current: null }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
       const mockDimensions = { width: 800, height: 400 }
       const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
@@ -288,7 +288,7 @@ describe('useSortState', () => {
         animateSorted: vi.fn().mockResolvedValue(undefined),
         renderSortBars: vi.fn()
       }
-      const mockSvgRef = { current: null }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
       const mockDimensions = { width: 800, height: 400 }
       const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
@@ -309,7 +309,7 @@ describe('useSortState', () => {
         animateSorted: vi.fn().mockResolvedValue(undefined),
         renderSortBars: vi.fn()
       }
-      const mockSvgRef = { current: null }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
       const mockDimensions = { width: 800, height: 400 }
       const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 
@@ -330,7 +330,7 @@ describe('useSortState', () => {
         animateSorted: vi.fn().mockResolvedValue(undefined),
         renderSortBars: vi.fn()
       }
-      const mockSvgRef = { current: null }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
       const mockDimensions = { width: 800, height: 400 }
       const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
 

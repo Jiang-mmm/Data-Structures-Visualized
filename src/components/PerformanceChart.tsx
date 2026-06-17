@@ -29,7 +29,7 @@ function PerformanceChart({ results }: PerformanceChartProps) {
     }
   }, [])
 
-  const labels = useMemo(() => ({
+  const labels: Record<string, string> = useMemo(() => ({
     comparisons: t('performanceChart.comparisons'),
     swaps: t('performanceChart.swaps'),
     steps: t('performanceChart.steps'),

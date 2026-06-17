@@ -5,8 +5,8 @@ function chainable() {
   const c = new Proxy(m, {
     get(t, p) {
       if (p === 'empty') return () => true
-      if (p === 'nodes') return () => []
-      if (p === 'node') return () => null
+      if (p === 'nodes') return (): unknown[] => []
+      if (p === 'node') return (): null => null
       if (p === 'size') return () => 0
       if (p === 'text') return () => c
       if (p === 'attr') return () => c
@@ -66,8 +66,8 @@ const trieData = {
 }
 
 const singleNodeTrie = {
-  nodes: [{ id: '1', prefix: 'a', char: 'a', isEndOfWord: true, parent: '', depth: 1, childrenKeys: [] }],
-  edges: [],
+  nodes: [{ id: '1', prefix: 'a', char: 'a', isEndOfWord: true, parent: '', depth: 1, childrenKeys: [] as string[] }],
+  edges: [] as Array<{ from: string; to: string; char: string }>,
 }
 
 describe('trieVisualizer', () => {
@@ -114,7 +114,7 @@ describe('trieVisualizer', () => {
     it('应该处理大数据集', () => {
       const bigNodes = Array.from({ length: 50 }, (_, i) => ({
         id: String(i), prefix: `p${i}`, char: String.fromCharCode(97 + (i % 26)),
-        isEndOfWord: i % 5 === 0, parent: i > 0 ? `p${i - 1}` : '', depth: i + 1, childrenKeys: [],
+        isEndOfWord: i % 5 === 0, parent: i > 0 ? `p${i - 1}` : '', depth: i + 1, childrenKeys: [] as string[],
       }))
       const bigEdges = Array.from({ length: 49 }, (_, i) => ({
         from: String(i), to: String(i + 1), char: String.fromCharCode(97 + ((i + 1) % 26)),

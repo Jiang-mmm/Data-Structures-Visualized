@@ -10,7 +10,7 @@ vi.mock('../../hooks/useKeyboard', () => ({
   useKeyboard: vi.fn(),
 }))
 vi.mock('../../components/Visualizer', () => ({
-  default: () => null,
+  default: (): null => null,
 }))
 
 import { useQueueState } from '../../hooks/useQueueState'
