@@ -4,6 +4,31 @@
 
 ---
 
+## [v8.0.0] - 2026-06-17
+
+### TypeScript 严格模式
+- 启用 `strict: true`（strictFunctionTypes、strictNullChecks、noImplicitAny 等）
+- 启用 `noUnusedLocals` + `noUnusedParameters`
+- 修复 300+ 个类型错误，261 个测试文件、3822 个测试全部通过
+- 新增 `npm run typecheck` 脚本（tsc --noEmit）
+
+### E2E 测试加固
+- test-interactions/test-persistence/test-a11y 支持 Firefox（BROWSER 环境变量）
+- test-a11y.js 纳入 run-all-tests.js
+- 删除过时的 test-v65-full.js
+- test-persistence.js sleep 优化（运行时间从 10+ 分钟降至 ~5 分钟/浏览器）
+- 双浏览器 E2E 全套：282 测试 / 98.2% 通过率
+
+### CI/CD 完善
+- CI 添加 Typecheck 步骤、覆盖率收集、Playwright 浏览器缓存
+- deploy.yml 改为 workflow_run 触发（依赖 CI 完成）
+
+### 测试扩展
+- 单元测试从 1274 → 3822（87 → 261 文件）
+- axe-core WCAG 2 AA 零 violations
+
+---
+
 ## [v6.4.0] - 2026-06-01
 
 ### 重构
