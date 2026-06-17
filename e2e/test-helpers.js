@@ -92,7 +92,9 @@ export async function getVisibleInputs(page) {
 }
 
 export async function fillInput(page, input, value) {
-  await input.fill(value);
+  await input.click();
+  await input.clear();
+  await input.pressSequentially(String(value), { delay: 30 });
   await input.press('Tab');
   await sleep(200);
 }
