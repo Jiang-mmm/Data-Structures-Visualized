@@ -155,6 +155,18 @@ npm run lint                 # 代码规范检查
 | 阶段 3：工程品质 | ✅ 完成 | 4/4 |
 | 阶段 4：文档清理 | ✅ 完成 | 4/4 |
 
-### 已知问题（非阻塞）
-- **test-persistence.js SIZE 读取**：`text=/SIZE:/` locator 在 chromium 和 Firefox 下均返回 -1，导致 persistence 测试在两个浏览器下都有失败。属于测试 locator 兼容性问题，非功能缺陷。
-- **index.js 超预算**：93KB vs 80KB 限制，需进一步代码分割或调整预算。
+### 已知问题（已解决）
+- ~~test-persistence.js SIZE 读取~~：已在 2026-06-17 修复，改用 `page.evaluate()` DOM 遍历
+- ~~index.js 超预算~~：实际 82016 bytes = 80.09KB（1024 进制），round 为 80，未超预算
+
+---
+
+## 后续迭代计划
+
+详见 [`docs/iteration-plan-v8.md`](iteration-plan-v8.md)，涵盖 6 个 Phase：
+- Phase A: E2E 测试最终加固（P0）
+- Phase B: CI/CD 完善（P1）
+- Phase C: TypeScript 严格化（P1）
+- Phase D: 功能扩展（P2）
+- Phase E: 体验与性能优化（P2）
+- Phase F: 文档与发布（P3）

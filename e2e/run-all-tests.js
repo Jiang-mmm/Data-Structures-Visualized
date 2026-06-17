@@ -16,6 +16,7 @@ const comprehensiveTestFiles = [
   'test-comprehensive.js',
   'test-interactions.js',
   'test-persistence.js',
+  'test-a11y.js',
 ];
 
 function runTest(file, browser) {

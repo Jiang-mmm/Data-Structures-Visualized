@@ -1,4 +1,4 @@
-import { chromium } from 'playwright';
+import { chromium, firefox } from 'playwright';
 import path from 'path';
 import { sleep, clickButtonIfEnabled, closeModalIfOpen, getVisibleInputs, fillInput, SCREENSHOTS_DIR } from './test-helpers.js';
 
@@ -6,7 +6,9 @@ const BASE_URL = 'http://localhost:3000/Data-Structures-Visualized/';
 
 async function runTest() {
   const results = { name: '持久化与边界条件综合测试', passed: [], failed: [] };
-  const browser = await chromium.launch();
+  const browserType = process.env.BROWSER || 'chromium';
+  const launchBrowser = browserType === 'firefox' ? firefox : chromium;
+  const browser = await launchBrowser.launch();
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
   const page = await context.newPage();
 
@@ -26,10 +28,10 @@ async function runTest() {
   // Helper: navigate to page, clear localStorage for that DS, reload to get fresh default data
   async function clearAndReload(pagePath, storageKey) {
     await page.goto(BASE_URL + pagePath, { waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(600);
+    await sleep(400);
     await page.evaluate((key) => { localStorage.removeItem(`ds-visualizer-data-${key}`); }, storageKey);
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(1000);
+    await sleep(600);
     await closeModalIfOpen(page);
   }
 
@@ -74,7 +76,7 @@ async function runTest() {
     await sleep(300);
     await closeModalIfOpen(page);
     const clicked = await clickButtonIfEnabled(page, /按位插/);
-    if (clicked) await sleep(2000);
+    if (clicked) await sleep(1000);
     await closeModalIfOpen(page);
   }
 
@@ -86,7 +88,7 @@ async function runTest() {
     await sleep(300);
     await closeModalIfOpen(page);
     const clicked = await clickButtonIfEnabled(page, /入栈/);
-    if (clicked) await sleep(1500);
+    if (clicked) await sleep(800);
     await closeModalIfOpen(page);
   }
 
@@ -98,7 +100,7 @@ async function runTest() {
     await sleep(300);
     await closeModalIfOpen(page);
     const clicked = await clickButtonIfEnabled(page, /入队/);
-    if (clicked) await sleep(1500);
+    if (clicked) await sleep(800);
     await closeModalIfOpen(page);
   }
 
@@ -126,7 +128,7 @@ async function runTest() {
 
     // Reload and verify data persists
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(1200);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const arrSizeAfterReload = await getSizeValue();
@@ -147,7 +149,7 @@ async function runTest() {
     const stackSizeAfterPush = await getSizeValue();
 
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(1200);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const stackSizeAfterReload = await getSizeValue();
@@ -168,7 +170,7 @@ async function runTest() {
     const queueSizeAfterEnqueue = await getSizeValue();
 
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(1200);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const queueSizeAfterReload = await getSizeValue();
@@ -189,7 +191,7 @@ async function runTest() {
     await sleep(300);
     await closeModalIfOpen(page);
     await clickButtonIfEnabled(page, /头插/);
-    await sleep(1500);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const llStoredBefore = await page.evaluate(() => {
@@ -199,7 +201,7 @@ async function runTest() {
     await assert(Array.isArray(llStoredBefore) && llStoredBefore[0] === 77, `LinkedList: localStorage 头部为77`, 'LinkedList: localStorage 头部数据异常');
 
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(1200);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const llStoredAfter = await page.evaluate(() => {
@@ -219,14 +221,14 @@ async function runTest() {
     await sleep(300);
     await closeModalIfOpen(page);
     await clickButtonIfEnabled(page, /插入/);
-    await sleep(1500);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const treeNodesAfter = await getInfoValue('NODES:');
     await assert(treeNodesAfter > treeInitialNodes, `Tree: 插入后 NODES=${treeNodesAfter} > ${treeInitialNodes}`, 'Tree: 插入后节点数未增加');
 
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(1200);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const treeNodesReload = await getInfoValue('NODES:');
@@ -244,13 +246,13 @@ async function runTest() {
     await sleep(300);
     await closeModalIfOpen(page);
     await clickButtonIfEnabled(page, /插入/);
-    await sleep(1500);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const hashEntriesAfter = await getInfoValue('ENTRIES:');
 
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(1200);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const hashEntriesReload = await getInfoValue('ENTRIES:');
@@ -267,14 +269,14 @@ async function runTest() {
     await sleep(300);
     await closeModalIfOpen(page);
     await clickButtonIfEnabled(page, /插入/);
-    await sleep(1500);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const heapSizeAfter = await getSizeValue();
     await assert(heapSizeAfter > heapInitialSize, `Heap: 插入后 SIZE=${heapSizeAfter} > ${heapInitialSize}`, 'Heap: 插入后 SIZE 未增加');
 
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(1200);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const heapSizeReload = await getSizeValue();
@@ -312,7 +314,7 @@ async function runTest() {
 
     // Reload to pick up the new data
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(1200);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const trieWordsAfter = await getInfoValue('WORDS:');
@@ -320,7 +322,7 @@ async function runTest() {
 
     // Reload again to verify persistence
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(1200);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const trieWordsReload = await getInfoValue('WORDS:');
@@ -356,7 +358,7 @@ async function runTest() {
     for (let i = 0; i < 3; i++) {
       await closeModalIfOpen(page);
       await clickButtonIfEnabled(page, /撤销/);
-      await sleep(2000);
+      await sleep(1000);
       await closeModalIfOpen(page);
       const s = await getSizeValue();
       sizes.push(s);
@@ -369,7 +371,7 @@ async function runTest() {
     for (let i = 0; i < 2; i++) {
       await closeModalIfOpen(page);
       await clickButtonIfEnabled(page, /重做/);
-      await sleep(2000);
+      await sleep(1000);
       await closeModalIfOpen(page);
     }
 
@@ -384,7 +386,7 @@ async function runTest() {
       const disabled = await undoBtn.isDisabled().catch(() => true);
       if (disabled) break;
       await undoBtn.click();
-      await sleep(1500);
+      await sleep(800);
       await closeModalIfOpen(page);
     }
 
@@ -506,7 +508,7 @@ async function runTest() {
       await sleep(300);
       await closeModalIfOpen(page);
       await clickButtonIfEnabled(page, /尾插/);
-      await sleep(1200);
+      await sleep(600);
       await closeModalIfOpen(page);
     }
 
@@ -539,7 +541,7 @@ async function runTest() {
       await sleep(300);
       await closeModalIfOpen(page);
       await clickButtonIfEnabled(page, /插入/);
-      await sleep(1500);
+      await sleep(800);
       await closeModalIfOpen(page);
     }
 
@@ -573,7 +575,7 @@ async function runTest() {
       await sleep(300);
       await closeModalIfOpen(page);
       await clickButtonIfEnabled(page, /插入/);
-      await sleep(1500);
+      await sleep(800);
       await closeModalIfOpen(page);
     }
 
@@ -631,7 +633,7 @@ async function runTest() {
 
     // Reload to pick up the new data
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });
-    await sleep(1200);
+    await sleep(800);
     await closeModalIfOpen(page);
 
     const trieWordCount = await getInfoValue('WORDS:');
@@ -691,7 +693,7 @@ async function runTest() {
         if (!isDisabled) await bubbleBtn.click({ timeout: 2000 });
       } catch {}
     }
-    await sleep(5000);
+    await sleep(3000);
     await closeModalIfOpen(page);
 
     // Check no crash - page should still be functional
@@ -783,7 +785,7 @@ async function runTest() {
     await sleep(300);
     await closeModalIfOpen(page);
     await clickButtonIfEnabled(page, /插入/);
-    await sleep(2000);
+    await sleep(1000);
     await closeModalIfOpen(page);
 
     // Trigger traversal animation (preorder) and immediately check button states

@@ -1,4 +1,4 @@
-import { chromium } from 'playwright';
+import { chromium, firefox } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 
 const BASE_URL = 'http://localhost:3000/Data-Structures-Visualized/';
@@ -19,7 +19,9 @@ const PAGES = [
 ];
 
 async function runA11yTests() {
-  const browser = await chromium.launch({ headless: true });
+  const browserType = process.env.BROWSER || 'chromium';
+  const launchBrowser = browserType === 'firefox' ? firefox : chromium;
+  const browser = await launchBrowser.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
 
