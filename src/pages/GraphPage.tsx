@@ -40,7 +40,7 @@ export default function GraphPage() {
   const [algorithmEnd, setAlgorithmEnd] = useState<string>('F')
   const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('graph')
-  useSharedData({ dataType: 'graph', loadData, validator: (d) => d && typeof d === 'object' && 'nodes' in d && 'links' in d && Array.isArray((d as Record<string, unknown>).nodes) && Array.isArray((d as Record<string, unknown>).links) })
+  useSharedData({ dataType: 'graph', loadData, validator: (d): d is unknown => !!(d && typeof d === 'object' && 'nodes' in d && 'links' in d && Array.isArray((d as Record<string, unknown>).nodes) && Array.isArray((d as Record<string, unknown>).links)) })
   usePageTracker('graph')
 
   useKeyboard({

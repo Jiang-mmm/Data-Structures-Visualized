@@ -64,7 +64,7 @@ describe('useTrieState', () => {
     it('应该过滤掉非字母字符', () => {
       const { result } = renderHook(() => useTrieState())
       act(() => { result.current.insert('test123') })
-      let searchResult: { found: boolean; path?: string[] }
+      let searchResult: { found: boolean; path?: string[] } = null as any
       act(() => { searchResult = result.current.search('test') })
       expect(searchResult.found).toBe(true)
     })
@@ -72,7 +72,7 @@ describe('useTrieState', () => {
     it('应该转换为小写存储', () => {
       const { result } = renderHook(() => useTrieState())
       act(() => { result.current.insert('HELLO') })
-      let searchResult: { found: boolean; path?: string[] }
+      let searchResult: { found: boolean; path?: string[] } = null as any
       act(() => { searchResult = result.current.search('hello') })
       expect(searchResult.found).toBe(true)
     })
@@ -124,21 +124,21 @@ describe('useTrieState', () => {
   describe('search 操作', () => {
     it('应该找到存在的单词', () => {
       const { result } = renderHook(() => useTrieState())
-      let searchResult: { found: boolean; path?: string[] }
+      let searchResult: { found: boolean; path?: string[] } = null as any
       act(() => { searchResult = result.current.search('cat') })
       expect(searchResult.found).toBe(true)
     })
 
     it('应该返回未找到对于不存在的单词', () => {
       const { result } = renderHook(() => useTrieState())
-      let searchResult: { found: boolean; path?: string[] }
+      let searchResult: { found: boolean; path?: string[] } = null as any
       act(() => { searchResult = result.current.search('bird') })
       expect(searchResult.found).toBe(false)
     })
 
     it('应该区分完整单词和前缀', () => {
       const { result } = renderHook(() => useTrieState())
-      let carResult: { found: boolean; path?: string[] }
+      let carResult: { found: boolean; path?: string[] } = null as any
       act(() => { carResult = result.current.search('car') })
       expect(carResult.found).toBe(true)
     })
@@ -160,7 +160,7 @@ describe('useTrieState', () => {
   describe('searchPrefix 操作', () => {
     it('应该找到前缀匹配的单词', () => {
       const { result } = renderHook(() => useTrieState())
-      let prefixResult: { found: boolean; words: string[] }
+      let prefixResult: { found: boolean; words: string[] } = null as any
       act(() => { prefixResult = result.current.searchPrefix('ca') })
       expect(prefixResult.found).toBe(true)
       expect(prefixResult.words).toContain('cat')
@@ -170,7 +170,7 @@ describe('useTrieState', () => {
 
     it('应该返回所有匹配单词', () => {
       const { result } = renderHook(() => useTrieState())
-      let prefixResult: { found: boolean; words: string[] }
+      let prefixResult: { found: boolean; words: string[] } = null as any
       act(() => { prefixResult = result.current.searchPrefix('d') })
       expect(prefixResult.words).toContain('dog')
       expect(prefixResult.words).toContain('dot')
@@ -178,7 +178,7 @@ describe('useTrieState', () => {
 
     it('应该返回空数组对于无前缀匹配', () => {
       const { result } = renderHook(() => useTrieState())
-      let prefixResult: { found: boolean; words: string[] }
+      let prefixResult: { found: boolean; words: string[] } = null as any
       act(() => { prefixResult = result.current.searchPrefix('xyz') })
       expect(prefixResult.found).toBe(false)
       expect(prefixResult.words).toEqual([])

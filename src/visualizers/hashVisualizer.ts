@@ -33,7 +33,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
 
   if (!data || data.length === 0) {
     container.append('text')
-      .attr('x', width / 2).attr('y', height / 2)
+      .attr('x', width! / 2).attr('y', height! / 2)
       .attr('text-anchor', 'middle').attr('fill', C.textMuted)
       .attr('font-size', '14px').text(tStatic('emptyState.emptyHashShort'))
     return
@@ -57,7 +57,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
   const startY = 50
   const groupWidth = BUCKET_WIDTH
   const totalWidth = bucketCount * groupWidth + (bucketCount - 1) * BUCKET_GROUP_GAP
-  const offsetX = Math.max(20, (width - totalWidth) / 2)
+  const offsetX = Math.max(20, (width! - totalWidth) / 2)
 
   if (container.select('defs #hash-arrow').empty()) {
     const defsEl = container.select('defs')

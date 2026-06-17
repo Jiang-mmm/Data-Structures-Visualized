@@ -73,7 +73,7 @@ describe('useHashState', () => {
   describe('insert 操作', () => {
     it('应该插入新的键值对', () => {
       const { result } = renderHook(() => useHashState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insert(7, 'Test') })
       expect(success).toBe(true)
       expect(result.current.entryCount).toBe(5)
@@ -82,7 +82,7 @@ describe('useHashState', () => {
 
     it('应该更新已存在的键的值', () => {
       const { result } = renderHook(() => useHashState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insert(12, 'Updated') })
       expect(success).toBe(true)
       const entry = result.current.data.find((e: { key: number; value: string }) => e.key === 12)
@@ -92,7 +92,7 @@ describe('useHashState', () => {
 
     it('应该拒绝无效键（非数字）', () => {
       const { result } = renderHook(() => useHashState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insert('abc', 'Test') })
       expect(success).toBe(false)
       expect(result.current.entryCount).toBe(4)
@@ -100,7 +100,7 @@ describe('useHashState', () => {
 
     it('应该拒绝超出范围的键（0 和 100）', () => {
       const { result } = renderHook(() => useHashState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insert(0, 'Test') })
       expect(success).toBe(false)
       act(() => { success = result.current.insert(100, 'Test') })
@@ -110,7 +110,7 @@ describe('useHashState', () => {
 
     it('应该接受边界值键 1 和 99', () => {
       const { result } = renderHook(() => useHashState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insert(1, 'One') })
       expect(success).toBe(true)
       act(() => { success = result.current.insert(99, 'NinetyNine') })
@@ -129,7 +129,7 @@ describe('useHashState', () => {
   describe('remove 操作', () => {
     it('应该删除存在的键', () => {
       const { result } = renderHook(() => useHashState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.remove(12) })
       expect(success).toBe(true)
       expect(result.current.entryCount).toBe(3)
@@ -138,7 +138,7 @@ describe('useHashState', () => {
 
     it('应该返回 false 对于不存在的键', () => {
       const { result } = renderHook(() => useHashState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.remove(999) })
       expect(success).toBe(false)
       expect(result.current.entryCount).toBe(4)
@@ -146,7 +146,7 @@ describe('useHashState', () => {
 
     it('应该拒绝无效键（非数字）', () => {
       const { result } = renderHook(() => useHashState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.remove('abc') })
       expect(success).toBe(false)
     })
@@ -162,21 +162,21 @@ describe('useHashState', () => {
   describe('search 操作', () => {
     it('应该找到存在的键', () => {
       const { result } = renderHook(() => useHashState())
-      let entry: { key: number; value: string } | null
+      let entry: { key: number; value: string } | null = null as any
       act(() => { entry = result.current.search(12) })
       expect(entry).toEqual({ key: 12, value: 'Alice' })
     })
 
     it('应该返回 null 对于不存在的键', () => {
       const { result } = renderHook(() => useHashState())
-      let entry: { key: number; value: string } | null
+      let entry: { key: number; value: string } | null = null as any
       act(() => { entry = result.current.search(999) })
       expect(entry).toBe(null)
     })
 
     it('应该返回 null 对于无效键', () => {
       const { result } = renderHook(() => useHashState())
-      let entry: { key: number; value: string } | null
+      let entry: { key: number; value: string } | null = null as any
       act(() => { entry = result.current.search('abc') })
       expect(entry).toBe(null)
     })

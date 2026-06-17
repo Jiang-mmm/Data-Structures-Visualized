@@ -125,7 +125,7 @@ export function renderGraph(svg: SVGWithSimulation, nodes: GraphNode[], links: G
   const simLinks: SimLink[] = links.map(l => ({
     source: l.source as unknown as SimNode,
     target: l.target as unknown as SimNode,
-    weight: l.weight,
+    weight: l.weight ?? 0,
   }))
   const sim = getOrCreateSimulation(svg, simNodes, simLinks, width, height)
   sim.alpha(1).restart()

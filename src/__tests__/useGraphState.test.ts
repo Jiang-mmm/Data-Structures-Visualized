@@ -69,7 +69,7 @@ describe('useGraphState', () => {
     it('应该添加新边', () => {
       const { result } = renderHook(() => useGraphState())
       const initialCount = result.current.links.length
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.addEdge('A', 'D') })
       expect(success).toBe(true)
       expect(result.current.links.length).toBe(initialCount + 1)
@@ -77,14 +77,14 @@ describe('useGraphState', () => {
 
     it('应该拒绝连接自身', () => {
       const { result } = renderHook(() => useGraphState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.addEdge('A', 'A') })
       expect(success).toBe(false)
     })
 
     it('应该拒绝已存在的边', () => {
       const { result } = renderHook(() => useGraphState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.addEdge('A', 'B') })
       expect(success).toBe(false)
     })

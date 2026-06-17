@@ -67,7 +67,7 @@ describe('useTreeState', () => {
   describe('search 操作', () => {
     it('应该找到存在的节点', () => {
       const { result } = renderHook(() => useTreeState())
-      let searchResult: { found: number; path: number[] }
+      let searchResult: { found: number; path: number[] } = null as any
       act(() => { searchResult = result.current.search(70) })
       expect(searchResult.found).toBe(2)
       expect(Array.isArray(searchResult.path)).toBe(true)
@@ -75,14 +75,14 @@ describe('useTreeState', () => {
 
     it('应该返回 -1 对于不存在的节点', () => {
       const { result } = renderHook(() => useTreeState())
-      let searchResult: { found: number; path: number[] }
+      let searchResult: { found: number; path: number[] } = null as any
       act(() => { searchResult = result.current.search(999) })
       expect(searchResult.found).toBe(-1)
     })
 
     it('应该记录搜索路径', () => {
       const { result } = renderHook(() => useTreeState())
-      let searchResult: { found: number; path: number[] }
+      let searchResult: { found: number; path: number[] } = null as any
       act(() => { searchResult = result.current.search(20) })
       expect(searchResult.path.length).toBeGreaterThan(0)
     })
@@ -91,7 +91,7 @@ describe('useTreeState', () => {
   describe('deleteNode 操作', () => {
     it('应该删除存在的节点', () => {
       const { result } = renderHook(() => useTreeState())
-      let deletedIndex: number | null
+      let deletedIndex: number | null = -1
       act(() => { deletedIndex = result.current.deleteNode(20) })
       expect(deletedIndex).toBe(3)
       expect(result.current.nodeCount).toBe(6)
@@ -99,14 +99,14 @@ describe('useTreeState', () => {
 
     it('应该返回 null 对于不存在的节点', () => {
       const { result } = renderHook(() => useTreeState())
-      let deletedIndex: number | null
+      let deletedIndex: number | null = -1
       act(() => { deletedIndex = result.current.deleteNode(999) })
       expect(deletedIndex).toBe(null)
     })
 
     it('应该删除叶子节点（无子节点）', () => {
       const { result } = renderHook(() => useTreeState())
-      let deletedIndex: number | null
+      let deletedIndex: number | null = -1
       act(() => { deletedIndex = result.current.deleteNode(20) })
       expect(deletedIndex).toBe(3)
       expect(result.current.data).not.toContain(20)
@@ -116,7 +116,7 @@ describe('useTreeState', () => {
     it('应该删除只有左子节点的节点', () => {
       const { result } = renderHook(() => useTreeState())
       act(() => { result.current.loadData([50, 30, 70, 20]) })
-      let deletedIndex: number | null
+      let deletedIndex: number | null = -1
       act(() => { deletedIndex = result.current.deleteNode(30) })
       expect(deletedIndex).toBe(1)
       expect(result.current.data).not.toContain(30)
@@ -126,7 +126,7 @@ describe('useTreeState', () => {
     it('应该删除只有右子节点的节点', () => {
       const { result } = renderHook(() => useTreeState())
       act(() => { result.current.loadData([50, 30, 70, 0, 40]) })
-      let deletedIndex: number | null
+      let deletedIndex: number | null = -1
       act(() => { deletedIndex = result.current.deleteNode(30) })
       expect(deletedIndex).toBe(1)
       expect(result.current.data).not.toContain(30)
@@ -134,7 +134,7 @@ describe('useTreeState', () => {
 
     it('应该删除双子树节点（使用后继替换）', () => {
       const { result } = renderHook(() => useTreeState())
-      let deletedIndex: number | null
+      let deletedIndex: number | null = -1
       act(() => { deletedIndex = result.current.deleteNode(50) })
       expect(deletedIndex).toBe(0)
       expect(result.current.data).not.toContain(50)
@@ -144,7 +144,7 @@ describe('useTreeState', () => {
     it('空树删除应该返回 null', () => {
       const { result } = renderHook(() => useTreeState())
       act(() => { result.current.loadData([]) })
-      let deletedIndex: number | null
+      let deletedIndex: number | null = -1
       act(() => { deletedIndex = result.current.deleteNode(20) })
       expect(deletedIndex).toBe(null)
     })

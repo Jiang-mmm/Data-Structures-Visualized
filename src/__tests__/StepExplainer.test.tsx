@@ -36,12 +36,12 @@ function renderStepExplainer(overrides: Partial<typeof defaultProps> = {}) {
 describe('StepExplainer', () => {
   describe('空状态', () => {
     it('step 为 null 时应显示提示文本', () => {
-      renderStepExplainer({ step: null })
+      renderStepExplainer({ step: undefined })
       expect(screen.getByText('stepExplainer.selectAlgorithm')).toBeInTheDocument()
     })
 
     it('step 为 null 时不应显示按钮', () => {
-      renderStepExplainer({ step: null })
+      renderStepExplainer({ step: undefined })
       expect(screen.queryByText('stepExplainer.prev')).not.toBeInTheDocument()
       expect(screen.queryByText('stepExplainer.next')).not.toBeInTheDocument()
       expect(screen.queryByText('stepExplainer.reset')).not.toBeInTheDocument()

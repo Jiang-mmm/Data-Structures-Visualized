@@ -264,9 +264,9 @@ export async function animateDeleteNode(svg: SVGSVGElement, index: number, data:
   const nodeSpacing = effectiveRadius * 2 + effectiveGap
   const targetX = startX + index * nodeSpacing
 
-  const targetNode = container.selectAll('g.linked-node').filter(function() {
-    const m = select(this).attr('transform').match(/translate\(([^,]+)/)
-    return m && Math.abs(parseFloat(m[1]) - targetX) < 5
+  const targetNode = container.selectAll('g.linked-node').filter((_: Element, i: number, nodes: Element[]) => {
+    const m = select(nodes[i]).attr('transform')?.match(/translate\(([^,]+)/)
+    return !!(m && Math.abs(parseFloat(m[1]) - targetX) < 5)
   })
 
   // Phase 1: Highlight error with overshoot grow

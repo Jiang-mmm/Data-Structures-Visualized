@@ -69,7 +69,7 @@ describe('PerformanceChart', () => {
     })
 
     it('应该渲染 null results', () => {
-      const { container } = render(<PerformanceChart results={null as unknown as Record<string, unknown>} />)
+      const { container } = render(<PerformanceChart results={null as unknown as Record<string, { comparisons: number; swaps: number; steps: number }>} />)
       const svg = container.querySelector('svg')
       expect(svg).toBeInTheDocument()
     })

@@ -83,8 +83,8 @@ export function measureRender<T>(label: string, fn: () => T): T {
       }
     }
   }
-  if (result && typeof (result as Promise<any>).then === 'function') {
-    return (result as Promise<any>).then(
+  if (result && typeof (result as unknown as Promise<any>).then === 'function') {
+    return (result as unknown as Promise<any>).then(
       (value) => { log(); return value },
       (err) => { log(); throw err }
     ) as T

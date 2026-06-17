@@ -26,7 +26,7 @@ describe('useStackState.js', () => {
   describe('push 操作', () => {
     it('应该成功入栈有效值', () => {
       const { result } = renderHook(() => useStackState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.push(50) })
       expect(success).toBe(true)
       expect(result.current.data).toEqual([8, 17, 42, 50])
@@ -42,7 +42,7 @@ describe('useStackState.js', () => {
       const { result } = renderHook(() => useStackState())
       act(() => { result.current.loadData([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) })
       expect(result.current.data.length).toBe(10)
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.push(11) })
       expect(success).toBe(false)
       expect(result.current.data.length).toBe(10)
@@ -50,14 +50,14 @@ describe('useStackState.js', () => {
 
     it('应该拒绝无效输入', () => {
       const { result } = renderHook(() => useStackState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.push('abc' as any) })
       expect(success).toBe(false)
     })
 
     it('应该接受边界值 1 和 99', () => {
       const { result } = renderHook(() => useStackState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.push(1) })
       expect(success).toBe(true)
       act(() => { success = result.current.push(99) })
@@ -68,7 +68,7 @@ describe('useStackState.js', () => {
   describe('pop 操作', () => {
     it('应该成功出栈并返回栈顶元素', () => {
       const { result } = renderHook(() => useStackState())
-      let popped: number | null
+      let popped: number | null = null as any
       act(() => { popped = result.current.pop() })
       expect(popped).toBe(42)
       expect(result.current.data).toEqual([8, 17])
@@ -83,7 +83,7 @@ describe('useStackState.js', () => {
     it('应该拒绝空栈出栈', () => {
       const { result } = renderHook(() => useStackState())
       act(() => { result.current.loadData([]) })
-      let popped: number | null
+      let popped: number | null = null as any
       act(() => { popped = result.current.pop() })
       expect(popped).toBe(null)
       expect(result.current.data).toEqual([])
@@ -93,7 +93,7 @@ describe('useStackState.js', () => {
   describe('peek 操作', () => {
     it('应该返回栈顶元素而不删除', () => {
       const { result } = renderHook(() => useStackState())
-      let top: number | null
+      let top: number | null = null as any
       act(() => { top = result.current.peek() })
       expect(top).toBe(42)
       expect(result.current.data).toEqual([8, 17, 42])
@@ -102,7 +102,7 @@ describe('useStackState.js', () => {
     it('应该返回空栈的 null', () => {
       const { result } = renderHook(() => useStackState())
       act(() => { result.current.loadData([]) })
-      let top: number | null
+      let top: number | null = null as any
       act(() => { top = result.current.peek() })
       expect(top).toBe(null)
     })

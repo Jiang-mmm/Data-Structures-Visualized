@@ -71,7 +71,7 @@ describe('useLinkedListState', () => {
   describe('insertAt 操作', () => {
     it('应该在指定位置插入有效值', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insertAt(2, 25) })
       expect(success).toBe(true)
       expect(result.current.data).toEqual([10, 20, 25, 30, 40])
@@ -79,7 +79,7 @@ describe('useLinkedListState', () => {
 
     it('应该在开头插入 (index === 0)', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insertAt(0, 5) })
       expect(success).toBe(true)
       expect(result.current.data).toEqual([5, 10, 20, 30, 40])
@@ -87,7 +87,7 @@ describe('useLinkedListState', () => {
 
     it('应该在末尾插入 (index === length)', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insertAt(4, 50) })
       expect(success).toBe(true)
       expect(result.current.data).toEqual([10, 20, 30, 40, 50])
@@ -95,21 +95,21 @@ describe('useLinkedListState', () => {
 
     it('应该拒绝索引越界 (index < 0)', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insertAt(-1, 5) })
       expect(success).toBe(false)
     })
 
     it('应该拒绝索引越界 (index > length)', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insertAt(10, 5) })
       expect(success).toBe(false)
     })
 
     it('应该拒绝无效输入', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insertAt(1, 'abc') })
       expect(success).toBe(false)
     })
@@ -118,7 +118,7 @@ describe('useLinkedListState', () => {
   describe('deleteAt 操作', () => {
     it('应该删除指定位置的元素', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let removed: number | null
+      let removed: number | null = null
       act(() => { removed = result.current.deleteAt(1) })
       expect(removed).toBe(20)
       expect(result.current.data).toEqual([10, 30, 40])
@@ -126,7 +126,7 @@ describe('useLinkedListState', () => {
 
     it('应该删除头元素', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let removed: number | null
+      let removed: number | null = null
       act(() => { removed = result.current.deleteAt(0) })
       expect(removed).toBe(10)
       expect(result.current.data).toEqual([20, 30, 40])
@@ -134,7 +134,7 @@ describe('useLinkedListState', () => {
 
     it('应该删除尾元素', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let removed: number | null
+      let removed: number | null = null
       act(() => { removed = result.current.deleteAt(3) })
       expect(removed).toBe(40)
       expect(result.current.data).toEqual([10, 20, 30])
@@ -142,14 +142,14 @@ describe('useLinkedListState', () => {
 
     it('应该返回 null 对于索引越界 (负数)', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let removed: number | null
+      let removed: number | null = null
       act(() => { removed = result.current.deleteAt(-1) })
       expect(removed).toBe(null)
     })
 
     it('应该返回 null 对于索引越界 (大于等于长度)', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let removed: number | null
+      let removed: number | null = null
       act(() => { removed = result.current.deleteAt(4) })
       expect(removed).toBe(null)
     })
@@ -158,14 +158,14 @@ describe('useLinkedListState', () => {
   describe('search 操作', () => {
     it('应该找到存在的元素', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let index: number
+      let index: number = -1
       act(() => { index = result.current.search(30) })
       expect(index).toBe(2)
     })
 
     it('应该返回 -1 对于不存在的元素', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let index: number
+      let index: number = -1
       act(() => { index = result.current.search(999) })
       expect(index).toBe(-1)
     })
@@ -174,7 +174,7 @@ describe('useLinkedListState', () => {
   describe('reverse 操作', () => {
     it('应该反转链表', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let reversed: number[]
+      let reversed: number[] = [] as any
       act(() => { reversed = result.current.reverse() })
       expect(reversed).toEqual([40, 30, 20, 10])
       expect(result.current.data).toEqual([40, 30, 20, 10])
@@ -183,7 +183,7 @@ describe('useLinkedListState', () => {
     it('应该返回单元素链表的反转结果', () => {
       const { result } = renderHook(() => useLinkedListState())
       act(() => { result.current.loadData([42]) })
-      let reversed: number[]
+      let reversed: number[] = [] as any
       act(() => { reversed = result.current.reverse() })
       expect(reversed).toEqual([42])
     })
@@ -192,7 +192,7 @@ describe('useLinkedListState', () => {
   describe('detectCycle 操作', () => {
     it('应该返回无环结果对于普通链表', () => {
       const { result } = renderHook(() => useLinkedListState())
-      let cycleResult: { hasCycle: boolean; steps: unknown[] }
+      let cycleResult: { hasCycle: boolean; steps: unknown[] } = { hasCycle: false, steps: [] }
       act(() => { cycleResult = result.current.detectCycle() })
       expect(cycleResult.hasCycle).toBe(false)
       expect(Array.isArray(cycleResult.steps)).toBe(true)
@@ -201,7 +201,7 @@ describe('useLinkedListState', () => {
     it('应该返回无环结果对于空链表', () => {
       const { result } = renderHook(() => useLinkedListState())
       act(() => { result.current.loadData([]) })
-      let cycleResult: { hasCycle: boolean; steps: unknown[] }
+      let cycleResult: { hasCycle: boolean; steps: unknown[] } = { hasCycle: false, steps: [] }
       act(() => { cycleResult = result.current.detectCycle() })
       expect(cycleResult.hasCycle).toBe(false)
     })

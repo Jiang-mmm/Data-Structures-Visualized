@@ -7,9 +7,9 @@ import { measureRender } from '../utils/animationEngine'
 interface VisualizerProps {
   data: unknown
   renderFn: (svg: SVGSVGElement, data: unknown, dimensions: { width: number; height: number; isDark?: boolean }) => void
-  svgRef: React.RefObject<SVGSVGElement>
+  svgRef: React.RefObject<SVGSVGElement | null>
   dimensions: { width: number; height: number }
-  containerRef: React.RefObject<HTMLDivElement>
+  containerRef: React.RefObject<HTMLDivElement | null>
   className?: string
   ariaLabel?: string
   renderOptions?: Record<string, unknown>

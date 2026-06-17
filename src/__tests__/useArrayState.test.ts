@@ -104,7 +104,7 @@ describe('useArrayState', () => {
     it('字符串数字应该成功', () => {
       const { result } = renderHook(() => useArrayState())
       act(() => { result.current.loadData([]) })
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insert('50', 0) })
       expect(success).toBe(true)
       expect(result.current.data[0]).toBe(50)

@@ -26,7 +26,7 @@ describe('useQueueState', () => {
   describe('enqueue 操作', () => {
     it('应该成功入队有效值', () => {
       const { result } = renderHook(() => useQueueState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.enqueue(40) })
       expect(success).toBe(true)
       expect(result.current.data).toEqual([10, 20, 30, 40])
@@ -42,7 +42,7 @@ describe('useQueueState', () => {
       const { result } = renderHook(() => useQueueState())
       act(() => { result.current.loadData([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) })
       expect(result.current.data.length).toBe(10)
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.enqueue(11) })
       expect(success).toBe(false)
       expect(result.current.data.length).toBe(10)
@@ -50,14 +50,14 @@ describe('useQueueState', () => {
 
     it('应该拒绝无效输入', () => {
       const { result } = renderHook(() => useQueueState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.enqueue('abc') })
       expect(success).toBe(false)
     })
 
     it('应该接受边界值 1 和 99', () => {
       const { result } = renderHook(() => useQueueState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.enqueue(1) })
       expect(success).toBe(true)
       act(() => { success = result.current.enqueue(99) })
@@ -68,7 +68,7 @@ describe('useQueueState', () => {
   describe('dequeue 操作', () => {
     it('应该成功出队并返回队首元素', () => {
       const { result } = renderHook(() => useQueueState())
-      let dequeued: number | null
+      let dequeued: number | null = null as any
       act(() => { dequeued = result.current.dequeue() })
       expect(dequeued).toBe(10)
       expect(result.current.data).toEqual([20, 30])
@@ -83,7 +83,7 @@ describe('useQueueState', () => {
     it('应该拒绝空队出队', () => {
       const { result } = renderHook(() => useQueueState())
       act(() => { result.current.loadData([]) })
-      let dequeued: number | null
+      let dequeued: number | null = null as any
       act(() => { dequeued = result.current.dequeue() })
       expect(dequeued).toBe(null)
       expect(result.current.data).toEqual([])
@@ -93,7 +93,7 @@ describe('useQueueState', () => {
   describe('front 操作', () => {
     it('应该返回队首元素而不删除', () => {
       const { result } = renderHook(() => useQueueState())
-      let front: number | null
+      let front: number | null = null as any
       act(() => { front = result.current.front() })
       expect(front).toBe(10)
       expect(result.current.data).toEqual([10, 20, 30])
@@ -102,7 +102,7 @@ describe('useQueueState', () => {
     it('应该返回空队的 null', () => {
       const { result } = renderHook(() => useQueueState())
       act(() => { result.current.loadData([]) })
-      let front: number | null
+      let front: number | null = null as any
       act(() => { front = result.current.front() })
       expect(front).toBe(null)
     })

@@ -36,7 +36,7 @@ describe('useHeapState', () => {
   describe('insert 操作', () => {
     it('应该插入有效值到堆', () => {
       const { result } = renderHook(() => useHeapState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insert(25) })
       expect(success).toBe(true)
       expect(result.current.data).toEqual([95, 80, 70, 60, 50, 40, 30, 25])
@@ -45,7 +45,7 @@ describe('useHeapState', () => {
 
     it('应该拒绝无效输入（非数字）', () => {
       const { result } = renderHook(() => useHeapState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insert('abc') })
       expect(success).toBe(false)
       expect(result.current.heapSize).toBe(7)
@@ -53,7 +53,7 @@ describe('useHeapState', () => {
 
     it('应该拒绝超出范围的值（0 和 100）', () => {
       const { result } = renderHook(() => useHeapState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insert(0) })
       expect(success).toBe(false)
       act(() => { success = result.current.insert(100) })
@@ -63,7 +63,7 @@ describe('useHeapState', () => {
 
     it('应该接受边界值 1 和 99', () => {
       const { result } = renderHook(() => useHeapState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insert(1) })
       expect(success).toBe(true)
       act(() => { success = result.current.insert(99) })
@@ -73,7 +73,7 @@ describe('useHeapState', () => {
 
     it('应该拒绝 null/undefined 输入', () => {
       const { result } = renderHook(() => useHeapState())
-      let success: boolean
+      let success = false as boolean
       act(() => { success = result.current.insert(null as unknown as string) })
       expect(success).toBe(false)
       act(() => { success = result.current.insert(undefined as unknown as string) })
@@ -84,7 +84,7 @@ describe('useHeapState', () => {
   describe('extractMax 操作', () => {
     it('应该提取堆顶最大值', () => {
       const { result } = renderHook(() => useHeapState())
-      let max: number | null
+      let max: number | null = -1
       act(() => { max = result.current.extractMax() })
       expect(max).toBe(95)
       expect(result.current.heapSize).toBe(6)
@@ -101,7 +101,7 @@ describe('useHeapState', () => {
       const { result } = renderHook(() => useHeapState())
       act(() => { result.current.reset() })
       act(() => { result.current.loadData([]) })
-      let max: number | null
+      let max: number | null = -1
       act(() => { max = result.current.extractMax() })
       expect(max).toBe(null)
     })
@@ -109,7 +109,7 @@ describe('useHeapState', () => {
     it('应该正确处理单元素堆', () => {
       const { result } = renderHook(() => useHeapState())
       act(() => { result.current.loadData([42]) })
-      let max: number | null
+      let max: number | null = -1
       act(() => { max = result.current.extractMax() })
       expect(max).toBe(42)
       expect(result.current.data).toEqual([])
@@ -118,7 +118,7 @@ describe('useHeapState', () => {
 
     it('应该支持连续提取多个元素', () => {
       const { result } = renderHook(() => useHeapState())
-      let max1: number | null
+      let max1: number | null = -1
       act(() => { max1 = result.current.extractMax() })
       act(() => { result.current.extractMax() })
       act(() => { result.current.extractMax() })
@@ -130,7 +130,7 @@ describe('useHeapState', () => {
   describe('peek 操作', () => {
     it('应该返回堆顶元素但不移除', () => {
       const { result } = renderHook(() => useHeapState())
-      let top: number | null
+      let top: number | null = null as any
       act(() => { top = result.current.peek() })
       expect(top).toBe(95)
       expect(result.current.heapSize).toBe(7)
@@ -138,7 +138,7 @@ describe('useHeapState', () => {
 
     it('连续 peek 应该返回相同值', () => {
       const { result } = renderHook(() => useHeapState())
-      let top1: number | null, top2: number | null
+      let top1: number | null = null, top2: number | null = null
       act(() => { top1 = result.current.peek() })
       act(() => { top2 = result.current.peek() })
       expect(top1).toBe(top2)
@@ -147,7 +147,7 @@ describe('useHeapState', () => {
     it('应该返回 null 对于空堆', () => {
       const { result } = renderHook(() => useHeapState())
       act(() => { result.current.loadData([]) })
-      let top: number | null
+      let top: number | null = null as any
       act(() => { top = result.current.peek() })
       expect(top).toBe(null)
     })

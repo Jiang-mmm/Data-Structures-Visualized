@@ -268,8 +268,8 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
       const p = nodes.find(n => n.dataIndex === node.parentIndex)
       if (!p) return
       if (isNaN(p.x!) || isNaN(p.y!) || isNaN(node.x!) || isNaN(node.y!)) return
-      const x1 = p.x, y1 = p.y + NODE_RADIUS
-      const x2 = node.x, y2 = node.y - NODE_RADIUS
+      const x1 = p.x!, y1 = p.y! + NODE_RADIUS
+      const x2 = node.x!, y2 = node.y! - NODE_RADIUS
 
       const isLeftChild = node.dataIndex === 2 * p.dataIndex + 1
       const isBSTViolation = isLeftChild ? node.value >= p.value : node.value <= p.value
@@ -411,8 +411,8 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
   if (newNode.parentIndex >= 0) {
     const p = nodes.find(n => n.dataIndex === newNode.parentIndex)
     if (!p) return
-    if (isNaN(p.x) || isNaN(p.y) || isNaN(x) || isNaN(y)) return
-    const x1 = p.x, y1 = p.y + NODE_RADIUS
+    if (isNaN(p.x!) || isNaN(p.y!) || isNaN(x!) || isNaN(y!)) return
+    const x1 = p.x!, y1 = p.y! + NODE_RADIUS
     const x2 = x, y2 = y - NODE_RADIUS
 
     if (edgeStyle === 'curved' || edgeStyle === 'orthogonal') {

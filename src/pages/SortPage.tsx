@@ -85,7 +85,7 @@ export default function SortPage() {
         <ExportImport dataType="sort" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
           if (result.valid) {
-            loadData(result.data)
+            loadData(result.data ?? [])
           } else {
             showToast({ type: 'error', message: `${t('errors.importFailed')}: ${result.error}` })
           }
