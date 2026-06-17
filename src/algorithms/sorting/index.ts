@@ -168,7 +168,7 @@ registerSortAlgorithm('bucket', {
     const bucketCount = Math.floor(Math.sqrt(n)) + 1
     const bucketRange = (max - min + 1) / bucketCount
 
-    const buckets: number[][] = Array.from({ length: bucketCount }, () => [])
+    const buckets: number[][] = Array.from({ length: bucketCount }, (): number[] => [])
 
     for (let i = 0; i < n; i++) {
       if (anim?.isAborted?.()) return { comparisons, swaps, steps: stepCount, aborted: true }
