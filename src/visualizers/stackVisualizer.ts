@@ -2,10 +2,11 @@ import { select } from '../utils/d3Imports'
 import { tStatic } from '../i18n/useI18n'
 import { duration, EASING, transitionEnd, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
+import { calculateCenterStart } from '../utils/visualizerLayout'
 
-const RECT_WIDTH = 80
-const RECT_HEIGHT = 50
-const GAP = 8
+export const RECT_WIDTH = 80
+export const RECT_HEIGHT = 50
+export const GAP = 8
 const BASE_DURATION = 400
 const LARGE_DATA_THRESHOLD = 30
 
@@ -15,16 +16,17 @@ interface StackVisualizerOptions {
   isDark?: boolean
 }
 
-function layout(data: number[], width: number, height: number) {
+export function layout(data: number[], width: number, height: number) {
   const totalHeight = data.length * (RECT_HEIGHT + GAP) - GAP
-  const startX = (width - RECT_WIDTH) / 2
-  const startY = (height - totalHeight) / 2 + totalHeight - RECT_HEIGHT
-  return { startX, startY, totalHeight }
+  const startX = calculateCenterStart(RECT_WIDTH, width)
+  const topY = calculateCenterStart(totalHeight, height)
+  const startY = topY + totalHeight - RECT_HEIGHT
+  return { startX, startY, totalHeight, topY }
 }
 
 function drawContainer(container: ReturnType<typeof select>, data: number[], width: number, height: number, C: ReturnType<typeof getColors>) {
   if (data.length === 0) {
-    const startX = (width - RECT_WIDTH) / 2
+    const startX = calculateCenterStart(RECT_WIDTH, width)
     const startY = height / 2
     container.append('rect')
       .attr('x', startX - 4).attr('y', startY - 100)

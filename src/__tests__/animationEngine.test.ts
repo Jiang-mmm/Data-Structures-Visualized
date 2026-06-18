@@ -50,6 +50,7 @@ import {
   createAnimation,
   duration,
   wait,
+  delayStart,
   sequence,
   transition,
   highlightElement,
@@ -548,6 +549,156 @@ describe('animationEngine.ts', () => {
       const promise = wait(100)
       vi.advanceTimersByTime(100)
       await expect(promise).resolves.toBeUndefined()
+    })
+  })
+
+  // ============================================================
+  // delayStart
+  // ============================================================
+  describe('delayStart', () => {
+    beforeEach(() => {
+      vi.useFakeTimers()
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it('should return an object with promise, abort, and isAborted', () => {
+      const delayed = delayStart(1000)
+      expect(delayed.promise).toBeInstanceOf(Promise)
+      expect(typeof delayed.abort).toBe('function')
+      expect(typeof delayed.isAborted).toBe('function')
+      expect(delayed.isAborted()).toBe(false)
+      delayed.abort()
+    })
+
+    it('should default to 1500ms when no ms argument provided', async () => {
+      const callback = vi.fn()
+      const delayed = delayStart(undefined, callback)
+
+      await vi.advanceTimersByTimeAsync(1499)
+      expect(callback).not.toHaveBeenCalled()
+
+      await vi.advanceTimersByTimeAsync(1)
+      expect(callback).toHaveBeenCalledTimes(1)
+      await delayed.promise
+    })
+
+    it('should resolve promise after the specified delay', async () => {
+      const delayed = delayStart(500)
+      const promise = delayed.promise
+
+      await vi.advanceTimersByTimeAsync(499)
+      let resolved = false
+      promise.then(() => { resolved = true })
+
+      await vi.advanceTimersByTimeAsync(1)
+      await Promise.resolve()
+      expect(resolved).toBe(true)
+    })
+
+    it('should call callback after the delay', async () => {
+      const callback = vi.fn()
+      const delayed = delayStart(300, callback)
+
+      await vi.advanceTimersByTimeAsync(300)
+      await delayed.promise
+
+      expect(callback).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not call callback if aborted before delay completes', async () => {
+      const callback = vi.fn()
+      const delayed = delayStart(1000, callback)
+
+      await vi.advanceTimersByTimeAsync(500)
+      delayed.abort()
+
+      await vi.advanceTimersByTimeAsync(1000)
+      await delayed.promise
+
+      expect(callback).not.toHaveBeenCalled()
+      expect(delayed.isAborted()).toBe(true)
+    })
+
+    it('should resolve promise immediately when aborted', async () => {
+      const delayed = delayStart(5000)
+
+      await vi.advanceTimersByTimeAsync(100)
+      delayed.abort()
+
+      await expect(delayed.promise).resolves.toBeUndefined()
+      expect(delayed.isAborted()).toBe(true)
+    })
+
+    it('should be idempotent on abort', () => {
+      const delayed = delayStart(1000)
+      delayed.abort()
+      delayed.abort()
+      expect(delayed.isAborted()).toBe(true)
+    })
+
+    it('should not call callback if aborted after delay already completed', async () => {
+      const callback = vi.fn()
+      const delayed = delayStart(100, callback)
+
+      await vi.advanceTimersByTimeAsync(100)
+      await delayed.promise
+
+      delayed.abort()
+      expect(callback).toHaveBeenCalledTimes(1)
+      expect(delayed.isAborted()).toBe(true)
+    })
+
+    it('should work without a callback', async () => {
+      const delayed = delayStart(200)
+
+      await vi.advanceTimersByTimeAsync(200)
+      await expect(delayed.promise).resolves.toBeUndefined()
+    })
+
+    it('should clear timer on abort to prevent callback after abort', async () => {
+      const callback = vi.fn()
+      const delayed = delayStart(1000, callback)
+
+      delayed.abort()
+      await vi.advanceTimersByTimeAsync(2000)
+
+      expect(callback).not.toHaveBeenCalled()
+    })
+
+    it('should support multiple independent delayStart instances', async () => {
+      const cb1 = vi.fn()
+      const cb2 = vi.fn()
+      const d1 = delayStart(100, cb1)
+      const d2 = delayStart(300, cb2)
+
+      await vi.advanceTimersByTimeAsync(100)
+      await d1.promise
+      expect(cb1).toHaveBeenCalledTimes(1)
+      expect(cb2).not.toHaveBeenCalled()
+
+      await vi.advanceTimersByTimeAsync(200)
+      await d2.promise
+      expect(cb2).toHaveBeenCalledTimes(1)
+    })
+
+    it('should abort only the targeted instance', async () => {
+      const cb1 = vi.fn()
+      const cb2 = vi.fn()
+      const d1 = delayStart(200, cb1)
+      const d2 = delayStart(200, cb2)
+
+      d1.abort()
+
+      await vi.advanceTimersByTimeAsync(200)
+      await d2.promise
+
+      expect(cb1).not.toHaveBeenCalled()
+      expect(cb2).toHaveBeenCalledTimes(1)
+      expect(d1.isAborted()).toBe(true)
+      expect(d2.isAborted()).toBe(false)
     })
   })
 

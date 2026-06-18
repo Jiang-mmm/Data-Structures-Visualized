@@ -18,7 +18,7 @@ function layout(data: number[], width: number, height: number) {
   const nodeSpacing = NODE_RADIUS * 2 + NODE_GAP
   const totalWidth = data.length * nodeSpacing - NODE_GAP
   const headSpace = NODE_RADIUS + 50 + 50 // HEAD label + margin
-  const nullSpace = 80 // NULL label + margin
+  const nullSpace = NODE_GAP + 50 // NULL arrow + label + margin
   const availableWidth = width - headSpace - nullSpace
 
   let effectiveGap = NODE_GAP
@@ -31,7 +31,9 @@ function layout(data: number[], width: number, height: number) {
 
   const effectiveNodeSpacing = effectiveRadius * 2 + effectiveGap
   const effectiveTotalWidth = data.length * effectiveNodeSpacing - effectiveGap
-  const startX = Math.max(headSpace, (width - effectiveTotalWidth) / 2 + effectiveRadius)
+  const arrowLen = Math.max(10, effectiveGap - 10)
+  const leftPad = effectiveRadius + arrowLen + 48
+  const startX = Math.max(leftPad, (width - effectiveTotalWidth) / 2 + effectiveRadius)
   const startY = height / 2
   return { startX, startY, totalWidth: effectiveTotalWidth, effectiveRadius, effectiveGap }
 }
@@ -63,19 +65,44 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
   ensureGradientDefs(svg, isDark)
 
   if (!data || data.length === 0) {
-    container.append('text').attr('x', width / 2).attr('y', height / 2)
-      .attr('text-anchor', 'middle').attr('fill', C.textMuted)
-      .attr('font-size', '14px').text(tStatic('emptyState.emptyLinkedListShort'))
+    const cy = height / 2
+    const cx = width / 2
+    ensureArrowDef(container, C)
+    const boxW = 44
+    const arrowLen = NODE_GAP - 10
+    const headX = cx - (boxW + arrowLen + 30) / 2
+    // HEAD label
+    container.append('rect')
+      .attr('x', headX - boxW).attr('y', cy - 12)
+      .attr('width', boxW).attr('height', 24).attr('rx', 4)
+      .attr('fill', C.nodeRoot).attr('opacity', 0.15)
+      .attr('stroke', C.nodeRootStroke).attr('stroke-width', 1).attr('stroke-opacity', 0.3)
+    container.append('text').attr('x', headX - boxW / 2).attr('y', cy + 5)
+      .attr('text-anchor', 'middle').attr('fill', C.nodeRootStroke).attr('font-size', '11px').attr('font-weight', 'bold')
+      .attr('font-family', "'JetBrains Mono', monospace")
+      .text(tStatic('linkedlist.headLabel'))
+    // Arrow
+    container.append('line')
+      .attr('x1', headX + 2).attr('y1', cy)
+      .attr('x2', headX + 2 + arrowLen).attr('y2', cy)
+      .attr('stroke', C.arrowStroke).attr('stroke-width', 2).attr('marker-end', 'url(#ll-arrow)')
+    // NULL label
+    const nullX = headX + 2 + arrowLen + 20
+    container.append('text').attr('x', nullX).attr('y', cy + 5)
+      .attr('text-anchor', 'middle').attr('fill', C.textMuted).attr('font-size', '12px').attr('font-weight', 'bold')
+      .attr('font-family', "'JetBrains Mono', monospace")
+      .text('NULL')
     return
   }
 
   ensureArrowDef(container, C)
   const { startX, startY, effectiveRadius, effectiveGap } = layout(data, width, height)
   const nodeSpacing = effectiveRadius * 2 + effectiveGap
+  const arrowLen = Math.max(10, effectiveGap - 10)
 
   // HEAD label - orange light background (state indicator)
-  const headBoxRight = startX - effectiveRadius - 2
   const headBoxWidth = 44
+  const headBoxRight = startX - effectiveRadius - arrowLen - 4
   container.append('rect')
     .attr('x', headBoxRight - headBoxWidth).attr('y', startY - 12)
     .attr('width', headBoxWidth).attr('height', 24).attr('rx', 4)
@@ -126,22 +153,22 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
       .attr('fill', C.textWhite).attr('font-size', Math.max(10, Math.min(14, effectiveRadius * 0.6)) + 'px').attr('font-weight', 'bold').text(value)
 
     if (i < data.length - 1) {
-      const nx = startX + (i + 1) * nodeSpacing
       container.append('line')
-        .attr('x1', x + effectiveRadius + 5).attr('y1', y)
-        .attr('x2', nx - effectiveRadius - 5).attr('y2', y)
+        .attr('x1', x + effectiveRadius + 3).attr('y1', y)
+        .attr('x2', x + effectiveRadius + 3 + arrowLen).attr('y2', y)
         .attr('stroke', C.arrowStroke).attr('stroke-width', 2).attr('marker-end', 'url(#ll-arrow)')
     }
   })
 
   const lastX = startX + (data.length - 1) * nodeSpacing
 
-  // NULL label with arrow
-  const nullStartX = lastX + effectiveRadius + 8
-  const nullLabelX = nullStartX + 22
+  // NULL label with arrow (same length as all other arrows)
+  const nullArrowStart = lastX + effectiveRadius + 3
+  const nullArrowEnd = nullArrowStart + arrowLen
+  const nullLabelX = nullArrowEnd + 20
   container.append('line')
-    .attr('x1', nullStartX).attr('y1', startY)
-    .attr('x2', nullStartX + 16).attr('y2', startY)
+    .attr('x1', nullArrowStart).attr('y1', startY)
+    .attr('x2', nullArrowEnd).attr('y2', startY)
     .attr('stroke', C.arrowStroke).attr('stroke-width', 2).attr('marker-end', 'url(#ll-arrow)')
 
   // NULL badge - light gray (auxiliary annotation)
@@ -152,7 +179,7 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
   container.append('text').attr('x', nullLabelX + 15).attr('y', startY + 5)
     .attr('text-anchor', 'middle').attr('fill', C.textMuted).attr('font-size', '12px').attr('font-weight', 'bold')
     .attr('font-family', "'JetBrains Mono', monospace")
-    .text(tStatic('linkedlist.nullLabel'))
+    .text('NULL')
 }
 
 /**

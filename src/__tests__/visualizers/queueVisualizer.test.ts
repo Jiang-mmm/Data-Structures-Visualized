@@ -48,7 +48,7 @@ vi.mock('../../utils/animationEngine', () => ({
 }))
 vi.mock('../../i18n/useI18n', () => ({ tStatic: (key: string) => key }))
 
-const { renderQueue, animateEnqueue, animateDequeue, animateFront } = await import('../../visualizers/queueVisualizer')
+const { renderQueue, animateEnqueue, animateDequeue, animateFront, layout } = await import('../../visualizers/queueVisualizer')
 
 describe('queueVisualizer', () => {
   let svg: SVGSVGElement
@@ -56,6 +56,53 @@ describe('queueVisualizer', () => {
   beforeEach(() => {
     svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
     svg.getBoundingClientRect = () => ({ width: 800, height: 300, top: 0, left: 0, right: 800, bottom: 300, x: 0, y: 0, toJSON: () => {} })
+  })
+
+  describe('layout', () => {
+    it('应该水平居中队列(队列中心等于视口中心)', () => {
+      const { startX, totalWidth } = layout([1, 2, 3], 800, 300)
+      const center = startX + totalWidth / 2
+      expect(center).toBe(400)
+    })
+
+    it('应该计算正确的 startX 使元素水平居中', () => {
+      const { startX, totalWidth } = layout([1, 2, 3], 800, 300)
+      expect(startX).toBe((800 - totalWidth) / 2)
+    })
+
+    it('应该垂直居中元素', () => {
+      const { startY } = layout([1, 2, 3], 800, 300)
+      expect(startY).toBe((300 - 50) / 2)
+    })
+
+    it('应该正确计算 totalWidth', () => {
+      const { totalWidth } = layout([1, 2, 3, 4], 800, 300)
+      expect(totalWidth).toBe(4 * (70 + 10) - 10)
+    })
+
+    it('应该居中单元素队列', () => {
+      const { startX, totalWidth } = layout([42], 800, 300)
+      expect(startX).toBe((800 - totalWidth) / 2)
+      expect(startX + totalWidth / 2).toBe(400)
+    })
+
+    it('应该在大数据集时钳制 startX 不为负值', () => {
+      const bigData = Array.from({ length: 15 }, (_, i) => i)
+      const { startX } = layout(bigData, 800, 300)
+      expect(startX).toBeGreaterThanOrEqual(0)
+    })
+
+    it('应该在 totalWidth 超过 width 时将 startX 钳制为 0', () => {
+      const bigData = Array.from({ length: 20 }, (_, i) => i)
+      const { startX, totalWidth } = layout(bigData, 800, 300)
+      expect(totalWidth).toBeGreaterThan(800)
+      expect(startX).toBe(0)
+    })
+
+    it('应该在窄视口下保证 startX 非负', () => {
+      const { startX } = layout([1, 2, 3, 4, 5], 100, 300)
+      expect(startX).toBeGreaterThanOrEqual(0)
+    })
   })
 
   describe('renderQueue', () => {

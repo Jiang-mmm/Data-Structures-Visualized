@@ -2,6 +2,7 @@ import { select } from '../utils/d3Imports'
 import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
+import { calculateCenterStart } from '../utils/visualizerLayout'
 
 const NODE_RADIUS = 22
 const LARGE_DATA_THRESHOLD = 30
@@ -49,7 +50,7 @@ function layout(data: number[], width: number, height?: number) {
     const nodesInLevel = levelIndices.length
     const availableWidth = width - 40
     const spacing = Math.max(60, availableWidth / (nodesInLevel + 1))
-    const startX = (width - spacing * (nodesInLevel - 1)) / 2
+    const startX = calculateCenterStart(spacing * (nodesInLevel - 1), width)
 
     for (let i = 0; i < nodesInLevel; i++) {
       positions.push({
@@ -197,12 +198,17 @@ export async function animateInsertHeap(svg: SVGSVGElement, _value: number, data
   newCircle.attr('r', 0).attr('opacity', 0)
   newTexts.attr('opacity', 0)
 
+  // 拆分链式过渡为两段顺序 await，确保每段 end 事件被 transitionEnd 正确捕获
   await transitionEnd(
     newCircle
       .transition().duration(duration(300)).ease(EASING.easeOutBack)
       .attr('r', NODE_RADIUS + 5)
       .attr('opacity', 1)
       .attr('fill', gradUrl('node-active'))
+  )
+  if (anim?.isAborted?.()) return
+  await transitionEnd(
+    newCircle
       .transition().duration(duration(250)).ease(defaultEase)
       .attr('r', NODE_RADIUS)
       .attr('fill', gradUrl('node-default'))
@@ -220,11 +226,17 @@ export async function animateInsertHeap(svg: SVGSVGElement, _value: number, data
 
     if (anim?.isAborted?.()) return
 
+    // 拆分链式过渡为两段顺序 await
+    const parentCircle = parentGroup.select('circle')
     await transitionEnd(
-      parentGroup.select('circle')
+      parentCircle
         .transition().duration(duration(200)).ease(EASING.easeOutBack)
         .attr('r', NODE_RADIUS + 4)
         .attr('fill', gradUrl('node-active'))
+    )
+    if (anim?.isAborted?.()) return
+    await transitionEnd(
+      parentCircle
         .transition().duration(duration(200)).ease(defaultEase)
         .attr('r', NODE_RADIUS)
         .attr('fill', gradUrl('node-default'))
@@ -247,11 +259,17 @@ export async function animateExtractHeap(svg: SVGSVGElement, anim?: Animation) {
     if (anim?.isAborted?.()) return
 
     // Phase 1: Root pulses with overshoot (highlight the max value)
+    // 拆分链式过渡为两段顺序 await
+    const rootCircle = rootGroup.select('circle')
     await transitionEnd(
-      rootGroup.select('circle')
+      rootCircle
         .transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('r', NODE_RADIUS + 10)
         .attr('fill', gradUrl('node-active'))
+    )
+    if (anim?.isAborted?.()) return
+    await transitionEnd(
+      rootCircle
         .transition().duration(duration(200)).ease(defaultEase)
         .attr('r', NODE_RADIUS)
         .attr('fill', gradUrl('node-error'))
@@ -275,11 +293,17 @@ export async function animateExtractHeap(svg: SVGSVGElement, anim?: Animation) {
 
       // Highlight left child
       if (!leftGroup.empty()) {
+        // 拆分链式过渡为两段顺序 await
+        const leftCircle = leftGroup.select('circle')
         await transitionEnd(
-          leftGroup.select('circle')
+          leftCircle
             .transition().duration(duration(200)).ease(EASING.easeOutBack)
             .attr('r', NODE_RADIUS + 4)
             .attr('fill', gradUrl('node-active'))
+        )
+        if (anim?.isAborted?.()) return
+        await transitionEnd(
+          leftCircle
             .transition().duration(duration(150)).ease(defaultEase)
             .attr('r', NODE_RADIUS)
             .attr('fill', gradUrl('node-default'))
@@ -288,11 +312,17 @@ export async function animateExtractHeap(svg: SVGSVGElement, anim?: Animation) {
 
       // Highlight right child if exists
       if (rightGroup && !rightGroup.empty()) {
+        // 拆分链式过渡为两段顺序 await
+        const rightCircle = rightGroup.select('circle')
         await transitionEnd(
-          rightGroup.select('circle')
+          rightCircle
             .transition().duration(duration(200)).ease(EASING.easeOutBack)
             .attr('r', NODE_RADIUS + 4)
             .attr('fill', gradUrl('node-active'))
+        )
+        if (anim?.isAborted?.()) return
+        await transitionEnd(
+          rightCircle
             .transition().duration(duration(150)).ease(defaultEase)
             .attr('r', NODE_RADIUS)
             .attr('fill', gradUrl('node-default'))
@@ -329,11 +359,17 @@ export async function animatePeekHeap(svg: SVGSVGElement, anim?: Animation) {
   if (!rootGroup.empty()) {
     if (anim?.isAborted?.()) return
     // Elastic bounce effect for peek
+    // 拆分链式过渡为两段顺序 await
+    const rootCircle = rootGroup.select('circle')
     await transitionEnd(
-      rootGroup.select('circle')
+      rootCircle
         .transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('r', NODE_RADIUS + 8)
         .attr('fill', gradUrl('node-active'))
+    )
+    if (anim?.isAborted?.()) return
+    await transitionEnd(
+      rootCircle
         .transition().duration(duration(500)).ease(EASING.easeOutElastic)
         .attr('r', NODE_RADIUS)
         .attr('fill', gradUrl('node-root'))

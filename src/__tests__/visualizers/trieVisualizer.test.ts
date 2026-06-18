@@ -121,6 +121,68 @@ describe('trieVisualizer', () => {
       }))
       expect(() => renderTrie(svg, { nodes: bigNodes, edges: bigEdges }, {})).not.toThrow()
     })
+
+    it('应该创建渐变定义 defs 元素', () => {
+      renderTrie(svg, trieData, {})
+      const defs = svg.querySelector('defs')
+      expect(defs).toBeTruthy()
+    })
+
+    it('应该创建所有节点类型的径向渐变', () => {
+      renderTrie(svg, trieData, {})
+      const defs = svg.querySelector('defs')
+      expect(defs?.querySelector('#grad-node-root')).toBeTruthy()
+      expect(defs?.querySelector('#grad-node-default')).toBeTruthy()
+      expect(defs?.querySelector('#grad-node-leaf')).toBeTruthy()
+      expect(defs?.querySelector('#grad-node-active')).toBeTruthy()
+      expect(defs?.querySelector('#grad-node-error')).toBeTruthy()
+    })
+
+    it('渐变应使用 radialGradient 类型', () => {
+      renderTrie(svg, trieData, {})
+      const grad = svg.querySelector('#grad-node-default')
+      expect(grad?.tagName.toLowerCase()).toBe('radialgradient')
+    })
+
+    it('渐变应设置 cx/cy/r 属性实现 3D 球面效果', () => {
+      renderTrie(svg, trieData, {})
+      const grad = svg.querySelector('#grad-node-default') as SVGRadialGradientElement | null
+      expect(grad?.getAttribute('cx')).toBe('35%')
+      expect(grad?.getAttribute('cy')).toBe('30%')
+      expect(grad?.getAttribute('r')).toBe('75%')
+    })
+
+    it('渐变应包含两个 stop 实现亮色中心效果', () => {
+      renderTrie(svg, trieData, {})
+      const grad = svg.querySelector('#grad-node-default')
+      const stops = grad?.querySelectorAll('stop')
+      expect(stops?.length).toBe(2)
+      expect(stops?.[0].getAttribute('offset')).toBe('0%')
+      expect(stops?.[1].getAttribute('offset')).toBe('100%')
+    })
+
+    it('应该创建节点阴影滤镜', () => {
+      renderTrie(svg, trieData, {})
+      const filter = svg.querySelector('#trie-node-shadow')
+      expect(filter).toBeTruthy()
+      expect(filter?.tagName.toLowerCase()).toBe('filter')
+    })
+
+    it('应该处理 width/height 选项', () => {
+      expect(() => renderTrie(svg, trieData, { width: 1000, height: 600 })).not.toThrow()
+    })
+
+    it('应该处理 isDark 时创建暗色主题渐变', () => {
+      expect(() => renderTrie(svg, trieData, { isDark: true })).not.toThrow()
+      const defs = svg.querySelector('defs')
+      expect(defs?.querySelector('#grad-node-root')).toBeTruthy()
+    })
+
+    it('应该为空字典树也创建 defs', () => {
+      renderTrie(svg, { nodes: [], edges: [] }, {})
+      expect(svg.querySelector('defs')).toBeTruthy()
+      expect(svg.querySelector('#grad-node-default')).toBeTruthy()
+    })
   })
 
   describe('animateInsertTrie', () => {

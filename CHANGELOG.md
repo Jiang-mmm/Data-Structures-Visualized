@@ -4,12 +4,69 @@
 
 ---
 
+## [v9.0.0] - 2026-06-18
+
+### Phase 1：动画与交互修复
+
+#### 新增
+- **公共居中工具:** `src/utils/visualizerLayout.ts` — 统一数组/栈/队列/链表等可视化主体居中布局逻辑，避免重复实现
+- **延迟启动指示器:** `src/components/AnimationDelayIndicator.tsx` — 延迟启动动画的可视化反馈组件
+- **animationEngine delayStart API:** `src/utils/animationEngine.ts` 新增 delayStart 延迟启动支持
+
+#### 修复
+- **可视化主体定位异常:** 修复数组/栈/队列/链表可视化主体定位偏移问题，通过公共居中工具统一处理
+
+#### 测试
+- 单元测试从 2580 增长到 2866（新增 286 个测试）
+
+### Phase 2：学习路径系统优化
+
+#### 新增
+- **ProgressOverview 组件:** `src/components/ProgressOverview.tsx` — 进度环 + 统计卡片 + 目标设定
+- **LearningRecommendations 组件:** `src/components/LearningRecommendations.tsx` — 学习推荐展示
+- **learningRecommender 推荐算法:** `src/utils/learningRecommender.ts` — 基于学习进度的智能推荐算法
+
+#### 重构
+- **useLearningProgress 重构:** 新增 CustomEvent 同步机制、SyncStatus 状态、统计 API、目标设定功能
+
+#### 优化
+- **LearningPath 信息框重设计:** `src/pages/LearningPath.tsx` 信息框 UI 优化
+
+### Phase 3：可视化界面优化
+
+#### 优化
+- **trieVisualizer 全面美化:** `src/visualizers/trieVisualizer.ts` — radialGradient 渐变填充 + 贝塞尔曲线边 + computeSubtreeWidth 子树宽度计算
+- **GraphPage 矩阵/邻接表 UI 重设计:** `src/pages/GraphPage.tsx` — 矩阵和邻接表展示 UI 优化
+- **ComplexityChart 重设计:** `src/components/ComplexityChart.tsx` — 8 色调色板 + 表格视图
+- **GraphAlgorithmPage 横线清理:** `src/pages/GraphAlgorithmPage.tsx` — 移除多余横线
+
+### Phase 4：功能内容拓展
+
+#### 新增
+- **3 个学习配置:** `src/configs/learning/` 新增 complexityAnalysis（复杂度分析）、advancedDataStructures（高级数据结构）、realWorldApplications（实际应用）3 个拓展主题配置
+- **ContentTier 内容分层组件:** `src/components/ContentTier.tsx` — 基础/进阶/拓展三层内容展示
+
+#### 集成
+- **5 个核心数据结构页面集成 ContentTier:** 内容分层组件集成到 5 个核心数据结构页面
+
+### 质量指标
+
+| 指标 | 结果 |
+|------|------|
+| 单元测试 | 2866 tests passed（182 文件） |
+| ESLint | 0 错误 |
+| TypeScript strict | 0 错误 |
+| Build | 808ms 成功 |
+| Bundle 预算 | 符合（index < 80KB, vendor-react < 250KB, vendor-d3 < 60KB） |
+
+---
+
 ## [v8.0.0] - 2026-06-17
 
 ### TypeScript 严格模式
 - 启用 `strict: true`（strictFunctionTypes、strictNullChecks、noImplicitAny 等）
 - 启用 `noUnusedLocals` + `noUnusedParameters`
-- 修复 300+ 个类型错误，261 个测试文件、3822 个测试全部通过
+- 修复 300+ 个类型错误，174 个测试文件、2548 个测试全部通过
 - 新增 `npm run typecheck` 脚本（tsc --noEmit）
 
 ### E2E 测试加固
@@ -24,7 +81,7 @@
 - deploy.yml 改为 workflow_run 触发（依赖 CI 完成）
 
 ### 测试扩展
-- 单元测试从 1274 → 3822（87 → 261 文件）
+- 单元测试从 1274 → 2548（87 → 174 文件）
 - axe-core WCAG 2 AA 零 violations
 
 ---

@@ -76,4 +76,4 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 - **Heap/Tree inserts**: Must maintain data structure invariants (siftUp for heap, BST position for tree). Don't just append to array.
 - **Graph state**: `nodeCounter` is a useRef inside the hook (not module-level). Both `nodes` and `links` are stored as a single `GraphData` object in `useDataStructureState`, so both are persisted to localStorage and included in undo/redo.
 - **Accessibility**: SVG visualizations must have `role="img"` and `aria-label` (via `Visualizer` component's `ariaLabel` prop). All interactive elements need `aria-label` or visible text. Use `t()` for all user-facing strings. Error toasts use `aria-live="assertive"`.
-- **Bundle optimization**: Vendor chunks are split via `manualChunks` in `vite.config.js` (vendor-react, vendor-d3). `scripts/check-bundle.js` enforces size budgets (index < 80KB, vendor-react < 250KB, vendor-d3 < 60KB).
+- **Bundle optimization**: Vendor chunks are split via `manualChunks` in `vite.config.js` (vendor-react, vendor-d3). `scripts/check-bundle.js` enforces size budgets (index < 110KB, vendor-react < 250KB, vendor-d3 < 60KB).

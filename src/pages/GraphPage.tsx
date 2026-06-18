@@ -220,22 +220,49 @@ export default function GraphPage() {
         </>
       ) : viewMode === 'matrix' ? (
         <div className="flex-1 overflow-auto p-6 border-b-2 border-ink dark:border-dark-border bg-white dark:bg-slate">
-          <h3 className="font-bold text-sm mb-4 text-ink dark:text-dark-ink">{t('graph.adjacencyMatrix')}</h3>
-          <div className="overflow-x-auto">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <h3 className="font-bold text-sm text-ink dark:text-dark-ink">{t('graph.adjacencyMatrix')}</h3>
+            <div className="flex items-center gap-2 font-mono text-[10px]">
+              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{nodes.length} {t('graph.nodes')}</span>
+              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{links.length} {t('graph.edges')}</span>
+              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-accent-blue/10 text-accent-blue font-bold">{nodes.length > 1 ? (links.length / (nodes.length * (nodes.length - 1))).toFixed(2) : '0.00'} {t('graph.density')}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 mb-4 flex-wrap">
+            <div className="flex items-center gap-1">
+              <span className="w-3 h-3 border-2 border-ink dark:border-dark-border bg-accent-blue/20"></span>
+              <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light">{t('graph.legendEdge')}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="w-3 h-3 border-2 border-ink/20 dark:border-dark-border"></span>
+              <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light">{t('graph.legendNoEdge')}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="w-3 h-3 border-2 border-ink dark:border-dark-border bg-accent-amber/20" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(217,119,6,0.3) 2px, rgba(217,119,6,0.3) 4px)' }}></span>
+              <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light">{t('graph.legendSelfLoop')}</span>
+            </div>
+          </div>
+          <div className="overflow-x-auto border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper p-1 shadow-card dark:shadow-card-dark">
           <table className="border-collapse font-mono text-sm">
             <thead>
               <tr>
-                <th className="border-2 border-ink dark:border-dark-border bg-paper dark:bg-slate p-2"></th>
-                {ids.map(id => <th key={id} className="border-2 border-ink dark:border-dark-border bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper p-2 font-bold">{id}</th>)}
+                <th className="sticky left-0 z-20 border-2 border-ink dark:border-dark-border bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper p-2 min-w-12"></th>
+                {ids.map(id => <th key={id} className="sticky top-0 z-10 border-2 border-ink dark:border-dark-border bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper p-2 font-bold min-w-10 text-center">{id}</th>)}
               </tr>
             </thead>
             <tbody>
               {ids.map((id, i) => (
                 <tr key={id}>
-                  <td className="border-2 border-ink dark:border-dark-border bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper p-2 font-bold">{id}</td>
+                  <td className="sticky left-0 z-10 border-2 border-ink dark:border-dark-border bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper p-2 font-bold text-center">{id}</td>
                   {matrix[i].map((val, j) => (
-                    <td key={j} className={`border-2 border-border dark:border-dark-border p-2 text-center ${i === j ? 'bg-paper dark:bg-slate text-ink-light/20 dark:text-dark-ink-light/20' : val > 0 ? 'bg-accent-blue/10 text-accent-blue font-bold' : 'text-ink-light/20 dark:text-dark-ink-light/20'}`}>
-                      {val || '·'}
+                    <td key={j} className={`border-2 border-border dark:border-dark-border p-2 text-center min-w-10 transition-colors ${
+                      i === j
+                        ? 'bg-accent-amber/10 text-accent-amber font-bold'
+                        : val > 0
+                          ? 'bg-accent-blue/15 text-accent-blue font-bold hover:bg-accent-blue/25'
+                          : 'text-ink-light/25 dark:text-dark-ink-light/25 hover:bg-ink/5 dark:hover:bg-dark-ink/5'
+                    }`}>
+                      {i === j ? (val > 0 ? val : '—') : (val || '·')}
                     </td>
                   ))}
                 </tr>
@@ -246,20 +273,38 @@ export default function GraphPage() {
         </div>
       ) : (
         <div className="flex-1 overflow-auto p-6 border-b-2 border-ink dark:border-dark-border bg-white dark:bg-slate">
-          <h3 className="font-bold text-sm mb-4 text-ink dark:text-dark-ink">{t('graph.adjacencyList')}</h3>
-          <div className="space-y-2">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <h3 className="font-bold text-sm text-ink dark:text-dark-ink">{t('graph.adjacencyList')}</h3>
+            <div className="flex items-center gap-2 font-mono text-[10px]">
+              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{nodes.length} {t('graph.nodes')}</span>
+              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{links.length} {t('graph.edges')}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 mb-4 flex-wrap">
+            <div className="flex items-center gap-1">
+              <span className="w-3 h-3 border-2 border-ink dark:border-dark-border bg-accent-blue/20"></span>
+              <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light">{t('graph.legendEdge')}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="w-3 h-3 border-2 border-ink/20 dark:border-dark-border"></span>
+              <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light">{t('graph.noNeighbors')}</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {Object.entries(adjList).map(([node, neighbors]) => (
-              <div key={node} className="flex items-start gap-3">
-                <span className="font-mono font-bold text-sm bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper px-3 py-1 w-12 text-center">{node}</span>
-                <span className="text-ink-light dark:text-dark-ink-light font-mono text-sm py-1">→</span>
-                <div className="flex flex-wrap gap-1">
+              <div key={node} className="border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper p-3 shadow-card dark:shadow-card-dark">
+                <div className="flex items-center justify-between mb-2 pb-2 border-b-2 border-ink dark:border-dark-border">
+                  <span className="font-mono font-bold text-sm bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper px-2 py-0.5">{node}</span>
+                  <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light border border-border dark:border-dark-border px-1.5 py-0.5">{neighbors.length} {t('graph.degree')}</span>
+                </div>
+                <div className="flex flex-wrap gap-1 min-h-6 items-center">
                   {neighbors.length > 0
                     ? neighbors.map((n, i) => (
-                      <span key={i} className="font-mono text-xs border-2 border-border dark:border-dark-border px-2 py-0.5 bg-paper dark:bg-slate text-ink dark:text-dark-ink">
-                        {n.node}<span className="text-ink-light/40 dark:text-dark-ink-light/40 ml-1">({n.weight})</span>
+                      <span key={i} className="font-mono text-xs border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-accent-blue/15 text-accent-blue font-bold flex items-center gap-1">
+                        {n.node}<span className="text-ink-light/60 dark:text-dark-ink-light/60 font-normal">:{n.weight}</span>
                       </span>
                     ))
-                    : <span className="font-mono text-xs text-ink-light/20 dark:text-dark-ink-light/20 py-1">NULL</span>
+                    : <span className="font-mono text-xs text-ink-light/30 dark:text-dark-ink-light/30">∅ {t('graph.noNeighbors')}</span>
                   }
                 </div>
               </div>

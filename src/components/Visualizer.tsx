@@ -40,6 +40,11 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
   const pinchRef = useRef({ initialDistance: 0, initialZoom: 1 })
   const dragRef = useRef({ dragging: false, startX: 0, startY: 0, startPanX: 0, startPanY: 0 })
 
+  // 缓存 dimensions 引用，避免 ResizeObserver 触发的尺寸变化作为 useEffect 依赖
+  // 导致动画进行中 Visualizer 重渲染（selectAll('*').interrupt()）打断 D3 过渡
+  const dimensionsRef = useRef(dimensions)
+  dimensionsRef.current = dimensions
+
   const handleZoomIn = useCallback(() => {
     setZoom(z => {
       const next = Math.min(ZOOM_MAX, +(z + ZOOM_STEP).toFixed(1))
@@ -136,9 +141,11 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
       try {
         const d = data as Record<string, unknown>
         const dataSize = Array.isArray(data) ? data.length : (d?.nodes as unknown[])?.length || (d?.length as number) || 1
-        const label = `${renderFn.name || 'Visualizer'}:render (${dataSize} items, ${dimensions.width}x${dimensions.height})`
+        // 使用 ref 读取最新 dimensions，避免将其作为依赖项触发重渲染
+        const dims = dimensionsRef.current
+        const label = `${renderFn.name || 'Visualizer'}:render (${dataSize} items, ${dims.width}x${dims.height})`
         measureRender(label, () => {
-          renderFn(svgRef.current!, data, { ...dimensions, isDark: isDark as boolean | undefined, ...renderOptions })
+          renderFn(svgRef.current!, data, { ...dims, isDark: isDark as boolean | undefined, ...renderOptions })
         })
       } catch (error) {
         if (import.meta.env.DEV) {
@@ -146,7 +153,7 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
         }
       }
     }
-  }, [data, renderFn, svgRef, dimensions, isDark, colorTheme, renderOptions])
+  }, [data, renderFn, svgRef, isDark, colorTheme, renderOptions])
 
   const viewBox = useMemo(() => {
     const w = Math.round(dimensions.width / zoom)

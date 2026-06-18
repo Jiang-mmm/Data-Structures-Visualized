@@ -1,7 +1,6 @@
 import { select } from '../utils/d3Imports'
 import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
-import { tStatic } from '../i18n/useI18n'
 
 const BAR_GAP_RATIO = 0.35
 const CORNER_RADIUS = 4
@@ -42,7 +41,6 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
   const C = getColors(isDark)
   const container = select(svg)
 
-  container.selectAll('text.sort-done').remove()
 
   if (!data || data.length === 0) {
     container.selectAll('g.bar').remove()
@@ -61,60 +59,7 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
     filter.append('feDropShadow').attr('dx', 1).attr('dy', 2).attr('stdDeviation', 2).attr('flood-opacity', 0.15)
   }
 
-  // Grid lines + axis labels
   container.selectAll('g.sort-grid').remove()
-  const gridGroup = container.append('g').attr('class', 'sort-grid')
-  const gridSteps = 4
-  const barBottom = height - 45
-
-  // Horizontal grid lines with Y-axis values
-  for (let i = 1; i <= gridSteps; i++) {
-    const ratio = i / gridSteps
-    const y = barBottom - ratio * maxBarHeight
-    const gridVal = Math.round(maxVal * ratio)
-    gridGroup.append('line')
-      .attr('x1', offsetX - 4).attr('y1', y)
-      .attr('x2', width - 10).attr('y2', y)
-      .attr('stroke', C.containerStroke).attr('stroke-width', 1)
-      .attr('stroke-dasharray', '4,4').attr('opacity', 0.35)
-    gridGroup.append('text')
-      .attr('x', offsetX - 8).attr('y', y + 3)
-      .attr('text-anchor', 'end')
-      .attr('fill', C.textMuted).attr('font-size', '9px')
-      .attr('font-family', 'monospace')
-      .text(gridVal)
-  }
-
-  // Vertical grid lines (every 5th index)
-  const vertStep = n > 20 ? 5 : n > 10 ? 2 : 1
-  for (let i = vertStep; i < n; i += vertStep) {
-    const x = indexToX(i, barWidth, gap, offsetX) + barWidth / 2
-    gridGroup.append('line')
-      .attr('x1', x).attr('y1', barBottom)
-      .attr('x2', x).attr('y2', barBottom - maxBarHeight)
-      .attr('stroke', C.containerStroke).attr('stroke-width', 1)
-      .attr('stroke-dasharray', '2,4').attr('opacity', 0.2)
-  }
-
-  // Baseline
-  gridGroup.append('line')
-    .attr('x1', offsetX - 4).attr('y1', barBottom)
-    .attr('x2', width - 10).attr('y2', barBottom)
-    .attr('stroke', C.textMuted).attr('stroke-width', 1).attr('opacity', 0.4)
-
-  // Axis labels
-  gridGroup.append('text')
-    .attr('x', (offsetX + width - 10) / 2).attr('y', height - 4)
-    .attr('text-anchor', 'middle')
-    .attr('fill', C.textMuted).attr('font-size', '10px')
-    .attr('font-family', "'JetBrains Mono', monospace")
-    .text(tStatic('sort.axisX'))
-  gridGroup.append('text')
-    .attr('x', offsetX - 8).attr('y', barBottom - maxBarHeight - 8)
-    .attr('text-anchor', 'end')
-    .attr('fill', C.textMuted).attr('font-size', '10px')
-    .attr('font-family', "'JetBrains Mono', monospace")
-    .text(tStatic('sort.axisY'))
 
   if (data.length > 100) {
     renderSortBarsImmediate(svg, data, options, container, { barWidth, maxBarHeight, maxVal, gap, offsetX, n, C })
@@ -138,19 +83,19 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
             .attr('stroke-width', 1.5)
             .attr('filter', 'url(#bar-shadow)')
 
+          // Tooltip only
+          g.append('title').text((d: number, i: number) => `[${i}] = ${d}`)
+
           g.append('text')
             .attr('class', 'bar-index')
             .attr('x', barWidth / 2)
-            .attr('y', height - 31)
+            .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight + 14)
             .attr('text-anchor', 'middle')
-            .attr('fill', C.textSecondary)
+            .attr('fill', C.textWhite)
             .attr('font-size', n > 30 ? '8px' : n > 15 ? '9px' : '11px')
             .attr('font-weight', '700')
             .attr('font-family', 'monospace')
             .text(n > 50 ? '' : (_d: number, i: number) => i)
-
-          // Tooltip only (no always-visible value label to avoid overlap)
-          g.append('title').text((d: number, i: number) => `[${i}] = ${d}`)
 
           return g
         },
@@ -175,7 +120,6 @@ function renderSortBarsImmediate(_svg: SVGSVGElement, data: number[], options: S
   const { height } = options
   const { barWidth, maxBarHeight, maxVal, gap, offsetX, C } = layout
 
-  container.selectAll('text.sort-done').remove()
 
   container.selectAll('g.bar')
     .data(data, (_d: number, i: number) => i)
@@ -198,9 +142,9 @@ function renderSortBarsImmediate(_svg: SVGSVGElement, data: number[], options: S
         g.append('text')
           .attr('class', 'bar-index')
           .attr('x', barWidth / 2)
-          .attr('y', height - 8)
+          .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight + 14)
           .attr('text-anchor', 'middle')
-          .attr('fill', C.textSecondary)
+          .attr('fill', C.textWhite)
           .attr('font-size', '11px')
           .attr('font-weight', '700')
           .attr('font-family', 'monospace')
@@ -351,7 +295,7 @@ export async function animateSorted(svg: SVGSVGElement, data: number[], options:
   const defaultEase = getDefaultEasing()
   const bars = container.selectAll('g.bar')
   const { width, height } = options
-  const { barWidth, maxBarHeight, maxVal, gap, offsetX, n: _n } = getLayout(data, width, height)
+  const { maxBarHeight, maxVal } = getLayout(data, width, height)
 
   // Wave-fill effect: bars light up with staggered delays for a true wave
   const staggerDelay = duration(40)
@@ -383,26 +327,6 @@ export async function animateSorted(svg: SVGSVGElement, data: number[], options:
   }
 
   await Promise.all(promises)
-
-  if (anim?.isAborted?.()) return
-
-  // SORTED label with fade-in
-  const mid = (data.length - 1) / 2
-  await transitionEnd(
-    container.append('text')
-      .attr('class', 'sort-done')
-      .attr('x', indexToX(mid, barWidth, gap, offsetX) + barWidth / 2)
-      .attr('y', height - 50)
-      .attr('text-anchor', 'middle')
-      .attr('fill', C.sortSortedStroke)
-      .attr('font-size', '16px')
-      .attr('font-weight', '800')
-      .attr('font-family', "'JetBrains Mono', monospace")
-      .attr('opacity', 0)
-      .text(tStatic('sortLegend.sorted').toUpperCase())
-      .transition().duration(duration(600)).ease(EASING.easeOutBack)
-      .attr('opacity', 1)
-  )
 }
 
 export function highlightSortedPosition(svg: SVGSVGElement, index: number): void {

@@ -4,7 +4,7 @@ import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils
 import { tStatic } from '../i18n/useI18n'
 
 const NODE_RADIUS = 20
-const LARGE_DATA_THRESHOLD = 50
+const LARGE_DATA_THRESHOLD = 20
 
 interface GraphNode {
   id: string

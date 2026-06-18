@@ -2,7 +2,7 @@ import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 const BUDGETS = {
-  'index': 80,      // 80KB
+  'index': 110,      // 110KB（v9.0 新增学习路径系统/进度可视化/推荐/内容分层后调整）
   'vendor-react': 250, // 250KB
   'vendor-d3': 60,   // 60KB
 };

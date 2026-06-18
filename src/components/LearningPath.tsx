@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { memo, useCallback } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { useLearningProgress } from '../hooks/useLearningProgress'
-import { LEARNING_PATH, CATEGORY_COLORS, DIFFICULTY_LABELS } from '../configs/learningPath'
+import { LEARNING_PATH, CATEGORY_COLORS, CATEGORY_LABELS, DIFFICULTY_LABELS } from '../configs/learningPath'
 
 function LearningPath() {
   const { t } = useGlobalSettings()
@@ -93,10 +93,33 @@ function LearningPath() {
                 )}
 
                 {/* Tooltip on hover */}
-                {unlocked && !done && (
+                {unlocked && (
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200">
-                    <div className="bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper px-3 py-2 border-2 border-ink dark:border-dark-border shadow-button-hover dark:shadow-button-dark-hover text-xs max-w-[200px] whitespace-normal text-center">
-                      {t(node.descriptionKey)}
+                    <div className="learning-path-tooltip w-56 px-3 py-2.5 bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper border-2 border-ink dark:border-dark-border shadow-button-hover dark:shadow-button-dark-hover">
+                      {/* Title */}
+                      <div className="lp-tooltip-title text-sm font-bold leading-tight mb-1.5 pb-1.5 border-b border-paper/20 dark:border-dark-paper/20">
+                        {t(node.nameKey)}
+                      </div>
+                      {/* Description */}
+                      <p className="lp-tooltip-desc text-xs leading-relaxed mb-2 text-paper/90 dark:text-dark-paper/90">
+                        {t(node.descriptionKey)}
+                      </p>
+                      {/* Progress: status + category + difficulty */}
+                      <div className="lp-tooltip-progress flex flex-wrap items-center gap-1.5 text-[10px] font-mono">
+                        <span className={`px-1.5 py-0.5 font-bold ${
+                          done
+                            ? 'bg-accent-emerald text-ink'
+                            : 'bg-paper/15 text-paper dark:bg-dark-paper/15 dark:text-dark-paper'
+                        }`}>
+                          {done ? t('learningPath.completed') : t('learningPath.startLearning')}
+                        </span>
+                        <span className="flex items-center gap-1 text-paper/60 dark:text-dark-paper/60">
+                          <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+                          {t(CATEGORY_LABELS[node.category])}
+                        </span>
+                        <span className="text-paper/30 dark:text-dark-paper/30">·</span>
+                        <span className="text-paper/60 dark:text-dark-paper/60">{t(diffKey)}</span>
+                      </div>
                     </div>
                   </div>
                 )}

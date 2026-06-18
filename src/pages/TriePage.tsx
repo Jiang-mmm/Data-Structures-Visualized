@@ -53,15 +53,20 @@ export default function TriePage() {
     setIsAnimating(true)
     const anim = getAnimationContext()
     try {
-      if (svgRef.current) await animateInsertTrie(svgRef.current, word, anim)
+      // 先更新数据，让 Visualizer 重渲染出新增的 trie 节点
+      // 再运行动画，确保 animateInsertTrie 能找到正确的路径节点
       insert(word)
+      // 等待两帧: 第一帧 React commit + Visualizer useEffect 触发 renderFn，第二帧确保 DOM 就绪
+      await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())))
+      if (anim?.isAborted?.()) return
+      if (svgRef.current) await animateInsertTrie(svgRef.current, word, anim)
     } catch (e) {
       handleAnimationError(e, t('trie.insert'))
     } finally {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, insert, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, inputValue, insert, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleDelete = useCallback(async () => {
     if (isAnimating) return

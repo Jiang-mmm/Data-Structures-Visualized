@@ -20,6 +20,7 @@ import { getColors } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import StatsOverlay from '../components/StatsOverlay'
 import LearningModeToggle from '../components/LearningModeToggle'
+import ContentTier from '../components/ContentTier'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
@@ -177,6 +178,7 @@ export default function ArrayPage() {
           ]} />
         </OperationInfo>
       </OperationBar>
+      <ContentTier structureKey="array" />
       <div className="relative flex flex-col flex-1 min-h-0">
         <Visualizer data={data} renderFn={renderArray as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.arrayLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: `${data.length} / 20` }]} />} />
         {data.length === 0 && (

@@ -57,8 +57,13 @@ export default function HashPage() {
     setIsAnimating(true)
     const anim = getAnimationContext()
     try {
-      if (svgRef.current) await animateInsertHash(svgRef.current, key, value, { hashFn: hashFn as any }, anim)
+      // 先更新数据，让 Visualizer 重渲染出目标 DOM（.hash-entry.key-${key}）
+      // 再运行动画，确保动画能找到目标元素
       insert(key, value)
+      // 等待两帧: 第一帧 React commit + Visualizer useEffect 触发 renderFn，第二帧确保 DOM 就绪
+      await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())))
+      if (anim?.isAborted?.()) return
+      if (svgRef.current) await animateInsertHash(svgRef.current, key, value, { hashFn: hashFn as any }, anim)
     } catch (e) {
       handleAnimationError(e, t('hash.insert'))
     } finally {
@@ -66,7 +71,7 @@ export default function HashPage() {
     }
     setKeyValue('')
     setValueInput('')
-  }, [isAnimating, keyValue, valueInput, insert, setIsAnimating, getAnimationContext, svgRef, hashFn])
+  }, [isAnimating, keyValue, valueInput, insert, setIsAnimating, getAnimationContext, svgRef, hashFn, t])
 
   const handleSearch = useCallback(async (): Promise<void> => {
     if (isAnimating) return

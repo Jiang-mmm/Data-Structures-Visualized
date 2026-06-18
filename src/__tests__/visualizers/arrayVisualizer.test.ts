@@ -73,6 +73,79 @@ describe('arrayVisualizer', () => {
     })
   })
 
+  describe('renderArray 居中定位', () => {
+    it('应该将数组元素水平居中（无 viewBox 时使用 options 尺寸）', () => {
+      renderArray(svg, [1, 2, 3], { width: 800, height: 400 })
+      const items = svg.querySelectorAll('.array-item')
+      expect(items.length).toBe(3)
+      // totalW = 3*70-10 = 200, startX = (800-200)/2 = 300
+      // startY = max(20, floor((400-70)/2)) = 165
+      expect(items[0].getAttribute('transform')).toBe('translate(300, 165)')
+      expect(items[1].getAttribute('transform')).toBe('translate(370, 165)')
+      expect(items[2].getAttribute('transform')).toBe('translate(440, 165)')
+    })
+
+    it('单个元素也应该水平居中', () => {
+      renderArray(svg, [42], { width: 800, height: 400 })
+      const items = svg.querySelectorAll('.array-item')
+      expect(items.length).toBe(1)
+      // totalW = 1*70-10 = 60, startX = (800-60)/2 = 370
+      expect(items[0].getAttribute('transform')).toBe('translate(370, 165)')
+    })
+
+    it('不同数据量下居中定位一致（数组中心位于 width/2）', () => {
+      const cases = [
+        { data: [1, 2], expectedStart: 335, expectedEnd: 465 },
+        { data: [1, 2, 3, 4, 5], expectedStart: 230, expectedEnd: 570 },
+        { data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], expectedStart: 55, expectedEnd: 745 },
+      ]
+      for (const { data, expectedStart, expectedEnd } of cases) {
+        svg.innerHTML = ''
+        renderArray(svg, data, { width: 800, height: 400 })
+        const items = svg.querySelectorAll('.array-item')
+        const firstTransform = items[0].getAttribute('transform') || ''
+        const lastTransform = items[items.length - 1].getAttribute('transform') || ''
+        const firstX = parseFloat(firstTransform.match(/translate\(([^,]+)/)![1])
+        const lastX = parseFloat(lastTransform.match(/translate\(([^,]+)/)![1])
+        expect(firstX).toBe(expectedStart)
+        // 最后一个元素右边缘 = lastX + RECT_WIDTH(60)，应等于 expectedEnd
+        expect(lastX + 60).toBe(expectedEnd)
+        // 数组中心应位于 width/2 = 400
+        expect((firstX + lastX + 60) / 2).toBe(400)
+      }
+    })
+
+    it('应该根据 SVG viewBox 坐标系居中（而非 options 尺寸）', () => {
+      svg.setAttribute('viewBox', '0 0 400 200')
+      renderArray(svg, [1, 2, 3], { width: 800, height: 400 })
+      const items = svg.querySelectorAll('.array-item')
+      expect(items.length).toBe(3)
+      // 使用 viewBox 尺寸 400x200 居中
+      // totalW = 200, startX = (400-200)/2 = 100
+      // startY = max(20, floor((200-70)/2)) = 65
+      expect(items[0].getAttribute('transform')).toBe('translate(100, 65)')
+      expect(items[1].getAttribute('transform')).toBe('translate(170, 65)')
+      expect(items[2].getAttribute('transform')).toBe('translate(240, 65)')
+    })
+
+    it('viewBox 尺寸小于数组宽度时应左对齐（startX=0）', () => {
+      svg.setAttribute('viewBox', '0 0 200 100')
+      renderArray(svg, [1, 2, 3], { width: 800, height: 400 })
+      const items = svg.querySelectorAll('.array-item')
+      // totalW = 200, startX = max(0, (200-200)/2) = 0
+      // startY = max(20, floor((100-70)/2)) = 20
+      expect(items[0].getAttribute('transform')).toBe('translate(0, 20)')
+    })
+
+    it('无效 viewBox 应回退到 options 尺寸', () => {
+      svg.setAttribute('viewBox', 'invalid')
+      renderArray(svg, [1, 2, 3], { width: 800, height: 400 })
+      const items = svg.querySelectorAll('.array-item')
+      // 回退到 800x400，startX = 300
+      expect(items[0].getAttribute('transform')).toBe('translate(300, 165)')
+    })
+  })
+
   describe('animateInsert', () => {
     it('应该能够执行插入动画', async () => {
       await expect(animateInsert(svg, 4, 42, [1, 2, 3], { width: 800, height: 400 })).resolves.toBeUndefined()

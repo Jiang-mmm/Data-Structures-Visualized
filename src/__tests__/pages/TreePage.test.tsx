@@ -115,42 +115,54 @@ describe('TreePage', () => {
     expect(mockState.search).toHaveBeenCalledWith(30)
   })
 
-  it('calls preorder when preorder button clicked', () => {
+  it('calls preorder when preorder button clicked', async () => {
+    vi.useFakeTimers()
     const mockState = createMockTreeState()
     mockedUseTreeState.mockReturnValue(mockState)
     renderWithRouter(<TreePage />)
 
     fireEvent.click(screen.getByText('tree.preorder'))
+    await vi.advanceTimersByTimeAsync(1500)
     expect(mockState.preorder).toHaveBeenCalled()
+    vi.useRealTimers()
   })
 
-  it('calls inorder when inorder button clicked', () => {
+  it('calls inorder when inorder button clicked', async () => {
+    vi.useFakeTimers()
     const mockState = createMockTreeState()
     mockedUseTreeState.mockReturnValue(mockState)
     renderWithRouter(<TreePage />)
 
     fireEvent.click(screen.getByText('tree.inorder'))
+    await vi.advanceTimersByTimeAsync(1500)
     expect(mockState.inorder).toHaveBeenCalled()
+    vi.useRealTimers()
   })
 
-  it('calls postorder when postorder button clicked', () => {
+  it('calls postorder when postorder button clicked', async () => {
+    vi.useFakeTimers()
     const mockState = createMockTreeState()
     mockedUseTreeState.mockReturnValue(mockState)
     renderWithRouter(<TreePage />)
 
     fireEvent.click(screen.getByText(/common\.more/))
     fireEvent.click(screen.getByText('tree.postorder'))
+    await vi.advanceTimersByTimeAsync(1500)
     expect(mockState.postorder).toHaveBeenCalled()
+    vi.useRealTimers()
   })
 
-  it('calls levelorder when levelorder button clicked', () => {
+  it('calls levelorder when levelorder button clicked', async () => {
+    vi.useFakeTimers()
     const mockState = createMockTreeState()
     mockedUseTreeState.mockReturnValue(mockState)
     renderWithRouter(<TreePage />)
 
     fireEvent.click(screen.getByText(/common\.more/))
     fireEvent.click(screen.getByText('tree.levelorder'))
+    await vi.advanceTimersByTimeAsync(1500)
     expect(mockState.levelorder).toHaveBeenCalled()
+    vi.useRealTimers()
   })
 
   it('calls reset when reset button clicked', () => {

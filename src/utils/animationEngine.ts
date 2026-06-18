@@ -263,13 +263,58 @@ export async function wait(baseMs: number, anim?: Animation) {
   })
 }
 
+export interface DelayedStart {
+  promise: Promise<void>
+  abort: () => void
+  isAborted: () => boolean
+}
+
+export function delayStart(ms = 1500, callback?: () => void): DelayedStart {
+  let aborted = false
+  let timer: ReturnType<typeof setTimeout> | null = null
+  let resolvePromise: (() => void) | null = null
+
+  const promise = new Promise<void>((resolve) => {
+    resolvePromise = resolve
+    timer = setTimeout(() => {
+      if (aborted) return
+      callback?.()
+      resolve()
+    }, ms)
+  })
+
+  const abort = () => {
+    if (aborted) return
+    aborted = true
+    if (timer) { clearTimeout(timer); timer = null }
+    resolvePromise?.()
+  }
+
+  const isAborted = () => aborted
+
+  return { promise, abort, isAborted }
+}
+
 /**
  * 创建一个安全的 D3 过渡 Promise，同时监听 'end' 和 'interrupt' 事件
  * 防止过渡被中断时 Promise 永远不 resolve 导致 isAnimating 卡住
+ * 增加超时保护: 防止链式过渡被中断或事件丢失时 Promise 永久挂起
+ * @param transition D3 过渡选择器
+ * @param timeoutMs 超时毫秒数，默认 3000ms（覆盖最长链式过渡的 5 倍冗余）
  */
-export function transitionEnd(transition: any): Promise<void> {
+export function transitionEnd(transition: any, timeoutMs = 3000): Promise<void> {
   return new Promise<void>((resolve) => {
-    transition.on('end', resolve).on('interrupt', resolve)
+    let resolved = false
+    const safeResolve = (): void => {
+      if (!resolved) {
+        resolved = true
+        clearTimeout(timer)
+        resolve()
+      }
+    }
+    transition.on('end', safeResolve).on('interrupt', safeResolve)
+    // 超时兜底: 防止 Promise 永久挂起导致页面交互卡死
+    const timer = setTimeout(safeResolve, timeoutMs)
   })
 }
 

@@ -16,6 +16,7 @@ export default defineConfig({
     exclude: [
       '.agents/**',
       'node_modules/**',
+      'e2e/**',
     ],
     coverage: {
       provider: 'v8',

@@ -2,6 +2,200 @@
 
 ---
 
+## 2026-06-18 | v9.0 全面迭代优化
+
+### 执行概要
+
+基于 v8.1 基础，执行 v9.0 全面迭代优化，分 4 个 Phase 推进：动画与交互修复、学习路径系统优化、可视化界面优化、功能内容拓展。全部验证通过，单元测试从 2580 增长到 2866。
+
+### 完成内容
+
+#### Phase 1：动画与交互修复
+
+##### 1. 可视化主体定位修复 [P0]
+- **修改原因：** 数组/栈/队列/链表可视化主体定位异常，元素位置偏移
+- **修改内容：** 新建 `src/utils/visualizerLayout.ts` 公共居中工具，统一主体居中逻辑
+- **风险说明：** 纯增强，统一布局逻辑，不影响现有动画行为
+
+##### 2. 延迟启动指示器 [P1]
+- **修改原因：** 延迟启动动画缺乏可视化反馈，用户感知不到动画即将开始
+- **修改内容：** 新建 `src/components/AnimationDelayIndicator.tsx` 延迟启动指示器组件
+- **风险说明：** 纯新增组件，不影响现有功能
+
+##### 3. animationEngine delayStart API [P1]
+- **修改原因：** 动画引擎缺少延迟启动支持
+- **修改内容：** `src/utils/animationEngine.ts` 新增 delayStart API
+- **风险说明：** 纯增强，不影响现有动画时序
+
+##### 4. 单元测试扩展 [P1]
+- **修改原因：** 新功能需要测试覆盖
+- **修改内容：** 单元测试从 2580 增长到 2866（新增 286 个测试）
+- **风险说明：** 无
+
+#### Phase 2：学习路径系统优化
+
+##### 1. useLearningProgress 重构 [P0]
+- **修改原因：** 学习进度跨组件同步机制缺失，进度数据无法实时同步
+- **修改内容：** `src/hooks/useLearningProgress.ts` 重构，新增 CustomEvent 同步机制、SyncStatus 状态、统计 API、目标设定功能
+- **风险说明：** 重构核心 hook，需确保向后兼容
+
+##### 2. ProgressOverview 组件 [P1]
+- **修改原因：** 用户无法直观查看学习进度
+- **修改内容：** 新建 `src/components/ProgressOverview.tsx`，包含进度环、统计卡片、目标设定
+- **风险说明：** 纯新增组件
+
+##### 3. LearningRecommendations 组件 [P1]
+- **修改原因：** 用户缺乏学习引导
+- **修改内容：** 新建 `src/components/LearningRecommendations.tsx` 学习推荐展示组件
+- **风险说明：** 纯新增组件
+
+##### 4. learningRecommender 推荐算法 [P1]
+- **修改原因：** 推荐展示组件需要推荐算法支持
+- **修改内容：** 新建 `src/utils/learningRecommender.ts` 基于学习进度的智能推荐算法
+- **风险说明：** 纯新增工具模块
+
+##### 5. LearningPath 信息框重设计 [P2]
+- **修改原因：** LearningPath 信息框 UI 不够清晰
+- **修改内容：** `src/pages/LearningPath.tsx` 信息框 UI 优化
+- **风险说明：** 仅 UI 调整，不影响功能逻辑
+
+#### Phase 3：可视化界面优化
+
+##### 1. trieVisualizer 全面美化 [P1]
+- **修改原因：** 字典树可视化层次感弱，视觉效果不足
+- **修改内容：** `src/visualizers/trieVisualizer.ts` 全面美化：radialGradient 渐变填充 + 贝塞尔曲线边 + computeSubtreeWidth 子树宽度计算
+- **风险说明：** 视觉效果变化，需验证动画行为一致
+
+##### 2. GraphPage 矩阵/邻接表 UI 重设计 [P1]
+- **修改原因：** 图数据矩阵和邻接表展示不清晰
+- **修改内容：** `src/pages/GraphPage.tsx` 矩阵/邻接表 UI 重设计
+- **风险说明：** 仅 UI 调整
+
+##### 3. ComplexityChart 重设计 [P1]
+- **修改原因：** 复杂度对比图表配色单一，对比不直观
+- **修改内容：** `src/components/ComplexityChart.tsx` 重设计：8 色调色板 + 表格视图
+- **风险说明：** 视觉效果变化
+
+##### 4. GraphAlgorithmPage 横线清理 [P2]
+- **修改原因：** GraphAlgorithmPage 存在多余横线影响视觉
+- **修改内容：** `src/pages/GraphAlgorithmPage.tsx` 移除多余横线
+- **风险说明：** 纯 UI 清理
+
+#### Phase 4：功能内容拓展
+
+##### 1. 学习配置拓展 [P1]
+- **修改原因：** 学习模式配置覆盖面不足，缺少拓展主题
+- **修改内容：** `src/configs/learning/` 新增 3 个学习配置：
+  - complexityAnalysis（复杂度分析）
+  - advancedDataStructures（高级数据结构）
+  - realWorldApplications（实际应用）
+- **风险说明：** 纯新增配置，不影响现有配置
+
+##### 2. ContentTier 内容分层组件 [P1]
+- **修改原因：** 不同学习阶段用户需要分层内容展示
+- **修改内容：** 新建 `src/components/ContentTier.tsx`，支持基础/进阶/拓展三层内容展示
+- **风险说明：** 纯新增组件
+
+##### 3. 核心页面集成 [P1]
+- **修改原因：** ContentTier 组件需要集成到核心数据结构页面
+- **修改内容：** ContentTier 集成到 5 个核心数据结构页面
+- **风险说明：** 页面集成，需验证不影响现有功能
+
+### 验证方式
+
+| 验证项 | 结果 |
+|--------|------|
+| ESLint | 0 错误 |
+| TypeScript strict | 0 错误 |
+| 单元测试 | 2866 passed（182 文件） |
+| 生产构建 | 808ms 成功 |
+| Bundle 预算 | 符合（index < 80KB, vendor-react < 250KB, vendor-d3 < 60KB） |
+
+### v9.0 修改文件清单
+
+| 文件 | 类型 | 修改内容 |
+|------|------|---------|
+| `src/utils/visualizerLayout.ts` | 新增 | 公共居中布局工具 |
+| `src/components/AnimationDelayIndicator.tsx` | 新增 | 延迟启动指示器 |
+| `src/utils/animationEngine.ts` | 修改 | 新增 delayStart API |
+| `src/hooks/useLearningProgress.ts` | 重构 | CustomEvent 同步 + SyncStatus + 统计 API + 目标设定 |
+| `src/components/ProgressOverview.tsx` | 新增 | 进度环/统计卡片/目标设定 |
+| `src/components/LearningRecommendations.tsx` | 新增 | 学习推荐展示 |
+| `src/utils/learningRecommender.ts` | 新增 | 智能推荐算法 |
+| `src/pages/LearningPath.tsx` | 修改 | 信息框 UI 重设计 |
+| `src/visualizers/trieVisualizer.ts` | 修改 | radialGradient + 贝塞尔曲线 + computeSubtreeWidth |
+| `src/pages/GraphPage.tsx` | 修改 | 矩阵/邻接表 UI 重设计 |
+| `src/components/ComplexityChart.tsx` | 修改 | 8 色调色板 + 表格视图 |
+| `src/pages/GraphAlgorithmPage.tsx` | 修改 | 移除多余横线 |
+| `src/configs/learning/complexityAnalysis.config.ts` | 新增 | 复杂度分析学习配置 |
+| `src/configs/learning/advancedDataStructures.config.ts` | 新增 | 高级数据结构学习配置 |
+| `src/configs/learning/realWorldApplications.config.ts` | 新增 | 实际应用学习配置 |
+| `src/components/ContentTier.tsx` | 新增 | 内容分层组件 |
+| 5 个核心数据结构页面 | 修改 | 集成 ContentTier |
+
+### 下一步建议
+
+1. 评估新增 Bellman-Ford/Floyd-Warshall/Prim/Kruskal 图算法
+2. 评估新增 TimSort/ShellSort/CombSort 排序算法
+3. 评估 PWA 离线验证和大数据量性能优化
+4. 评估 doublyLinkedList 页面创建
+
+---
+
+## 2026-06-17 | v8.1 动画挂起问题修复与交互优化
+
+### 执行概要
+
+基于浏览器自动化测试发现的关键动画挂起问题（Hash/Heap/Trie 插入动画无限期卡死），执行 3 阶段修复方案，全部验证通过。
+
+### 修改内容
+
+#### 1. 修复 `transitionEnd` 超时保护 [P0]
+- **修改原因：** `transitionEnd` 函数在 D3 链式过渡被中断或事件丢失时 Promise 永不 resolve，导致 `isAnimating` 永久为 true，页面交互锁死
+- **修改文件：** `src/utils/animationEngine.ts` (L266-287)
+- **修改内容：** 新增 `timeoutMs` 参数（默认 3000ms），使用 `resolved` 标志 + `clearTimeout` 实现安全超时兜底
+- **风险说明：** 纯增强，不影响正常过渡的 resolve 时机
+
+#### 2. 防止 Visualizer 动画期间重渲染 [P0]
+- **修改原因：** `Visualizer.tsx` 的 useEffect 将 `dimensions` 作为依赖项，ResizeObserver 触发的尺寸变化会导致 `renderFn` 重渲染（`selectAll('*').interrupt()`），打断进行中的 D3 过渡
+- **修改文件：** `src/components/Visualizer.tsx` (L32-46, L139-156)
+- **修改内容：** 新增 `dimensionsRef` 缓存 dimensions 引用，从 useEffect 依赖数组中移除 `dimensions`，改用 ref 读取最新值
+- **风险说明：** 窗口缩放时 SVG 内部元素不会立即重排，但 viewBox 仍会更新；下次数据变化时自动重渲染
+
+#### 3. 重构 Hash/Heap 链式过渡 [P0]
+- **修改原因：** `hashVisualizer.ts` 和 `heapVisualizer.ts` 中大量使用 `.transition().transition()` 链式过渡，第二段过渡的 `end` 事件无法被 `transitionEnd` 正确捕获
+- **修改文件：** `src/visualizers/hashVisualizer.ts`, `src/visualizers/heapVisualizer.ts`
+- **修改内容：** 将所有链式过渡拆分为顺序 `await transitionEnd()` 两段调用，中间插入 `anim?.isAborted?.()` 检查
+- **风险说明：** 视觉效果一致（相同 duration 和 easing），仅执行方式变化
+
+#### 4. 修正动画与数据更新顺序 [P1]
+- **修改原因：** HashPage/HeapPage/TriePage 的 `handleInsert` 先运行动画再更新数据，导致动画函数无法找到新增的 DOM 节点（如 `.hash-entry.key-${key}`），动画缺失或作用于错误节点
+- **修改文件：** `src/pages/HashPage.tsx`, `src/pages/HeapPage.tsx`, `src/pages/TriePage.tsx`
+- **修改内容：** 调整为"先 insert 数据 → 等待两帧（double-rAF）确保 DOM 就绪 → 再运行动画"的顺序
+- **风险说明：** 依赖阶段 2 的 Visualizer 修复（dimensions 不再触发重渲染），否则数据更新会中断动画
+
+### 验证方式
+
+| 验证项 | 结果 |
+|--------|------|
+| ESLint | 0 错误 |
+| TypeScript | 0 错误 |
+| 单元测试 | 2580 passed (176 files) |
+| 生产构建 | 成功，bundle 检查通过 |
+| Hash 插入动画 | ✅ 完成，数据更新，撤销可用 |
+| Heap 插入动画 | ✅ 完成，堆序正确，撤销可用 |
+| Trie 插入动画 | ✅ 完成，新路径节点创建，撤销可用 |
+| Tree 前序遍历 | ✅ 完成，日志更新 |
+| Tree 中序遍历 | ✅ 完成，日志更新 |
+| Tree 后序遍历 | ✅ 完成，日志更新 |
+
+### 相关文档
+- [docs/test-issue-report.md](docs/test-issue-report.md) — 问题报告
+- [docs/optimization-proposal.md](docs/optimization-proposal.md) — 优化建议
+- [docs/development-implementation-plan.md](docs/development-implementation-plan.md) — 实施计划
+
+---
+
 ## 2026-06-17 | v7.0 Code Wiki 全面重构与优化迭代
 
 ### 执行概要

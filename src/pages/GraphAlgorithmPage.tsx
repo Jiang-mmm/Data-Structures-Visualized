@@ -11,7 +11,7 @@ import { useVisualizer } from '../hooks/useVisualizer'
 import { showToast } from '../components/toastStore'
 import StepExplainer from '../components/StepExplainer'
 import ComplexityChart from '../components/ComplexityChart'
-import { bfs, dfs, dijkstra, topoSort, graphAlgorithms, type GraphAlgorithmKey } from '../algorithms/graph'
+import { bfs, dfs, dijkstra, topoSort, bellmanFord, floydWarshall, prim, kruskal, graphAlgorithms, type GraphAlgorithmKey } from '../algorithms/graph'
 import { exportPerformanceCSV, exportPerformanceJSON } from '../utils/dataExport'
 import { renderGraph, animateBFS, animateDFS, animateDijkstra, animateTopoSort, clearGraphSimulation } from '../visualizers/graphVisualizer'
 import { handleAnimationError } from '../utils/errorHandler'
@@ -108,6 +108,22 @@ export default function GraphAlgorithmPage() {
         case 'topoSort':
           result = await topoSort(adjacencyList, onStep)
           if (svgRef.current && result) await animateTopoSort(svgRef.current, result.visited, anim)
+          break
+        case 'bellmanFord':
+          result = await bellmanFord(adjacencyList, startNode, onStep)
+          if (svgRef.current) await animateBFS(svgRef.current, startNode, nodes, links, dimensions, anim)
+          break
+        case 'floydWarshall':
+          result = await floydWarshall(adjacencyList, onStep)
+          if (svgRef.current) await animateBFS(svgRef.current, startNode, nodes, links, dimensions, anim)
+          break
+        case 'prim':
+          result = await prim(adjacencyList, startNode, onStep)
+          if (svgRef.current) await animateBFS(svgRef.current, startNode, nodes, links, dimensions, anim)
+          break
+        case 'kruskal':
+          result = await kruskal(adjacencyList, onStep)
+          if (svgRef.current) await animateBFS(svgRef.current, startNode, nodes, links, dimensions, anim)
           break
       }
 
@@ -223,7 +239,7 @@ export default function GraphAlgorithmPage() {
             )}
           </OperationBar>
 
-          <div className="flex-1 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border">
+          <div className="flex-1 flex flex-col bg-white dark:bg-slate border-2 border-ink dark:border-dark-border">
             <Visualizer
               data={nodes}
               renderFn={handleGraphRender}
@@ -231,6 +247,7 @@ export default function GraphAlgorithmPage() {
               dimensions={dimensions}
               containerRef={containerRef}
               ariaLabel={t('visualizer.graphLabel')}
+              className="!border-b-0"
             />
           </div>
         </div>
@@ -255,15 +272,17 @@ export default function GraphAlgorithmPage() {
 
           <div className="mt-4">
             <div className="bg-white dark:bg-slate border-2 border-ink dark:border-dark-border p-4">
-              <h3 className="text-sm font-bold text-ink dark:text-dark-ink mb-2">{t('graphAlgorithm.complexityCompare')}</h3>
-              <div className="h-48">
-                <ComplexityChart
-                  algorithms={graphAlgorithms.map(algo => ({
-                    name: algo.name,
-                    complexity: algo.timeComplexity,
-                  }))}
-                />
-              </div>
+              <h3 className="text-sm font-bold text-ink dark:text-dark-ink mb-3">{t('graphAlgorithm.complexityCompare')}</h3>
+              <ComplexityChart
+                algorithms={graphAlgorithms.map(algo => ({
+                  name: algo.name,
+                  complexity: algo.timeComplexity,
+                  timeComplexity: algo.timeComplexity,
+                  spaceComplexity: algo.spaceComplexity,
+                  description: algo.description,
+                }))}
+                showChart={false}
+              />
             </div>
           </div>
         </div>

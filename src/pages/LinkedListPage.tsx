@@ -21,6 +21,7 @@ import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors } from '../utils/themeColors'
 import LearningModeToggle from '../components/LearningModeToggle'
+import ContentTier from '../components/ContentTier'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
@@ -32,7 +33,8 @@ export default function LinkedListPage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [inputIndex, setInputIndex] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
-  const learningMode = useLearningMode('linkedlist')
+  const [isDoublyMode, setIsDoublyMode] = useState(false)
+  const learningMode = useLearningMode(isDoublyMode ? 'doublyLinkedList' : 'linkedlist')
   useSharedData({ dataType: 'linkedlist', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
   usePageTracker('linkedlist')
 
@@ -184,7 +186,14 @@ export default function LinkedListPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
-      <PageHeader title={t('linkedlist.title')} subtitle={t('linkedlist.subtitle')}>
+      <PageHeader title={isDoublyMode ? t('linkedlist.doublyTitle') : t('linkedlist.title')} subtitle={isDoublyMode ? t('linkedlist.doublySubtitle') : t('linkedlist.subtitle')}>
+        <OperationButton
+          variant={isDoublyMode ? 'primary' : 'outline'}
+          onClick={() => setIsDoublyMode(!isDoublyMode)}
+          disabled={isAnimating}
+        >
+          {isDoublyMode ? t('linkedlist.switchToSingle') : t('linkedlist.switchToDoubly')}
+        </OperationButton>
         <ExportImport dataType="linkedlist" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           const result = validateImportData(imported)
           if (result.valid && result.data) {
@@ -237,6 +246,7 @@ export default function LinkedListPage() {
           ]} />
         </OperationInfo>
       </OperationBar>
+      <ContentTier structureKey="linkedlist" />
       <Visualizer data={data} renderFn={renderLinkedList as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.linkedlistLabel")} overlay={<StatsOverlay stats={[{ label: 'LEN', value: length }]} />} />
       {data.length === 0 && (
         <EmptyState icon="◎" titleKey="emptyState.emptyLinkedList" descriptionKey="emptyState.emptyLinkedListDesc" onFill={reset} />

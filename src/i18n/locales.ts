@@ -49,6 +49,10 @@ export interface Locale {
     detectCycle: string
     headLabel: string
     nullLabel: string
+    doublyTitle: string
+    doublySubtitle: string
+    switchToDoubly: string
+    switchToSingle: string
   }
   tree: {
     title: string
@@ -60,6 +64,7 @@ export interface Locale {
     postorder: string
     levelorder: string
     edgeStyle: string
+    animationStarting: string
   }
   graph: {
     title: string
@@ -77,6 +82,14 @@ export interface Locale {
     weight: string
     adjacencyMatrix: string
     adjacencyList: string
+    nodes: string
+    edges: string
+    degree: string
+    density: string
+    noNeighbors: string
+    legendEdge: string
+    legendNoEdge: string
+    legendSelfLoop: string
   }
   hash: {
     title: string
@@ -123,6 +136,9 @@ export interface Locale {
     heapSort: string
     selection: string
     insertion: string
+    shell: string
+    comb: string
+    tim: string
     axisX: string
     axisY: string
   }
@@ -172,6 +188,7 @@ export interface Locale {
     badge: string
     title: string
     heroDescription: string
+    tagline: string
     selectStructure: string
     enterModule: string
     modules: string
@@ -271,6 +288,35 @@ export interface Locale {
     close: string
     title: string
   }
+  advancedLearning: {
+    complexityAnalysis: {
+      title: string
+      timeComplexity: string
+      spaceComplexity: string
+      bigONotation: string
+      bestCase: string
+      worstCase: string
+      averageCase: string
+      amortizedAnalysis: string
+    }
+    advancedDataStructures: {
+      title: string
+      redBlackTree: string
+      bTree: string
+      skipList: string
+      bloomFilter: string
+      unionFind: string
+    }
+    realWorldApplications: {
+      title: string
+      browserHistory: string
+      taskQueue: string
+      fileSystem: string
+      socialNetwork: string
+      searchEngine: string
+      cache: string
+    }
+  }
   learningPath: {
     title: string
     progress: string
@@ -280,6 +326,18 @@ export interface Locale {
     startLearning: string
     continueLearning: string
     allCompleted: string
+    overviewTitle: string
+    overallCompletionRate: string
+    completedModules: string
+    inProgressModules: string
+    notStartedModules: string
+    totalModules: string
+    learningGoal: string
+    targetSteps: string
+    targetDate: string
+    setGoal: string
+    clearGoal: string
+    goalProgress: string
     category: {
       linear: string
       tree: string
@@ -303,6 +361,36 @@ export interface Locale {
       hash: string
       graph: string
       sort: string
+    }
+    sync: {
+      synced: string
+      failed: string
+    }
+  }
+  recommendations: {
+    title: string
+    recommendedModules: string
+    reasonLabel: string
+    personalizedAdvice: string
+    difficulty: string
+    startLearning: string
+    continueLearning: string
+    review: string
+    noRecommendations: string
+    reason: {
+      startHere: string
+      unlockedNotStarted: string
+      continueLearning: string
+      review: string
+    }
+    advice: {
+      welcome: string
+      allCompleted: string
+      stalled: string
+      justStarted: string
+      fastPace: string
+      slowPace: string
+      normalPace: string
     }
   }
   undoPreview: {
@@ -365,6 +453,15 @@ export interface Locale {
     comparisons: string
     swaps: string
     steps: string
+  }
+  complexityChart: {
+    title: string
+    legend: string
+    algorithm: string
+    timeComplexity: string
+    spaceComplexity: string
+    description: string
+    empty: string
   }
   performanceMonitor: {
     show: string
@@ -553,6 +650,38 @@ export interface Locale {
     presetInstant: string
     animationError: string
   }
+  contentTier: {
+    title: string
+    beginner: string
+    intermediate: string
+    advanced: string
+    conceptLabel: string
+    featuresLabel: string
+    complexityLabel: string
+    applicationsLabel: string
+    codeLabel: string
+    variantsLabel: string
+    comparisonLabel: string
+    engineeringLabel: string
+    expand: string
+    collapse: string
+    array: ContentTierStructure
+    stack: ContentTierStructure
+    queue: ContentTierStructure
+    linkedlist: ContentTierStructure
+    tree: ContentTierStructure
+  }
+}
+
+interface ContentTierStructure {
+  beginnerConcept: string
+  beginnerFeatures: string
+  intermediateComplexity: string
+  intermediateApplications: string
+  intermediateCode: string
+  advancedVariants: string
+  advancedComparison: string
+  advancedEngineering: string
 }
 
 export const zh: Locale = {
@@ -574,7 +703,7 @@ export const zh: Locale = {
   },
   array: {
     title: '数组',
-    subtitle: '线性结构 · Contiguous Memory · Random Access O(1)',
+    subtitle: '线性结构 · 连续内存 · 随机访问 O(1)',
     search: '查找',
     insert: '按位插',
     delete: '删除',
@@ -583,21 +712,21 @@ export const zh: Locale = {
   },
   stack: {
     title: '栈',
-    subtitle: '后进先出 LIFO · Function Call · 括号匹配',
+    subtitle: '后进先出 · 函数调用 · 括号匹配',
     push: '入栈',
     pop: '出栈',
     peek: '查看',
   },
   queue: {
     title: '队列',
-    subtitle: '先进先出 FIFO · Buffer Queue · BFS',
+    subtitle: '先进先出 · 缓冲队列 · 广度优先搜索',
     enqueue: '入队',
     dequeue: '出队',
     peek: '查看',
   },
   linkedlist: {
     title: '链表',
-    subtitle: 'Dynamic Memory · O(1) Insert · 单向遍历',
+    subtitle: '动态内存 · O(1) 插入 · 单向遍历',
     pushFront: '头插',
     pushBack: '尾插',
     reverse: '反转',
@@ -606,10 +735,14 @@ export const zh: Locale = {
     detectCycle: '检测环',
     headLabel: '头节点',
     nullLabel: '空',
+    doublyTitle: '双向链表',
+    doublySubtitle: '双向指针 · O(1) 删除 · 正反向遍历',
+    switchToDoubly: '切换双向链表',
+    switchToSingle: '切换单链表',
   },
   tree: {
     title: '二叉树',
-    subtitle: 'Hierarchical · Recursive Traversal · Binary Search',
+    subtitle: '层级结构 · 递归遍历 · 二分查找',
     insert: '插入',
     search: '查找',
     preorder: '前序',
@@ -617,10 +750,11 @@ export const zh: Locale = {
     postorder: '后序',
     levelorder: '层序',
     edgeStyle: '连线样式',
+    animationStarting: '动画即将开始',
   },
   graph: {
     title: '图',
-    subtitle: 'Network · BFS / DFS · Shortest Path',
+    subtitle: '网络结构 · BFS / DFS · 最短路径',
     inputPlaceholder: '节点名 (如 A)',
     addNode: '添加节点',
     removeNode: '删除节点',
@@ -634,10 +768,18 @@ export const zh: Locale = {
     weight: '权重',
     adjacencyMatrix: '邻接矩阵',
     adjacencyList: '邻接表',
+    nodes: '节点',
+    edges: '边',
+    degree: '度',
+    density: '密度',
+    noNeighbors: '无邻接',
+    legendEdge: '有边',
+    legendNoEdge: '无边',
+    legendSelfLoop: '自环',
   },
   hash: {
     title: '哈希表',
-    subtitle: 'Key-Value · Collision Resolution · O(1)',
+    subtitle: '键值映射 · 冲突解决 · O(1)',
     keyPlaceholder: '键 (0~99)',
     valuePlaceholder: '值 (任意文本)',
     insert: '插入',
@@ -646,7 +788,7 @@ export const zh: Locale = {
   },
   heap: {
     title: '堆',
-    subtitle: 'Complete Binary Tree · Max Heap · Priority Queue',
+    subtitle: '完全二叉树 · 最大堆 · 优先队列',
     inputPlaceholder: '值 (1~99)',
     insert: '插入',
     extractMax: '提取最大值',
@@ -682,6 +824,9 @@ export const zh: Locale = {
     heapSort: '堆排序',
     selection: '选择排序',
     insertion: '插入排序',
+    shell: '希尔排序',
+    comb: '梳排序',
+    tim: 'TimSort',
   },
   compare: {
     title: '算法对比',
@@ -696,7 +841,7 @@ export const zh: Locale = {
   },
   graphAlgorithm: {
     title: '图算法可视化',
-    subtitle: 'BFS / DFS / Dijkstra / 拓扑排序',
+    subtitle: 'BFS / DFS / Dijkstra / 拓扑排序 / Bellman-Ford / Floyd-Warshall / Prim / Kruskal',
     algorithm: '算法',
     startNode: '起始节点',
     complexityCompare: '复杂度对比',
@@ -726,9 +871,10 @@ export const zh: Locale = {
     themeRoyal: '皇家',
   },
   home: {
-    badge: 'Data Structures Visualized',
+    badge: '数据结构可视化',
     title: '数据结构学习助手',
-    heroDescription: '通过交互式可视化动画，直观理解12种核心数据结构的原理与操作。Neo-Brutalism 风格 · 工程图纸质感 · 实时动画反馈。',
+    heroDescription: '通过交互式可视化动画，直观理解 12 种核心数据结构的原理与操作。硬边框风格 · 工程图纸质感 · 实时动画反馈。',
+    tagline: '交互式数据结构可视化工具',
     selectStructure: '选择数据结构开始探索',
     enterModule: '进入模块',
     modules: '个模块',
@@ -834,6 +980,15 @@ export const zh: Locale = {
     swaps: '交换次数',
     steps: '总步数',
   },
+  complexityChart: {
+    title: '复杂度对比',
+    legend: '图例',
+    algorithm: '算法',
+    timeComplexity: '时间复杂度',
+    spaceComplexity: '空间复杂度',
+    description: '说明',
+    empty: '暂无算法数据',
+  },
   performanceMonitor: {
     show: '显示性能监控',
     toggle: '切换性能详情',
@@ -898,6 +1053,35 @@ export const zh: Locale = {
     close: '◇ 关闭学习模式',
     title: '学习模式',
   },
+  advancedLearning: {
+    complexityAnalysis: {
+      title: '算法复杂度分析',
+      timeComplexity: '时间复杂度',
+      spaceComplexity: '空间复杂度',
+      bigONotation: '大O表示法',
+      bestCase: '最好情况',
+      worstCase: '最坏情况',
+      averageCase: '平均情况',
+      amortizedAnalysis: '均摊分析',
+    },
+    advancedDataStructures: {
+      title: '高级数据结构应用',
+      redBlackTree: '红黑树',
+      bTree: 'B树',
+      skipList: '跳表',
+      bloomFilter: '布隆过滤器',
+      unionFind: '并查集',
+    },
+    realWorldApplications: {
+      title: '实际应用场景',
+      browserHistory: '浏览器历史记录',
+      taskQueue: '任务队列',
+      fileSystem: '文件系统',
+      socialNetwork: '社交网络',
+      searchEngine: '搜索引擎',
+      cache: '缓存',
+    },
+  },
   learningPath: {
     title: '学习路径',
     progress: '学习进度',
@@ -907,6 +1091,18 @@ export const zh: Locale = {
     startLearning: '开始学习',
     continueLearning: '继续学习',
     allCompleted: '恭喜！全部学完',
+    overviewTitle: '进度概览',
+    overallCompletionRate: '总体完成率',
+    completedModules: '已完成',
+    inProgressModules: '进行中',
+    notStartedModules: '未开始',
+    totalModules: '总模块数',
+    learningGoal: '学习目标',
+    targetSteps: '目标步骤数',
+    targetDate: '目标日期',
+    setGoal: '设定目标',
+    clearGoal: '清除目标',
+    goalProgress: '目标进度',
     category: {
       linear: '线性结构',
       tree: '树形结构',
@@ -930,6 +1126,36 @@ export const zh: Locale = {
       hash: 'O(1) 查找，理解哈希函数与冲突处理',
       graph: '关系建模，最短路径与拓扑排序的核心',
       sort: '算法基石，理解时间与空间复杂度的必经之路',
+    },
+    sync: {
+      synced: '进度已同步',
+      failed: '进度同步失败',
+    },
+  },
+  recommendations: {
+    title: '学习推荐',
+    recommendedModules: '推荐模块',
+    reasonLabel: '推荐理由',
+    personalizedAdvice: '个性化建议',
+    difficulty: '难度',
+    startLearning: '开始学习',
+    continueLearning: '继续学习',
+    review: '复习',
+    noRecommendations: '暂无推荐，继续探索吧！',
+    reason: {
+      startHere: '从这里开始，适合入门',
+      unlockedNotStarted: '已解锁，前置模块已完成',
+      continueLearning: '继续学习，你已经开始',
+      review: '复习巩固，重温已学内容',
+    },
+    advice: {
+      welcome: '欢迎开始学习之旅！从基础模块开始，逐步深入。',
+      allCompleted: '恭喜！你已完成所有模块，可以尝试更高级的算法挑战。',
+      stalled: '已经 {days} 天没有完成新模块了，建议复习已学内容或从基础模块重新开始。',
+      justStarted: '你已经开始了学习之旅，继续加油！完成第一个模块来解锁更多内容。',
+      fastPace: '学习速度很快！{completed} 个模块用了 {days} 天，可以尝试挑战更高难度的内容。',
+      slowPace: '学习节奏较慢，{completed} 个模块用了 {days} 天，建议放慢脚步，巩固基础。',
+      normalPace: '学习节奏稳定，{completed} 个模块用了 {days} 天，继续保持！',
     },
   },
   undoPreview: {
@@ -1110,6 +1336,72 @@ export const zh: Locale = {
     presetInstant: '瞬时',
     animationError: '动画异常',
   },
+  contentTier: {
+    title: '知识分层',
+    beginner: '初级',
+    intermediate: '中级',
+    advanced: '高级',
+    conceptLabel: '基本概念',
+    featuresLabel: '核心特点',
+    complexityLabel: '复杂度分析',
+    applicationsLabel: '应用场景',
+    codeLabel: '代码示例',
+    variantsLabel: '变体与优化',
+    comparisonLabel: '对比分析',
+    engineeringLabel: '工程实践',
+    expand: '展开知识点',
+    collapse: '收起知识点',
+    array: {
+      beginnerConcept: '数组是一种线性数据结构，在连续的内存空间中存储相同类型的元素。每个元素通过索引（下标）访问，索引从 0 开始。这是最基础也是最常用的数据结构。',
+      beginnerFeatures: '随机访问 O(1)，通过索引直接定位；内存连续，缓存友好；静态数组长度固定，动态数组可变；支持正向和反向遍历。',
+      intermediateComplexity: '访问 O(1)；头部插入/删除 O(n)（需移动元素）；尾部插入/删除均摊 O(1)；查找（无序）O(n)；查找（有序，二分查找）O(log n)。',
+      intermediateApplications: '查找表与随机访问；缓冲区与数据缓存；动态规划的状态数组；哈希表开放寻址法的底层存储；矩阵运算。',
+      intermediateCode: 'int arr[10]; arr[0] = 42;  // C 静态数组\nvector<int> v; v.push_back(1);  // C++ 动态数组\nint x = arr[i];  // O(1) 随机访问',
+      advancedVariants: '动态数组（vector/ArrayList）自动扩容，通常 1.5x 或 2x 增长；环形数组实现循环队列；位图（Bitmap）用于高效集合操作；稀疏数组压缩存储。',
+      advancedComparison: 'vs 链表：数组随机访问快 O(1) 但插入删除慢 O(n)，链表反之；数组内存连续缓存友好，链表指针跳跃缓存不友好；数组无额外指针开销，链表每个节点多一个指针。',
+      advancedEngineering: '扩容策略影响性能，2x 增长均摊 O(1) 但可能浪费内存；vector 的 reserve() 预分配避免多次扩容；Java ArrayList 默认容量 10；Go slice 扩容策略在小数组时更激进。',
+    },
+    stack: {
+      beginnerConcept: '栈是一种后进先出（LIFO）的线性数据结构。只能在一端（栈顶）进行插入（入栈 push）和删除（出栈 pop）操作，另一端（栈底）封闭。',
+      beginnerFeatures: '后进先出 LIFO；只能在栈顶操作；入栈 push、出栈 pop、查看栈顶 peek 三大操作；是递归的天然模型。',
+      intermediateComplexity: 'push/pop/peek 均为 O(1)；空间复杂度 O(n)；搜索需要逐个弹出，为 O(n)。',
+      intermediateApplications: '函数调用栈管理；括号匹配检测；表达式求值（中缀转后缀）；浏览器后退按钮；编辑器撤销操作（Undo）；DFS 深度优先搜索。',
+      intermediateCode: 'stack<int> s;\ns.push(1);       // 入栈\nint top = s.top(); // 查看栈顶\ns.pop();          // 出栈',
+      advancedVariants: '链式栈（基于链表，无容量限制）；双栈实现队列（入队栈+出队栈，均摊 O(1)）；单调栈（维护单调性，解决"下一个更大元素"问题）；并行栈（无锁 CAS 实现）。',
+      advancedComparison: 'vs 队列：栈 LIFO 适合回溯和递归，队列 FIFO 适合 BFS 和缓冲。vs 数组：栈是数组的受限版本，只暴露栈顶操作，更安全更抽象。',
+      advancedEngineering: '函数调用栈溢出（Stack Overflow）需警惕递归深度；尾递归优化可避免栈增长；浏览器调用栈大小有限（Chrome 约 1 万-2 万帧）；协程使用堆模拟栈避免溢出。',
+    },
+    queue: {
+      beginnerConcept: '队列是一种先进先出（FIFO）的线性数据结构。在一端（队尾 rear）插入元素（入队 enqueue），在另一端（队头 front）删除元素（出队 dequeue）。',
+      beginnerFeatures: '先进先出 FIFO；队尾入队、队头出队；查看队头 front；体现公平性——先来的先服务。',
+      intermediateComplexity: 'enqueue/dequeue/front 均为 O(1)；空间 O(n)；基于数组实现需循环利用空间避免假溢出。',
+      intermediateApplications: 'BFS 广度优先搜索的核心结构；任务调度（先来先服务 FCFS）；消息队列与异步处理；打印队列；缓冲区管理。',
+      intermediateCode: 'queue<int> q;\nq.push(1);         // 入队\nint front = q.front(); // 查看队头\nq.pop();            // 出队',
+      advancedVariants: '循环队列（环形数组，避免假溢出）；双端队列 Deque（两端均可进出）；优先队列（堆实现，按优先级出队）；单调队列（滑动窗口最值）。',
+      advancedComparison: 'vs 栈：队列 FIFO 适合 BFS，栈 LIFO 适合 DFS。循环队列 vs 链式队列：循环队列内存连续缓存友好但容量固定，链式队列无容量限制但有指针开销。',
+      advancedEngineering: '生产者-消费者模型用阻塞队列实现解耦；消息中间件（Kafka/RabbitMQ）本质是分布式队列；循环队列需注意判空判满条件（用 size 字段区分 front==rear 的两种情况）。',
+    },
+    linkedlist: {
+      beginnerConcept: '链表是一种线性数据结构，元素（节点 node）通过指针连接。每个节点包含数据域和指针域，指针指向下一个节点。内存不连续，动态分配。',
+      beginnerFeatures: '动态大小，无需预分配容量；头插/尾插 O(1)；不支持随机访问，需从头遍历；每个节点有额外指针开销。',
+      intermediateComplexity: '头插/尾插 O(1)；按索引访问 O(n)；按值查找 O(n)；删除已知节点 O(1)（双向链表）或 O(n)（单链表需找前驱）。',
+      intermediateApplications: '实现栈和队列；哈希表的链地址法解决冲突；LRU 缓存（双向链表+哈希表）；多项式运算；内存管理空闲块链表。',
+      intermediateCode: 'struct Node { int val; Node* next; };\nNode* head = new Node{1, nullptr};\nhead->next = new Node{2, nullptr};',
+      advancedVariants: '单链表/双向链表/循环链表；跳表 SkipList（多层索引，O(log n) 查找）；惰性删除链表（标记删除，批量清理）；Unrolled 链表（每节点存多个元素，缓存友好）。',
+      advancedComparison: 'vs 数组：链表插入删除快 O(1) 但访问慢 O(n)，数组反之；链表内存不连续缓存不友好，数组连续缓存友好；链表动态扩容无浪费，数组扩容有临时浪费。',
+      advancedEngineering: 'LRU 缓存=双向链表+哈希表，Java LinkedHashMap 内置此实现；跳表是 Redis 有序集合的底层结构之一；Linux 内核大量使用链表（list_head 嵌入式结构）；链表反转是经典面试题。',
+    },
+    tree: {
+      beginnerConcept: '树是一种层次结构的数据结构，由节点和边组成。有一个根节点（root），每个节点有零个或多个子节点。二叉树每个节点最多有两个子节点（左子树和右子树）。',
+      beginnerFeatures: '层次结构，根节点唯一；无环连通图；二叉树有左右子树；四种遍历方式：前序、中序、后序（深度优先）和层序（广度优先）。',
+      intermediateComplexity: '平衡 BST 查找/插入/删除 O(log n)；遍历 O(n)；最坏情况（退化为链表）O(n)；树的高度 h 决定操作效率。',
+      intermediateApplications: '二叉搜索树 BST（高效查找与范围查询）；文件系统目录树；DOM 树；表达式树（编译器语法分析）；堆（优先队列的底层结构）。',
+      intermediateCode: 'struct TreeNode {\n  int val;\n  TreeNode* left;\n  TreeNode* right;\n};\n// 前序遍历：根→左→右\nvoid preorder(TreeNode* n) {\n  if (!n) return;\n  visit(n);\n  preorder(n->left);\n  preorder(n->right);\n}',
+      advancedVariants: 'AVL 树（严格平衡，高度差≤1）；红黑树（近似平衡，工程常用）；B 树/B+ 树（多路搜索，数据库索引）；Trie 字典树（字符串前缀检索）；线段树/树状数组（区间查询与更新）。',
+      advancedComparison: 'BST vs 哈希表：BST 有序遍历 O(n) 且支持范围查询，哈希表查找 O(1) 但无序。AVL vs 红黑树：AVL 更严格平衡查找更快，红黑树插入删除旋转更少更适合写多场景。',
+      advancedEngineering: '红黑树是 C++ std::map、Java TreeMap 的底层实现；B+ 树是 MySQL InnoDB 的索引结构；LSM Tree 是 LevelDB/RocksDB 的核心；递归是树操作的自然表达，但需注意栈深度。',
+    },
+  },
 }
 
 export const en: Locale = {
@@ -1163,6 +1455,10 @@ export const en: Locale = {
     detectCycle: 'Detect Cycle',
     headLabel: 'HEAD',
     nullLabel: 'NULL',
+    doublyTitle: 'Doubly Linked List',
+    doublySubtitle: 'Bidirectional Pointers · O(1) Delete · Forward/Backward Traversal',
+    switchToDoubly: 'Switch to Doubly',
+    switchToSingle: 'Switch to Single',
   },
   tree: {
     title: 'Binary Tree',
@@ -1174,6 +1470,7 @@ export const en: Locale = {
     postorder: 'Postorder',
     levelorder: 'Level Order',
     edgeStyle: 'Edge Style',
+    animationStarting: 'Animation starting',
   },
   graph: {
     title: 'Graph',
@@ -1191,6 +1488,14 @@ export const en: Locale = {
     weight: 'Weight',
     adjacencyMatrix: 'Adjacency Matrix',
     adjacencyList: 'Adjacency List',
+    nodes: 'Nodes',
+    edges: 'Edges',
+    degree: 'Degree',
+    density: 'Density',
+    noNeighbors: 'No neighbors',
+    legendEdge: 'Edge',
+    legendNoEdge: 'No edge',
+    legendSelfLoop: 'Self-loop',
   },
   hash: {
     title: 'Hash Table',
@@ -1239,6 +1544,9 @@ export const en: Locale = {
     heapSort: 'Heap Sort',
     selection: 'Selection Sort',
     insertion: 'Insertion Sort',
+    shell: 'Shell Sort',
+    comb: 'Comb Sort',
+    tim: 'TimSort',
   },
   compare: {
     title: 'Algorithm Compare',
@@ -1253,7 +1561,7 @@ export const en: Locale = {
   },
   graphAlgorithm: {
     title: 'Graph Algorithm Visualization',
-    subtitle: 'BFS / DFS / Dijkstra / Topological Sort',
+    subtitle: 'BFS / DFS / Dijkstra / Topological Sort / Bellman-Ford / Floyd-Warshall / Prim / Kruskal',
     algorithm: 'Algorithm',
     startNode: 'Start Node',
     complexityCompare: 'Complexity Comparison',
@@ -1286,6 +1594,7 @@ export const en: Locale = {
     badge: 'Data Structures Visualized',
     title: 'Data Structure Learner',
     heroDescription: 'Learn 12 core data structures through interactive visualization animations. Neo-Brutalist style · Engineering blueprint feel · Real-time animation feedback.',
+    tagline: 'Interactive Data Structure Visualizer',
     selectStructure: 'Select a data structure to explore',
     enterModule: 'Enter Module',
     modules: 'MODULES',
@@ -1391,6 +1700,15 @@ export const en: Locale = {
     swaps: 'Swaps',
     steps: 'Steps',
   },
+  complexityChart: {
+    title: 'Complexity Comparison',
+    legend: 'Legend',
+    algorithm: 'Algorithm',
+    timeComplexity: 'Time',
+    spaceComplexity: 'Space',
+    description: 'Description',
+    empty: 'No algorithm data',
+  },
   performanceMonitor: {
     show: 'Show performance monitor',
     toggle: 'Toggle performance details',
@@ -1455,6 +1773,35 @@ export const en: Locale = {
     close: '◇ Close Learning Mode',
     title: 'Learning Mode',
   },
+  advancedLearning: {
+    complexityAnalysis: {
+      title: 'Algorithm Complexity Analysis',
+      timeComplexity: 'Time Complexity',
+      spaceComplexity: 'Space Complexity',
+      bigONotation: 'Big O Notation',
+      bestCase: 'Best Case',
+      worstCase: 'Worst Case',
+      averageCase: 'Average Case',
+      amortizedAnalysis: 'Amortized Analysis',
+    },
+    advancedDataStructures: {
+      title: 'Advanced Data Structure Applications',
+      redBlackTree: 'Red-Black Tree',
+      bTree: 'B-Tree',
+      skipList: 'Skip List',
+      bloomFilter: 'Bloom Filter',
+      unionFind: 'Union-Find',
+    },
+    realWorldApplications: {
+      title: 'Real-World Applications',
+      browserHistory: 'Browser History',
+      taskQueue: 'Task Queue',
+      fileSystem: 'File System',
+      socialNetwork: 'Social Network',
+      searchEngine: 'Search Engine',
+      cache: 'Cache',
+    },
+  },
   learningPath: {
     title: 'Learning Path',
     progress: 'Progress',
@@ -1464,6 +1811,18 @@ export const en: Locale = {
     startLearning: 'Start Learning',
     continueLearning: 'Continue Learning',
     allCompleted: 'Congratulations! All completed',
+    overviewTitle: 'Progress Overview',
+    overallCompletionRate: 'Overall Completion',
+    completedModules: 'Completed',
+    inProgressModules: 'In Progress',
+    notStartedModules: 'Not Started',
+    totalModules: 'Total Modules',
+    learningGoal: 'Learning Goal',
+    targetSteps: 'Target Steps',
+    targetDate: 'Target Date',
+    setGoal: 'Set Goal',
+    clearGoal: 'Clear Goal',
+    goalProgress: 'Goal Progress',
     category: {
       linear: 'Linear',
       tree: 'Tree',
@@ -1487,6 +1846,36 @@ export const en: Locale = {
       hash: 'O(1) lookup, understand hash functions and collision handling',
       graph: 'Relationship modeling, core of shortest path and topological sort',
       sort: 'Algorithm cornerstone, essential for understanding time/space complexity',
+    },
+    sync: {
+      synced: 'Progress synced',
+      failed: 'Progress sync failed',
+    },
+  },
+  recommendations: {
+    title: 'Learning Recommendations',
+    recommendedModules: 'Recommended Modules',
+    reasonLabel: 'Reason',
+    personalizedAdvice: 'Personalized Advice',
+    difficulty: 'Difficulty',
+    startLearning: 'Start Learning',
+    continueLearning: 'Continue',
+    review: 'Review',
+    noRecommendations: 'No recommendations yet, keep exploring!',
+    reason: {
+      startHere: 'Start here, beginner-friendly',
+      unlockedNotStarted: 'Unlocked, prerequisites completed',
+      continueLearning: 'Continue learning, already started',
+      review: 'Review and reinforce',
+    },
+    advice: {
+      welcome: 'Welcome! Start with the basics and progress step by step.',
+      allCompleted: 'Congratulations! You have completed all modules. Try advanced challenges!',
+      stalled: 'No new modules completed in {days} days. Consider reviewing or restarting from basics.',
+      justStarted: 'You have started your learning journey, keep going! Complete your first module to unlock more.',
+      fastPace: 'Fast pace! {completed} modules in {days} days. Try higher difficulty challenges.',
+      slowPace: 'Slow pace, {completed} modules in {days} days. Take your time and consolidate fundamentals.',
+      normalPace: 'Steady pace, {completed} modules in {days} days. Keep it up!',
     },
   },
   undoPreview: {
@@ -1666,5 +2055,71 @@ export const en: Locale = {
     presetDramatic: 'Dramatic',
     presetInstant: 'Instant',
     animationError: 'Animation error',
+  },
+  contentTier: {
+    title: 'Knowledge Tiers',
+    beginner: 'Beginner',
+    intermediate: 'Intermediate',
+    advanced: 'Advanced',
+    conceptLabel: 'Concept',
+    featuresLabel: 'Key Features',
+    complexityLabel: 'Complexity',
+    applicationsLabel: 'Applications',
+    codeLabel: 'Code Example',
+    variantsLabel: 'Variants & Optimization',
+    comparisonLabel: 'Comparison',
+    engineeringLabel: 'Engineering Practice',
+    expand: 'Show Knowledge',
+    collapse: 'Hide Knowledge',
+    array: {
+      beginnerConcept: 'An array is a linear data structure that stores elements of the same type in contiguous memory. Each element is accessed by its index (subscript), starting from 0. It is the most fundamental and widely used data structure.',
+      beginnerFeatures: 'Random access O(1) via index; contiguous memory, cache-friendly; fixed length (static) or resizable (dynamic); supports forward and backward traversal.',
+      intermediateComplexity: 'Access O(1); head insert/delete O(n) (shift elements); tail insert/delete amortized O(1); search (unsorted) O(n); search (sorted, binary search) O(log n).',
+      intermediateApplications: 'Lookup tables and random access; buffers and data caching; DP state arrays; hash table open-addressing storage; matrix operations.',
+      intermediateCode: 'int arr[10]; arr[0] = 42;  // C static array\nvector<int> v; v.push_back(1);  // C++ dynamic array\nint x = arr[i];  // O(1) random access',
+      advancedVariants: 'Dynamic arrays (vector/ArrayList) auto-resize, typically 1.5x or 2x growth; circular arrays for ring buffers; bitmaps for efficient set operations; sparse arrays for compressed storage.',
+      advancedComparison: 'vs Linked List: arrays have fast random access O(1) but slow insert/delete O(n), linked lists vice versa; arrays are contiguous and cache-friendly, linked lists have pointer chasing; arrays have no pointer overhead.',
+      advancedEngineering: 'Resize strategy affects performance — 2x growth gives amortized O(1) but may waste memory; vector reserve() pre-allocates to avoid repeated resizing; Java ArrayList default capacity 10; Go slice growth is more aggressive for small arrays.',
+    },
+    stack: {
+      beginnerConcept: 'A stack is a Last-In-First-Out (LIFO) linear data structure. Elements can only be inserted (push) and removed (pop) from one end (the top), while the other end (the bottom) is closed.',
+      beginnerFeatures: 'LIFO order; operations only at the top; three core operations: push, pop, peek; natural model for recursion.',
+      intermediateComplexity: 'push/pop/peek all O(1); space O(n); searching requires popping elements one by one, O(n).',
+      intermediateApplications: 'Function call stack management; parenthesis matching; expression evaluation (infix to postfix); browser back button; editor undo; DFS depth-first search.',
+      intermediateCode: 'stack<int> s;\ns.push(1);       // push\nint top = s.top(); // peek\ns.pop();          // pop',
+      advancedVariants: 'Linked-list stack (no capacity limit); two-stack queue (push stack + pop stack, amortized O(1)); monotonic stack (maintains monotonicity, solves "next greater element"); lock-free parallel stack (CAS).',
+      advancedComparison: 'vs Queue: stack LIFO suits backtracking/recursion, queue FIFO suits BFS/buffering. vs Array: stack is a restricted array exposing only top operations — safer and more abstract.',
+      advancedEngineering: 'Call stack overflow (Stack Overflow) requires watching recursion depth; tail-call optimization prevents stack growth; browser call stack is limited (Chrome ~10k-20k frames); coroutines use heap-simulated stacks to avoid overflow.',
+    },
+    queue: {
+      beginnerConcept: 'A queue is a First-In-First-Out (FIFO) linear data structure. Elements are inserted at one end (rear, enqueue) and removed from the other end (front, dequeue).',
+      beginnerFeatures: 'FIFO order; enqueue at rear, dequeue from front; peek at front; embodies fairness — first come, first served.',
+      intermediateComplexity: 'enqueue/dequeue/front all O(1); space O(n); array-based implementation needs circular buffer to avoid false overflow.',
+      intermediateApplications: 'Core structure for BFS; task scheduling (FCFS); message queues and async processing; print queues; buffer management.',
+      intermediateCode: 'queue<int> q;\nq.push(1);         // enqueue\nint front = q.front(); // peek front\nq.pop();            // dequeue',
+      advancedVariants: 'Circular queue (ring buffer, avoids false overflow); deque (both ends insert/delete); priority queue (heap-based, dequeues by priority); monotonic queue (sliding window extrema).',
+      advancedComparison: 'vs Stack: queue FIFO suits BFS, stack LIFO suits DFS. Circular queue vs linked queue: circular is contiguous and cache-friendly but fixed capacity, linked has no capacity limit but pointer overhead.',
+      advancedEngineering: 'Producer-consumer pattern uses blocking queues for decoupling; message brokers (Kafka/RabbitMQ) are essentially distributed queues; circular queues need careful empty/full detection (use a size field to disambiguate front==rear).',
+    },
+    linkedlist: {
+      beginnerConcept: 'A linked list is a linear data structure where elements (nodes) are connected via pointers. Each node contains a data field and a pointer field pointing to the next node. Memory is non-contiguous and dynamically allocated.',
+      beginnerFeatures: 'Dynamic size, no pre-allocation needed; head/tail insert O(1); no random access, must traverse from head; extra pointer overhead per node.',
+      intermediateComplexity: 'Head/tail insert O(1); access by index O(n); search by value O(n); delete known node O(1) (doubly linked) or O(n) (singly linked, need predecessor).',
+      intermediateApplications: 'Implementing stacks and queues; hash table chaining for collision resolution; LRU cache (doubly linked list + hash map); polynomial arithmetic; memory management free-block lists.',
+      intermediateCode: 'struct Node { int val; Node* next; };\nNode* head = new Node{1, nullptr};\nhead->next = new Node{2, nullptr};',
+      advancedVariants: 'Singly/doubly/circular linked lists; SkipList (multi-level indexes, O(log n) search); lazy-deletion lists (mark then batch-clean); unrolled linked list (multiple elements per node, cache-friendly).',
+      advancedComparison: 'vs Array: linked list has fast insert/delete O(1) but slow access O(n), array vice versa; linked list is non-contiguous and cache-unfriendly, array is contiguous and cache-friendly; linked list has no resize waste.',
+      advancedEngineering: 'LRU cache = doubly linked list + hash map, Java LinkedHashMap provides this built-in; SkipList is one of Redis sorted set underlying structures; Linux kernel uses linked lists extensively (list_head intrusive structure); list reversal is a classic interview problem.',
+    },
+    tree: {
+      beginnerConcept: 'A tree is a hierarchical data structure composed of nodes and edges. There is one root node, and each node has zero or more children. A binary tree has at most two children per node (left subtree and right subtree).',
+      beginnerFeatures: 'Hierarchical structure with a unique root; acyclic connected graph; binary trees have left and right subtrees; four traversals: preorder, inorder, postorder (DFS) and level-order (BFS).',
+      intermediateComplexity: 'Balanced BST search/insert/delete O(log n); traversal O(n); worst case (degenerated to linked list) O(n); tree height h determines operation efficiency.',
+      intermediateApplications: 'Binary Search Tree BST (efficient search and range queries); file system directory trees; DOM trees; expression trees (compiler syntax analysis); heaps (priority queue underlying structure).',
+      intermediateCode: 'struct TreeNode {\n  int val;\n  TreeNode* left;\n  TreeNode* right;\n};\n// Preorder: root -> left -> right\nvoid preorder(TreeNode* n) {\n  if (!n) return;\n  visit(n);\n  preorder(n->left);\n  preorder(n->right);\n}',
+      advancedVariants: 'AVL tree (strictly balanced, height diff <= 1); red-black tree (approximately balanced, widely used in engineering); B-tree/B+ tree (multi-way search, database indexes); Trie (string prefix retrieval); segment tree / BIT (range queries and updates).',
+      advancedComparison: 'BST vs Hash Table: BST supports ordered traversal O(n) and range queries, hash table gives O(1) lookup but is unordered. AVL vs Red-Black: AVL is more strictly balanced with faster lookups, red-black has fewer rotations for insert/delete — better for write-heavy workloads.',
+      advancedEngineering: 'Red-black tree underlies C++ std::map and Java TreeMap; B+ tree is the MySQL InnoDB index structure; LSM Tree is the core of LevelDB/RocksDB; recursion is the natural expression for tree operations, but watch stack depth.',
+    },
   },
 }

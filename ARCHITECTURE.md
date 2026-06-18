@@ -1,8 +1,8 @@
 # 数据结构学习助手 — Architecture 文档
 
-> **版本:** v6.4
-> **更新日期:** 2026-06-01
-> **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest
+> **版本:** v9.0
+> **更新日期:** 2026-06-18
+> **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 
 ---
 
@@ -22,7 +22,7 @@
 │                        页面层 (Pages)                             │
 │  ArrayPage | StackPage | QueuePage | LinkedListPage | TreePage   │
 │  GraphPage | SortPage | HashPage | HeapPage | TriePage           │
-│  SortComparePage | GraphAlgorithmPage | Home                     │
+│  SortComparePage | GraphAlgorithmPage | Home | LearningPath      │
 ├─────────────────────────────────────────────────────────────────┤
 │                      公共组件层 (Components)                       │
 │  Visualizer | OperationBar | PageHeader | LogPanel | Timeline    │
@@ -30,6 +30,8 @@
 │  StepExplainer | ComplexityChart | UndoPreviewButton | ShareBtn  │
 │  KeyboardHelp | EmptyState | NetworkStatus | PerformanceMonitor │
 │  UndoRedoBar | Sidebar | Layout | ErrorBoundary                  │
+│  ProgressOverview | LearningRecommendations | ContentTier        │
+│  AnimationDelayIndicator                                         │
 ├─────────────────────────────────────────────────────────────────┤
 │                       状态管理层 (Hooks)                          │
 │  useArrayState | useStackState | useQueueState                   │
@@ -37,6 +39,7 @@
 │  useSortState | useHashState | useHeapState | useTrieState       │
 │  useHistory | useVisualizer | useKeyboard | useCommonKeyboard    │
 │  useTheme | useI18n | useGlobalSettings | useLearningMode        │
+│  useLearningProgress | usePageTracker                            │
 ├─────────────────────────────────────────────────────────────────┤
 │                     可视化引擎层 (Visualizers)                     │
 │  arrayVisualizer | stackVisualizer | queueVisualizer             │
@@ -52,13 +55,13 @@
 │                       工具层 (Utils)                              │
 │  animationEngine | validate | dataExport | debounce              │
 │  timeslicing | themeColors | d3Imports | performanceBenchmark    │
-│  shareUtils                                                      │
+│  shareUtils | visualizerLayout | learningRecommender             │
 ├─────────────────────────────────────────────────────────────────┤
 │                      国际化层 (i18n)                              │
 │  locales.ts (zh + en) | useI18n.ts                               │
 ├─────────────────────────────────────────────────────────────────┤
 │                      配置层 (Configs)                             │
-│  learning/ — 学习模式算法步骤配置（按算法分文件）                   │
+│  learning/ — 学习模式算法步骤配置（按算法分文件，含拓展主题）       │
 ├─────────────────────────────────────────────────────────────────┤
 │                      类型层 (Types)                               │
 │  animationEngine.d.ts | hooks.d.ts | toastStore.d.ts             │
@@ -73,13 +76,14 @@
 | **Entry** | `main.tsx` | React 应用挂载、StrictMode 包装 |
 | | `App.tsx` | React Router 路由配置，React.lazy 懒加载 |
 | **Pages** | `*Page.tsx` | 业务逻辑编排：组合组件、调用 hooks、处理用户交互 |
+| | `LearningPath.tsx` | 学习路径页面，展示学习进度、推荐、信息框 |
 | **Components** | `Visualizer.tsx` | D3 可视化容器，管理 SVG 生命周期、缩放、FPS 监控 |
 | | `OperationBar.tsx` | 操作按钮区统一容器 |
 | | `PageHeader.tsx` | 页面标题 + 描述 + 图标 |
 | | `LogPanel.tsx` | 操作日志展示，支持过滤和自动滚动 |
 | | `Timeline.tsx` | 操作历史时间线，图标匹配 + 悬停 tooltip + 键盘导航 |
 | | `PerformanceChart.tsx` | 排序算法性能对比 D3 柱状图 |
-| | `ComplexityChart.tsx` | 算法复杂度增长曲线对比图表 |
+| | `ComplexityChart.tsx` | 算法复杂度增长曲线对比图表（8 色调色板 + 表格视图） |
 | | `StepExplainer.tsx` | 学习模式步骤解释面板 + 代码同步 |
 | | `SpeedControl.tsx` | 动画速度滑块 + 5 种动画预设选择 |
 | | `ExportImport.tsx` | JSON/CSV 导入导出按钮组 |
@@ -91,6 +95,10 @@
 | | `NetworkStatus.tsx` | 网络在线/离线状态提示 |
 | | `PerformanceMonitor.tsx` | FPS/内存实时监控面板 |
 | | `UndoRedoBar.tsx` | 撤销/重做 UI 封装 |
+| | `ProgressOverview.tsx` | 学习进度概览：进度环 + 统计卡片 + 目标设定 |
+| | `LearningRecommendations.tsx` | 学习推荐展示组件，基于 learningRecommender 算法 |
+| | `ContentTier.tsx` | 内容分层组件，基础/进阶/拓展三层内容展示 |
+| | `AnimationDelayIndicator.tsx` | 延迟启动动画的可视化反馈指示器 |
 | | `Sidebar.tsx` | 左侧导航栏 + 主题切换 + 版本号 |
 | | `Layout.tsx` | 页面整体布局框架 |
 | | `ErrorBoundary.tsx` | 错误边界捕获 + 异常恢复 UI |
@@ -103,10 +111,12 @@
 | | `useI18n` | 中英文翻译 + 语言切换 |
 | | `useGlobalSettings` | 全局设置上下文（i18n + theme + preset） |
 | | `useLearningMode` | 交互式学习模式步骤管理 |
+| | `useLearningProgress` | 学习进度管理（CustomEvent 同步 + SyncStatus + 统计 API + 目标设定） |
+| | `usePageTracker` | 页面访问追踪 |
 | **Visualizers** | `*Visualizer.ts` | D3.js SVG 渲染 + 动画（10 个） |
 | **Algorithms** | `sorting/*` | 8 种排序算法实现（插件注册模式） |
 | | `graph/*` | 4 种图算法实现 |
-| **Utils** | `animationEngine.ts` | 动画时序控制、性能模式、缓动函数、FPS 监控、动画预设 |
+| **Utils** | `animationEngine.ts` | 动画时序控制、性能模式、缓动函数、FPS 监控、动画预设、delayStart 延迟启动 |
 | | `validate.ts` | 输入验证（XSS 净化、数值范围、导入数据校验） |
 | | `dataExport.ts` | JSON/CSV 序列化、版本校验、文件下载 |
 | | `debounce.ts` | 防抖工具 |
@@ -115,8 +125,10 @@
 | | `d3Imports.ts` | D3 子模块按需导入 |
 | | `performanceBenchmark.ts` | 性能基准测试工具 |
 | | `shareUtils.ts` | 分享数据 Base64 编解码 |
+| | `visualizerLayout.ts` | 可视化公共居中布局工具，统一数组/栈/队列/链表等主体定位 |
+| | `learningRecommender.ts` | 学习推荐算法，基于学习进度智能推荐下一步学习内容 |
 | **i18n** | `locales.ts` | 完整中英文翻译键值对 |
-| **Configs** | `learning/*.config.ts` | 学习模式算法步骤配置（12 种算法） |
+| **Configs** | `learning/*.config.ts` | 学习模式算法步骤配置（含 3 个拓展主题：complexityAnalysis/advancedDataStructures/realWorldApplications） |
 | **Types** | `*.d.ts` | TypeScript 类型声明文件 |
 
 ---
@@ -150,13 +162,14 @@ const { state: data, push, undo, redo } = useHistory<number[]>(INITIAL_DATA)
 
 ### 2.2 可视化渲染：D3 全量清除 + 全新渲染
 
-**决策:** 不使用 D3 的 enter/update/exit 数据绑定模式，采用**全量清除 + 全新渲染**策略。
+**决策:** 不使用 D3 的 enter/update/exit 数据绑定模式，采用**全量清除 + 全新渲染**策略。主体居中布局由 `visualizerLayout.ts` 公共工具统一处理。
 
 **理由:**
 - 数据结构可视化中元素位置关系复杂（树、图、链表）
 - 增量更新需要稳定的 key，但数据结构操作中元素位置变化频繁
 - 全量渲染代码更直观，维护更简单
 - 教学场景数据量不大（通常 < 50 元素），性能可接受
+- 公共居中工具避免数组/栈/队列/链表等重复实现定位逻辑
 
 **实现:**
 ```typescript
@@ -193,6 +206,7 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: RenderO
 - 统一缓动函数库（EASING 常量）
 - 支持动画预设系统（5 种预设：standard/soft/fast/dramatic/instant）
 - 支持 FPS 监控和自适应降级
+- 支持 delayStart 延迟启动（配合 AnimationDelayIndicator 提供可视化反馈）
 
 **实现:**
 ```typescript
@@ -214,6 +228,7 @@ export function duration(baseMs: number, dataLength?: number): number {
 **约束:**
 - 全局 speedMultiplier 为模块级变量，非 React 状态
 - 动画函数通过 `anim?.isAborted?.()` 支持中止
+- delayStart 延迟启动期间通过 AnimationDelayIndicator 提供视觉反馈
 
 ### 2.4 SVG 渲染：viewBox 方案
 
@@ -288,8 +303,9 @@ const StackPage = lazy(() => import('./pages/StackPage'))
 - E2E 核心流程 — 中优先级
 
 **当前状态:**
-- 869 个单元测试（56 个测试文件），100% 通过率，核心逻辑覆盖率 > 70%
-- 4 个 E2E 测试文件，100+ 用例，95.2% 通过率
+- 2866 个单元测试（182 个测试文件），100% 通过率，TypeScript strict 模式
+- 9 个 E2E 测试文件，282 用例，98.2% 通过率（Chromium + Firefox）
+- axe-core WCAG 2 AA 零 violations
 
 ---
 
@@ -362,6 +378,8 @@ StepExplainer 显示当前步骤：标题 + 描述 + 代码片段 + 高亮
     ↓
 更新 currentStepIndex → 同步更新代码高亮行和关键词
     ↓
+useLearningProgress 记录进度（CustomEvent 同步到 ProgressOverview）
+    ↓
 可选：触发对应数据结构操作演示
     ↓
 用户点击"停止" → 退出学习模式
@@ -370,13 +388,54 @@ StepExplainer 显示当前步骤：标题 + 描述 + 代码片段 + 高亮
 **配置数据流：**
 
 ```
-configs/learning/*.config.ts  (独立配置模块)
+configs/learning/*.config.ts  (独立配置模块，含拓展主题)
     ↓
 configs/learning/index.ts     (统一导出 learningConfigs)
     ↓
 useLearningMode.ts            (导入配置，管理状态)
     ↓
 StepExplainer.tsx             (接收当前步骤数据，渲染 UI)
+```
+
+### 3.3.1 学习路径系统架构（v9.0 新增）
+
+**核心组件协作：**
+
+```
+useLearningProgress (重构版)
+  ├── CustomEvent 同步机制 → 跨组件进度实时同步
+  ├── SyncStatus 状态 → 同步状态可视化
+  ├── 统计 API → 学习时长/完成率/连续学习天数
+  └── 目标设定 → 用户自定义学习目标
+        ↓
+ProgressOverview 组件
+  ├── 进度环 → 整体学习进度可视化
+  ├── 统计卡片 → 关键指标展示
+  └── 目标设定 → 用户目标管理
+        ↓
+learningRecommender 推荐算法
+  ├── 基于学习进度分析
+  ├── 基于学习历史分析
+  └── 推荐下一步学习内容
+        ↓
+LearningRecommendations 组件
+  └── 展示推荐内容（卡片式 UI）
+```
+
+**内容分层架构：**
+
+```
+ContentTier 组件
+  ├── 基础层 (basic) → 核心概念与基础操作
+  ├── 进阶层 (advanced) → 进阶算法与优化技巧
+  └── 拓展层 (extension) → 实际应用与拓展主题
+        ↓
+集成到 5 个核心数据结构页面
+  ├── ArrayPage
+  ├── LinkedListPage
+  ├── TreePage
+  ├── GraphPage
+  └── SortPage
 ```
 
 ### 3.4 分享流程
@@ -463,13 +522,17 @@ main.tsx
                                      ├── StepExplainer
                                      ├── ComplexityChart ──→ d3Imports
                                      └── graphVisualizer
+        └── LearningPath.tsx ──→ useLearningProgress
+                                 ├── ProgressOverview
+                                 ├── LearningRecommendations ──→ learningRecommender
+                                 └── ContentTier（5 个核心页面集成）
 ```
 
 ### 4.2 工具模块复用
 
 | 工具模块 | 被依赖方 |
 |---------|---------|
-| `animationEngine.ts` | 所有 visualizers、PerformanceMonitor |
+| `animationEngine.ts` | 所有 visualizers、PerformanceMonitor、AnimationDelayIndicator |
 | `validate.ts` | 所有 use*State hooks |
 | `themeColors.ts` | 所有 visualizers、components |
 | `d3Imports.ts` | 所有 visualizers、PerformanceChart、ComplexityChart |
@@ -478,6 +541,9 @@ main.tsx
 | `useHistory.ts` | 所有 use*State hooks |
 | `useVisualizer.ts` | 所有 Page |
 | `useKeyboard.ts` | useCommonKeyboard、各 Page |
+| `visualizerLayout.ts` | arrayVisualizer、stackVisualizer、queueVisualizer、linkedListVisualizer |
+| `learningRecommender.ts` | LearningRecommendations 组件、LearningPath 页面 |
+| `useLearningProgress.ts` | ProgressOverview、LearningRecommendations、LearningPath、各学习模式页面 |
 
 ---
 
@@ -613,4 +679,4 @@ main.tsx
 
 ---
 
-> 本文档最后更新于 2026-06-01，与代码库版本 v6.4 同步维护。
+> 本文档最后更新于 2026-06-18，与代码库版本 v9.0 同步维护。

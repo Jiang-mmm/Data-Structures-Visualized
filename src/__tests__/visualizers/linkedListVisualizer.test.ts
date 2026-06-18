@@ -38,8 +38,10 @@ describe('linkedListVisualizer 集成测试', () => {
       renderLinkedList(svg, [], { width: 800, height: 400 })
 
       const texts = svg.querySelectorAll('text')
-      const emptyText = Array.from(texts).find(t => t.textContent === '空链表')
-      expect(emptyText).toBeTruthy()
+      const hasHead = Array.from(texts).some(t => t.textContent === tStatic('linkedlist.headLabel'))
+      const hasNull = Array.from(texts).some(t => t.textContent === 'NULL')
+      expect(hasHead).toBe(true)
+      expect(hasNull).toBe(true)
     })
 
     it('应该渲染单元素链表', () => {
@@ -55,7 +57,7 @@ describe('linkedListVisualizer 集成测试', () => {
 
       const texts = Array.from(svg.querySelectorAll('text'))
       const hasHead = texts.some(t => t.textContent === tStatic('linkedlist.headLabel'))
-      const hasNull = texts.some(t => t.textContent === tStatic('linkedlist.nullLabel'))
+      const hasNull = texts.some(t => t.textContent === 'NULL')
       expect(hasHead).toBe(true)
       expect(hasNull).toBe(true)
     })
@@ -66,6 +68,84 @@ describe('linkedListVisualizer 集成测试', () => {
 
       const lines = svg.querySelectorAll('line')
       expect(lines.length).toBeGreaterThanOrEqual(2)
+    })
+  })
+
+  describe('居中定位', () => {
+    function getNodeX(node: Element): number {
+      const transform = node.getAttribute('transform') || ''
+      const match = transform.match(/translate\(([^,]+)/)
+      return match ? parseFloat(match[1]) : 0
+    }
+
+    function getNodeY(node: Element): number {
+      const transform = node.getAttribute('transform') || ''
+      const match = transform.match(/translate\([^,]+,\s*([^)]+)\)/)
+      return match ? parseFloat(match[1]) : 0
+    }
+
+    it('少量节点应水平居中显示', () => {
+      const data = [1, 2, 3]
+      renderLinkedList(svg, data, { width: 800, height: 400 })
+
+      const nodes = svg.querySelectorAll('g.linked-node')
+      const firstX = getNodeX(nodes[0])
+      const lastX = getNodeX(nodes[nodes.length - 1])
+      const centerX = (firstX + lastX) / 2
+      expect(Math.abs(centerX - 400)).toBeLessThan(5)
+    })
+
+    it('多节点应水平居中显示(不偏移)', () => {
+      const data = Array.from({ length: 15 }, (_, i) => i + 1)
+      renderLinkedList(svg, data, { width: 800, height: 400 })
+
+      const nodes = svg.querySelectorAll('g.linked-node')
+      expect(nodes.length).toBe(15)
+
+      const firstX = getNodeX(nodes[0])
+      const lastX = getNodeX(nodes[nodes.length - 1])
+      const centerX = (firstX + lastX) / 2
+      expect(Math.abs(centerX - 400)).toBeLessThan(20)
+    })
+
+    it('窄容器中多节点仍应居中', () => {
+      const data = Array.from({ length: 10 }, (_, i) => i + 1)
+      renderLinkedList(svg, data, { width: 500, height: 300 })
+
+      const nodes = svg.querySelectorAll('g.linked-node')
+      const firstX = getNodeX(nodes[0])
+      const lastX = getNodeX(nodes[nodes.length - 1])
+      const centerX = (firstX + lastX) / 2
+      expect(Math.abs(centerX - 250)).toBeLessThan(20)
+    })
+
+    it('节点不应定位在左上角', () => {
+      const data = [10, 20, 30]
+      renderLinkedList(svg, data, { width: 800, height: 400 })
+
+      const nodes = svg.querySelectorAll('g.linked-node')
+      const x = getNodeX(nodes[0])
+      const y = getNodeY(nodes[0])
+
+      expect(x).toBeGreaterThan(0)
+      expect(y).toBeGreaterThan(0)
+      expect(y).toBeCloseTo(200, 0)
+    })
+
+    it('HEAD 标签不应超出 SVG 左边界', () => {
+      const data = Array.from({ length: 15 }, (_, i) => i + 1)
+      renderLinkedList(svg, data, { width: 800, height: 400 })
+
+      const rects = svg.querySelectorAll('rect')
+      let headRectX = Infinity
+      rects.forEach(rect => {
+        const w = parseFloat(rect.getAttribute('width') || '0')
+        if (w === 44) {
+          const x = parseFloat(rect.getAttribute('x') || '0')
+          headRectX = Math.min(headRectX, x)
+        }
+      })
+      expect(headRectX).toBeGreaterThanOrEqual(0)
     })
   })
 

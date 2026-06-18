@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import LearningPath from '../components/LearningPath'
+import ProgressOverview from '../components/ProgressOverview'
+import LearningRecommendations from '../components/LearningRecommendations'
 
 const ACCENT_COLORS = [
   { bg: 'bg-accent-blue/5', border: 'border-l-accent-blue', badge: 'bg-accent-blue/10 text-accent-blue', iconBg: 'bg-accent-blue/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(37,99,235,0.15)]' },
@@ -46,7 +48,7 @@ export default function Home() {
                 {t('home.heroDescription')}
               </p>
               <p className="text-sm font-mono text-ink-light/40 dark:text-dark-ink-light/40 tracking-widest uppercase mt-3">
-                Interactive Data Structure Visualizer
+                {t('home.tagline')}
               </p>
             </div>
 
@@ -82,7 +84,9 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Learning Path */}
+        {/* Progress Overview + Recommendations + Learning Path */}
+        <ProgressOverview />
+        <LearningRecommendations />
         <LearningPath />
 
         {/* Cards Grid */}

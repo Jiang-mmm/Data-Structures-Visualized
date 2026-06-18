@@ -509,3 +509,240 @@ registerSortAlgorithm('insertion', {
     return { comparisons, swaps, steps: stepCount }
   },
 })
+
+/**
+ * 希尔排序（Shell Sort）
+ * 时间复杂度: O(n log²n)（取决于间隔序列）
+ * 空间复杂度: O(1)
+ * 是插入排序的改进版，通过逐步缩小的间隔对子序列进行插入排序
+ */
+registerSortAlgorithm('shell', {
+  name: '希尔排序',
+  nameKey: 'sort.shell',
+  timeComplexity: 'O(n log²n)',
+  spaceComplexity: 'O(1)',
+  icon: '◇',
+  color: 'bg-accent-amber',
+  variant: 'warning',
+  execute: async (arr, { animateCompare, animateSwap, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
+    const n = arr.length
+    const total = n * Math.ceil(Math.log2(n))
+    let comparisons = 0, swaps = 0, stepCount = 0
+
+    // 使用 Knuth 间隔序列：1, 4, 13, 40, 121, ...
+    let gap = 1
+    while (gap < n / 3) gap = gap * 3 + 1
+
+    while (gap >= 1) {
+      if (anim?.isAborted?.()) return { comparisons, swaps, steps: stepCount, aborted: true }
+
+      // 对每个间隔 gap 进行插入排序
+      for (let i = gap; i < n; i++) {
+        if (anim?.isAborted?.()) return { comparisons, swaps, steps: stepCount, aborted: true }
+
+        let j = i
+        while (j >= gap) {
+          if (anim?.isAborted?.()) return { comparisons, swaps, steps: stepCount, aborted: true }
+
+          callbacks.onStep?.()
+          await animateCompare(svgRef.current, j - gap, j, arr, dimensions, anim)
+          comparisons++
+          callbacks.onCompare?.(comparisons, Math.round((comparisons / total) * 100))
+
+          if (arr[j - gap] > arr[j]) {
+            await animateSwap(svgRef.current, j - gap, j, arr, dimensions, anim)
+            const temp = arr[j]; arr[j] = arr[j - gap]; arr[j - gap] = temp
+            swaps++; j -= gap
+            stepCount++
+            callbacks.onSwap?.(swaps, stepCount)
+            if (svgRef.current) renderSortBars(svgRef.current, arr, dimensions)
+          } else {
+            break
+          }
+        }
+      }
+
+      gap = Math.floor(gap / 3)
+    }
+
+    await animateSorted(svgRef.current, arr, dimensions, anim)
+    return { comparisons, swaps, steps: stepCount }
+  },
+})
+
+/**
+ * 梳排序（Comb Sort）
+ * 时间复杂度: O(n²)（最坏）/ O(n log n)（平均）
+ * 空间复杂度: O(1)
+ * 冒泡排序的改进版，使用逐步缩小的间隔（收缩因子 1.3）消除小值靠近末尾的"乌龟"问题
+ */
+registerSortAlgorithm('comb', {
+  name: '梳排序',
+  nameKey: 'sort.comb',
+  timeComplexity: 'O(n log n)',
+  spaceComplexity: 'O(1)',
+  icon: '▣',
+  color: 'bg-accent-cyan',
+  variant: 'teal',
+  execute: async (arr, { animateCompare, animateSwap, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
+    const n = arr.length
+    const total = n * Math.ceil(Math.log2(n))
+    let comparisons = 0, swaps = 0, stepCount = 0
+
+    let gap = n
+    const shrinkFactor = 1.3
+    let swapped = true
+
+    while (gap > 1 || swapped) {
+      if (anim?.isAborted?.()) return { comparisons, swaps, steps: stepCount, aborted: true }
+
+      // 收缩间隔
+      gap = Math.floor(gap / shrinkFactor)
+      if (gap < 1) gap = 1
+
+      swapped = false
+
+      for (let i = 0; i + gap < n; i++) {
+        if (anim?.isAborted?.()) return { comparisons, swaps, steps: stepCount, aborted: true }
+
+        callbacks.onStep?.()
+        await animateCompare(svgRef.current, i, i + gap, arr, dimensions, anim)
+        comparisons++
+        callbacks.onCompare?.(comparisons, Math.round((comparisons / total) * 100))
+
+        if (arr[i] > arr[i + gap]) {
+          await animateSwap(svgRef.current, i, i + gap, arr, dimensions, anim)
+          const temp = arr[i]; arr[i] = arr[i + gap]; arr[i + gap] = temp
+          swaps++; stepCount++
+          swapped = true
+          callbacks.onSwap?.(swaps, stepCount)
+          if (svgRef.current) renderSortBars(svgRef.current, arr, dimensions)
+        }
+      }
+    }
+
+    await animateSorted(svgRef.current, arr, dimensions, anim)
+    return { comparisons, swaps, steps: stepCount }
+  },
+})
+
+/**
+ * TimSort（简化版）
+ * 时间复杂度: O(n log n)
+ * 空间复杂度: O(n)
+ * 结合归并排序和插入排序的混合算法，对小规模子序列使用插入排序，再合并
+ * 此处为教学简化版，使用固定 run 长度 32
+ */
+registerSortAlgorithm('tim', {
+  name: 'TimSort',
+  nameKey: 'sort.tim',
+  timeComplexity: 'O(n log n)',
+  spaceComplexity: 'O(n)',
+  icon: '◈',
+  color: 'bg-accent-indigo',
+  variant: 'primary',
+  execute: async (arr, { animateCompare, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
+    const n = arr.length
+    const total = n * Math.ceil(Math.log2(n))
+    let comparisons = 0, swaps = 0, stepCount = 0
+    const RUN = 32
+
+    // 对长度 <= RUN 的子序列使用插入排序
+    async function insertionSort(left: number, right: number): Promise<boolean> {
+      for (let i = left + 1; i <= right; i++) {
+        if (anim?.isAborted?.()) return false
+        const temp = arr[i]
+        let j = i - 1
+
+        while (j >= left) {
+          if (anim?.isAborted?.()) return false
+          callbacks.onStep?.()
+          await animateCompare(svgRef.current, j, j + 1, arr, dimensions, anim)
+          comparisons++
+          callbacks.onCompare?.(comparisons, Math.round((comparisons / total) * 100))
+
+          if (arr[j] > temp) {
+            arr[j + 1] = arr[j]
+            swaps++; stepCount++
+            callbacks.onSwap?.(swaps, stepCount)
+            j--
+          } else {
+            break
+          }
+        }
+        arr[j + 1] = temp
+        if (svgRef.current) renderSortBars(svgRef.current, arr, dimensions)
+      }
+      return true
+    }
+
+    // 合并两个有序子序列
+    async function merge(left: number, mid: number, right: number): Promise<boolean> {
+      const leftArr = arr.slice(left, mid + 1)
+      const rightArr = arr.slice(mid + 1, right + 1)
+      let i = 0, j = 0, k = left
+
+      while (i < leftArr.length && j < rightArr.length) {
+        if (anim?.isAborted?.()) return false
+        callbacks.onStep?.()
+        await animateCompare(svgRef.current, left + i, mid + 1 + j, arr, dimensions, anim)
+        comparisons++
+        callbacks.onCompare?.(comparisons, Math.round((comparisons / total) * 100))
+
+        if (leftArr[i] <= rightArr[j]) {
+          arr[k] = leftArr[i]
+          i++
+        } else {
+          arr[k] = rightArr[j]
+          j++
+          swaps++; stepCount++
+          callbacks.onSwap?.(swaps, stepCount)
+        }
+        k++
+        if (svgRef.current) renderSortBars(svgRef.current, arr, dimensions)
+      }
+
+      while (i < leftArr.length) {
+        if (anim?.isAborted?.()) return false
+        arr[k] = leftArr[i]
+        i++; k++; stepCount++
+        callbacks.onStep?.()
+        if (svgRef.current) renderSortBars(svgRef.current, arr, dimensions)
+      }
+
+      while (j < rightArr.length) {
+        if (anim?.isAborted?.()) return false
+        arr[k] = rightArr[j]
+        j++; k++; stepCount++
+        callbacks.onStep?.()
+        if (svgRef.current) renderSortBars(svgRef.current, arr, dimensions)
+      }
+
+      return true
+    }
+
+    // 1. 对每个 RUN 长度的子序列进行插入排序
+    for (let i = 0; i < n; i += RUN) {
+      if (anim?.isAborted?.()) return { comparisons, swaps, steps: stepCount, aborted: true }
+      const right = Math.min(i + RUN - 1, n - 1)
+      const ok = await insertionSort(i, right)
+      if (!ok) return { comparisons, swaps, steps: stepCount, aborted: true }
+    }
+
+    // 2. 逐步合并有序子序列，每次合并的跨度翻倍
+    for (let size = RUN; size < n; size *= 2) {
+      for (let left = 0; left < n; left += 2 * size) {
+        if (anim?.isAborted?.()) return { comparisons, swaps, steps: stepCount, aborted: true }
+        const mid = left + size - 1
+        const right = Math.min(left + 2 * size - 1, n - 1)
+        if (mid < right) {
+          const ok = await merge(left, mid, right)
+          if (!ok) return { comparisons, swaps, steps: stepCount, aborted: true }
+        }
+      }
+    }
+
+    await animateSorted(svgRef.current, arr, dimensions, anim)
+    return { comparisons, swaps, steps: stepCount }
+  },
+})

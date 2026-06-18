@@ -227,10 +227,16 @@ export async function animateInsertHash(svg: SVGSVGElement, key: number | string
   // Phase 2: Target bucket pulses
   const bucketGroup = container.select(`.hash-bucket-${bucketIdx}`)
   if (!bucketGroup.empty()) {
+    // 拆分链式过渡为两段顺序 await，确保每段 end 事件被 transitionEnd 正确捕获
+    const bucketRect = bucketGroup.select('rect')
     await transitionEnd(
-      bucketGroup.select('rect')
+      bucketRect
         .transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('fill', C.bucketHighlight).attr('stroke', C.bucketHighlightStroke)
+    )
+    if (anim?.isAborted?.()) return
+    await transitionEnd(
+      bucketRect
         .transition().duration(duration(300)).ease(defaultEase)
         .attr('fill', C.bucketBg).attr('stroke', C.bucketStroke)
     )
@@ -259,12 +265,18 @@ export async function animateInsertHash(svg: SVGSVGElement, key: number | string
         .attr('opacity', 1)
     )
 
+    if (anim?.isAborted?.()) return
+    // 拆分链式过渡: 先放大高亮，再回缩默认
     circle.attr('r', 0).attr('opacity', 1)
     await transitionEnd(
       circle
         .transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('r', ENTRY_RADIUS + 4)
         .attr('fill', C.bucketHighlight)
+    )
+    if (anim?.isAborted?.()) return
+    await transitionEnd(
+      circle
         .transition().duration(duration(200)).ease(defaultEase)
         .attr('r', ENTRY_RADIUS)
         .attr('fill', gradUrl('node-default'))
@@ -305,11 +317,17 @@ export async function animateSearchHash(svg: SVGSVGElement, key: number | string
   // Phase 2: Target bucket result highlight
   const bucketGroup = container.select(`.hash-bucket-${bucketIdx}`)
   if (!bucketGroup.empty()) {
+    // 拆分链式过渡为两段顺序 await
+    const bucketRect = bucketGroup.select('rect')
     await transitionEnd(
-      bucketGroup.select('rect')
+      bucketRect
         .transition().duration(duration(250)).ease(EASING.easeOutBack)
         .attr('fill', found ? C.bucketSuccess : C.bucketError)
         .attr('stroke', found ? C.bucketSuccessStroke : C.bucketErrorStroke)
+    )
+    if (anim?.isAborted?.()) return
+    await transitionEnd(
+      bucketRect
         .transition().duration(duration(300)).ease(defaultEase)
         .attr('fill', C.bucketBg).attr('stroke', C.bucketStroke)
     )
@@ -320,12 +338,18 @@ export async function animateSearchHash(svg: SVGSVGElement, key: number | string
   if (found) {
     const entryGroup = container.select(`.hash-entry.key-${key}`)
     if (!entryGroup.empty()) {
+      // 拆分链式过渡为两段顺序 await
+      const entryCircle = entryGroup.select('circle')
       await transitionEnd(
-        entryGroup.select('circle')
+        entryCircle
           .transition().duration(duration(300)).ease(EASING.easeOutBack)
           .attr('r', ENTRY_RADIUS + 6)
           .attr('fill', C.nodeActive)
           .attr('stroke', C.nodeActiveStroke)
+      )
+      if (anim?.isAborted?.()) return
+      await transitionEnd(
+        entryCircle
           .transition().duration(duration(250)).ease(defaultEase)
           .attr('r', ENTRY_RADIUS)
           .attr('fill', C.entryFill)
@@ -347,10 +371,16 @@ export async function animateDeleteHash(svg: SVGSVGElement, key: number | string
 
   const entryGroup = container.select(`.hash-entry.key-${key}`)
   if (!entryGroup.empty()) {
+    // 拆分链式过渡为两段顺序 await
+    const entryCircle = entryGroup.select('circle')
     await transitionEnd(
-      entryGroup.select('circle')
+      entryCircle
         .transition().duration(duration(200)).ease(defaultEase)
         .attr('fill', C.nodeError).attr('stroke', C.nodeErrorStroke)
+    )
+    if (anim?.isAborted?.()) return
+    await transitionEnd(
+      entryCircle
         .transition().duration(duration(250)).ease(EASING.easeInCubic)
         .attr('r', 0).attr('opacity', 0)
     )
@@ -362,10 +392,16 @@ export async function animateDeleteHash(svg: SVGSVGElement, key: number | string
 
   const bucketGroup = container.select(`.hash-bucket-${bucketIdx}`)
   if (!bucketGroup.empty()) {
+    // 拆分链式过渡为两段顺序 await
+    const bucketRect = bucketGroup.select('rect')
     await transitionEnd(
-      bucketGroup.select('rect')
+      bucketRect
         .transition().duration(duration(200)).ease(EASING.easeOutBack)
         .attr('fill', C.bucketError).attr('stroke', C.bucketErrorStroke)
+    )
+    if (anim?.isAborted?.()) return
+    await transitionEnd(
+      bucketRect
         .transition().duration(duration(300)).ease(defaultEase)
         .attr('fill', C.bucketBg).attr('stroke', C.bucketStroke)
     )

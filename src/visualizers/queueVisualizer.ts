@@ -2,6 +2,7 @@ import { select } from '../utils/d3Imports'
 import { tStatic } from '../i18n/useI18n'
 import { duration, EASING, transitionEnd, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
+import { calculateCenterStart } from '../utils/visualizerLayout'
 
 const RECT_WIDTH = 70
 const RECT_HEIGHT = 50
@@ -15,9 +16,9 @@ interface QueueVisualizerOptions {
   isDark?: boolean
 }
 
-function layout(data: number[], width: number, height: number) {
+export function layout(data: number[], width: number, height: number) {
   const totalWidth = data.length * (RECT_WIDTH + GAP) - GAP
-  const startX = (width - totalWidth) / 2
+  const startX = calculateCenterStart(totalWidth, width)
   const startY = (height - RECT_HEIGHT) / 2
   return { startX, startY, totalWidth }
 }

@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
+import AnimationDelayIndicator from '../components/AnimationDelayIndicator'
 import { renderTree, animateInsertNode, animateTraversal, animateLevelOrder, animateSearch, animateDeleteNode, clearTreePositions, type EdgeStyle } from '../visualizers/treeVisualizer'
 import { useTreeState } from '../hooks/useTreeState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -20,9 +21,11 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import LearningModeToggle from '../components/LearningModeToggle'
+import ContentTier from '../components/ContentTier'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
+import { delayStart, type DelayedStart } from '../utils/animationEngine'
 
 export default function TreePage() {
   const { t } = useGlobalSettings()
@@ -31,6 +34,8 @@ export default function TreePage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
   const [showLearning, setShowLearning] = useState(false)
+  const [isDelaying, setIsDelaying] = useState(false)
+  const delayRef = useRef<DelayedStart | null>(null)
   const [edgeStyle, setEdgeStyle] = useState<EdgeStyle>(() => {
     const stored = localStorage.getItem('ds-tree-edge-style')
     return (stored === 'curved' || stored === 'straight' || stored === 'orthogonal') ? stored as EdgeStyle : 'straight'
@@ -65,25 +70,49 @@ export default function TreePage() {
   }, [isAnimating, inputValue, data, dimensions, insert, setIsAnimating, getAnimationContext, svgRef, setInputValue])
 
   const handleTraversal = useCallback(async (fn: () => number[]): Promise<void> => {
-    if (isAnimating) return
-    setIsAnimating(true)
-    const anim = getAnimationContext()
+    if (isAnimating || isDelaying) return
+    setIsDelaying(true)
+    const delayed = delayStart(1500, () => {
+      setIsDelaying(false)
+      setIsAnimating(true)
+    })
+    delayRef.current = delayed
     try {
-      const order = fn()
-      if (svgRef.current) await animateTraversal(svgRef.current, order, data, dimensions, anim)
-    } catch (e) { handleAnimationError(e, t('tree.preorder')) }
-    finally { setIsAnimating(false) }
-  }, [isAnimating, data, dimensions, setIsAnimating, getAnimationContext, svgRef])
+      await delayed.promise
+      if (delayed.isAborted()) return
+      const anim = getAnimationContext()
+      try {
+        const order = fn()
+        if (svgRef.current) await animateTraversal(svgRef.current, order, data, dimensions, anim)
+      } catch (e) { handleAnimationError(e, t('tree.preorder')) }
+      finally { setIsAnimating(false) }
+    } finally {
+      setIsDelaying(false)
+      delayRef.current = null
+    }
+  }, [isAnimating, isDelaying, data, dimensions, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleLevelOrder = useCallback(async (): Promise<void> => {
-    if (isAnimating) return
-    setIsAnimating(true)
-    const anim = getAnimationContext()
-    const order = levelorder()
-    try { if (svgRef.current) await animateLevelOrder(svgRef.current, order, data, dimensions, anim) }
-    catch (e) { handleAnimationError(e, t('tree.levelorder')) }
-    finally { setIsAnimating(false) }
-  }, [isAnimating, data, dimensions, levelorder, setIsAnimating, getAnimationContext, svgRef])
+    if (isAnimating || isDelaying) return
+    setIsDelaying(true)
+    const delayed = delayStart(1500, () => {
+      setIsDelaying(false)
+      setIsAnimating(true)
+    })
+    delayRef.current = delayed
+    try {
+      await delayed.promise
+      if (delayed.isAborted()) return
+      const anim = getAnimationContext()
+      const order = levelorder()
+      try { if (svgRef.current) await animateLevelOrder(svgRef.current, order, data, dimensions, anim) }
+      catch (e) { handleAnimationError(e, t('tree.levelorder')) }
+      finally { setIsAnimating(false) }
+    } finally {
+      setIsDelaying(false)
+      delayRef.current = null
+    }
+  }, [isAnimating, isDelaying, data, dimensions, levelorder, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleSearch = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -119,6 +148,11 @@ export default function TreePage() {
   }, [isAnimating, inputValue, data, dimensions, deleteNode, setIsAnimating, getAnimationContext, svgRef, setInputValue])
 
   const handleStop = useCallback((): void => {
+    if (delayRef.current) {
+      delayRef.current.abort()
+      delayRef.current = null
+      setIsDelaying(false)
+    }
     abortAnimation()
     setIsAnimating(false)
   }, [abortAnimation, setIsAnimating])
@@ -150,12 +184,12 @@ export default function TreePage() {
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('common.delete')}</OperationButton>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={searchValue} onChange={setSearchValue} />
         <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating}>{t('tree.search')}</OperationButton>
-        <OperationButton variant="purple" onClick={() => handleTraversal(preorder)} disabled={isAnimating} popAnimation>{t('tree.preorder')}</OperationButton>
-        <OperationButton variant="purple" onClick={() => handleTraversal(inorder)} disabled={isAnimating} popAnimation>{t('tree.inorder')}</OperationButton>
-        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        <OperationButton variant="purple" onClick={() => handleTraversal(preorder)} disabled={isAnimating || isDelaying} popAnimation>{t('tree.preorder')}</OperationButton>
+        <OperationButton variant="purple" onClick={() => handleTraversal(inorder)} disabled={isAnimating || isDelaying} popAnimation>{t('tree.inorder')}</OperationButton>
+        {(isAnimating || isDelaying) && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <OperationGroup label={t('common.more')}>
-          <OperationButton variant="purple" onClick={() => handleTraversal(postorder)} disabled={isAnimating} popAnimation>{t('tree.postorder')}</OperationButton>
-          <OperationButton variant="purple" onClick={handleLevelOrder} disabled={isAnimating} popAnimation>{t('tree.levelorder')}</OperationButton>
+          <OperationButton variant="purple" onClick={() => handleTraversal(postorder)} disabled={isAnimating || isDelaying} popAnimation>{t('tree.postorder')}</OperationButton>
+          <OperationButton variant="purple" onClick={handleLevelOrder} disabled={isAnimating || isDelaying} popAnimation>{t('tree.levelorder')}</OperationButton>
           <OperationButton
             variant="outline"
             onClick={() => {
@@ -195,7 +229,8 @@ export default function TreePage() {
           <span className="font-mono text-xs text-ink-light">NODES: {nodeCount}</span>
         </OperationInfo>
       </OperationBar>
-      <Visualizer data={data} renderFn={renderTree as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.treeLabel")} renderOptions={{ edgeStyle }} />
+      <ContentTier structureKey="tree" />
+      <Visualizer data={data} renderFn={renderTree as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.treeLabel")} renderOptions={{ edgeStyle }} overlay={isDelaying ? <AnimationDelayIndicator /> : undefined} />
       {data.length === 0 && (
         <EmptyState icon="◆" titleKey="emptyState.emptyTree" descriptionKey="emptyState.emptyTreeDesc" onFill={reset} />
       )}

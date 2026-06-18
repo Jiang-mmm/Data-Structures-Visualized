@@ -1,6 +1,7 @@
 import { select } from '../utils/d3Imports'
 import { duration, EASING, transitionEnd, wait, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
+import { getViewBoxSize, calculateCenterStart } from '../utils/visualizerLayout'
 
 const RECT_WIDTH = 60
 const RECT_HEIGHT = 50
@@ -19,7 +20,7 @@ export interface ArrayVisualizerOptions {
 
 function layout(dataLength: number, width: number, height: number) {
   const totalW = dataLength * (RECT_WIDTH + GAP) - GAP
-  const startX = Math.max(0, (width - totalW) / 2)
+  const startX = calculateCenterStart(totalW, width)
   const startY = Math.max(20, Math.floor((height - CONTENT_HEIGHT) / 2))
   return { startX, startY }
 }
@@ -86,7 +87,8 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVi
     defs.appendChild(filter)
   }
 
-  const { startX, startY } = layout(data.length, width, height)
+  const vbSize = getViewBoxSize(svg, width, height)
+  const { startX, startY } = layout(data.length, vbSize.width, vbSize.height)
 
   data.forEach((value, i) => {
     const g = document.createElementNS(ns, 'g')
@@ -168,7 +170,8 @@ export async function animateInsert(svg: SVGSVGElement, index: number, _value: n
   container.selectAll('.insert-indicator').remove()
 
   const newLength = oldData.length + 1
-  const { startX: finalStartX, startY } = layout(newLength, width, height)
+  const vbSize = getViewBoxSize(svg, width, height)
+  const { startX: finalStartX, startY } = layout(newLength, vbSize.width, vbSize.height)
   const insertX = posX(finalStartX, index)
 
   // Phase 1: 插入指示器弹入
@@ -297,7 +300,8 @@ export async function animateDelete(svg: SVGSVGElement, index: number, _data: nu
   if (anim?.isAborted?.()) return
 
   // Phase 3: 右侧元素逐个左移合拢
-  const { startX: newStartX, startY } = layout(_data.length - 1, width, height)
+  const vbSize = getViewBoxSize(svg, width, height)
+  const { startX: newStartX, startY } = layout(_data.length - 1, vbSize.width, vbSize.height)
   const allGroups = container.selectAll('g.array-item').nodes()
   for (let gi = index + 1; gi < allGroups.length; gi++) {
     if (anim?.isAborted?.()) return

@@ -54,15 +54,20 @@ export default function HeapPage() {
     setIsAnimating(true)
     const anim = getAnimationContext()
     try {
-      if (svgRef.current) await animateInsertHeap(svgRef.current, value, data, anim)
+      // 先更新数据，让 Visualizer 重渲染出新增的 .heap-node 节点
+      // 再运行动画，确保 animateInsertHeap 能找到正确的新节点（最后一个 .heap-node）
       insert(value)
+      // 等待两帧: 第一帧 React commit + Visualizer useEffect 触发 renderFn，第二帧确保 DOM 就绪
+      await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())))
+      if (anim?.isAborted?.()) return
+      if (svgRef.current) await animateInsertHeap(svgRef.current, value, data, anim)
     } catch (e) {
       handleAnimationError(e, t('heap.insert'))
     } finally {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, data, insert, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, inputValue, data, insert, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleExtract = useCallback(async () => {
     if (isAnimating || data.length === 0) return

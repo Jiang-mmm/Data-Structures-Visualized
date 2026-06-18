@@ -234,4 +234,55 @@ describe('GraphPage', () => {
     expect(screen.getByText('common.undo')).toBeDisabled()
     expect(screen.getByText('common.redo')).toBeDisabled()
   })
+
+  it('renders matrix view with title, stats, legend and table cells', () => {
+    const mockState = createMockGraphState({ viewMode: 'matrix' })
+    mockedUseGraphState.mockReturnValue(mockState)
+    renderWithRouter(<GraphPage />)
+
+    expect(screen.getByText('graph.adjacencyMatrix')).toBeInTheDocument()
+    expect(screen.getByText(/graph\.nodes/)).toBeInTheDocument()
+    expect(screen.getByText(/graph\.edges/)).toBeInTheDocument()
+    expect(screen.getByText(/graph\.density/)).toBeInTheDocument()
+    expect(screen.getByText('graph.legendEdge')).toBeInTheDocument()
+    expect(screen.getByText('graph.legendNoEdge')).toBeInTheDocument()
+    expect(screen.getByText('graph.legendSelfLoop')).toBeInTheDocument()
+    expect(screen.getAllByText('1').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('2').length).toBeGreaterThan(0)
+  })
+
+  it('renders matrix view with node id headers', () => {
+    const mockState = createMockGraphState({ viewMode: 'matrix' })
+    mockedUseGraphState.mockReturnValue(mockState)
+    renderWithRouter(<GraphPage />)
+
+    const cells = screen.getAllByText('A')
+    expect(cells.length).toBeGreaterThan(0)
+    const bCells = screen.getAllByText('B')
+    expect(bCells.length).toBeGreaterThan(0)
+    const cCells = screen.getAllByText('C')
+    expect(cCells.length).toBeGreaterThan(0)
+  })
+
+  it('renders list view with title, stats, legend and node cards', () => {
+    const mockState = createMockGraphState({ viewMode: 'list' })
+    mockedUseGraphState.mockReturnValue(mockState)
+    renderWithRouter(<GraphPage />)
+
+    expect(screen.getByText('graph.adjacencyList')).toBeInTheDocument()
+    expect(screen.getAllByText(/graph\.nodes/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/graph\.edges/).length).toBeGreaterThan(0)
+    expect(screen.getByText('graph.legendEdge')).toBeInTheDocument()
+    expect(screen.getByText('graph.noNeighbors')).toBeInTheDocument()
+    expect(screen.getAllByText(/graph\.degree/).length).toBeGreaterThan(0)
+  })
+
+  it('renders list view with neighbor badges showing weights', () => {
+    const mockState = createMockGraphState({ viewMode: 'list' })
+    mockedUseGraphState.mockReturnValue(mockState)
+    renderWithRouter(<GraphPage />)
+
+    expect(screen.getAllByText(':1').length).toBeGreaterThan(0)
+    expect(screen.getAllByText(':2').length).toBeGreaterThan(0)
+  })
 })

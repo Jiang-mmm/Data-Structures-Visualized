@@ -43,7 +43,7 @@ vi.mock('../../utils/animationEngine', () => ({
 }))
 vi.mock('../../i18n/useI18n', () => ({ tStatic: (key: string) => key }))
 
-const { renderStack, animatePush, animatePop, animatePeek } = await import('../../visualizers/stackVisualizer')
+const { renderStack, animatePush, animatePop, animatePeek, layout, RECT_WIDTH, RECT_HEIGHT, GAP } = await import('../../visualizers/stackVisualizer')
 
 describe('stackVisualizer', () => {
   let svg: SVGSVGElement
@@ -51,6 +51,84 @@ describe('stackVisualizer', () => {
   beforeEach(() => {
     svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
     svg.getBoundingClientRect = () => ({ width: 400, height: 600, top: 0, left: 0, right: 400, bottom: 600, x: 0, y: 0, toJSON: () => {} })
+  })
+
+  describe('layout 居中计算', () => {
+    it('应该水平居中:startX = (width - RECT_WIDTH) / 2', () => {
+      const width = 400
+      const { startX } = layout([1, 2, 3], width, 600)
+      expect(startX).toBe((width - RECT_WIDTH) / 2)
+      expect(startX).toBe(160)
+    })
+
+    it('栈元素中心 X 应等于 width / 2', () => {
+      const width = 400
+      const { startX } = layout([1, 2, 3], width, 600)
+      const centerX = startX + RECT_WIDTH / 2
+      expect(centerX).toBe(width / 2)
+    })
+
+    it('应该垂直居中:栈顶 topY = (height - totalHeight) / 2', () => {
+      const data = [1, 2, 3]
+      const height = 600
+      const { topY, totalHeight } = layout(data, 400, height)
+      expect(topY).toBe((height - totalHeight) / 2)
+    })
+
+    it('栈垂直中心应等于 height / 2', () => {
+      const data = [1, 2, 3]
+      const height = 600
+      const { startY, topY } = layout(data, 400, height)
+      const stackTop = topY
+      const stackBottom = startY + RECT_HEIGHT
+      const stackCenter = (stackTop + stackBottom) / 2
+      expect(stackCenter).toBe(height / 2)
+    })
+
+    it('元素不应定位在左上角 (0, 0)', () => {
+      const { startX, startY, topY } = layout([1, 2, 3], 400, 600)
+      expect(startX).toBeGreaterThan(0)
+      expect(startY).toBeGreaterThan(0)
+      expect(topY).toBeGreaterThan(0)
+    })
+
+    it('单元素栈应水平且垂直居中', () => {
+      const width = 400
+      const height = 600
+      const { startX, startY, topY } = layout([42], width, height)
+      expect(startX).toBe((width - RECT_WIDTH) / 2)
+      expect(topY).toBe((height - RECT_HEIGHT) / 2)
+      expect(startY).toBe(topY)
+    })
+
+    it('不同数据量下均应保持水平居中', () => {
+      const width = 800
+      for (const n of [1, 2, 5, 10]) {
+        const data = Array.from({ length: n }, (_, i) => i)
+        const { startX } = layout(data, width, 400)
+        expect(startX).toBe((width - RECT_WIDTH) / 2)
+        expect(startX + RECT_WIDTH / 2).toBe(width / 2)
+      }
+    })
+
+    it('totalHeight 应正确计算:n * (RECT_HEIGHT + GAP) - GAP', () => {
+      for (const n of [1, 2, 3, 5]) {
+        const data = Array.from({ length: n }, (_, i) => i)
+        const { totalHeight } = layout(data, 400, 600)
+        expect(totalHeight).toBe(n * (RECT_HEIGHT + GAP) - GAP)
+      }
+    })
+
+    it('栈底元素 Y (startY) 应使栈整体垂直居中', () => {
+      const data = [1, 2, 3, 4]
+      const height = 600
+      const { startY, totalHeight } = layout(data, 400, height)
+      const bottomEdge = startY + RECT_HEIGHT
+      const topEdge = startY - (data.length - 1) * (RECT_HEIGHT + GAP)
+      const center = (topEdge + bottomEdge) / 2
+      expect(center).toBe(height / 2)
+      expect(bottomEdge - topEdge).toBe(totalHeight)
+    })
   })
 
   describe('renderStack', () => {

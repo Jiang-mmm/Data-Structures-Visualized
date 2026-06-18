@@ -20,6 +20,7 @@ import { getColors } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import StatsOverlay from '../components/StatsOverlay'
 import LearningModeToggle from '../components/LearningModeToggle'
+import ContentTier from '../components/ContentTier'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
@@ -130,6 +131,7 @@ export default function StackPage() {
           ]} />
         </OperationInfo>
       </OperationBar>
+      <ContentTier structureKey="stack" />
       <Visualizer data={data} renderFn={renderStack as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.stackLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: size }]} />} />
       {data.length === 0 && (
         <EmptyState icon="☰" titleKey="emptyState.emptyStack" descriptionKey="emptyState.emptyStackDesc" onFill={reset} />
