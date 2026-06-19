@@ -1,16 +1,15 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationButton } from '../components/OperationBar'
 import OperationGroup from '../components/OperationGroup'
 import UndoPreviewButton from '../components/UndoPreviewButton'
 import ShareButton from '../components/ShareButton'
 import Visualizer from '../components/Visualizer'
-import LogPanel from '../components/LogPanel'
+import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
 import SpeedControl from '../components/SpeedControl'
 import ExportImport from '../components/ExportImport'
 import ProgressBar from '../components/ProgressBar'
-import LearningModeToggle from '../components/LearningModeToggle'
 import { renderSortBars, animateCompare, animateSwap, animateSorted } from '../visualizers/sortVisualizer'
 import { useSortState } from '../hooks/useSortState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -39,7 +38,6 @@ export default function SortPage() {
   useSharedData({ dataType: 'sort', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
   usePageTracker('sort')
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('bubble')
-  const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode(selectedAlgorithm)
 
   useKeyboard({
@@ -78,6 +76,13 @@ export default function SortPage() {
 
   const algorithms = useMemo(() => Array.from(getAllSortAlgorithms()), [])
   const selectedAlgo = algorithms.find(([key]) => key === selectedAlgorithm)?.[1]
+
+  const handleJumpToStep = useCallback((stepId: string): void => {
+    const idx = learningMode.steps.findIndex(s => s.id === stepId)
+    if (idx >= 0) {
+      learningMode.goToStep(idx)
+    }
+  }, [learningMode.steps, learningMode.goToStep])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
@@ -181,48 +186,29 @@ export default function SortPage() {
         </div>
       </div>
 
-      <Visualizer data={data} renderFn={renderSortBars as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.sortLabel")} />
-      {data.length === 0 && (
-        <EmptyState icon="⇅" titleKey="emptyState.emptySort" descriptionKey="emptyState.emptySortDesc" onFill={randomize} />
-      )}
-
-      {selectedAlgo && (
-        <AlgorithmInfo
-          algorithmKey={selectedAlgorithm}
-          name={selectedAlgo.nameKey ? t(selectedAlgo.nameKey) : selectedAlgo.name}
-          timeComplexity={selectedAlgo.timeComplexity}
-          spaceComplexity={selectedAlgo.spaceComplexity}
-          isAnimating={isAnimating}
-        />
-      )}
-
-      <LearningModeToggle
-        showLearning={showLearning}
-        setShowLearning={setShowLearning}
-        learningMode={learningMode}
-        isAnimating={isAnimating}
-      >
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-sm font-semibold text-ink dark:text-dark-ink">{t('sort.selectAlgorithm')}:</span>
-          {algorithms.map(([key, algo]) => (
-            <button
-              key={key}
-              onClick={() => {
-                setSelectedAlgorithm(key)
-                learningMode.reset()
-              }}
-              className={`px-2 py-1 text-xs border-2 border-ink dark:border-dark-border transition-colors ${selectedAlgorithm === key
-                  ? 'bg-accent-blue text-white border-accent-blue'
-                  : 'hover:bg-ink hover:text-white dark:hover:bg-dark-ink dark:hover:text-dark-paper'
-                }`}
-            >
-              {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
-            </button>
-          ))}
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <div className="relative flex flex-col flex-1 min-h-0">
+          <Visualizer data={data} renderFn={renderSortBars as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.sortLabel")} />
+          {data.length === 0 && (
+            <EmptyState icon="⇅" titleKey="emptyState.emptySort" descriptionKey="emptyState.emptySortDesc" onFill={randomize} />
+          )}
+          {selectedAlgo && (
+            <AlgorithmInfo
+              algorithmKey={selectedAlgorithm}
+              name={selectedAlgo.nameKey ? t(selectedAlgo.nameKey) : selectedAlgo.name}
+              timeComplexity={selectedAlgo.timeComplexity}
+              spaceComplexity={selectedAlgo.spaceComplexity}
+              isAnimating={isAnimating}
+            />
+          )}
         </div>
-      </LearningModeToggle>
-
-      <LogPanel logs={logs} />
+        <InfoPanel
+          logs={logs}
+          learningMode={learningMode}
+          isAnimating={isAnimating}
+          onJumpToStep={handleJumpToStep}
+        />
+      </div>
     </div>
   )
 }

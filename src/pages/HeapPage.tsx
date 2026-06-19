@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
-import LogPanel from '../components/LogPanel'
+import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
 import { renderHeap, animateInsertHeap, animateExtractHeap, animatePeekHeap } from '../visualizers/heapVisualizer'
 import { useHeapState } from '../hooks/useHeapState'
@@ -19,7 +19,6 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import StatsOverlay from '../components/StatsOverlay'
-import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
@@ -29,7 +28,6 @@ export default function HeapPage() {
   const { data, logs, isAnimating, setIsAnimating, insert, extractMax, peek, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, heapSize } = useHeapState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
-  const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('heapStructure')
   useSharedData({ dataType: 'heap', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
   usePageTracker('heap')
@@ -48,7 +46,6 @@ export default function HeapPage() {
   const handleJumpToStep = useCallback((stepId: string): void => {
     const idx = learningMode.steps.findIndex(s => s.id === stepId)
     if (idx >= 0) {
-      setShowLearning(true)
       learningMode.goToStep(idx)
     }
   }, [learningMode.steps, learningMode.goToStep])
@@ -154,17 +151,20 @@ export default function HeapPage() {
         </OperationInfo>
       </OperationBar>
 
-      <Visualizer data={data} renderFn={renderHeap as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.heapLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: heapSize }]} />} />
-      {data.length === 0 && (
-        <EmptyState icon="▲" titleKey="emptyState.emptyHeap" descriptionKey="emptyState.emptyHeapDesc" onFill={reset} />
-      )}
-      <LearningModeToggle
-        showLearning={showLearning}
-        setShowLearning={setShowLearning}
-        learningMode={learningMode}
-        isAnimating={isAnimating}
-      />
-      <LogPanel logs={logs} onJumpToStep={handleJumpToStep} />
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <div className="relative flex flex-col flex-1 min-h-0">
+          <Visualizer data={data} renderFn={renderHeap as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.heapLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: heapSize }]} />} />
+          {data.length === 0 && (
+            <EmptyState icon="▲" titleKey="emptyState.emptyHeap" descriptionKey="emptyState.emptyHeapDesc" onFill={reset} />
+          )}
+        </div>
+        <InfoPanel
+          logs={logs}
+          learningMode={learningMode}
+          isAnimating={isAnimating}
+          onJumpToStep={handleJumpToStep}
+        />
+      </div>
     </div>
   )
 }

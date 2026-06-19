@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
-import LogPanel from '../components/LogPanel'
+import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
 import { renderGraph, animateBFS, animateDFS, animateDijkstra, clearGraphSimulation } from '../visualizers/graphVisualizer'
 import { useGraphState } from '../hooks/useGraphState'
@@ -15,7 +15,6 @@ import ShareButton from '../components/ShareButton'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { showToast } from '../components/toastStore'
 import { handleAnimationError } from '../utils/errorHandler'
-import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { usePageTracker } from '../hooks/usePageTracker'
 import OperationGroup from '../components/OperationGroup'
@@ -38,7 +37,6 @@ export default function GraphPage() {
   const [weightInput, setWeightInput] = useState<string>('1')
   const [algorithmStart, setAlgorithmStart] = useState<string>('A')
   const [algorithmEnd, setAlgorithmEnd] = useState<string>('F')
-  const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('graph')
   useSharedData({ dataType: 'graph', loadData: ((d: unknown) => loadData(d as any)) as any, validator: (d): d is unknown => !!(d && typeof d === 'object' && 'nodes' in d && 'links' in d && Array.isArray((d as Record<string, unknown>).nodes) && Array.isArray((d as Record<string, unknown>).links)) })
   usePageTracker('graph')
@@ -84,7 +82,6 @@ export default function GraphPage() {
   const handleJumpToStep = useCallback((stepId: string): void => {
     const idx = learningMode.steps.findIndex(s => s.id === stepId)
     if (idx >= 0) {
-      setShowLearning(true)
       learningMode.goToStep(idx)
     }
   }, [learningMode.steps, learningMode.goToStep])
@@ -219,7 +216,9 @@ export default function GraphPage() {
         </OperationInfo>
       </OperationBar>
 
-      {viewMode === 'force' ? (
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <div className="relative flex flex-col flex-1 min-h-0">
+          {viewMode === 'force' ? (
         <>
           <Visualizer data={nodes} renderFn={handleGraphRender} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.graphLabel")} />
           {nodes.length === 0 && (
@@ -320,14 +319,14 @@ export default function GraphPage() {
           </div>
         </div>
       )}
-
-      <LearningModeToggle
-        showLearning={showLearning}
-        setShowLearning={setShowLearning}
-        learningMode={learningMode}
-        isAnimating={isAnimating}
-      />
-      <LogPanel logs={logs} onJumpToStep={handleJumpToStep} />
+        </div>
+        <InfoPanel
+          logs={logs}
+          learningMode={learningMode}
+          isAnimating={isAnimating}
+          onJumpToStep={handleJumpToStep}
+        />
+      </div>
     </div>
   )
 }

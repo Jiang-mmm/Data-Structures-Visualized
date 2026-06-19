@@ -281,6 +281,16 @@ export interface Locale {
     pause: string
     speed: string
   }
+  infoPanel: {
+    tabLog: string
+    tabLearning: string
+    logEmpty: string
+    logCount: string
+    learningEmpty: string
+    closeDrawer: string
+    openDrawer: string
+    recent: string
+  }
   errorBoundary: {
     title: string
     retry: string
@@ -1097,6 +1107,16 @@ export const zh: Locale = {
     pause: '暂停',
     speed: '速度',
   },
+  infoPanel: {
+    tabLog: '操作日志',
+    tabLearning: '学习模式',
+    logEmpty: '暂无操作记录',
+    logCount: '条',
+    learningEmpty: '当前结构暂无学习内容',
+    closeDrawer: '收起面板',
+    openDrawer: '展开面板',
+    recent: '最近',
+  },
   errorBoundary: {
     title: '组件异常',
     retry: '重试',
@@ -1875,6 +1895,16 @@ export const en: Locale = {
     autoPlay: 'Auto Play',
     pause: 'Pause',
     speed: 'Speed',
+  },
+  infoPanel: {
+    tabLog: 'Logs',
+    tabLearning: 'Learn',
+    logEmpty: 'No operations yet',
+    logCount: 'logs',
+    learningEmpty: 'No learning content for this structure',
+    closeDrawer: 'Collapse panel',
+    openDrawer: 'Expand panel',
+    recent: 'Recent',
   },
   errorBoundary: {
     title: 'Component Error',

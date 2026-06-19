@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
-import LogPanel from '../components/LogPanel'
+import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
 import { renderQueue, animateEnqueue, animateDequeue, animateFront } from '../visualizers/queueVisualizer'
 import { useQueueState } from '../hooks/useQueueState'
@@ -19,7 +19,6 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import StatsOverlay from '../components/StatsOverlay'
-import LearningModeToggle from '../components/LearningModeToggle'
 import ContentTier from '../components/ContentTier'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
@@ -30,7 +29,6 @@ export default function QueuePage() {
   const { data, logs, isAnimating, setIsAnimating, enqueue, dequeue, front, clear, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, size } = useQueueState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
-  const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('queue')
   useSharedData({ dataType: 'queue', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
   usePageTracker('queue')
@@ -49,7 +47,6 @@ export default function QueuePage() {
   const handleJumpToStep = useCallback((stepId: string): void => {
     const idx = learningMode.steps.findIndex(s => s.id === stepId)
     if (idx >= 0) {
-      setShowLearning(true)
       learningMode.goToStep(idx)
     }
   }, [learningMode.steps, learningMode.goToStep])
@@ -140,18 +137,20 @@ export default function QueuePage() {
         </OperationInfo>
       </OperationBar>
       <ContentTier structureKey="queue" />
-      <Visualizer data={data} renderFn={renderQueue as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.queueLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: size }]} />} />
-      {data.length === 0 && (
-        <EmptyState icon="⇒" titleKey="emptyState.emptyQueue" descriptionKey="emptyState.emptyQueueDesc" onFill={reset} />
-      )}
-      <LearningModeToggle
-        showLearning={showLearning}
-        setShowLearning={setShowLearning}
-        learningMode={learningMode}
-        isAnimating={isAnimating}
-      />
-
-      <LogPanel logs={logs} onJumpToStep={handleJumpToStep} />
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <div className="relative flex flex-col flex-1 min-h-0">
+          <Visualizer data={data} renderFn={renderQueue as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.queueLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: size }]} />} />
+          {data.length === 0 && (
+            <EmptyState icon="⇒" titleKey="emptyState.emptyQueue" descriptionKey="emptyState.emptyQueueDesc" onFill={reset} />
+          )}
+        </div>
+        <InfoPanel
+          logs={logs}
+          learningMode={learningMode}
+          isAnimating={isAnimating}
+          onJumpToStep={handleJumpToStep}
+        />
+      </div>
     </div>
   )
 }

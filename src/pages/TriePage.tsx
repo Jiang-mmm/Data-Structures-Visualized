@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
-import LogPanel from '../components/LogPanel'
+import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
 import { renderTrie, animateInsertTrie, animateSearchTrie, animateDeleteTrie } from '../visualizers/trieVisualizer'
 import { useTrieState } from '../hooks/useTrieState'
@@ -17,7 +17,6 @@ import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
-import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
@@ -27,7 +26,6 @@ export default function TriePage() {
   const { logs, isAnimating, setIsAnimating, insert, remove, search, searchPrefix, getFlattened, wordCount, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useTrieState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
-  const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('trie')
   useSharedData({ dataType: 'trie', loadData: ((d: unknown) => loadData(d as any)) as any, validator: (d): d is unknown => !!(d && typeof d === 'object' && !Array.isArray(d)) })
   usePageTracker('trie')
@@ -46,7 +44,6 @@ export default function TriePage() {
   const handleJumpToStep = useCallback((stepId: string): void => {
     const idx = learningMode.steps.findIndex(s => s.id === stepId)
     if (idx >= 0) {
-      setShowLearning(true)
       learningMode.goToStep(idx)
     }
   }, [learningMode.steps, learningMode.goToStep])
@@ -198,17 +195,20 @@ export default function TriePage() {
         </OperationInfo>
       </OperationBar>
 
-      <Visualizer data={flatData} renderFn={renderTrie as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.trieLabel")} />
-      {flatData.nodes.length === 0 && (
-        <EmptyState icon="◈" titleKey="emptyState.emptyTrie" descriptionKey="emptyState.emptyTrieDesc" onFill={reset} />
-      )}
-      <LearningModeToggle
-        showLearning={showLearning}
-        setShowLearning={setShowLearning}
-        learningMode={learningMode}
-        isAnimating={isAnimating}
-      />
-      <LogPanel logs={logs} onJumpToStep={handleJumpToStep} />
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <div className="relative flex flex-col flex-1 min-h-0">
+          <Visualizer data={flatData} renderFn={renderTrie as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.trieLabel")} />
+          {flatData.nodes.length === 0 && (
+            <EmptyState icon="◈" titleKey="emptyState.emptyTrie" descriptionKey="emptyState.emptyTrieDesc" onFill={reset} />
+          )}
+        </div>
+        <InfoPanel
+          logs={logs}
+          learningMode={learningMode}
+          isAnimating={isAnimating}
+          onJumpToStep={handleJumpToStep}
+        />
+      </div>
     </div>
   )
 }

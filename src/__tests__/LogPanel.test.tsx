@@ -245,4 +245,37 @@ describe('LogPanel', () => {
       expect(screen.getByText('logPanel.freeze')).toBeInTheDocument()
     })
   })
+
+  describe('embedded 模式（InfoPanel 内使用）', () => {
+    it('应渲染卡片化日志条目', () => {
+      render(<LogPanel logs={sampleLogs} variant="embedded" />)
+      expect(screen.getByText('操作日志1')).toBeInTheDocument()
+      expect(screen.getByText('信息日志1')).toBeInTheDocument()
+    })
+
+    it('应渲染时间戳（截断小时）', () => {
+      render(<LogPanel logs={sampleLogs} variant="embedded" />)
+      expect(screen.getByText('00:01')).toBeInTheDocument()
+      expect(screen.getByText('00:02')).toBeInTheDocument()
+    })
+
+    it('应渲染类型徽章', () => {
+      render(<LogPanel logs={sampleLogs} variant="embedded" />)
+      expect(screen.getAllByText('logPanel.type.oper').length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('日志为空时应显示空状态', () => {
+      render(<LogPanel logs={[]} variant="embedded" />)
+      expect(screen.getByText(/infoPanel\.logEmpty/)).toBeInTheDocument()
+    })
+
+    it('codeStepId 存在且提供 onJumpToStep 时应显示查看代码按钮', () => {
+      const onJump = vi.fn()
+      const logs = [{ time: '10:00:01', type: 'code', message: '代码日志', codeStepId: 'insert' }]
+      render(<LogPanel logs={logs} variant="embedded" onJumpToStep={onJump} />)
+      const btn = screen.getByText('logPanel.viewCode')
+      fireEvent.click(btn)
+      expect(onJump).toHaveBeenCalledWith('insert')
+    })
+  })
 })

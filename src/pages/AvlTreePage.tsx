@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
-import LogPanel from '../components/LogPanel'
+import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
 import { renderAvlTree, animateInsertPath, animateSearchPath, animateTraversal } from '../visualizers/avlTreeVisualizer'
 import { useAvlTreeState } from '../hooks/useAvlTreeState'
@@ -19,7 +19,6 @@ import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
-import LearningModeToggle from '../components/LearningModeToggle'
 import ContentTier from '../components/ContentTier'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
@@ -37,7 +36,6 @@ export default function AvlTreePage() {
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
-  const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('avlTree')
   useSharedData({ dataType: 'avlTree', loadData: ((d: unknown) => loadData(d as any)) as any, validator: (d: unknown) => d !== null })
   usePageTracker('avlTree')
@@ -124,6 +122,13 @@ export default function AvlTreePage() {
     setIsAnimating(false)
   }, [abortAnimation, setIsAnimating])
 
+  const handleJumpToStep = useCallback((stepId: string): void => {
+    const idx = learningMode.steps.findIndex(s => s.id === stepId)
+    if (idx >= 0) {
+      learningMode.goToStep(idx)
+    }
+  }, [learningMode.steps, learningMode.goToStep])
+
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('avlTree.title')} subtitle={t('avlTree.subtitle')}>
@@ -182,25 +187,28 @@ export default function AvlTreePage() {
         </OperationInfo>
       </OperationBar>
       <ContentTier structureKey="avlTree" />
-      <Visualizer
-        data={flattenedData}
-        renderFn={renderAvlTree as any}
-        svgRef={svgRef}
-        dimensions={dimensions}
-        containerRef={containerRef}
-        isAnimating={isAnimating}
-        ariaLabel={t('visualizer.avlTreeLabel')}
-      />
-      {nodeCount === 0 && (
-        <EmptyState icon="◆" titleKey="emptyState.emptyAvl" descriptionKey="emptyState.emptyAvlDesc" onFill={reset} />
-      )}
-      <LearningModeToggle
-        showLearning={showLearning}
-        setShowLearning={setShowLearning}
-        learningMode={learningMode}
-        isAnimating={isAnimating}
-      />
-      <LogPanel logs={logs} />
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <div className="relative flex flex-col flex-1 min-h-0">
+          <Visualizer
+            data={flattenedData}
+            renderFn={renderAvlTree as any}
+            svgRef={svgRef}
+            dimensions={dimensions}
+            containerRef={containerRef}
+            isAnimating={isAnimating}
+            ariaLabel={t('visualizer.avlTreeLabel')}
+          />
+          {nodeCount === 0 && (
+            <EmptyState icon="◆" titleKey="emptyState.emptyAvl" descriptionKey="emptyState.emptyAvlDesc" onFill={reset} />
+          )}
+        </div>
+        <InfoPanel
+          logs={logs}
+          learningMode={learningMode}
+          isAnimating={isAnimating}
+          onJumpToStep={handleJumpToStep}
+        />
+      </div>
     </div>
   )
 }

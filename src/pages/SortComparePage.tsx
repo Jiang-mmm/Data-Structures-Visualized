@@ -1,11 +1,12 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationButton, OperationInfo } from '../components/OperationBar'
-import LogPanel from '../components/LogPanel'
+import InfoPanel from '../components/InfoPanel'
 import Timeline from '../components/Timeline'
 import SpeedControl from '../components/SpeedControl'
 import PerformanceChart from '../components/PerformanceChart'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { useLearningMode } from '../hooks/useLearningMode'
 import { createAnimation } from '../utils/animationEngine'
 import { renderSortBars, animateCompare, animateSwap, animateSorted } from '../visualizers/sortVisualizer'
 import { getSortAlgorithm, getAllSortAlgorithms } from '../algorithms/sorting'
@@ -125,6 +126,7 @@ export default function SortComparePage() {
   const [showExportMenu, setShowExportMenu] = useState<boolean>(false)
   const exportMenuRef = useRef<HTMLDivElement>(null)
   const { t } = useGlobalSettings()
+  const learningMode = useLearningMode('bubble')
 
   const svgRefs = useRef<Record<string, SVGSVGElement | null>>({})
   const dimensionsMap = useRef<Record<string, { width: number; height: number }>>({})
@@ -340,8 +342,9 @@ export default function SortComparePage() {
         </OperationInfo>
       </OperationBar>
 
-      <div className="flex-1 p-2 overflow-auto bg-paper dark:bg-dark-paper">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <div className="flex-1 p-2 overflow-auto bg-paper dark:bg-dark-paper">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
           {allAlgorithms.map(([key, algo]) => {
             const isSelected = selectedAlgos.includes(key)
             const result = algoResults[key]
@@ -407,10 +410,15 @@ export default function SortComparePage() {
             <PerformanceChart results={algoResults} />
           </div>
         )}
+        </div>
+        <InfoPanel
+          logs={logs}
+          learningMode={learningMode}
+          isAnimating={isRunning}
+        />
       </div>
 
       <Timeline history={timelineHistory} currentIndex={Math.max(0, timelineHistory.length - 1)} />
-      <LogPanel logs={logs} />
     </div>
   )
 }

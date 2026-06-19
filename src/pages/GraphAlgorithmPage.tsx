@@ -3,14 +3,13 @@ import PageHeader from '../components/PageHeader'
 import Card from '../components/Card'
 import OperationBar, { OperationButton } from '../components/OperationBar'
 import SpeedControl from '../components/SpeedControl'
-import LogPanel from '../components/LogPanel'
+import InfoPanel from '../components/InfoPanel'
 import Visualizer from '../components/Visualizer'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { useKeyboard } from '../hooks/useKeyboard'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useVisualizer } from '../hooks/useVisualizer'
 import { showToast } from '../components/toastStore'
-import StepExplainer from '../components/StepExplainer'
 import ComplexityChart from '../components/ComplexityChart'
 import { bfs, dfs, dijkstra, topoSort, bellmanFord, floydWarshall, prim, kruskal, graphAlgorithms, type GraphAlgorithmKey } from '../algorithms/graph'
 import { exportPerformanceCSV, exportPerformanceJSON } from '../utils/dataExport'
@@ -252,42 +251,27 @@ export default function GraphAlgorithmPage() {
               className="!border-b-0"
             />
           </div>
-        </div>
-        
-        <div className="w-full lg:w-96 shrink-0 overflow-y-auto">
-          <LogPanel logs={logs} />
 
-          {learningMode.isLearning && (
-            <div className="mt-4">
-              <StepExplainer
-                step={learningMode.currentStep}
-                currentStepIndex={learningMode.currentStepIndex}
-                totalSteps={learningMode.totalSteps}
-                progress={learningMode.progress}
-                onNext={learningMode.nextStep}
-                onPrev={learningMode.prevStep}
-                onReset={learningMode.reset}
-                isAnimating={isAnimating}
-              />
-            </div>
-          )}
-
-          <div className="mt-4">
-            <Card shadow="md" radius="none">
-              <h3 className="text-sm font-bold text-ink dark:text-dark-ink mb-3">{t('graphAlgorithm.complexityCompare')}</h3>
-              <ComplexityChart
-                algorithms={graphAlgorithms.map(algo => ({
-                  name: algo.name,
-                  complexity: algo.timeComplexity,
-                  timeComplexity: algo.timeComplexity,
-                  spaceComplexity: algo.spaceComplexity,
-                  description: algo.description,
-                }))}
-                showChart={false}
-              />
-            </Card>
-          </div>
+          <Card shadow="md" radius="none">
+            <h3 className="text-sm font-bold text-ink dark:text-dark-ink mb-3">{t('graphAlgorithm.complexityCompare')}</h3>
+            <ComplexityChart
+              algorithms={graphAlgorithms.map(algo => ({
+                name: algo.name,
+                complexity: algo.timeComplexity,
+                timeComplexity: algo.timeComplexity,
+                spaceComplexity: algo.spaceComplexity,
+                description: algo.description,
+              }))}
+              showChart={false}
+            />
+          </Card>
         </div>
+
+        <InfoPanel
+          logs={logs}
+          learningMode={learningMode}
+          isAnimating={isAnimating}
+        />
       </div>
     </div>
   )

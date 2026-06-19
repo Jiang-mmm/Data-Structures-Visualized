@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
-import LogPanel from '../components/LogPanel'
+import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
 import { renderHash, animateInsertHash, animateSearchHash, animateDeleteHash } from '../visualizers/hashVisualizer'
 import { useHashState } from '../hooks/useHashState'
@@ -18,7 +18,6 @@ import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
-import LearningModeToggle from '../components/LearningModeToggle'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
@@ -29,7 +28,6 @@ export default function HashPage() {
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [keyValue, setKeyValue] = useState<string>('')
   const [valueInput, setValueInput] = useState<string>('')
-  const [showLearning, setShowLearning] = useState(false)
   const learningMode = useLearningMode('hash')
   useSharedData({ dataType: 'hash', loadData: ((d: unknown) => loadData(d as any)) as any, validator: (d) => Array.isArray(d) })
   usePageTracker('hash')
@@ -48,7 +46,6 @@ export default function HashPage() {
   const handleJumpToStep = useCallback((stepId: string): void => {
     const idx = learningMode.steps.findIndex(s => s.id === stepId)
     if (idx >= 0) {
-      setShowLearning(true)
       learningMode.goToStep(idx)
     }
   }, [learningMode.steps, learningMode.goToStep])
@@ -169,25 +166,28 @@ export default function HashPage() {
         </OperationInfo>
       </OperationBar>
 
-      <Visualizer
-        data={data}
-        renderFn={(svg: SVGSVGElement, d: unknown, dims: { width: number; height: number }) => renderHash(svg, d as Parameters<typeof renderHash>[1], { ...dims, hashFn: hashFn as (key: string | number) => number })}
-        svgRef={svgRef}
-        dimensions={dimensions}
-        containerRef={containerRef}
-        isAnimating={isAnimating}
-        ariaLabel={t("visualizer.hashLabel")}
-      />
-      {data.length === 0 && (
-        <EmptyState icon="#" titleKey="emptyState.emptyHash" descriptionKey="emptyState.emptyHashDesc" onFill={reset} />
-      )}
-      <LearningModeToggle
-        showLearning={showLearning}
-        setShowLearning={setShowLearning}
-        learningMode={learningMode}
-        isAnimating={isAnimating}
-      />
-      <LogPanel logs={logs} onJumpToStep={handleJumpToStep} />
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <div className="relative flex flex-col flex-1 min-h-0">
+          <Visualizer
+            data={data}
+            renderFn={(svg: SVGSVGElement, d: unknown, dims: { width: number; height: number }) => renderHash(svg, d as Parameters<typeof renderHash>[1], { ...dims, hashFn: hashFn as (key: string | number) => number })}
+            svgRef={svgRef}
+            dimensions={dimensions}
+            containerRef={containerRef}
+            isAnimating={isAnimating}
+            ariaLabel={t("visualizer.hashLabel")}
+          />
+          {data.length === 0 && (
+            <EmptyState icon="#" titleKey="emptyState.emptyHash" descriptionKey="emptyState.emptyHashDesc" onFill={reset} />
+          )}
+        </div>
+        <InfoPanel
+          logs={logs}
+          learningMode={learningMode}
+          isAnimating={isAnimating}
+          onJumpToStep={handleJumpToStep}
+        />
+      </div>
     </div>
   )
 }

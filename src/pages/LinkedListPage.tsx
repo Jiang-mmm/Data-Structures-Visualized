@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationInput, OperationButton, OperationLabel, OperationInfo } from '../components/OperationBar'
 import Visualizer from '../components/Visualizer'
-import LogPanel from '../components/LogPanel'
+import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
 import { renderLinkedList, animateInsertHead, animateInsertTail, animateDeleteNode, animateSearchNode, animateInsertAt, animateReverse, animateCycleDetection } from '../visualizers/linkedListVisualizer'
 import { useLinkedListState } from '../hooks/useLinkedListState'
@@ -20,7 +20,6 @@ import { getValidationError, validateImportData } from '../utils/validate'
 import { handleAnimationError } from '../utils/errorHandler'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { getColors } from '../utils/themeColors'
-import LearningModeToggle from '../components/LearningModeToggle'
 import ContentTier from '../components/ContentTier'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { useSharedData } from '../hooks/useSharedData'
@@ -32,7 +31,6 @@ export default function LinkedListPage() {
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const [inputIndex, setInputIndex] = useState<string>('')
-  const [showLearning, setShowLearning] = useState(false)
   const [isDoublyMode, setIsDoublyMode] = useState(false)
   const learningMode = useLearningMode(isDoublyMode ? 'doublyLinkedList' : 'linkedlist')
   useSharedData({ dataType: 'linkedlist', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
@@ -66,7 +64,6 @@ export default function LinkedListPage() {
   const handleJumpToStep = useCallback((stepId: string): void => {
     const idx = learningMode.steps.findIndex(s => s.id === stepId)
     if (idx >= 0) {
-      setShowLearning(true)
       learningMode.goToStep(idx)
     }
   }, [learningMode.steps, learningMode.goToStep])
@@ -255,17 +252,20 @@ export default function LinkedListPage() {
         </OperationInfo>
       </OperationBar>
       <ContentTier structureKey="linkedlist" />
-      <Visualizer data={data} renderFn={renderLinkedList as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.linkedlistLabel")} overlay={<StatsOverlay stats={[{ label: 'LEN', value: length }]} />} />
-      {data.length === 0 && (
-        <EmptyState icon="●" titleKey="emptyState.emptyLinkedList" descriptionKey="emptyState.emptyLinkedListDesc" onFill={reset} />
-      )}
-      <LearningModeToggle
-        showLearning={showLearning}
-        setShowLearning={setShowLearning}
-        learningMode={learningMode}
-        isAnimating={isAnimating}
-      />
-      <LogPanel logs={logs} onJumpToStep={handleJumpToStep} />
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <div className="relative flex flex-col flex-1 min-h-0">
+          <Visualizer data={data} renderFn={renderLinkedList as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.linkedlistLabel")} overlay={<StatsOverlay stats={[{ label: 'LEN', value: length }]} />} />
+          {data.length === 0 && (
+            <EmptyState icon="●" titleKey="emptyState.emptyLinkedList" descriptionKey="emptyState.emptyLinkedListDesc" onFill={reset} />
+          )}
+        </div>
+        <InfoPanel
+          logs={logs}
+          learningMode={learningMode}
+          isAnimating={isAnimating}
+          onJumpToStep={handleJumpToStep}
+        />
+      </div>
     </div>
   )
 }
