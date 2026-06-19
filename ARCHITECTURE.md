@@ -80,7 +80,8 @@
 | **Components** | `Visualizer.tsx` | D3 可视化容器，管理 SVG 生命周期、缩放、FPS 监控 |
 | | `OperationBar.tsx` | 操作按钮区统一容器 |
 | | `PageHeader.tsx` | 页面标题 + 描述 + 图标 |
-| | `LogPanel.tsx` | 操作日志展示，支持过滤和自动滚动 |
+| | `LogPanel.tsx` | 操作日志展示，支持过滤和自动滚动；`variant="embedded"` 卡片式时间线用于 InfoPanel |
+| | `InfoPanel.tsx` | 统一信息面板：桌面端右侧 w-96 持久面板 + 移动端底部抽屉，双 Tab（操作日志/学习模式），含自动跳转机制 |
 | | `Timeline.tsx` | 操作历史时间线，图标匹配 + 悬停 tooltip + 键盘导航 |
 | | `PerformanceChart.tsx` | 排序算法性能对比 D3 柱状图 |
 | | `ComplexityChart.tsx` | 算法复杂度增长曲线对比图表（8 色调色板 + 表格视图） |

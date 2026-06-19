@@ -117,6 +117,16 @@ v11.0 全面视觉统一与交互优化已完成，在 v10.0 基础上分 6 个 
 | AVL 遍历动画优化 | `avlTreeVisualizer.ts` 新增边流动点 (`traceEdgeToNode`) 与遍历节点脉冲 (`pulseTraverseNode`)，移除冗余 ripple，缩短尾等待 700ms → 500ms | ✅ 完成 |
 | 质量验证 | 3042 单元测试通过 / ESLint 0 错误 / TypeScript strict 0 错误 / Build 成功 / Bundle 预算符合 | ✅ 完成 |
 
+### Phase 5.6 统一信息面板（InfoPanel）
+
+| 任务 | 内容 | 状态 |
+|------|------|------|
+| InfoPanel 组件 | 新增 `src/components/InfoPanel.tsx`，桌面端右侧 w-96 持久面板 + 移动端底部抽屉，双 Tab（操作日志/学习模式） | ✅ 完成 |
+| LogPanel 重构 | 新增 `variant="embedded"` 模式，卡片式时间线替代旧暗色反转背景 | ✅ 完成 |
+| 13 页面布局改造 | 11 标准页面 + GraphAlgorithmPage + SortComparePage 改为左右分栏 + InfoPanel | ✅ 完成 |
+| 自动跳转机制 | 最新日志含 codeStepId 时自动切换学习 Tab + goToStep | ✅ 完成 |
+| 质量验证 | 3089 单元测试通过 / ESLint 0 错误 / TypeScript strict 0 错误 / Build 成功 / Bundle 预算符合 | ✅ 完成 |
+
 ### 上一迭代状态（v10.0）
 
 v10.0 UI 打磨与可视化定位修复已完成，在 v9.0 基础上分 3 个 Phase 推进：

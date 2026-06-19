@@ -4,6 +4,29 @@
 
 ---
 
+## [Phase 5.6] - 2026-06-20
+
+### 新增
+- **统一信息面板 InfoPanel:** `src/components/InfoPanel.tsx` 新增组件，取代 LogPanel + LearningModeToggle 分离布局。桌面端右侧 w-96 持久面板，移动端底部抽屉，双 Tab（操作日志/学习模式）
+- **自动跳转机制:** 最新日志携带 codeStepId 时，自动切换到学习 Tab 并调用 `goToStep(idx)`
+- **InfoPanel 测试:** `src/__tests__/InfoPanel.test.tsx` 9 个测试用例（Tab 切换、日志内容、学习模式、空状态）
+
+### 优化
+- **LogPanel embedded 模式:** `src/components/LogPanel.tsx` 新增 `variant="embedded"` prop，卡片式时间线（`bg-paper border border-ink/10`）替代旧暗色反转背景，含时间徽章、类型徽章、"查看代码"按钮
+- **13 页面布局统一:** 11 标准页面 + GraphAlgorithmPage + SortComparePage 改为 `flex-1 flex flex-col lg:flex-row min-h-0` 左右分栏布局，右侧统一使用 InfoPanel
+- **GraphAlgorithmPage ComplexityChart 位置调整:** ComplexityChart 从右侧移到左侧（Visualizer 下方），为 InfoPanel 腾出空间
+- **SortComparePage 学习内容:** 新增 `useLearningMode('bubble')` 为 InfoPanel 学习 Tab 提供内容
+
+### 文档
+- 更新 `WORKLOG.md`：记录 Phase 5.6 InfoPanel 开发
+- 更新 `TODO.md`：添加 Phase 5.6 已完成任务
+- 更新 `PROJECT_SUMMARY.md`：添加 Phase 5.6 条目
+- 更新 `README.md`：更新特性列表与文件树
+- 更新 `ARCHITECTURE.md`：组件表新增 InfoPanel
+- 更新 `CODE_WIKI.md`：组件分类更新
+
+---
+
 ## [v11.0.1] - 2026-06-19
 
 ### 修复

@@ -2,6 +2,75 @@
 
 ---
 
+## 2026-06-20 | Phase 5.6：统一信息面板（InfoPanel）取代 LogPanel + LearningModeToggle
+
+### 执行概要
+
+基于用户反馈，重构数据结构页面的右侧信息区：移除底部 LogPanel + LearningModeToggle 的分离布局，创建统一的 InfoPanel 组件，桌面端为右侧持久面板（w-96），移动端为底部抽屉，内含"操作日志"与"学习模式"双 Tab。日志 Tab 采用卡片式时间线（embedded 模式），学习 Tab 直接嵌入 StepExplainer。新增自动跳转机制：当最新日志携带 codeStepId 时，自动切换到学习 Tab 并跳转到对应步骤。
+
+### 完成内容
+
+#### InfoPanel 组件 [P1]
+- **新增文件：** `src/components/InfoPanel.tsx`
+- **功能：**
+  - 桌面端 `hidden lg:flex flex-col w-96` 持久右侧面板
+  - 移动端 `lg:hidden` 底部抽屉（可折叠状态栏 + 60vh 展开区）
+  - Tab 切换：`activeTab` 状态管理 'log' | 'learning'
+  - 自动跳转：`useEffect` 监听 `logs.length`，最新日志含 `codeStepId` 时自动切换到学习 Tab + `goToStep(idx)`
+  - `memo` 包装，含 `InfoPanelTabButtons` 子组件
+- **接口：** `InfoPanelProps { logs, learningMode, isAnimating, onJumpToStep? }`
+
+#### LogPanel 重构 [P1]
+- **修改文件：** `src/components/LogPanel.tsx`
+- **功能：**
+  - 新增 `variant?: 'standalone' | 'embedded'` prop
+  - `EmbeddedLogList`：卡片式时间线（`bg-paper border border-ink/10 p-2.5 animate-slide-up`），含时间徽章、类型徽章、"查看代码"按钮
+  - `StandaloneLogPanel`：保留旧暗色反转背景逻辑（向后兼容）
+  - `typeConfig` 提取为模块级 `as const` 对象
+
+#### 13 个页面布局改造 [P1]
+- **修改文件：** 11 个标准页面（Array/LinkedList/Stack/Queue/Tree/AvlTree/Heap/Hash/Trie/Graph/Sort）+ GraphAlgorithmPage + SortComparePage
+- **改造模式：**
+  - 移除 `LogPanel` + `LearningModeToggle` 导入，新增 `InfoPanel`
+  - 移除 `showLearning` 状态
+  - 简化 `handleJumpToStep`（移除 `setShowLearning(true)`）
+  - JSX：Visualizer + EmptyState 包裹在 `<div className="flex-1 flex flex-col lg:flex-row min-h-0">`，右侧替换为 `<InfoPanel>`
+- **特殊处理：**
+  - GraphAlgorithmPage：ComplexityChart 从右侧移到左侧（Visualizer 下方）
+  - SortComparePage：新增 `useLearningMode('bubble')` 提供学习内容
+
+#### i18n 国际化 [P1]
+- **修改文件：** `src/i18n/locales.ts`
+- **新增键：** `infoPanel.tabLog`、`infoPanel.tabLearning`、`infoPanel.logEmpty`、`infoPanel.logCount`、`infoPanel.learningEmpty`、`infoPanel.closeDrawer`、`infoPanel.openDrawer`、`infoPanel.recent`
+
+#### 测试覆盖 [P1]
+- **新增文件：** `src/__tests__/InfoPanel.test.tsx`（9 个测试：Tab 切换、日志内容、学习模式、空状态）
+- **修改文件：** `src/__tests__/LogPanel.test.tsx`（新增 5 个 embedded 模式测试）
+
+### 验证方式
+
+| 验证项 | 命令 | 结果 |
+|--------|------|------|
+| 单元测试 | `npm run test:run` | ✅ 3089 tests passed |
+| ESLint | `npm run lint` | ✅ 0 错误 / 0 警告 |
+| TypeScript | `npm run typecheck` | ✅ 0 错误 |
+| 生产构建 | `npm run build` | ✅ 构建成功，bundle 预算通过 |
+
+### 修改文件清单
+
+| 文件 | 类型 | 修改内容 |
+|------|------|---------|
+| `src/components/InfoPanel.tsx` | 新增 | 统一信息面板组件 |
+| `src/components/LogPanel.tsx` | 修改 | 新增 embedded 模式支持 |
+| `src/i18n/locales.ts` | 修改 | 新增 infoPanel 命名空间 |
+| `src/pages/ArrayPage.tsx` 等 11 个标准页面 | 修改 | 布局改造为左右分栏 + InfoPanel |
+| `src/pages/GraphAlgorithmPage.tsx` | 修改 | ComplexityChart 移至左侧 + InfoPanel |
+| `src/pages/SortComparePage.tsx` | 修改 | 新增 useLearningMode + InfoPanel |
+| `src/__tests__/InfoPanel.test.tsx` | 新增 | 9 个测试用例 |
+| `src/__tests__/LogPanel.test.tsx` | 修改 | 新增 embedded 模式测试 |
+
+---
+
 ## 2026-06-19 | v11.0.1 后续补丁：首页配色统一与 AVL 遍历动画优化
 
 ### 执行概要

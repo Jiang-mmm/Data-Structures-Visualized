@@ -245,16 +245,17 @@ src/
 - `ShareButton.tsx`：分享按钮（URL 编码数据）
 
 **学习与教学类**：
-- `LearningModeToggle.tsx`：学习模式开关
+- `InfoPanel.tsx`：统一信息面板（桌面端右侧 w-96 + 移动端底部抽屉，双 Tab：操作日志/学习模式，含自动跳转机制）
+- `LearningModeToggle.tsx`：学习模式开关（已被 InfoPanel 取代，保留向后兼容）
 - `LearningPath.tsx`：学习路径展示
-- `StepExplainer.tsx`：步骤解释器
+- `StepExplainer.tsx`：步骤解释器（嵌入 InfoPanel 学习 Tab）
 - `AlgorithmInfo.tsx`：算法信息卡
 - `ComplexityChart.tsx`：复杂度图表
 - `ProgressBar.tsx`：进度条
 - `Timeline.tsx`：时间轴
 
 **日志与反馈类**：
-- `LogPanel.tsx`：操作日志面板
+- `LogPanel.tsx`：操作日志面板（`variant="embedded"` 卡片式时间线用于 InfoPanel，`variant="standalone"` 保留旧暗色反转背景）
 - `Toast.tsx` + `toastStore.ts`：全局通知（基于 `useSyncExternalStore` 的外部 store 模式）
 
 **监控与辅助类**：
