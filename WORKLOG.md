@@ -2,6 +2,65 @@
 
 ---
 
+## 2026-06-19 | v11.0.1 后续补丁：首页配色统一与 AVL 遍历动画优化
+
+### 执行概要
+
+基于用户反馈，对 v11.0.1 进行补充优化：修复首页图/哈希类卡片在不同主题下始终显示粉红色的问题，统一使用 Design Token；优化 AVL 树遍历动画的可视化效果，使其与二叉树、图等模块的动画体验保持一致。
+
+### 完成内容
+
+#### 首页图/哈希卡片分组色主题统一 [P1]
+- **修改原因：** 用户反馈首页中 Graph/Hash 模块卡片颜色不统一，且在不同主题下始终显示粉红色，无法随主题切换
+- **修改内容：**
+  - `src/index.css`：默认主题 `--color-card-group-graph` 由 `#dc2626` 改为 `#7c3aed`（violet）
+  - `src/utils/themeColors.ts`：为 default/forest/warm/royal 四套主题分别指定协调的 graph accent 色
+    - default: `#7c3aed`
+    - forest: `#0891b2`
+    - warm: `#7c3aed`
+    - royal: `#059669`
+  - `src/pages/Home.tsx`：将注释由"图与哈希类 (rose)"更新为"图与哈希类 (graph accent)"，准确反映 token 语义
+- **风险说明：** 仅颜色 token 调整，不影响功能逻辑；保持 `colorIdx: 2` 分组不变
+
+#### AVL 遍历动画优化 [P1]
+- **修改原因：** 用户反馈 AVL 树前序/中序遍历动画时长过短、可视化效果不明显、相比其他树/图动画效果较差
+- **修改内容：**
+  - `src/visualizers/avlTreeVisualizer.ts`：
+    - 新增 `pulseTraverseNode`：遍历节点放大脉冲（+10px → +4px），使用 `easeOutBack` + `easeOutCubic`，停留更久、高亮更清晰
+    - 新增 `traceEdgeToNode`：边流动点沿父节点到当前节点的路径移动，突出遍历方向
+    - 修改 `animateTraversal`：遍历循环中先调用 `traceEdgeToNode`，再调用 `pulseTraverseNode`，移除冗余 `pulseNode` + `addRippleEffect`
+    - 尾等待由 700ms 缩短为 500ms，避免动画臃肿
+  - `src/__tests__/visualizers/avlTreeVisualizer.test.ts`：边动画测试增加 `pathEl.getTotalLength` 类型守卫断言（与实现同步）
+- **风险说明：** 仅动画视觉效果与时序调整，不改变遍历算法结果；已用单元测试覆盖核心路径
+
+### 验证方式
+
+| 验证项 | 命令 | 结果 |
+|--------|------|------|
+| 单元测试 | `npm run test:run` | ✅ 188 个测试文件，3042 个测试全部通过 |
+| ESLint | `npm run lint` | ✅ 0 错误 / 0 警告 |
+| TypeScript | `npm run typecheck` | ✅ 0 错误 |
+| 生产构建 | `npm run build` | ✅ 构建成功，`check-bundle.js` 预算检查通过 |
+| 首页配色 | 浏览器手动验证 | default/forest/warm/royal 主题下图/哈希卡片颜色协调 |
+| AVL 遍历动画 | 浏览器手动验证 | 边流动点、节点脉冲、序号标签动画流畅自然 |
+
+### 修改文件清单
+
+| 文件 | 类型 | 修改内容 |
+|------|------|---------|
+| `src/index.css` | 修改 | `--color-card-group-graph` 默认主题改为 violet |
+| `src/utils/themeColors.ts` | 修改 | 四套主题 `card-group-graph` 取值协调 |
+| `src/pages/Home.tsx` | 修改 | 图/哈希类注释更新为 graph accent |
+| `src/visualizers/avlTreeVisualizer.ts` | 修改 | 新增 `pulseTraverseNode`、`traceEdgeToNode`，优化遍历动画时序 |
+| `src/__tests__/visualizers/avlTreeVisualizer.test.ts` | 修改 | 边动画测试增加 `getTotalLength` 类型守卫 |
+| `PROJECT_SUMMARY.md` | 修改 | 补充 v11.0.1+ 后续补丁条目 |
+| `WORKLOG.md` | 修改 | 记录本次后续开发 |
+| `TODO.md` | 修改 | 添加本次已完成任务 |
+| `CHANGELOG.md` | 修改 | 补充 v11.0.1 后续优化条目 |
+| `README.md` / `ARCHITECTURE.md` / `CODE_WIKI.md` | 修改 | 同步日期与关键特性描述 |
+
+---
+
 ## 2026-06-19 | v10/v11 最终验证、文档同步与 GitHub 部署
 
 ### 执行概要

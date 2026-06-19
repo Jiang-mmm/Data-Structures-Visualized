@@ -7,6 +7,25 @@
 
 ---
 
+## 已完成（v11.0.1+ - 首页配色统一与 AVL 遍历动画优化）
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| v11-PATCH-1 | 首页图/哈希卡片分组色主题统一 | P1 | ✅ | 更新 `--color-card-group-graph` token，四套主题颜色协调 |
+| v11-PATCH-2 | AVL 遍历动画优化 | P1 | ✅ | 新增边流动点、节点脉冲，移除冗余 ripple，缩短尾等待 |
+| v11-PATCH-3 | 文档同步 | P1 | ✅ | PROJECT_SUMMARY / WORKLOG / TODO / CHANGELOG / README / ARCHITECTURE / CODE_WIKI 同步 |
+
+### 质量验证
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| v11-PATCH-Q1 | 单元测试 | P0 | ✅ | 3042 tests passed（188 文件） |
+| v11-PATCH-Q2 | ESLint | P0 | ✅ | 0 错误 / 0 警告 |
+| v11-PATCH-Q3 | TypeScript strict | P0 | ✅ | 0 错误 |
+| v11-PATCH-Q4 | 生产构建 | P0 | ✅ | 成功，bundle 预算通过 |
+
+---
+
 ## 已完成（v11.0.1 - 最终验证、文档同步与 GitHub 部署）
 
 | # | 任务 | 优先级 | 状态 | 说明 |

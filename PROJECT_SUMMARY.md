@@ -109,6 +109,14 @@ v11.0 全面视觉统一与交互优化已完成，在 v10.0 基础上分 6 个 
 | Phase 6 | 最终验证与文档同步（全量测试 / lint / build / 文档更新） | ✅ 完成 |
 | 质量验证 | 2996 单元测试通过 / ESLint 0 错误 / TypeScript strict 0 错误 / Build 1.96s / Bundle 预算符合 | ✅ 完成 |
 
+### v11.0.1 后续补丁
+
+| 任务 | 内容 | 状态 |
+|------|------|------|
+| 首页配色统一 | 图/哈希卡片分组色随主题统一：更新 `--color-card-group-graph` token 取值，避免 default/forest/warm/royal 主题下出现不一致的粉红色 | ✅ 完成 |
+| AVL 遍历动画优化 | `avlTreeVisualizer.ts` 新增边流动点 (`traceEdgeToNode`) 与遍历节点脉冲 (`pulseTraverseNode`)，移除冗余 ripple，缩短尾等待 700ms → 500ms | ✅ 完成 |
+| 质量验证 | 3042 单元测试通过 / ESLint 0 错误 / TypeScript strict 0 错误 / Build 成功 / Bundle 预算符合 | ✅ 完成 |
+
 ### 上一迭代状态（v10.0）
 
 v10.0 UI 打磨与可视化定位修复已完成，在 v9.0 基础上分 3 个 Phase 推进：
@@ -147,6 +155,7 @@ v9.0 全面迭代优化已完成，分 4 个 Phase 推进：
 | Phase 3 | 构建完整 Design Token 体系：语义化颜色/圆角/阴影 token、主题完整调色板、按钮语义变体收敛、卡片统一、`border-l-4` 与 `border-dashed` 清理、SVG 字体 token 化 | ✅ 完成 |
 | Phase U1 | 动画性能优化与大数据降级：统一 `performanceConfig` 阈值配置、数组/图/树动画迁移至 transform/opacity、力导向 tick 使用 transform 更新、animationEngine FPS 自动降级、`measureRender` 渲染耗时观测 | ✅ 完成 |
 | v10 | UI 打磨与可视化定位修复：Home 配色统一、Card 渐变、LearningRecommendations 图标替换、ProgressOverview 目标设定交互修复、array/trie Visualizer 居中修复、Visualizer 响应式重渲染、themeColors 渐变 token | ✅ 完成 |
+| v11.0.1+ | 首页图/哈希卡片分组色主题统一、AVL 遍历动画优化（边流动点、节点脉冲、移除冗余 ripple） | ✅ 完成 |
 
 ### Design Token 体系核心交付
 

@@ -113,7 +113,7 @@
 | | `useLearningMode` | 交互式学习模式步骤管理 |
 | | `useLearningProgress` | 学习进度管理（CustomEvent 同步 + SyncStatus + 统计 API + 目标设定） |
 | | `usePageTracker` | 页面访问追踪 |
-| **Visualizers** | `*Visualizer.ts` | D3.js SVG 渲染 + 动画（10 个） |
+| **Visualizers** | `*Visualizer.ts` | D3.js SVG 渲染 + 动画（11 个），AVL 树遍历使用边流动点 + 节点脉冲高亮 |
 | **Algorithms** | `sorting/*` | 8 种排序算法实现（插件注册模式） |
 | | `graph/*` | 4 种图算法实现 |
 | **Utils** | `animationEngine.ts` | 动画时序控制、性能模式、缓动函数、FPS 监控、动画预设、delayStart 延迟启动 |

@@ -15,6 +15,8 @@
 - **全站语义化颜色统一:** 批量替换 20+ 组件/页面中的 `bg-white dark:bg-slate`、`bg-paper-warm dark:bg-slate-light` 等硬编码颜色为 `bg-surface`/`bg-dark-surface`、`bg-muted`/`bg-dark-muted`、`bg-paper`/`bg-dark-paper` 等语义化 token
 - **首页配色层次:** `src/pages/Home.tsx` 13 张卡片按线性结构（blue）/ 树结构（amber）/ 图与哈希（rose）三类分组，提升视觉层次与主题一致性
 - **Card 渐变主题感知:** `src/components/Card.tsx` 渐变色从硬编码 blue/amber/rose 改为 `from-accent-blue/10`、`from-accent-amber/10`、`from-accent-rose/10`，随主题动态变化
+- **首页图/哈希卡片分组色主题统一:** 更新 `--color-card-group-graph` token 取值（`src/index.css`、`src/utils/themeColors.ts`），default/forest/warm/royal 四套主题分别使用协调的 violet/cyan/violet/emerald，避免主题切换下图/哈希卡片仍显示粉红色
+- **AVL 遍历动画优化:** `src/visualizers/avlTreeVisualizer.ts` 新增边流动点 `traceEdgeToNode` 与遍历节点脉冲 `pulseTraverseNode`，移除冗余 `pulseNode` + `addRippleEffect`，尾等待由 700ms 缩短为 500ms，使遍历方向与节点高亮更清晰
 
 ### 文档
 - 更新 `PROJECT_SUMMARY.md`：v11 日期、3042 单元测试、14 页面、12 Hooks、11 Visualizers、AVL 树
