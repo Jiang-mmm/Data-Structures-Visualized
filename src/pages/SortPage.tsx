@@ -29,7 +29,7 @@ const VARIANT_MAP: Record<string, string> = {
   primary: 'primary',
   success: 'success',
   danger: 'danger',
-  purple: 'purple',
+  purple: 'primary',
 }
 
 export default function SortPage() {
@@ -80,7 +80,7 @@ export default function SortPage() {
   const selectedAlgo = algorithms.find(([key]) => key === selectedAlgorithm)?.[1]
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('sort.title')} subtitle={t('sort.subtitle')}>
         <ExportImport dataType="sort" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
@@ -91,7 +91,7 @@ export default function SortPage() {
           }
         }} />
         <ShareButton data={data} dataType="sort" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+        <OperationButton variant="secondary" onClick={reset}>{t('common.reset')}</OperationButton>
         <OperationButton variant="primary" onClick={randomize}>{t('sort.randomize')}</OperationButton>
       </PageHeader>
 
@@ -103,7 +103,7 @@ export default function SortPage() {
               key={key}
               variant={(VARIANT_MAP[algo.variant] || 'primary') as any}
               onClick={() => handleSort(key)}
-              disabled={isAnimating}
+              disabled={isAnimating} isBusy={isAnimating}
               title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}
             >
               {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
@@ -118,7 +118,7 @@ export default function SortPage() {
                 key={key}
                 variant={(VARIANT_MAP[algo.variant] || 'primary') as any}
                 onClick={() => handleSort(key)}
-                disabled={isAnimating}
+                disabled={isAnimating} isBusy={isAnimating}
                 title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}
               >
                 {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
@@ -126,9 +126,9 @@ export default function SortPage() {
               </OperationButton>
             ))}
         </OperationGroup>
-        {isAnimating && <OperationButton variant="outline" onClick={stop}>{t('sort.stop')}</OperationButton>}
+        {isAnimating && <OperationButton variant="secondary" onClick={stop}>{t('sort.stop')}</OperationButton>}
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={undo}
           disabled={isAnimating || !canUndo()}
           previewData={getUndoPreview()}
@@ -137,7 +137,7 @@ export default function SortPage() {
           {t('common.undo')}
         </UndoPreviewButton>
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={redo}
           disabled={isAnimating || !canRedo()}
           previewData={getRedoPreview()}
@@ -163,8 +163,8 @@ export default function SortPage() {
             <span className="text-ink dark:text-dark-ink font-semibold hidden sm:inline">{stats.algorithm}</span>
           )}
           <span className="stat-item">{t('sort.compare')}: <span className="text-accent-amber font-bold">{stats.comparisons}</span></span>
-          <span className="stat-item">{t('sort.swap')}: <span className="text-accent-rose font-bold">{stats.swaps}</span></span>
-          <span className="stat-item">{t('sort.steps')}: <span className="text-accent-violet font-bold">{stats.steps}</span></span>
+          <span className="stat-item">{t('sort.swap')}: <span className="text-accent-blue font-bold">{stats.swaps}</span></span>
+          <span className="stat-item">{t('sort.steps')}: <span className="text-ink-light/80 dark:text-dark-ink-light/80 font-bold">{stats.steps}</span></span>
         </div>
 
         <div className="ml-auto hidden md:flex items-center gap-3">
@@ -181,9 +181,9 @@ export default function SortPage() {
         </div>
       </div>
 
-      <Visualizer data={data} renderFn={renderSortBars as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.sortLabel")} />
+      <Visualizer data={data} renderFn={renderSortBars as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.sortLabel")} />
       {data.length === 0 && (
-        <EmptyState icon="⇚" titleKey="emptyState.emptySort" descriptionKey="emptyState.emptySortDesc" onFill={randomize} />
+        <EmptyState icon="⇅" titleKey="emptyState.emptySort" descriptionKey="emptyState.emptySortDesc" onFill={randomize} />
       )}
 
       {selectedAlgo && (

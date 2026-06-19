@@ -512,6 +512,21 @@ describe('Visualizer', () => {
       expect(wrapper.className).toContain('border-b-2')
     })
 
+    it('缩放与网格按钮应包含 focus-ring 类', () => {
+      render(
+        <Visualizer
+          data={mockData}
+          renderFn={mockRenderFn}
+          svgRef={svgRef}
+          dimensions={mockDimensions}
+          containerRef={containerRef}
+        />
+      )
+      expect(screen.getByText('#').className).toContain('focus-ring')
+      expect(screen.getByText('−').className).toContain('focus-ring')
+      expect(screen.getByText('+').className).toContain('focus-ring')
+    })
+
     it('应正确合并自定义 className', () => {
       const { container } = render(
         <Visualizer

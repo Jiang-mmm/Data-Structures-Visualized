@@ -130,7 +130,7 @@ export default function ArrayPage() {
   }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, search, svgRef, data, dimensions, setInputValue])
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('array.title')} subtitle={t('array.subtitle')}>
         <ExportImport dataType="array" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
@@ -141,7 +141,7 @@ export default function ArrayPage() {
           }
         }} />
         <ShareButton data={data} dataType="array" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+        <OperationButton variant="secondary" onClick={reset}>{t('common.reset')}</OperationButton>
         <OperationButton variant="primary" onClick={randomize}>{t('common.randomize')}</OperationButton>
       </PageHeader>
       <OperationBar>
@@ -149,12 +149,12 @@ export default function ArrayPage() {
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationInput type="number" placeholder={t('array.indexPlaceholder')} value={inputIndex} onChange={setInputIndex} className="w-20" />
-        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('array.insert')}</OperationButton>
-        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('common.delete')}</OperationButton>
-        <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('common.search')}</OperationButton>
-        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating} isBusy={isAnimating}>{t('array.insert')}</OperationButton>
+        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating} isBusy={isAnimating}>{t('common.delete')}</OperationButton>
+        <OperationButton variant="warning" onClick={handleSearch} disabled={isAnimating} isBusy={isAnimating} popAnimation>{t('common.search')}</OperationButton>
+        {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={undo}
           disabled={isAnimating || !canUndo()}
           previewData={getUndoPreview()}
@@ -163,7 +163,7 @@ export default function ArrayPage() {
           {t('common.undo')}
         </UndoPreviewButton>
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={redo}
           disabled={isAnimating || !canRedo()}
           previewData={getRedoPreview()}
@@ -180,7 +180,7 @@ export default function ArrayPage() {
       </OperationBar>
       <ContentTier structureKey="array" />
       <div className="relative flex flex-col flex-1 min-h-0">
-        <Visualizer data={data} renderFn={renderArray as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.arrayLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: `${data.length} / 20` }]} />} />
+        <Visualizer data={data} renderFn={renderArray as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.arrayLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: `${data.length} / 20` }]} />} />
         {data.length === 0 && (
           <EmptyState icon="▦" titleKey="emptyState.emptyArray" descriptionKey="emptyState.emptyArrayDesc" onFill={randomize} />
         )}

@@ -19,7 +19,7 @@ function StatsOverlay({ stats, className = '' }: StatsOverlayProps) {
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="flex items-center gap-1.5 px-2 py-1 bg-white/90 dark:bg-slate/90 backdrop-blur-sm border-2 border-ink/20 dark:border-dark-border/40 shadow-soft"
+          className="flex items-center gap-1.5 px-2 py-1 bg-surface/90 dark:bg-dark-surface/90 backdrop-blur-sm border-2 border-ink/20 dark:border-dark-border/40 shadow-hard-sm dark:shadow-button-dark"
         >
           <span className="font-mono text-[10px] text-ink-light/60 dark:text-dark-ink-light/60 uppercase tracking-wider">
             {stat.label}

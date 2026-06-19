@@ -1,52 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
-function chainable() {
-  const m: Record<string, unknown> = {}
-  const c = new Proxy(m, {
-    get(t, p) {
-      if (p === 'empty') return () => true
-      if (p === 'nodes') return (): unknown[] => []
-      if (p === 'node') return (): null => null
-      if (p === 'size') return () => 0
-      if (p === 'text') return () => c
-      if (p === 'attr') return () => c
-      if (p === 'style') return () => c
-      if (p === 'on') return (_event: string, cb?: Function) => { if (cb) cb(); return c }
-      if (p === 'interrupt') return () => c
-      if (p === Symbol.iterator) return undefined
-      if (!(p in t)) t[p as string] = vi.fn(() => chainable())
-      return t[p as string]
-    },
-  })
-  return c
-}
-
-vi.mock('../../utils/d3Imports', () => ({
-  select: vi.fn(() => chainable()),
-  d3Drag: vi.fn(() => ({ on: vi.fn(() => ({ on: vi.fn(() => ({ on: vi.fn() })) })) })),
-  forceSimulation: vi.fn(() => {
-    const sim: Record<string, unknown> = {}
-    const proxy = new Proxy(sim, {
-      get(t, p) {
-        if (p === 'stop') return vi.fn()
-        if (p === 'alpha') return vi.fn(() => ({ restart: vi.fn() }))
-        if (p === Symbol.iterator) return undefined
-        if (!(p in t)) t[p as string] = vi.fn(() => proxy)
-        return t[p as string]
-      },
-    })
-    return proxy
-  }),
-  forceLink: vi.fn(() => {
-    const o: Record<string, unknown> = {}
-    o.id = vi.fn(() => o)
-    o.distance = vi.fn(() => o)
-    return o
-  }),
-  forceManyBody: vi.fn(() => ({ strength: vi.fn(() => ({})) })),
-  forceCenter: vi.fn(() => ({ x: vi.fn(() => ({})), y: vi.fn(() => ({})) })),
-  forceCollide: vi.fn(() => ({ radius: vi.fn(() => ({})) })),
-}))
 vi.mock('../../utils/themeColors', () => ({
   getColors: () => ({
     nodeDefault: '#2563eb', nodeDefaultStroke: '#1e40af', nodeActive: '#f59e0b',
@@ -55,6 +8,7 @@ vi.mock('../../utils/themeColors', () => ({
     nodeVisitedStroke: '#7c3aed', nodeError: '#ef4444', nodeErrorStroke: '#dc2626',
     textWhite: '#ffffff', textLight: '#6b7280', textSecondary: '#6b7280',
     containerStroke: '#d1d5db', edgeDefault: '#9ca3af', edgeActive: '#f59e0b',
+    arrowStroke: '#4b5563',
   }),
   detectDarkMode: () => false,
   ensureGradientDefs: vi.fn(),
@@ -62,9 +16,15 @@ vi.mock('../../utils/themeColors', () => ({
 }))
 vi.mock('../../utils/animationEngine', () => ({
   duration: (ms: number) => ms,
-  EASING: { easeOutCubic: 'easeOutCubic', easeInCubic: 'easeInCubic', easeOutBack: 'easeOutBack', easeOutElastic: 'easeOutElastic' },
+  EASING: {
+    easeOutCubic: (t: number) => t,
+    easeInCubic: (t: number) => t,
+    easeOutBack: (t: number) => t,
+    easeOutElastic: (t: number) => t,
+  },
   transitionEnd: vi.fn(() => Promise.resolve()),
-  getDefaultEasing: () => 'easeOutCubic',
+  getDefaultEasing: () => (t: number) => t,
+  measureRender: vi.fn((_label: string, fn: () => unknown) => fn()),
 }))
 vi.mock('../../i18n/useI18n', () => ({ tStatic: (key: string) => key }))
 
@@ -86,6 +46,10 @@ describe('graphVisualizer', () => {
     svg.getBoundingClientRect = () => ({ width: 800, height: 500, top: 0, left: 0, right: 800, bottom: 500, x: 0, y: 0, toJSON: () => {} })
   })
 
+  afterEach(() => {
+    clearGraphSimulation(svg as any)
+  })
+
   describe('renderGraph', () => {
     it('应该能够渲染空图', () => {
       expect(() => renderGraph(svg, [], [], { width: 800, height: 500 })).not.toThrow()
@@ -93,6 +57,57 @@ describe('graphVisualizer', () => {
 
     it('应该能够渲染有节点和边的图', () => {
       expect(() => renderGraph(svg, nodes, links, { width: 800, height: 500 })).not.toThrow()
+    })
+
+    it('tick 回调不应直接修改 line 的 x1/y1/x2/y2 属性', () => {
+      renderGraph(svg, nodes, links, { width: 800, height: 500 })
+      const sim = (svg as any).__simulation
+      expect(sim).toBeDefined()
+      sim.stop()
+
+      const tick = sim.on('tick')
+      expect(tick).toBeDefined()
+
+      const simNodes = sim.nodes() as Array<{ x: number; y: number }>
+      // 设置确定性位置
+      simNodes[0].x = 100; simNodes[0].y = 100 // A
+      simNodes[1].x = 300; simNodes[1].y = 200 // B
+      simNodes[2].x = 500; simNodes[2].y = 100 // C
+
+      const lines = svg.querySelectorAll('line')
+      expect(lines.length).toBe(links.length)
+
+      lines.forEach(line => {
+        expect(line.getAttribute('x1')).toBe('0')
+        expect(line.getAttribute('y1')).toBe('0')
+        expect(line.getAttribute('x2')).toBe('1')
+        expect(line.getAttribute('y2')).toBe('0')
+      })
+
+      const initialAttrs = Array.from(lines).map(line => ({
+        x1: line.getAttribute('x1'),
+        y1: line.getAttribute('y1'),
+        x2: line.getAttribute('x2'),
+        y2: line.getAttribute('y2'),
+      }))
+
+      tick()
+
+      const afterAttrs = Array.from(lines).map(line => ({
+        x1: line.getAttribute('x1'),
+        y1: line.getAttribute('y1'),
+        x2: line.getAttribute('x2'),
+        y2: line.getAttribute('y2'),
+      }))
+
+      expect(afterAttrs).toEqual(initialAttrs)
+
+      const linkGroups = svg.querySelectorAll('g.link-group')
+      expect(linkGroups.length).toBe(links.length)
+      linkGroups.forEach(g => {
+        const transform = g.getAttribute('transform')
+        expect(transform).toMatch(/^translate\(/)
+      })
     })
   })
 
@@ -103,7 +118,7 @@ describe('graphVisualizer', () => {
     })
 
     it('应该跳过大型图的动画', async () => {
-      const largeNodes = Array.from({ length: 60 }, (_, i) => ({ id: `N${i}`, group: 0 }))
+      const largeNodes = Array.from({ length: 20 }, (_, i) => ({ id: `N${i}`, group: 0 }))
       const result = await animateBFS(svg, 'N0', largeNodes, [], { width: 800, height: 500 })
       expect(result).toEqual([])
     })
@@ -125,7 +140,7 @@ describe('graphVisualizer', () => {
 
   describe('clearGraphSimulation', () => {
     it('应该能够清除模拟', () => {
-      expect(() => clearGraphSimulation(svg)).not.toThrow()
+      expect(() => clearGraphSimulation(svg as any)).not.toThrow()
     })
   })
 
@@ -148,19 +163,19 @@ describe('graphVisualizer', () => {
 
     it('animateBFS 应在中止时提前退出', async () => {
       const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => true, resolve: () => {}, reject: () => {} }
-      const result = await animateBFS(svg, 'A', nodes, links, { width: 800, height: 500 }, anim)
+      const result = await animateBFS(svg, 'A', nodes, links, { width: 800, height: 500 }, anim as any)
       expect(Array.isArray(result)).toBe(true)
     })
 
     it('animateDFS 应在中止时提前退出', async () => {
       const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => true, resolve: () => {}, reject: () => {} }
-      const result = await animateDFS(svg, 'A', nodes, links, { width: 800, height: 500 }, anim)
+      const result = await animateDFS(svg, 'A', nodes, links, { width: 800, height: 500 }, anim as any)
       expect(Array.isArray(result)).toBe(true)
     })
 
     it('animateDijkstra 应在中止时提前退出', async () => {
       const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => true, resolve: () => {}, reject: () => {} }
-      const result = await animateDijkstra(svg, 'A', 'C', nodes, links, { width: 800, height: 500 }, anim)
+      const result = await animateDijkstra(svg, 'A', 'C', nodes, links, { width: 800, height: 500 }, anim as any)
       expect(Array.isArray(result)).toBe(true)
     })
 
@@ -190,20 +205,20 @@ describe('graphVisualizer', () => {
     })
 
     it('animateBFS 应跳过大型图', async () => {
-      const largeNodes = Array.from({ length: 60 }, (_, i) => ({ id: `N${i}`, group: 0 }))
+      const largeNodes = Array.from({ length: 20 }, (_, i) => ({ id: `N${i}`, group: 0 }))
       const result = await animateBFS(svg, 'N0', largeNodes, [], { width: 800, height: 500 })
       expect(result).toEqual([])
     })
 
     it('animateDFS 应跳过大型图', async () => {
-      const largeNodes = Array.from({ length: 60 }, (_, i) => ({ id: `N${i}`, group: 0 }))
+      const largeNodes = Array.from({ length: 20 }, (_, i) => ({ id: `N${i}`, group: 0 }))
       const result = await animateDFS(svg, 'N0', largeNodes, [], { width: 800, height: 500 })
       expect(result).toEqual([])
     })
 
     it('animateDijkstra 应跳过大型图', async () => {
-      const largeNodes = Array.from({ length: 60 }, (_, i) => ({ id: `N${i}`, group: 0 }))
-      const result = await animateDijkstra(svg, 'N0', 'N59', largeNodes, [], { width: 800, height: 500 })
+      const largeNodes = Array.from({ length: 20 }, (_, i) => ({ id: `N${i}`, group: 0 }))
+      const result = await animateDijkstra(svg, 'N0', 'N19', largeNodes, [], { width: 800, height: 500 })
       expect(result).toEqual([])
     })
   })

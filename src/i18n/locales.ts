@@ -66,6 +66,16 @@ export interface Locale {
     edgeStyle: string
     animationStarting: string
   }
+  avlTree: {
+    title: string
+    subtitle: string
+    insert: string
+    search: string
+    preorder: string
+    inorder: string
+    postorder: string
+    levelorder: string
+  }
   graph: {
     title: string
     subtitle: string
@@ -163,6 +173,7 @@ export interface Locale {
   sidebar: {
     title: string
     themeTooltip: string
+    themeModeTooltip: string
     langTooltip: string
     openMenu: string
     collapseMenu: string
@@ -172,6 +183,7 @@ export interface Locale {
     queue: string
     linkedlist: string
     tree: string
+    avlTree: string
     graph: string
     sort: string
     hash: string
@@ -210,6 +222,7 @@ export interface Locale {
     emptyQueueShort: string
     emptyLinkedListShort: string
     emptyTreeShort: string
+    emptyAvlShort: string
     emptyGraphShort: string
     emptyHashShort: string
     emptyHeapShort: string
@@ -225,6 +238,8 @@ export interface Locale {
     emptyLinkedListDesc: string
     emptyTree: string
     emptyTreeDesc: string
+    emptyAvl: string
+    emptyAvlDesc: string
     emptyGraph: string
     emptyGraphDesc: string
     emptyHash: string
@@ -334,10 +349,13 @@ export interface Locale {
     totalModules: string
     learningGoal: string
     targetSteps: string
+    targetStepsHint: string
     targetDate: string
     setGoal: string
     clearGoal: string
     goalProgress: string
+    goalSetSuccess: string
+    goalSetFailed: string
     category: {
       linear: string
       tree: string
@@ -356,6 +374,7 @@ export interface Locale {
       queue: string
       linkedlist: string
       tree: string
+      avlTree: string
       heap: string
       trie: string
       hash: string
@@ -423,6 +442,7 @@ export interface Locale {
     queueLabel: string
     linkedlistLabel: string
     treeLabel: string
+    avlTreeLabel: string
     graphLabel: string
     sortLabel: string
     hashLabel: string
@@ -594,6 +614,20 @@ export interface Locale {
     treeLogDeleteNotFound: string
     treeLogDeleteSuccess: string
     treeDeleteSuccess: string
+    avlLogInsert: string
+    avlInsertSuccess: string
+    avlInsertDuplicate: string
+    avlLogInsertDuplicate: string
+    avlDeleteNotFound: string
+    avlLogDeleteNotFound: string
+    avlLogDeleteSuccess: string
+    avlDeleteSuccess: string
+    avlLogSearchFound: string
+    avlLogSearchNotFound: string
+    avlLogPreorder: string
+    avlLogInorder: string
+    avlLogPostorder: string
+    avlLogLevelorder: string
     graphLogAddNode: string
     graphNodeAdded: string
     graphSelfLoop: string
@@ -670,6 +704,7 @@ export interface Locale {
     queue: ContentTierStructure
     linkedlist: ContentTierStructure
     tree: ContentTierStructure
+    avlTree: ContentTierStructure
   }
 }
 
@@ -751,6 +786,16 @@ export const zh: Locale = {
     levelorder: '层序',
     edgeStyle: '连线样式',
     animationStarting: '动画即将开始',
+  },
+  avlTree: {
+    title: 'AVL 树',
+    subtitle: '自平衡 BST · 旋转操作 · O(log n) 保证',
+    insert: '插入',
+    search: '查找',
+    preorder: '前序',
+    inorder: '中序',
+    postorder: '后序',
+    levelorder: '层序',
   },
   graph: {
     title: '图',
@@ -849,6 +894,7 @@ export const zh: Locale = {
   sidebar: {
     title: '数据结构学习助手',
     themeTooltip: '主题',
+    themeModeTooltip: '明暗主题',
     langTooltip: '语言',
     openMenu: '打开导航菜单',
     collapseMenu: '收起导航菜单',
@@ -858,6 +904,7 @@ export const zh: Locale = {
     queue: '队列',
     linkedlist: '链表',
     tree: '二叉树',
+    avlTree: 'AVL 树',
     graph: '图',
     sort: '排序',
     hash: '哈希表',
@@ -896,6 +943,7 @@ export const zh: Locale = {
     emptyQueueShort: '空队列',
     emptyLinkedListShort: '空链表',
     emptyTreeShort: '空二叉树',
+    emptyAvlShort: '空 AVL 树 · 请插入节点',
     emptyGraphShort: '空图 · 请添加节点',
     emptyHashShort: '空哈希表 · 请插入键值对',
     emptyHeapShort: '空堆 · 请插入元素',
@@ -911,6 +959,8 @@ export const zh: Locale = {
     emptyLinkedListDesc: '点击头部/尾部插入按钮添加节点',
     emptyTree: '二叉树为空',
     emptyTreeDesc: '点击插入按钮添加节点',
+    emptyAvl: 'AVL 树为空',
+    emptyAvlDesc: '点击插入按钮添加节点',
     emptyGraph: '图为空',
     emptyGraphDesc: '点击添加节点按钮创建图',
     emptyHash: '哈希表为空',
@@ -949,6 +999,7 @@ export const zh: Locale = {
     queueLabel: '队列可视化',
     linkedlistLabel: '链表可视化',
     treeLabel: '二叉树可视化',
+    avlTreeLabel: 'AVL 树可视化',
     graphLabel: '图可视化',
     sortLabel: '排序可视化',
     hashLabel: '哈希表可视化',
@@ -1099,10 +1150,13 @@ export const zh: Locale = {
     totalModules: '总模块数',
     learningGoal: '学习目标',
     targetSteps: '目标步骤数',
+    targetStepsHint: '请输入 1~{max} 的目标步数',
     targetDate: '目标日期',
     setGoal: '设定目标',
     clearGoal: '清除目标',
     goalProgress: '目标进度',
+    goalSetSuccess: '目标已设定',
+    goalSetFailed: '目标设定失败',
     category: {
       linear: '线性结构',
       tree: '树形结构',
@@ -1121,6 +1175,7 @@ export const zh: Locale = {
       queue: '先进先出，BFS 遍历与任务调度的基础',
       linkedlist: '动态增删，理解指针与引用的第一步',
       tree: '层次结构，二叉搜索树是高效查找的基石',
+      avlTree: '自平衡 BST，通过旋转保证 O(log n) 操作复杂度',
       heap: '优先队列，堆排序与 Top-K 问题的利器',
       trie: '前缀树，自动补全与字符串搜索的利器',
       hash: 'O(1) 查找，理解哈希函数与冲突处理',
@@ -1280,6 +1335,20 @@ export const zh: Locale = {
     treeLogDeleteNotFound: 'delete({value}) → 未找到',
     treeLogDeleteSuccess: 'delete({value}) → 删除成功，节点数: {count}',
     treeDeleteSuccess: '删除节点 {value}',
+    avlLogInsert: 'insert({value}) → 插入成功并重新平衡，节点数: {count}',
+    avlInsertSuccess: '插入节点 {value}（已平衡）',
+    avlInsertDuplicate: '节点 {value} 已存在，不重复插入',
+    avlLogInsertDuplicate: 'insert({value}) → 值已存在，跳过',
+    avlDeleteNotFound: '未找到节点 {value}',
+    avlLogDeleteNotFound: 'delete({value}) → 未找到',
+    avlLogDeleteSuccess: 'delete({value}) → 删除成功并重新平衡，节点数: {count}',
+    avlDeleteSuccess: '删除节点 {value}（已平衡）',
+    avlLogSearchFound: 'search({value}) → 找到，深度: {depth}',
+    avlLogSearchNotFound: 'search({value}) → 未找到',
+    avlLogPreorder: '前序遍历: [{data}]',
+    avlLogInorder: '中序遍历（有序）: [{data}]',
+    avlLogPostorder: '后序遍历: [{data}]',
+    avlLogLevelorder: '层序遍历: [{data}]',
     graphLogAddNode: 'addNode("{id}") → 节点数: {count}',
     graphNodeAdded: '添加节点 {id}',
     graphSelfLoop: '不能连接自身',
@@ -1401,6 +1470,16 @@ export const zh: Locale = {
       advancedComparison: 'BST vs 哈希表：BST 有序遍历 O(n) 且支持范围查询，哈希表查找 O(1) 但无序。AVL vs 红黑树：AVL 更严格平衡查找更快，红黑树插入删除旋转更少更适合写多场景。',
       advancedEngineering: '红黑树是 C++ std::map、Java TreeMap 的底层实现；B+ 树是 MySQL InnoDB 的索引结构；LSM Tree 是 LevelDB/RocksDB 的核心；递归是树操作的自然表达，但需注意栈深度。',
     },
+    avlTree: {
+      beginnerConcept: 'AVL 树是一种自平衡二叉搜索树，由 Adelson-Velsky 和 Landis 于 1962 年发明。它通过旋转操作保证任意节点的左右子树高度差不超过 1，从而确保查找、插入、删除操作始终为 O(log n)。',
+      beginnerFeatures: '自平衡：插入/删除后自动旋转恢复平衡；平衡因子 BF = 左子树高度 - 右子树高度，取值 {-1, 0, 1}；四种旋转：LL 右旋、RR 左旋、LR 先左后右、RL 先右后左；节点存储 height 字段。',
+      intermediateComplexity: '查找/插入/删除均为 O(log n)；树高度上界 h ≤ 1.44·log₂(n+2) - 0.328；插入最多 1 次旋转即可恢复平衡；删除最多 O(log n) 次旋转。',
+      intermediateApplications: '数据库索引（读多写少场景）；内存中的有序映射；文件系统目录结构；游戏中的空间分区（AABB 树）；网络路由表。',
+      intermediateCode: 'class AvlNode {\n  int val;\n  AvlNode *left, *right;\n  int height;\n};\n// 右旋（LL 型失衡）\nAvlNode* rotateRight(AvlNode *y) {\n  AvlNode *x = y->left;\n  y->left = x->right;\n  x->right = y;\n  updateHeight(y);\n  updateHeight(x);\n  return x;\n}',
+      advancedVariants: '红黑树（近似平衡，旋转更少）；AA 树（只允许右子节点为红，实现更简单）；Splay 树（自调整，最近访问节点靠近根）；Treap（树+堆，随机化平衡）。',
+      advancedComparison: 'AVL vs 红黑树：AVL 更严格平衡，查找更快（高度更小），但插入/删除旋转更多；红黑树旋转次数有上界（插入 2 次、删除 3 次），适合写多场景。AVL vs 普通 BST：AVL 保证 O(log n)，普通 BST 最坏退化为 O(n) 链表。',
+      advancedEngineering: 'Linux 内核早期使用 AVL 树管理进程虚拟内存区域（后被红黑树替代）；C++ std::map 通常用红黑树而非 AVL（权衡旋转次数）；AVL 树适合查找密集型场景如只读数据库索引；实现时注意 height 字段的正确维护是平衡的关键。',
+    },
   },
 }
 
@@ -1471,6 +1550,16 @@ export const en: Locale = {
     levelorder: 'Level Order',
     edgeStyle: 'Edge Style',
     animationStarting: 'Animation starting',
+  },
+  avlTree: {
+    title: 'AVL Tree',
+    subtitle: 'Self-balancing BST · Rotations · O(log n) Guaranteed',
+    insert: 'Insert',
+    search: 'Search',
+    preorder: 'Preorder',
+    inorder: 'Inorder',
+    postorder: 'Postorder',
+    levelorder: 'Level Order',
   },
   graph: {
     title: 'Graph',
@@ -1569,6 +1658,7 @@ export const en: Locale = {
   sidebar: {
     title: 'Data Structure Learner',
     themeTooltip: 'Theme',
+    themeModeTooltip: 'Light/Dark Theme',
     langTooltip: 'Language',
     openMenu: 'Open navigation menu',
     collapseMenu: 'Collapse navigation menu',
@@ -1578,6 +1668,7 @@ export const en: Locale = {
     queue: 'Queue',
     linkedlist: 'Linked List',
     tree: 'Binary Tree',
+    avlTree: 'AVL Tree',
     graph: 'Graph',
     sort: 'Sorting',
     hash: 'Hash Table',
@@ -1616,6 +1707,7 @@ export const en: Locale = {
     emptyQueueShort: 'Empty Queue',
     emptyLinkedListShort: 'Empty Linked List',
     emptyTreeShort: 'Empty Tree',
+    emptyAvlShort: 'Empty AVL Tree · Insert nodes',
     emptyGraphShort: 'Empty Graph · Add nodes',
     emptyHashShort: 'Empty Hash · Insert key-value pairs',
     emptyHeapShort: 'Empty Heap · Insert elements',
@@ -1631,6 +1723,8 @@ export const en: Locale = {
     emptyLinkedListDesc: 'Click head/tail insert to add nodes',
     emptyTree: 'Binary tree is empty',
     emptyTreeDesc: 'Click insert to add nodes',
+    emptyAvl: 'AVL tree is empty',
+    emptyAvlDesc: 'Click insert to add nodes',
     emptyGraph: 'Graph is empty',
     emptyGraphDesc: 'Click add node to create the graph',
     emptyHash: 'Hash table is empty',
@@ -1669,6 +1763,7 @@ export const en: Locale = {
     queueLabel: 'Queue visualization',
     linkedlistLabel: 'Linked list visualization',
     treeLabel: 'Binary tree visualization',
+    avlTreeLabel: 'AVL tree visualization',
     graphLabel: 'Graph visualization',
     sortLabel: 'Sorting visualization',
     hashLabel: 'Hash table visualization',
@@ -1819,10 +1914,13 @@ export const en: Locale = {
     totalModules: 'Total Modules',
     learningGoal: 'Learning Goal',
     targetSteps: 'Target Steps',
+    targetStepsHint: 'Please enter target steps between 1~{max}',
     targetDate: 'Target Date',
     setGoal: 'Set Goal',
     clearGoal: 'Clear Goal',
     goalProgress: 'Goal Progress',
+    goalSetSuccess: 'Goal set successfully',
+    goalSetFailed: 'Failed to set goal',
     category: {
       linear: 'Linear',
       tree: 'Tree',
@@ -1841,6 +1939,7 @@ export const en: Locale = {
       queue: 'FIFO, foundation of BFS traversal and task scheduling',
       linkedlist: 'Dynamic insert/delete, first step to understanding pointers',
       tree: 'Hierarchical structure, BST is the cornerstone of efficient search',
+      avlTree: 'Self-balancing BST, guarantees O(log n) operations via rotations',
       heap: 'Priority queue, essential for heap sort and Top-K problems',
       trie: 'Prefix tree, essential for autocomplete and string search',
       hash: 'O(1) lookup, understand hash functions and collision handling',
@@ -2000,6 +2099,20 @@ export const en: Locale = {
     treeLogDeleteNotFound: 'delete({value}) → not found',
     treeLogDeleteSuccess: 'delete({value}) → deleted, nodes: {count}',
     treeDeleteSuccess: 'Deleted node {value}',
+    avlLogInsert: 'insert({value}) → inserted and rebalanced, nodes: {count}',
+    avlInsertSuccess: 'Inserted node {value} (balanced)',
+    avlInsertDuplicate: 'Node {value} already exists, skipping',
+    avlLogInsertDuplicate: 'insert({value}) → duplicate, skipped',
+    avlDeleteNotFound: 'Node {value} not found',
+    avlLogDeleteNotFound: 'delete({value}) → not found',
+    avlLogDeleteSuccess: 'delete({value}) → deleted and rebalanced, nodes: {count}',
+    avlDeleteSuccess: 'Deleted node {value} (balanced)',
+    avlLogSearchFound: 'search({value}) → found, depth: {depth}',
+    avlLogSearchNotFound: 'search({value}) → not found',
+    avlLogPreorder: 'Preorder: [{data}]',
+    avlLogInorder: 'Inorder (sorted): [{data}]',
+    avlLogPostorder: 'Postorder: [{data}]',
+    avlLogLevelorder: 'Level order: [{data}]',
     graphLogAddNode: 'addNode("{id}") → nodes: {count}',
     graphNodeAdded: 'Added node {id}',
     graphSelfLoop: 'Cannot connect to self',
@@ -2120,6 +2233,16 @@ export const en: Locale = {
       advancedVariants: 'AVL tree (strictly balanced, height diff <= 1); red-black tree (approximately balanced, widely used in engineering); B-tree/B+ tree (multi-way search, database indexes); Trie (string prefix retrieval); segment tree / BIT (range queries and updates).',
       advancedComparison: 'BST vs Hash Table: BST supports ordered traversal O(n) and range queries, hash table gives O(1) lookup but is unordered. AVL vs Red-Black: AVL is more strictly balanced with faster lookups, red-black has fewer rotations for insert/delete — better for write-heavy workloads.',
       advancedEngineering: 'Red-black tree underlies C++ std::map and Java TreeMap; B+ tree is the MySQL InnoDB index structure; LSM Tree is the core of LevelDB/RocksDB; recursion is the natural expression for tree operations, but watch stack depth.',
+    },
+    avlTree: {
+      beginnerConcept: 'AVL tree is a self-balancing binary search tree invented by Adelson-Velsky and Landis in 1962. It uses rotations to ensure the height difference between left and right subtrees of any node is at most 1, guaranteeing O(log n) for search, insert, and delete operations.',
+      beginnerFeatures: 'Self-balancing: automatic rotation after insert/delete; Balance Factor BF = left height - right height, valid range {-1, 0, 1}; Four rotations: LL right, RR left, LR left-then-right, RL right-then-left; Nodes store a height field.',
+      intermediateComplexity: 'Search/insert/delete all O(log n); tree height upper bound h ≤ 1.44·log₂(n+2) - 0.328; insert needs at most 1 rotation to rebalance; delete needs at most O(log n) rotations.',
+      intermediateApplications: 'Database indexes (read-heavy workloads); in-memory ordered maps; filesystem directory structures; game spatial partitioning (AABB trees); network routing tables.',
+      intermediateCode: 'class AvlNode {\n  int val;\n  AvlNode *left, *right;\n  int height;\n};\n// Right rotation (LL imbalance)\nAvlNode* rotateRight(AvlNode *y) {\n  AvlNode *x = y->left;\n  y->left = x->right;\n  x->right = y;\n  updateHeight(y);\n  updateHeight(x);\n  return x;\n}',
+      advancedVariants: 'Red-black tree (approximately balanced, fewer rotations); AA tree (only right children can be red, simpler implementation); Splay tree (self-adjusting, recently accessed nodes near root); Treap (tree + heap, randomized balancing).',
+      advancedComparison: 'AVL vs Red-Black: AVL is more strictly balanced with faster lookups (smaller height) but more rotations for insert/delete; red-black has bounded rotations (insert 2, delete 3), better for write-heavy workloads. AVL vs plain BST: AVL guarantees O(log n), plain BST can degrade to O(n) linked list.',
+      advancedEngineering: 'Linux kernel historically used AVL trees for process virtual memory areas (later replaced by red-black trees); C++ std::map typically uses red-black over AVL (trading rotation count); AVL trees suit lookup-intensive scenarios like read-only database indexes; correct height field maintenance is the key to balancing.',
     },
   },
 }

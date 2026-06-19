@@ -4,6 +4,74 @@
 
 ---
 
+## [v11.0.0] - 2026-06-18
+
+### 修复
+- **全局色彩不协调:** `src/components/Button.tsx` 修正 `info` 变体背景色 `accent-cyan` → `accent-blue`，收敛页面级强调色为 blue/amber 两种语义色，消除"小丑"感
+- **Card 渐变模式失效:** `src/components/Card.tsx` 重构 `gradientClass` 映射，使用完整 `bg-gradient-to-br` 类名组合，修复渐变背景不显示
+- **动画曲线缺失:** `src/utils/animationEngine.ts` 补全 `easeInOutCubic: easeCubicInOut` 导出，避免部分过渡回退到默认缓动
+- **按钮变体类型缺失:** `src/components/Button.tsx` 的 `ButtonVariant` 与 `variantClasses` 增加 `outline`，修复多页面 `OperationButton` 使用 `outline` 的 TypeScript 错误
+- **撤销按钮变体类型缺失:** `src/components/UndoPreviewButton.tsx` 的 `variant` 类型与 `variants` 映射增加 `secondary`，修复撤销/重做按钮传入 `secondary` 的 TypeScript 错误
+- **SVG 测试类型错误:** `src/__tests__/visualizers/arrayVisualizer.test.ts` 为 `ownerSVGElement` 访问增加 `SVGElement` 类型断言，删除未使用的 `getAllStyleCalls`
+- **图标 aria-hidden 类型:** `src/components/LearningRecommendations.tsx` 将 `aria-hidden="true"` 改为 `aria-hidden={true}`，满足布尔类型约束
+
+### 优化
+- **排序界面序号标识:** `src/visualizers/sortVisualizer.ts` 在柱状图底部新增 `bar-index-bottom` 文本，n > 50 隐藏、n > 30 使用 8px 字号、默认 11px，提升数据可读性
+- **字典树动画重设计:** `src/visualizers/trieVisualizer.ts` 新增节点光晕（glow）辅助元素与 SVG filter，路径高亮改为 `easeOutCubic` 颜色/线宽过渡，insert/search/delete 新增 leaf 完成态动画，动画恢复阶段统一使用渐变填充
+- **全面视觉与交互体验:** 统一各 Page 标题/副标题/操作区间距与排版，优化按钮 busy/disabled 状态差异，位移动画统一使用 `easeOutCubic`、缩放/颜色动画使用 `easeOutBack`，减少过渡跳变
+
+### 测试
+- 新增/更新 `Button.test.tsx`、`OperationBar.test.tsx`、`Card.test.tsx`、`sortVisualizer.test.ts`、`trieVisualizer.test.ts`
+- 单元测试从 2978 增长到 2996（新增 18 个测试）
+
+### 文档
+- 新增 `.trae/specs/v11-visual-unification/spec.md`：v11 视觉统一与交互优化规范
+- 新增 `.trae/specs/v11-visual-unification/tasks.md`：Phase 0-6 任务分解
+- 新增 `.trae/specs/v11-visual-unification/checklist.md`：各阶段检查点
+- 更新 `PROJECT_SUMMARY.md`、`WORKLOG.md`、`CHANGELOG.md`
+
+### 质量指标
+
+| 指标 | 结果 |
+|------|------|
+| 单元测试 | 2996 tests passed（187 文件） |
+| ESLint | 0 错误 / 0 警告 |
+| TypeScript strict | 0 错误 |
+| Build | 成功 |
+| Bundle 预算 | 符合（index < 110KB, vendor-react < 250KB, vendor-d3 < 60KB） |
+
+---
+
+## [v10.0.0] - 2026-06-18
+
+### 修复
+- **数组可视化主体偏离中心:** `src/visualizers/arrayVisualizer.ts` 移除 `getViewBoxSize` 依赖，统一使用 `options.width/height` 计算布局与动画坐标，避免元素偏移与动画跳变
+- **字典树可视化主体偏离中心:** `src/visualizers/trieVisualizer.ts` 移除 `getViewBoxSize` 调用，使用传入尺寸或 fallback 计算布局
+- **Visualizer 响应式重渲染:** `src/components/Visualizer.tsx` 新增 `isAnimating` prop，尺寸变化时动画期间延迟重渲染，动画结束后补渲染，避免打断 D3 过渡
+- **进度目标设定无反馈:** `src/components/ProgressOverview.tsx` 增加 `targetSteps` 校验与禁用态提示，成功/失败均显示 Toast 反馈
+
+### 优化
+- **首页配色统一:** `src/pages/Home.tsx` 将 `ACCENT_COLORS` 收敛为 2 色（主色 blue + 辅色 amber），统一 Hero 徽章、DS Logo、统计条颜色，消除绿/橙/紫混杂
+- **卡片渐变模式:** `src/components/Card.tsx` 新增 `gradient?: boolean` prop，启用时根据 accent 生成柔和渐变背景，默认行为不变
+- **学习推荐图标:** `src/components/LearningRecommendations.tsx` 将 💡 emoji 替换为 SVG `SparklesIcon`，颜色随主题协调
+- **主题渐变 token:** `src/utils/themeColors.ts` 为 `default/forest/warm/royal` 四套主题的 light/dark 模式增加 `gradientStart` / `gradientEnd`，`src/pages/Home.tsx` Logo/Hero 可选使用渐变
+
+### 测试
+- 新增/更新 `arrayVisualizer.test.ts`、`trieVisualizer.test.ts`、`Visualizer.test.tsx`、`Card.test.tsx`、`LearningRecommendations.test.tsx`、`ProgressOverview.test.tsx`、`useLearningProgress.test.ts`、`themeColors.test.ts`
+- 单元测试从 2956 增长到 2978（新增 22 个测试）
+
+### 质量指标
+
+| 指标 | 结果 |
+|------|------|
+| 单元测试 | 2978 tests passed（187 文件） |
+| ESLint | 0 错误 / 0 警告 |
+| TypeScript strict | 0 错误 |
+| Build | 2.01s 成功 |
+| Bundle 预算 | 符合（index < 110KB, vendor-react < 250KB, vendor-d3 < 60KB） |
+
+---
+
 ## [v9.0.0] - 2026-06-18
 
 ### Phase 1：动画与交互修复

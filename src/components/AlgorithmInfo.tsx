@@ -62,7 +62,7 @@ function AlgorithmInfo({ algorithmKey, name, timeComplexity, spaceComplexity, is
       <button
         onClick={() => setOpen(!open)}
         disabled={isAnimating}
-        className="w-full px-4 py-2 flex items-center gap-3 text-sm hover:bg-paper-warm/40 dark:hover:bg-slate-light/40 transition-colors text-left"
+        className="w-full px-4 py-2 flex items-center gap-3 text-sm hover:bg-muted/40 dark:hover:bg-dark-muted/40 transition-colors text-left"
         aria-expanded={open}
       >
         <span className="font-mono text-[10px] text-ink-light/50">{open ? '▼' : '▶'}</span>
@@ -75,8 +75,8 @@ function AlgorithmInfo({ algorithmKey, name, timeComplexity, spaceComplexity, is
         </span>
       </button>
       {open && (
-        <div className="px-4 py-3 text-sm space-y-2 border-t border-ink/5 dark:border-dark-border/20 bg-paper-warm/20 dark:bg-slate-light/20">
-          <p className="text-ink dark:text-dark-ink leading-relaxed">{info.description}</p>
+        <div className="px-4 py-3 text-sm space-y-2 border-t border-ink/5 dark:border-dark-border/20 bg-muted/20 dark:bg-dark-muted/20">
+          <p className="text-ink-light dark:text-dark-ink-light leading-relaxed">{info.description}</p>
           <ul className="space-y-1">
             {info.characteristics.map((c, i) => (
               <li key={i} className="flex items-start gap-2 text-ink-light dark:text-dark-ink-light">

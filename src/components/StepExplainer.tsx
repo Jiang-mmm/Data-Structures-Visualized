@@ -83,7 +83,7 @@ function StepExplainer({
 
   if (!step) {
     return (
-      <div className="bg-white dark:bg-slate border-2 border-ink dark:border-dark-border p-4">
+      <div className="bg-surface dark:bg-dark-surface border-2 border-ink dark:border-dark-border p-4">
         <div className="text-center text-ink-light dark:text-dark-ink-light">
           {t('stepExplainer.selectAlgorithm')}
         </div>
@@ -92,7 +92,7 @@ function StepExplainer({
   }
 
   return (
-    <div className="bg-white dark:bg-slate border-2 border-ink dark:border-dark-border p-4">
+    <div className="bg-surface dark:bg-dark-surface border-2 border-ink dark:border-dark-border p-4">
       {/* Step dots navigation */}
       <div className="flex items-center gap-1.5 mb-3 flex-wrap">
         {Array.from({ length: totalSteps }, (_, i) => (

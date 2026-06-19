@@ -62,6 +62,17 @@ describe('linkedListVisualizer 集成测试', () => {
       expect(hasNull).toBe(true)
     })
 
+    it('HEAD 标签应使用展示字体，NULL 标签应使用等宽字体', () => {
+      const data = [1, 2, 3]
+      renderLinkedList(svg, data, { width: 800, height: 400 })
+
+      const texts = Array.from(svg.querySelectorAll('text'))
+      const headText = texts.find(t => t.textContent === tStatic('linkedlist.headLabel'))
+      const nullText = texts.find(t => t.textContent === 'NULL')
+      expect(headText?.getAttribute('font-family')).toContain('var(--font-display)')
+      expect(nullText?.getAttribute('font-family')).toContain('var(--font-mono)')
+    })
+
     it('应该渲染节点间的箭头连线', () => {
       const data = [1, 2, 3]
       renderLinkedList(svg, data, { width: 800, height: 400 })
@@ -222,7 +233,7 @@ describe('linkedListVisualizer 集成测试', () => {
     })
 
     it('应该跳过大型数据集', async () => {
-      const largeData = Array.from({ length: 40 }, (_, i) => i)
+      const largeData = Array.from({ length: 30 }, (_, i) => i)
       const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => false, resolve: () => {}, reject: () => {} }
       await expect(animateSearchNode(svg, 0, largeData, { width: 800, height: 400 }, anim)).resolves.toBeUndefined()
     })
@@ -249,7 +260,7 @@ describe('linkedListVisualizer 集成测试', () => {
     })
 
     it('应该跳过大型数据集', async () => {
-      const largeData = Array.from({ length: 40 }, (_, i) => i)
+      const largeData = Array.from({ length: 30 }, (_, i) => i)
       const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => false, resolve: () => {}, reject: () => {} }
       await expect(animateInsertHead(svg, 0, largeData, { width: 800, height: 400 }, anim)).resolves.toBeUndefined()
     })
@@ -296,7 +307,7 @@ describe('linkedListVisualizer 集成测试', () => {
 
     it('应该跳过大型数据集', async () => {
       const { animateDeleteNode } = await import('../../visualizers/linkedListVisualizer')
-      const largeData = Array.from({ length: 40 }, (_, i) => i)
+      const largeData = Array.from({ length: 30 }, (_, i) => i)
       const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => false, resolve: () => {}, reject: () => {} }
       await expect(animateDeleteNode(svg, 0, largeData, { width: 800, height: 400 }, anim)).resolves.toBeUndefined()
     })
@@ -323,7 +334,7 @@ describe('linkedListVisualizer 集成测试', () => {
 
     it('应该跳过大型数据集', async () => {
       const { animateInsertAt } = await import('../../visualizers/linkedListVisualizer')
-      const largeData = Array.from({ length: 40 }, (_, i) => i)
+      const largeData = Array.from({ length: 30 }, (_, i) => i)
       const anim = { promise: Promise.resolve(), abort: () => {}, isAborted: () => false, resolve: () => {}, reject: () => {} }
       await expect(animateInsertAt(svg, 0, 99, largeData, { width: 800, height: 400 }, anim)).resolves.toBeUndefined()
     })

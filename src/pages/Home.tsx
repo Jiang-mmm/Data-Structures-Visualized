@@ -4,41 +4,45 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import LearningPath from '../components/LearningPath'
 import ProgressOverview from '../components/ProgressOverview'
 import LearningRecommendations from '../components/LearningRecommendations'
+import Card, { type CardAccent } from '../components/Card'
 
 const ACCENT_COLORS = [
-  { bg: 'bg-accent-blue/5', border: 'border-l-accent-blue', badge: 'bg-accent-blue/10 text-accent-blue', iconBg: 'bg-accent-blue/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(37,99,235,0.15)]' },
-  { bg: 'bg-accent-violet/5', border: 'border-l-accent-violet', badge: 'bg-accent-violet/10 text-accent-violet', iconBg: 'bg-accent-violet/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(124,58,237,0.15)]' },
-  { bg: 'bg-accent-teal/5', border: 'border-l-accent-teal', badge: 'bg-accent-teal/10 text-accent-teal', iconBg: 'bg-accent-teal/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(13,148,136,0.15)]' },
-  { bg: 'bg-accent-amber/5', border: 'border-l-accent-amber', badge: 'bg-accent-amber/10 text-accent-amber', iconBg: 'bg-accent-amber/10', hoverGlow: 'group-hover:shadow-[0_0_20px_rgba(217,119,6,0.15)]' },
+  { accent: 'blue' as CardAccent, badge: 'bg-accent-blue/10 text-accent-blue', iconBg: 'bg-accent-blue/10' },
+  { accent: 'amber' as CardAccent, badge: 'bg-accent-amber/10 text-accent-amber', iconBg: 'bg-accent-amber/10' },
+  { accent: 'red' as CardAccent, badge: 'bg-accent-rose/10 text-accent-rose', iconBg: 'bg-accent-rose/10' },
 ]
 
 export default function Home() {
   const { t } = useGlobalSettings()
 
   const structures = useMemo(() => [
+    // 线性结构类 (blue)
     { path: '/array', name: t('array.title'), en: 'Array', icon: '▦', desc: t('array.subtitle'), ops: [t('array.insert'), t('array.delete'), t('array.search')], colorIdx: 0 },
-    { path: '/stack', name: t('stack.title'), en: 'Stack', icon: '☰', desc: t('stack.subtitle'), ops: [t('stack.push'), t('stack.pop'), t('stack.peek')], colorIdx: 0 },
+    { path: '/stack', name: t('stack.title'), en: 'Stack', icon: '▥', desc: t('stack.subtitle'), ops: [t('stack.push'), t('stack.pop'), t('stack.peek')], colorIdx: 0 },
     { path: '/queue', name: t('queue.title'), en: 'Queue', icon: '⇒', desc: t('queue.subtitle'), ops: [t('queue.enqueue'), t('queue.dequeue'), t('queue.peek')], colorIdx: 0 },
-    { path: '/linkedlist', name: t('linkedlist.title'), en: 'LinkedList', icon: '◎', desc: t('linkedlist.subtitle'), ops: [t('linkedlist.pushFront'), t('linkedlist.pushBack'), t('linkedlist.find')], colorIdx: 0 },
+    { path: '/linkedlist', name: t('linkedlist.title'), en: 'LinkedList', icon: '●', desc: t('linkedlist.subtitle'), ops: [t('linkedlist.pushFront'), t('linkedlist.pushBack'), t('linkedlist.find')], colorIdx: 0 },
+    { path: '/sort', name: t('sort.title'), en: 'Sorting', icon: '⇅', desc: t('sort.subtitle'), ops: [t('sort.bubble'), t('sort.quick'), t('sort.merge')], colorIdx: 0 },
+    { path: '/compare', name: t('compare.title'), en: 'Compare', icon: '⚖', desc: t('compare.subtitle'), ops: [t('compare.runAll'), t('compare.stop'), t('compare.exportCSV')], colorIdx: 0 },
+    // 树结构类 (amber)
     { path: '/tree', name: t('tree.title'), en: 'BinaryTree', icon: '◆', desc: t('tree.subtitle'), ops: [t('tree.preorder'), t('tree.inorder'), t('tree.postorder')], colorIdx: 1 },
-    { path: '/graph', name: t('graph.title'), en: 'Graph', icon: '⬡', desc: t('graph.subtitle'), ops: [t('graph.bfs'), t('graph.dfs'), t('graph.dijkstra')], colorIdx: 2 },
-    { path: '/hash', name: t('hash.title'), en: 'HashTable', icon: '#', desc: t('hash.subtitle'), ops: [t('hash.insert'), t('hash.remove'), t('hash.search')], colorIdx: 2 },
+    { path: '/avl-tree', name: t('avlTree.title'), en: 'AVLTree', icon: '◇', desc: t('avlTree.subtitle'), ops: [t('avlTree.insert'), t('avlTree.search'), t('avlTree.inorder')], colorIdx: 1 },
     { path: '/heap', name: t('heap.title'), en: 'Heap', icon: '▲', desc: t('heap.subtitle'), ops: [t('heap.insert'), t('heap.extractMax'), t('heap.peek')], colorIdx: 1 },
     { path: '/trie', name: t('trie.title'), en: 'Trie', icon: '◈', desc: t('trie.subtitle'), ops: [t('trie.insert'), t('trie.search'), t('trie.prefixSearch')], colorIdx: 1 },
-    { path: '/sort', name: t('sort.title'), en: 'Sorting', icon: '⇚', desc: t('sort.subtitle'), ops: [t('sort.bubble'), t('sort.quick'), t('sort.merge')], colorIdx: 3 },
-    { path: '/compare', name: t('compare.title'), en: 'Compare', icon: '⊞', desc: t('compare.subtitle'), ops: [t('compare.runAll'), t('compare.stop'), t('compare.exportCSV')], colorIdx: 3 },
-    { path: '/graph-algorithm', name: t('graphAlgorithm.title'), en: 'GraphAlgo', icon: '⊕', desc: t('graphAlgorithm.subtitle'), ops: [t('graph.bfs'), t('graph.dfs'), t('graph.dijkstra')], colorIdx: 2 },
+    // 图与哈希类 (rose)
+    { path: '/graph', name: t('graph.title'), en: 'Graph', icon: '⬡', desc: t('graph.subtitle'), ops: [t('graph.bfs'), t('graph.dfs'), t('graph.dijkstra')], colorIdx: 2 },
+    { path: '/hash', name: t('hash.title'), en: 'HashTable', icon: '#', desc: t('hash.subtitle'), ops: [t('hash.insert'), t('hash.remove'), t('hash.search')], colorIdx: 2 },
+    { path: '/graph-algorithm', name: t('graphAlgorithm.title'), en: 'GraphAlgo', icon: '⥁', desc: t('graphAlgorithm.subtitle'), ops: [t('graph.bfs'), t('graph.dfs'), t('graph.dijkstra')], colorIdx: 2 },
   ], [t])
 
   return (
-    <div className="min-h-screen bg-paper dark:bg-dark-paper grain">
+    <div className="min-h-dvh bg-paper dark:bg-dark-paper grain">
       <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
         {/* Hero Section */}
         <header className="mb-16 md:mb-20">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
             <div className="animate-slide-up max-w-2xl">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper text-xs font-bold tracking-widest uppercase mb-8 shadow-button dark:shadow-button-dark">
-                <span className="w-2 h-2 bg-accent-emerald rounded-full animate-pulse" />
+                <span className="w-2 h-2 bg-accent-blue rounded-full animate-pulse" />
                 {t('home.badge')}
               </div>
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] mb-6 text-ink dark:text-dark-ink">
@@ -54,10 +58,10 @@ export default function Home() {
 
             <div className="hidden md:block animate-pop">
               <div className="relative">
-                <div className="w-28 h-28 neo-border bg-gradient-to-br from-accent-violet to-accent-blue flex items-center justify-center -rotate-6 hover:rotate-0 transition-transform duration-500 ease-out">
+                <div className="w-28 h-28 neo-border bg-gradient-to-br from-[var(--color-gradient-start)] to-[var(--color-gradient-end)] dark:from-[var(--color-dark-gradient-start)] dark:to-[var(--color-dark-gradient-end)] flex items-center justify-center -rotate-6 hover:rotate-0 transition-transform duration-500 ease-out">
                   <span className="text-5xl font-black text-paper drop-shadow-lg">DS</span>
                 </div>
-                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-accent-emerald border-2 border-ink dark:border-dark-border flex items-center justify-center text-xs font-bold text-paper shadow-button dark:shadow-button-dark">
+                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-accent-blue border-2 border-ink dark:border-dark-border flex items-center justify-center text-xs font-bold text-paper shadow-button dark:shadow-button-dark">
                   ✓
                 </div>
               </div>
@@ -90,69 +94,59 @@ export default function Home() {
         <LearningPath />
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="ds-cards-grid">
           {structures.map((item, i) => {
             const color = ACCENT_COLORS[item.colorIdx % ACCENT_COLORS.length]
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`
-                  group relative block
-                  border-2 border-ink dark:border-dark-border
-                  border-l-4 ${color.border}
-                  ${color.bg} ${color.hoverGlow}
-                  bg-white dark:bg-slate
-                  p-6 transition-all duration-300 ease-out
-                  hover:-translate-y-1.5
-                  hover:shadow-card-hover dark:hover:shadow-card-dark-hover
-                  hover:border-ink dark:hover:border-dark-border
-                  animate-slide-up
-                  overflow-hidden
-                `}
+                className="group relative block animate-slide-up overflow-hidden"
                 style={{ animationDelay: `${i * 60}ms`, animationFillMode: 'both' }}
               >
-                {/* Decorative corner */}
-                <div className="absolute top-0 right-0 w-16 h-16 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className={`absolute top-2 right-2 w-3 h-3 ${color.iconBg} rounded-full`} />
-                </div>
-
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`w-12 h-12 ${color.iconBg} border-2 border-ink/10 dark:border-dark-border flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
-                    <span className="text-2xl">{item.icon}</span>
+                <Card variant="accent" accent={color.accent} shadow="hover" radius="none" gradient className="h-full">
+                  {/* Decorative corner */}
+                  <div className="absolute top-0 right-0 w-16 h-16 opacity-40 group-hover:opacity-80 transition-opacity duration-300">
+                    <div className={`absolute top-2 right-2 w-3 h-3 ${color.iconBg} rounded-full`} />
                   </div>
-                  <span className={`text-[10px] font-mono font-bold px-2.5 py-1 ${color.badge} border border-current/20`}>
-                    {item.en}
-                  </span>
-                </div>
 
-                <h2 className="text-xl font-bold mb-2 text-ink dark:text-dark-ink group-hover:text-accent-blue transition-colors duration-200">
-                  {item.name}
-                </h2>
-                <p className="text-sm text-ink-light dark:text-dark-ink-light mb-5 leading-relaxed line-clamp-2">
-                  {item.desc}
-                </p>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {item.ops.map((op) => (
-                    <span
-                      key={op}
-                      className="px-2.5 py-1 text-[11px] font-medium
-                        border border-border dark:border-dark-border
-                        bg-paper/80 dark:bg-slate/80
-                        text-ink/80 dark:text-dark-ink/80
-                        group-hover:border-ink/20 dark:group-hover:border-dark-ink/20
-                        transition-all duration-200"
-                    >
-                      {op}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`w-12 h-12 ${color.iconBg} border-2 border-ink/10 dark:border-dark-border flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                      <span className="text-2xl">{item.icon}</span>
+                    </div>
+                    <span className={`text-[10px] font-mono font-bold px-2.5 py-1 ${color.badge} border border-current/20`}>
+                      {item.en}
                     </span>
-                  ))}
-                </div>
+                  </div>
 
-                <div className="mt-5 pt-4 border-t border-border/50 dark:border-dark-border/50 flex items-center justify-between">
-                  <span className="text-xs font-mono text-ink-light/60 dark:text-dark-ink-light/60">{t('home.enterModule')}</span>
-                  <span className="text-lg group-hover:translate-x-2 transition-transform duration-300 text-ink/40 dark:text-dark-ink/40 group-hover:text-accent-blue">→</span>
-                </div>
+                  <h2 className="text-xl font-bold mb-2 text-ink dark:text-dark-ink group-hover:text-accent-blue transition-colors duration-200">
+                    {item.name}
+                  </h2>
+                  <p className="text-sm text-ink-light dark:text-dark-ink-light mb-5 leading-relaxed line-clamp-2">
+                    {item.desc}
+                  </p>
+
+                  <div className="flex flex-wrap gap-1.5">
+                    {item.ops.map((op) => (
+                      <span
+                        key={op}
+                        className="px-2.5 py-1 text-[11px] font-medium
+                          border border-border dark:border-dark-border
+                          bg-paper/80 dark:bg-dark-paper/80
+                          text-ink/80 dark:text-dark-ink/80
+                          group-hover:border-ink/20 dark:group-hover:border-dark-ink/20
+                          transition-all duration-200"
+                      >
+                        {op}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mt-5 pt-4 border-t border-border/50 dark:border-dark-border/50 flex items-center justify-between">
+                    <span className="text-xs font-mono text-ink-light/60 dark:text-dark-ink-light/60">{t('home.enterModule')}</span>
+                    <span className="text-lg group-hover:translate-x-2 transition-transform duration-300 text-ink/40 dark:text-dark-ink/40 group-hover:text-accent-blue">→</span>
+                  </div>
+                </Card>
               </Link>
             )
           })}

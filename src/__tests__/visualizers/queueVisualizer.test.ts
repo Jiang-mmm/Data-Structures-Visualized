@@ -146,7 +146,7 @@ describe('queueVisualizer', () => {
     })
 
     it('应该在大数据集时跳过动画', async () => {
-      const bigData = Array.from({ length: 35 }, (_, i) => i)
+      const bigData = Array.from({ length: 30 }, (_, i) => i)
       await expect(animateEnqueue(svg, 100, bigData, { width: 800, height: 300 })).resolves.toBeUndefined()
     })
 
@@ -170,7 +170,7 @@ describe('queueVisualizer', () => {
     })
 
     it('应该在大数据集时跳过动画', async () => {
-      const bigData = Array.from({ length: 35 }, (_, i) => i)
+      const bigData = Array.from({ length: 30 }, (_, i) => i)
       await expect(animateDequeue(svg, bigData, { width: 800, height: 300 })).resolves.toBeUndefined()
     })
 
@@ -194,7 +194,7 @@ describe('queueVisualizer', () => {
     })
 
     it('应该在大数据集时跳过动画', async () => {
-      const bigData = Array.from({ length: 35 }, (_, i) => i)
+      const bigData = Array.from({ length: 30 }, (_, i) => i)
       await expect(animateFront(svg, bigData, { width: 800, height: 300 })).resolves.toBeUndefined()
     })
 

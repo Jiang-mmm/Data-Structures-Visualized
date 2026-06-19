@@ -173,6 +173,83 @@ export interface TrieNode {
   isEndOfWord: boolean;
 }
 
+/**
+ * AVL 树类型定义
+ *
+ * 数据表示决策：采用递归对象表示（参考 TrieNode 模式），
+ * 而非数组索引表示（如 TreeState 的 2i+1/2i+2）。
+ * 原因：AVL 的旋转操作在数组索引表示下极其复杂且易错，
+ * 递归对象表示可让旋转逻辑清晰、可验证。
+ */
+
+/** AVL 树节点（递归对象表示） */
+export interface AvlNode {
+  /** 节点值 */
+  value: number;
+  /** 左子树 */
+  left: AvlNode | null;
+  /** 右子树 */
+  right: AvlNode | null;
+  /** 节点高度（叶子节点高度为 1） */
+  height: number;
+}
+
+/** 扁平化节点（供可视化器使用） */
+export interface AvlFlattenedNode {
+  /** 节点唯一标识（基于遍历顺序） */
+  id: string;
+  /** 节点值 */
+  value: number;
+  /** 父节点 id（根节点为空字符串） */
+  parent: string;
+  /** 节点所在深度（根为 0） */
+  depth: number;
+  /** 平衡因子（左子树高度 - 右子树高度） */
+  balanceFactor: number;
+  /** 节点高度 */
+  height: number;
+  /** 是否为左子节点 */
+  isLeft: boolean;
+  /** 是否为右子节点 */
+  isRight: boolean;
+}
+
+/** 扁平化边（供可视化器使用） */
+export interface AvlFlattenedEdge {
+  /** 起点 id（父节点） */
+  from: string;
+  /** 终点 id（子节点） */
+  to: string;
+}
+
+/** 扁平化 AVL 树结构（供可视化器使用） */
+export interface AvlFlattened {
+  nodes: AvlFlattenedNode[];
+  edges: AvlFlattenedEdge[];
+}
+
+/** AVL 树状态接口（继承数据结构状态基座） */
+export interface AvlTreeState extends DataStructureState<AvlNode | null> {
+  /** 插入节点 */
+  insert: (value: number) => void;
+  /** 删除节点 */
+  deleteNode: (value: number) => void;
+  /** 查找节点，返回路径与是否找到 */
+  search: (value: number) => { found: boolean; path: number[] };
+  /** 前序遍历 */
+  preorder: () => number[];
+  /** 中序遍历 */
+  inorder: () => number[];
+  /** 后序遍历 */
+  postorder: () => number[];
+  /** 层序遍历 */
+  levelorder: () => number[];
+  /** 获取扁平化结构（供可视化器） */
+  getFlattened: () => AvlFlattened;
+  /** 节点总数 */
+  nodeCount: number;
+}
+
 export interface VisualizerReturn {
   containerRef: React.RefObject<HTMLDivElement>;
   svgRef: React.RefObject<SVGSVGElement>;

@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import PageHeader from '../components/PageHeader'
+import Card from '../components/Card'
 import OperationBar, { OperationButton } from '../components/OperationBar'
 import SpeedControl from '../components/SpeedControl'
 import LogPanel from '../components/LogPanel'
@@ -181,7 +182,7 @@ export default function GraphAlgorithmPage() {
         title={t('graphAlgorithm.title')}
         subtitle={t('graphAlgorithm.subtitle')}
       >
-        <OperationButton variant="outline" onClick={reset} disabled={isAnimating}>
+        <OperationButton variant="secondary" onClick={reset} disabled={isAnimating} isBusy={isAnimating}>
           {t('common.reset')}
         </OperationButton>
       </PageHeader>
@@ -194,7 +195,7 @@ export default function GraphAlgorithmPage() {
                 key={algo.key}
                 variant={selectedAlgorithm === algo.key ? 'primary' : 'outline'}
                 onClick={() => setSelectedAlgorithm(algo.key)}
-                disabled={isAnimating}
+                disabled={isAnimating} isBusy={isAnimating}
               >
                 {algo.name}
               </OperationButton>
@@ -207,7 +208,7 @@ export default function GraphAlgorithmPage() {
                 key={node.id}
                 variant={startNode === node.id ? 'primary' : 'outline'}
                 onClick={() => setStartNode(node.id)}
-                disabled={isAnimating}
+                disabled={isAnimating} isBusy={isAnimating}
               >
                 {node.id}
               </OperationButton>
@@ -216,36 +217,37 @@ export default function GraphAlgorithmPage() {
           
           <OperationBar>
             <SpeedControl />
-            <OperationButton variant="primary" onClick={handleRun} disabled={isAnimating}>
+            <OperationButton variant="primary" onClick={handleRun} disabled={isAnimating} isBusy={isAnimating}>
               {isAnimating ? t('common.running') : t('common.run')}
             </OperationButton>
-            {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+            {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
             <OperationButton
               variant={learningMode.isLearning ? 'primary' : 'outline'}
               onClick={() => learningMode.isLearning ? learningMode.stopLearning() : learningMode.startLearning()}
-              disabled={isAnimating}
+              disabled={isAnimating} isBusy={isAnimating}
             >
               {learningMode.isLearning ? t('errors.exitLearning') : t('errors.learningMode')}
             </OperationButton>
             {logs.length > 0 && (
               <>
-                <OperationButton variant="outline" onClick={handleExportCSV} disabled={isAnimating}>
+                <OperationButton variant="secondary" onClick={handleExportCSV} disabled={isAnimating} isBusy={isAnimating}>
                   ⇅ CSV
                 </OperationButton>
-                <OperationButton variant="outline" onClick={handleExportJSON} disabled={isAnimating}>
+                <OperationButton variant="secondary" onClick={handleExportJSON} disabled={isAnimating} isBusy={isAnimating}>
                   ⇅ JSON
                 </OperationButton>
               </>
             )}
           </OperationBar>
 
-          <div className="flex-1 flex flex-col bg-white dark:bg-slate border-2 border-ink dark:border-dark-border">
+          <div className="flex-1 flex flex-col bg-surface dark:bg-dark-surface border-2 border-ink dark:border-dark-border">
             <Visualizer
               data={nodes}
               renderFn={handleGraphRender}
               svgRef={svgRef}
               dimensions={dimensions}
               containerRef={containerRef}
+              isAnimating={isAnimating}
               ariaLabel={t('visualizer.graphLabel')}
               className="!border-b-0"
             />
@@ -271,7 +273,7 @@ export default function GraphAlgorithmPage() {
           )}
 
           <div className="mt-4">
-            <div className="bg-white dark:bg-slate border-2 border-ink dark:border-dark-border p-4">
+            <Card shadow="md" radius="none">
               <h3 className="text-sm font-bold text-ink dark:text-dark-ink mb-3">{t('graphAlgorithm.complexityCompare')}</h3>
               <ComplexityChart
                 algorithms={graphAlgorithms.map(algo => ({
@@ -283,7 +285,7 @@ export default function GraphAlgorithmPage() {
                 }))}
                 showChart={false}
               />
-            </div>
+            </Card>
           </div>
         </div>
       </div>

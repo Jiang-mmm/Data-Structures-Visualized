@@ -1,14 +1,13 @@
 import { select, d3Drag } from '../utils/d3Imports'
-import { duration, EASING, transitionEnd, type Animation } from '../utils/animationEngine'
+import { duration, EASING, transitionEnd, measureRender, type Animation } from '../utils/animationEngine'
 import { showToast } from '../components/toastStore'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
+import { getLargeDataThreshold } from '../utils/performanceConfig'
 
 const NODE_RADIUS = 22
 const LEVEL_HEIGHT = 80
 const BASE_DURATION = 350
-
-const LARGE_DATA_THRESHOLD = 30
 
 const DEFAULT_EDGE_STROKE_WIDTH = 2
 
@@ -234,139 +233,141 @@ function resetNodeAndEdgeColors(container: ReturnType<typeof select>, C: ReturnT
 }
 
 export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOptions = {} as TreeOptions) {
-  const { width, height, isDark = detectDarkMode(), edgeStyle = 'straight' } = options
-  currentEdgeStyle = edgeStyle
-  const C = getColors(isDark)
-  const container = select(svg)
+  return measureRender('renderTree', () => {
+    const { width, height, isDark = detectDarkMode(), edgeStyle = 'straight' } = options
+    currentEdgeStyle = edgeStyle
+    const C = getColors(isDark)
+    const container = select(svg)
 
-  container.selectAll('*').interrupt()
-  container.selectAll('*').remove()
-  ensureGradientDefs(svg, isDark)
+    container.selectAll('*').interrupt()
+    container.selectAll('*').remove()
+    ensureGradientDefs(svg, isDark)
 
-  if (!data || data.length === 0) {
-    container.append('text').attr('x', width / 2).attr('y', height / 2)
-      .attr('text-anchor', 'middle').attr('fill', C.textMuted)
-      .attr('font-size', '14px').text(tStatic('emptyState.emptyTreeShort'))
-    return
-  }
-
-  // Clean up stale position entries for removed nodes
-  for (const key of positionStore.keys()) {
-    if (key >= data.length) positionStore.delete(key)
-  }
-
-  const nodes = getTreeLayout(data)
-
-  nodes.forEach((node) => {
-    const pos = getNodePosition(node, width, height)
-    node.x = pos.x
-    node.y = pos.y
-  })
-
-  nodes.forEach((node) => {
-    if (node.parentIndex >= 0) {
-      const p = nodes.find(n => n.dataIndex === node.parentIndex)
-      if (!p) return
-      if (isNaN(p.x!) || isNaN(p.y!) || isNaN(node.x!) || isNaN(node.y!)) return
-      const x1 = p.x!, y1 = p.y! + NODE_RADIUS
-      const x2 = node.x!, y2 = node.y! - NODE_RADIUS
-
-      const isLeftChild = node.dataIndex === 2 * p.dataIndex + 1
-      const isBSTViolation = isLeftChild ? node.value >= p.value : node.value <= p.value
-
-      if (isBSTViolation) {
-        const violationEdge = (edgeStyle === 'curved' || edgeStyle === 'orthogonal')
-          ? container.append('path')
-              .attr('class', 'tree-edge')
-              .attr('d', edgeStyle === 'curved' ? curvedPath(x1, y1, x2, y2) : orthogonalPath(x1, y1, x2, y2))
-              .attr('fill', 'none')
-          : container.append('line')
-              .attr('class', 'tree-edge')
-              .attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2)
-        violationEdge
-          .attr('stroke', C.nodeError)
-          .attr('stroke-width', 3)
-          .attr('stroke-dasharray', '5,3')
-          .style('animation', 'heap-violation-pulse 1.2s ease-in-out infinite')
-      } else {
-        drawEdge(container, x1, y1, x2, y2, C, edgeStyle)
-      }
+    if (!data || data.length === 0) {
+      container.append('text').attr('x', width / 2).attr('y', height / 2)
+        .attr('text-anchor', 'middle').attr('fill', C.textMuted)
+        .attr('font-size', '14px').text(tStatic('emptyState.emptyTreeShort'))
+      return
     }
-  })
 
-  const nodeGroups = container.selectAll('g.tree-node')
-    .data(nodes)
-    .join('g')
-    .attr('class', 'tree-node')
-    .attr('transform', (d: TreeNodeData) => `translate(${d.x}, ${d.y})`)
-    .attr('tabindex', '0')
-    .attr('role', 'group')
-    .attr('aria-label', (d: TreeNodeData) => `Node ${d.value}`)
-    .on('focus', function(this: SVGGElement) {
-      if (!this?.querySelector) return
-      select(this).select('circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+    // Clean up stale position entries for removed nodes
+    for (const key of positionStore.keys()) {
+      if (key >= data.length) positionStore.delete(key)
+    }
+
+    const nodes = getTreeLayout(data)
+
+    nodes.forEach((node) => {
+      const pos = getNodePosition(node, width, height)
+      node.x = pos.x
+      node.y = pos.y
     })
-    .on('blur', function(this: SVGGElement) {
-      if (!this?.querySelector) return
-      select(this).select('circle').attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
-    })
-    .on('keydown', function(this: SVGGElement, event: KeyboardEvent) {
-      if (!event?.key) return
-      const allNodes = Array.from(container.selectAll('g.tree-node').nodes())
-      const idx = allNodes.indexOf(this)
-      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-        event.preventDefault()
-        const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
-        next?.focus()
-      } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-        event.preventDefault()
-        const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
-        prev?.focus()
+
+    nodes.forEach((node) => {
+      if (node.parentIndex >= 0) {
+        const p = nodes.find(n => n.dataIndex === node.parentIndex)
+        if (!p) return
+        if (isNaN(p.x!) || isNaN(p.y!) || isNaN(node.x!) || isNaN(node.y!)) return
+        const x1 = p.x!, y1 = p.y! + NODE_RADIUS
+        const x2 = node.x!, y2 = node.y! - NODE_RADIUS
+
+        const isLeftChild = node.dataIndex === 2 * p.dataIndex + 1
+        const isBSTViolation = isLeftChild ? node.value >= p.value : node.value <= p.value
+
+        if (isBSTViolation) {
+          const violationEdge = (edgeStyle === 'curved' || edgeStyle === 'orthogonal')
+            ? container.append('path')
+                .attr('class', 'tree-edge')
+                .attr('d', edgeStyle === 'curved' ? curvedPath(x1, y1, x2, y2) : orthogonalPath(x1, y1, x2, y2))
+                .attr('fill', 'none')
+            : container.append('line')
+                .attr('class', 'tree-edge')
+                .attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2)
+          violationEdge
+            .attr('stroke', C.nodeError)
+            .attr('stroke-width', 3)
+            .attr('stroke-dasharray', '5,3')
+            .style('animation', 'heap-violation-pulse 1.2s ease-in-out infinite')
+        } else {
+          drawEdge(container, x1, y1, x2, y2, C, edgeStyle)
+        }
       }
     })
-    .call(dragBehavior())
 
-  nodeGroups.append('circle').attr('r', NODE_RADIUS)
-    .attr('fill', (d: TreeNodeData) => {
-      if (d.dataIndex === 0) return gradUrl('node-root')
-      const isLeaf = 2 * d.dataIndex + 1 >= data.length || (data[2 * d.dataIndex + 1] === 0 && (2 * d.dataIndex + 2 >= data.length || data[2 * d.dataIndex + 2] === 0))
-      return isLeaf ? gradUrl('node-leaf') : gradUrl('node-default')
-    })
-    .attr('stroke', (d: TreeNodeData) => d.dataIndex === 0 ? C.nodeRootStroke : C.nodeDefaultStroke)
-    .attr('stroke-width', 2)
-    .style('cursor', 'grab')
+    const nodeGroups = container.selectAll('g.tree-node')
+      .data(nodes)
+      .join('g')
+      .attr('class', 'tree-node')
+      .attr('transform', (d: TreeNodeData) => `translate(${d.x}, ${d.y})`)
+      .attr('tabindex', '0')
+      .attr('role', 'group')
+      .attr('aria-label', (d: TreeNodeData) => `Node ${d.value}`)
+      .on('focus', function(this: SVGGElement) {
+        if (!this?.querySelector) return
+        select(this).select('circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+      })
+      .on('blur', function(this: SVGGElement) {
+        if (!this?.querySelector) return
+        select(this).select('circle').attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
+      })
+      .on('keydown', function(this: SVGGElement, event: KeyboardEvent) {
+        if (!event?.key) return
+        const allNodes = Array.from(container.selectAll('g.tree-node').nodes())
+        const idx = allNodes.indexOf(this)
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          event.preventDefault()
+          const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
+          next?.focus()
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          event.preventDefault()
+          const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
+          prev?.focus()
+        }
+      })
+      .call(dragBehavior())
 
-  nodeGroups.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
-    .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', 'bold').text((d: TreeNodeData) => d.value)
+    nodeGroups.append('circle').attr('r', NODE_RADIUS)
+      .attr('fill', (d: TreeNodeData) => {
+        if (d.dataIndex === 0) return gradUrl('node-root')
+        const isLeaf = 2 * d.dataIndex + 1 >= data.length || (data[2 * d.dataIndex + 1] === 0 && (2 * d.dataIndex + 2 >= data.length || data[2 * d.dataIndex + 2] === 0))
+        return isLeaf ? gradUrl('node-leaf') : gradUrl('node-default')
+      })
+      .attr('stroke', (d: TreeNodeData) => d.dataIndex === 0 ? C.nodeRootStroke : C.nodeDefaultStroke)
+      .attr('stroke-width', 2)
+      .style('cursor', 'grab')
 
-  nodeGroups.append('text')
-    .attr('dy', NODE_RADIUS + 14).attr('text-anchor', 'middle')
-    .attr('fill', C.textLight).attr('font-size', '9px')
-    .text((d: TreeNodeData) => `[${d.dataIndex}]`)
+    nodeGroups.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
+      .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', 'bold').text((d: TreeNodeData) => d.value)
 
-  // Hover micro-animation: scale up + shadow glow
-  nodeGroups
-    .on('mouseover', function(this: SVGGElement) {
-      const g = select(this)
-      g.raise()
-      g.select('circle')
-        .transition().duration(150).ease(EASING.easeOutBack)
-        .attr('r', NODE_RADIUS + 3)
-        .attr('stroke-width', 3)
-        .attr('filter', 'drop-shadow(0 2px 6px rgba(0,0,0,0.25))')
-    })
-    .on('mouseout', function(this: SVGGElement, _event: any, _d: TreeNodeData) {
-      const g = select(this)
-      g.select('circle')
-        .transition().duration(200).ease(EASING.easeOutCubic)
-        .attr('r', NODE_RADIUS)
-        .attr('stroke-width', 2)
-        .attr('filter', null)
-    })
+    nodeGroups.append('text')
+      .attr('dy', NODE_RADIUS + 14).attr('text-anchor', 'middle')
+      .attr('fill', C.textLight).attr('font-size', '9px')
+      .text((d: TreeNodeData) => `[${d.dataIndex}]`)
+
+    // Hover micro-animation: scale up + shadow glow
+    nodeGroups
+      .on('mouseover', function(this: SVGGElement) {
+        const g = select(this)
+        g.raise()
+        g.select('circle')
+          .transition().duration(150).ease(EASING.easeOutBack)
+          .attr('r', NODE_RADIUS + 3)
+          .attr('stroke-width', 3)
+          .attr('filter', 'drop-shadow(0 2px 6px rgba(0,0,0,0.25))')
+      })
+      .on('mouseout', function(this: SVGGElement, _event: any, _d: TreeNodeData) {
+        const g = select(this)
+        g.select('circle')
+          .transition().duration(200).ease(EASING.easeOutCubic)
+          .attr('r', NODE_RADIUS)
+          .attr('stroke-width', 2)
+          .attr('filter', null)
+      })
+  })
 }
 
 export async function animateInsertNode(svg: SVGSVGElement, value: number, data: number[], options: TreeOptions = {} as TreeOptions, anim?: Animation) {
-  if (data && data.length > LARGE_DATA_THRESHOLD) return
+  if (data && data.length > getLargeDataThreshold('tree')) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
@@ -460,9 +461,9 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
   newGroup.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
     .attr('fill', C.textWhite).attr('font-size', '14px').attr('font-weight', 'bold').text(value)
 
-  // Phase 1: Enter with overshoot bounce (scale 0.3 → 1.15)
+  // Phase 1: Enter with smooth cubic movement + overshoot scale
   await transitionEnd(
-    newGroup.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutBack)
+    newGroup.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${x}, ${y}) scale(1.15)`)
       .attr('opacity', 1)
   )
@@ -481,7 +482,7 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
 }
 
 export async function animateTraversal(svg: SVGSVGElement, order: number[], data: number[], _options: TreeOptions, anim?: Animation) {
-  if (data && data.length > LARGE_DATA_THRESHOLD) return
+  if (data && data.length > getLargeDataThreshold('tree')) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
@@ -592,7 +593,7 @@ function addVisitOrderLabel(nodeGroup: any, order: number | string, C: ReturnTyp
     .attr('fill', C.nodeVisited)
     .attr('font-size', '11px')
     .attr('font-weight', '800')
-    .attr('font-family', "'JetBrains Mono', monospace")
+    .attr('font-family', 'var(--font-mono)')
     .attr('opacity', 0)
     .text(order)
 
@@ -601,7 +602,7 @@ function addVisitOrderLabel(nodeGroup: any, order: number | string, C: ReturnTyp
 }
 
 export async function animateLevelOrder(svg: SVGSVGElement, order: number[], data: number[], _options: TreeOptions, anim?: Animation) {
-  if (data && data.length > LARGE_DATA_THRESHOLD) return
+  if (data && data.length > getLargeDataThreshold('tree')) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
@@ -640,7 +641,7 @@ export async function animateLevelOrder(svg: SVGSVGElement, order: number[], dat
 }
 
 export async function animateSearch(svg: SVGSVGElement, path: number[], found: number, data: number[], _options: TreeOptions, anim?: Animation) {
-  if (data && data.length > LARGE_DATA_THRESHOLD) return
+  if (data && data.length > getLargeDataThreshold('tree')) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
@@ -692,7 +693,7 @@ export async function animateSearch(svg: SVGSVGElement, path: number[], found: n
 }
 
 export async function animateDeleteNode(svg: SVGSVGElement, value: number, data: number[], _options: TreeOptions, anim?: Animation) {
-  if (data && data.length > LARGE_DATA_THRESHOLD) return
+  if (data && data.length > getLargeDataThreshold('tree')) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)

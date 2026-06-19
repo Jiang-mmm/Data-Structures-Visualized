@@ -40,9 +40,9 @@ describe('LearningPath', () => {
     expect(screen.getAllByText('sidebar.sort').length).toBeGreaterThan(0)
   })
 
-  it('应该显示初始进度 0/10', () => {
+  it('应该显示初始进度 0/11', () => {
     render(<MemoryRouter><LearningPath /></MemoryRouter>)
-    expect(screen.getByText(/0\/10.*0%/)).toBeDefined()
+    expect(screen.getByText(/0\/11.*0%/)).toBeDefined()
   })
 
   it('array应该是可点击的（无前置条件）', () => {
@@ -70,7 +70,7 @@ describe('LearningPath', () => {
     }))
 
     render(<MemoryRouter><LearningPath /></MemoryRouter>)
-    expect(screen.getByText(/1\/10.*10%/)).toBeDefined()
+    expect(screen.getByText(/1\/11.*9%/)).toBeDefined()
   })
 
   it('应该显示完成的节点有对勾', () => {
@@ -121,8 +121,8 @@ describe('LearningPath', () => {
 
   it('全部完成时应该显示完成消息', () => {
     localStorage.setItem('ds-visualizer-learning-progress', JSON.stringify({
-      visited: ['array', 'stack', 'queue', 'linkedlist', 'tree', 'heap', 'trie', 'hash', 'graph', 'sort'],
-      completed: ['array', 'stack', 'queue', 'linkedlist', 'tree', 'heap', 'trie', 'hash', 'graph', 'sort'],
+      visited: ['array', 'stack', 'queue', 'linkedlist', 'tree', 'avlTree', 'heap', 'trie', 'hash', 'graph', 'sort'],
+      completed: ['array', 'stack', 'queue', 'linkedlist', 'tree', 'avlTree', 'heap', 'trie', 'hash', 'graph', 'sort'],
       startedAt: new Date().toISOString(),
     }))
 

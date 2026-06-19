@@ -98,12 +98,12 @@ describe('hashVisualizer', () => {
     })
 
     it('animateSearchHash 应跳过大型数据集', async () => {
-      const largeData = Array.from({ length: 60 }, (_, i) => ({ key: i, value: `v${i}` }))
+      const largeData = Array.from({ length: 30 }, (_, i) => ({ key: i, value: `v${i}` }))
       await expect(animateSearchHash(svg, 0, true, largeData, hashOpts)).resolves.toBeUndefined()
     })
 
     it('animateDeleteHash 应跳过大型数据集', async () => {
-      const largeData = Array.from({ length: 60 }, (_, i) => ({ key: i, value: `v${i}` }))
+      const largeData = Array.from({ length: 30 }, (_, i) => ({ key: i, value: `v${i}` }))
       await expect(animateDeleteHash(svg, 0, largeData, hashOpts)).resolves.toBeUndefined()
     })
 

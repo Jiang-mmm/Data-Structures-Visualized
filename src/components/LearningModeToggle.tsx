@@ -29,10 +29,10 @@ function LearningModeToggle({ showLearning, setShowLearning, learningMode, isAni
         aria-expanded={showLearning}
         onClick={() => setShowLearning(!showLearning)}
         className={`fixed bottom-16 right-4 z-40 px-3 py-2 text-sm font-bold border-2 transition-all duration-200
-          shadow-soft active:translate-x-[1px] active:translate-y-[1px] active:shadow-none rounded-sm
+          shadow-hard-sm dark:shadow-button-dark active:translate-x-[1px] active:translate-y-[1px] active:shadow-none rounded-sm
           ${showLearning
             ? 'bg-accent-blue/90 text-paper border-accent-blue backdrop-blur-sm'
-            : 'bg-white/90 dark:bg-slate/90 backdrop-blur-sm border-ink/20 dark:border-dark-border/40 hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover'
+            : 'bg-surface/90 dark:bg-dark-surface/90 backdrop-blur-sm border-ink/20 dark:border-dark-border/40 hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover'
           }`}
       >
         {showLearning ? t('learning.close') : t('learning.open')}
@@ -45,8 +45,8 @@ function LearningModeToggle({ showLearning, setShowLearning, learningMode, isAni
             className="fixed inset-0 bg-black/20 z-40 transition-opacity"
             onClick={() => setShowLearning(false)}
           />
-          <div className="fixed top-0 right-0 h-full w-[420px] max-w-[90vw] z-50 bg-white dark:bg-dark-paper border-l-2 border-ink dark:border-dark-border shadow-2xl overflow-y-auto transition-transform animate-slide-in-right">
-            <div className="sticky top-0 bg-white dark:bg-dark-paper border-b-2 border-ink dark:border-dark-border px-4 py-3 flex items-center justify-between z-10">
+          <div className="fixed top-0 right-0 h-full w-[420px] max-w-[90vw] z-50 bg-surface dark:bg-dark-surface border-l-2 border-ink dark:border-dark-border shadow-2xl overflow-y-auto transition-transform animate-slide-in-right">
+            <div className="sticky top-0 bg-surface dark:bg-dark-surface border-b-2 border-ink dark:border-dark-border px-4 py-3 flex items-center justify-between z-10">
               <span className="font-bold text-ink dark:text-dark-ink">{t('learning.title')}</span>
               <button
                 onClick={() => setShowLearning(false)}

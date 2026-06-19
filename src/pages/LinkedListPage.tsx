@@ -185,12 +185,12 @@ export default function LinkedListPage() {
   }, [isAnimating, dimensions, detectCycle, setIsAnimating, getAnimationContext, svgRef])
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={isDoublyMode ? t('linkedlist.doublyTitle') : t('linkedlist.title')} subtitle={isDoublyMode ? t('linkedlist.doublySubtitle') : t('linkedlist.subtitle')}>
         <OperationButton
           variant={isDoublyMode ? 'primary' : 'outline'}
           onClick={() => setIsDoublyMode(!isDoublyMode)}
-          disabled={isAnimating}
+          disabled={isAnimating} isBusy={isAnimating}
         >
           {isDoublyMode ? t('linkedlist.switchToSingle') : t('linkedlist.switchToDoubly')}
         </OperationButton>
@@ -203,23 +203,23 @@ export default function LinkedListPage() {
           }
         }} />
         <ShareButton data={data} dataType="linkedlist" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+        <OperationButton variant="secondary" onClick={reset}>{t('common.reset')}</OperationButton>
       </PageHeader>
       <OperationBar>
         <SpeedControl />
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationInput type="number" placeholder={t('array.indexPlaceholder')} value={inputIndex} onChange={setInputIndex} className="w-20" />
-        <OperationButton variant="primary" onClick={handleInsertHead} disabled={isAnimating}>{t('linkedlist.pushFront')}</OperationButton>
-        <OperationButton variant="primary" onClick={handleInsertTail} disabled={isAnimating}>{t('linkedlist.pushBack')}</OperationButton>
-        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('common.delete')}</OperationButton>
-        <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('linkedlist.find')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleInsertHead} disabled={isAnimating} isBusy={isAnimating}>{t('linkedlist.pushFront')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleInsertTail} disabled={isAnimating} isBusy={isAnimating}>{t('linkedlist.pushBack')}</OperationButton>
+        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating} isBusy={isAnimating}>{t('common.delete')}</OperationButton>
+        <OperationButton variant="warning" onClick={handleSearch} disabled={isAnimating} isBusy={isAnimating} popAnimation>{t('linkedlist.find')}</OperationButton>
         <OperationGroup label={t('common.more')}>
-          <OperationButton variant="primary" onClick={handleInsertAt} disabled={isAnimating}>{t('linkedlist.insertAt')}</OperationButton>
-          <OperationButton variant="outline" onClick={handleReverse} disabled={isAnimating}>{t('linkedlist.reverse')}</OperationButton>
-          <OperationButton variant="purple" onClick={handleDetectCycle} disabled={isAnimating}>{t('linkedlist.detectCycle')}</OperationButton>
+          <OperationButton variant="primary" onClick={handleInsertAt} disabled={isAnimating} isBusy={isAnimating}>{t('linkedlist.insertAt')}</OperationButton>
+          <OperationButton variant="secondary" onClick={handleReverse} disabled={isAnimating} isBusy={isAnimating}>{t('linkedlist.reverse')}</OperationButton>
+          <OperationButton variant="primary" onClick={handleDetectCycle} disabled={isAnimating} isBusy={isAnimating}>{t('linkedlist.detectCycle')}</OperationButton>
           <UndoPreviewButton
-            variant="outline"
+            variant="secondary"
             onClick={undo}
             disabled={isAnimating || !canUndo()}
             previewData={getUndoPreview()}
@@ -228,7 +228,7 @@ export default function LinkedListPage() {
             {t('common.undo')}
           </UndoPreviewButton>
           <UndoPreviewButton
-            variant="outline"
+            variant="secondary"
             onClick={redo}
             disabled={isAnimating || !canRedo()}
             previewData={getRedoPreview()}
@@ -237,7 +237,7 @@ export default function LinkedListPage() {
             {t('common.redo')}
           </UndoPreviewButton>
         </OperationGroup>
-        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <OperationInfo>
           <ColorLegend items={[
             { color: getColors().nodeDefault, labelKey: 'nodeLegend.node' },
@@ -247,9 +247,9 @@ export default function LinkedListPage() {
         </OperationInfo>
       </OperationBar>
       <ContentTier structureKey="linkedlist" />
-      <Visualizer data={data} renderFn={renderLinkedList as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.linkedlistLabel")} overlay={<StatsOverlay stats={[{ label: 'LEN', value: length }]} />} />
+      <Visualizer data={data} renderFn={renderLinkedList as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.linkedlistLabel")} overlay={<StatsOverlay stats={[{ label: 'LEN', value: length }]} />} />
       {data.length === 0 && (
-        <EmptyState icon="◎" titleKey="emptyState.emptyLinkedList" descriptionKey="emptyState.emptyLinkedListDesc" onFill={reset} />
+        <EmptyState icon="●" titleKey="emptyState.emptyLinkedList" descriptionKey="emptyState.emptyLinkedListDesc" onFill={reset} />
       )}
       <LearningModeToggle
         showLearning={showLearning}

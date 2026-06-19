@@ -153,17 +153,32 @@ describe('stackVisualizer', () => {
     it('应该能够推入空栈', async () => {
       await expect(animatePush(svg, 1, [], { width: 400, height: 600 })).resolves.toBeUndefined()
     })
+
+    it('应在大于等于阈值时跳过动画', async () => {
+      const largeData = Array.from({ length: 30 }, (_, i) => i)
+      await expect(animatePush(svg, 99, largeData, { width: 400, height: 600 })).resolves.toBeUndefined()
+    })
   })
 
   describe('animatePop', () => {
     it('应该能够执行出栈动画', async () => {
       await expect(animatePop(svg, [1, 2, 3], { width: 400, height: 600 })).resolves.toBeUndefined()
     })
+
+    it('应在大于等于阈值时跳过动画', async () => {
+      const largeData = Array.from({ length: 30 }, (_, i) => i)
+      await expect(animatePop(svg, largeData, { width: 400, height: 600 })).resolves.toBeUndefined()
+    })
   })
 
   describe('animatePeek', () => {
     it('应该能够执行查看栈顶动画', async () => {
       await expect(animatePeek(svg, [1, 2, 3], { width: 400, height: 600 })).resolves.toBeUndefined()
+    })
+
+    it('应在大于等于阈值时跳过动画', async () => {
+      const largeData = Array.from({ length: 30 }, (_, i) => i)
+      await expect(animatePeek(svg, largeData, { width: 400, height: 600 })).resolves.toBeUndefined()
     })
   })
 })

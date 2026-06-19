@@ -60,4 +60,26 @@ describe('Layout', () => {
     )
     expect(screen.getByRole('main')).toBeInTheDocument()
   })
+
+  it('根节点应使用 min-h-dvh', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <Layout><div>内容</div></Layout>
+      </MemoryRouter>
+    )
+    const root = container.firstChild as HTMLElement
+    expect(root.className).toContain('min-h-dvh')
+    expect(root.className).not.toContain('min-h-screen')
+  })
+
+  it('main 应为滚动容器且包含 overflow-auto', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <Layout><div>内容</div></Layout>
+      </MemoryRouter>
+    )
+    const main = container.querySelector('main') as HTMLElement
+    expect(main.className).toContain('overflow-auto')
+    expect(main.className).not.toContain('overflow-hidden')
+  })
 })

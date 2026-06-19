@@ -15,11 +15,11 @@ function LearningPath() {
 
   return (
     <section className="mb-12 animate-slide-up" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
-      <div className="border-2 border-ink dark:border-dark-border bg-white dark:bg-slate p-5 md:p-6">
+      <div className="border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface p-5 md:p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-accent-violet flex items-center justify-center text-paper text-sm font-bold shadow-button dark:shadow-button-dark">
+            <div className="w-8 h-8 bg-accent-blue flex items-center justify-center text-paper text-sm font-bold shadow-button dark:shadow-button-dark">
               ◇
             </div>
             <h2 className="text-lg font-bold text-ink dark:text-dark-ink">{t('learningPath.title')}</h2>
@@ -43,7 +43,7 @@ function LearningPath() {
         {/* Progress bar */}
         <div className="w-full h-2 bg-paper dark:bg-dark-paper border border-ink/10 dark:border-dark-border mb-5">
           <div
-            className="h-full bg-accent-emerald transition-all duration-500"
+            className="h-full bg-accent-blue transition-all duration-500"
             style={{ width: `${percentage}%` }}
           />
         </div>
@@ -64,21 +64,21 @@ function LearningPath() {
                 className={`
                   group relative flex items-center gap-2 px-3 py-2 border-2 transition-all duration-200
                   ${done
-                    ? 'border-accent-emerald/50 bg-accent-emerald/5 dark:bg-accent-emerald/10'
+                    ? 'border-accent-blue/50 bg-accent-blue/5 dark:bg-accent-blue/10'
                     : unlocked
-                      ? 'border-ink/20 dark:border-dark-border bg-paper dark:bg-slate hover:border-ink dark:hover:border-dark-border hover:-translate-y-0.5 hover:shadow-button dark:hover:shadow-button-dark'
-                      : 'border-ink/5 dark:border-dark-border/30 bg-paper/50 dark:bg-slate/30 opacity-40 cursor-not-allowed pointer-events-none'
+                      ? 'border-ink/20 dark:border-dark-border bg-paper dark:bg-dark-paper hover:border-ink dark:hover:border-dark-border hover:-translate-y-0.5 hover:shadow-button dark:hover:shadow-button-dark'
+                      : 'border-ink/5 dark:border-dark-border/30 bg-paper/50 dark:bg-dark-paper/30 opacity-40 cursor-not-allowed pointer-events-none'
                   }
                 `}
               >
                 {/* Category dot */}
                 <span
                   className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: done ? '#059669' : color }}
+                  style={{ backgroundColor: done ? 'var(--color-accent-blue)' : color }}
                 />
 
                 {/* Name */}
-                <span className={`text-sm font-medium ${done ? 'text-accent-emerald line-through' : 'text-ink dark:text-dark-ink'}`}>
+                <span className={`text-sm font-medium ${done ? 'text-accent-blue line-through' : 'text-ink dark:text-dark-ink'}`}>
                   {t(node.nameKey)}
                 </span>
 
@@ -89,7 +89,7 @@ function LearningPath() {
 
                 {/* Completion checkmark */}
                 {done && (
-                  <span className="text-accent-emerald text-xs font-bold">✓</span>
+                  <span className="text-accent-blue text-xs font-bold">✓</span>
                 )}
 
                 {/* Tooltip on hover */}
@@ -108,7 +108,7 @@ function LearningPath() {
                       <div className="lp-tooltip-progress flex flex-wrap items-center gap-1.5 text-[10px] font-mono">
                         <span className={`px-1.5 py-0.5 font-bold ${
                           done
-                            ? 'bg-accent-emerald text-ink'
+                            ? 'bg-accent-blue text-paper'
                             : 'bg-paper/15 text-paper dark:bg-dark-paper/15 dark:text-dark-paper'
                         }`}>
                           {done ? t('learningPath.completed') : t('learningPath.startLearning')}
@@ -130,7 +130,7 @@ function LearningPath() {
 
         {/* Completion message */}
         {percentage === 100 && (
-          <div className="mt-4 text-center text-sm font-bold text-accent-emerald">
+          <div className="mt-4 text-center text-sm font-bold text-accent-blue">
             {t('learningPath.allCompleted')}
           </div>
         )}

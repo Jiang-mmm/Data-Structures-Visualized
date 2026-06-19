@@ -1,7 +1,7 @@
 import { select } from '../utils/d3Imports'
 import { getColors, detectDarkMode, gradUrl } from '../utils/themeColors'
 import { duration, EASING, transitionEnd, type Animation } from '../utils/animationEngine'
-import { getViewBoxSize, calculateCenterStart } from '../utils/visualizerLayout'
+import { calculateCenterStart } from '../utils/visualizerLayout'
 import type { TrieFlattened } from '../hooks/useTrieState'
 import { tStatic } from '../i18n/useI18n'
 
@@ -227,6 +227,28 @@ function createGradientDefs(svg: SVGSVGElement, C: ReturnType<typeof getColors>)
     filter.appendChild(feShadow)
     defs.appendChild(filter)
   }
+
+  if (!defs.querySelector('#trie-node-glow')) {
+    const glowFilter = document.createElementNS(ns, 'filter')
+    glowFilter.setAttribute('id', 'trie-node-glow')
+    glowFilter.setAttribute('x', '-100%')
+    glowFilter.setAttribute('y', '-100%')
+    glowFilter.setAttribute('width', '300%')
+    glowFilter.setAttribute('height', '300%')
+    const feGaussianBlur = document.createElementNS(ns, 'feGaussianBlur')
+    feGaussianBlur.setAttribute('stdDeviation', '5')
+    feGaussianBlur.setAttribute('result', 'blur')
+    glowFilter.appendChild(feGaussianBlur)
+    const feMerge = document.createElementNS(ns, 'feMerge')
+    const feMergeNodeBlur = document.createElementNS(ns, 'feMergeNode')
+    feMergeNodeBlur.setAttribute('in', 'blur')
+    const feMergeNodeSource = document.createElementNS(ns, 'feMergeNode')
+    feMergeNodeSource.setAttribute('in', 'SourceGraphic')
+    feMerge.appendChild(feMergeNodeBlur)
+    feMerge.appendChild(feMergeNodeSource)
+    glowFilter.appendChild(feMerge)
+    defs.appendChild(glowFilter)
+  }
 }
 
 export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: TrieVisualizerOptions = {}) {
@@ -238,22 +260,19 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
 
   createGradientDefs(svg, C)
 
-  const { width: vbWidth, height: vbHeight } = getViewBoxSize(
-    svg,
-    options.width ?? FALLBACK_W,
-    options.height ?? FALLBACK_H
-  )
+  const width = options.width ?? FALLBACK_W
+  const height = options.height ?? FALLBACK_H
 
   if (!data || !data.nodes || data.nodes.length === 0) {
     container.append('text')
-      .attr('x', vbWidth / 2).attr('y', vbHeight / 2)
+      .attr('x', width / 2).attr('y', height / 2)
       .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
       .attr('fill', C.textLight).attr('font-size', '14px')
       .text(tStatic('emptyState.emptyTrieShort'))
     return
   }
 
-  const { positions, edges } = layout(data, vbWidth, vbHeight)
+  const { positions, edges } = layout(data, width, height)
 
   const posMap: Record<string, TriePosition> = {}
   for (const pos of positions) {
@@ -340,6 +359,7 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
 
     if (pos.isEndOfWord && !isRoot) {
       nodeGroup.append('circle')
+        .attr('class', 'trie-node-end-ring')
         .attr('r', radius + 5)
         .attr('fill', 'none')
         .attr('stroke', C.nodeLeafStroke)
@@ -347,6 +367,14 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
         .attr('opacity', 0.4)
         .attr('stroke-dasharray', '3,2')
     }
+
+    nodeGroup.append('circle')
+      .attr('class', 'trie-node-glow')
+      .attr('r', radius)
+      .attr('fill', C.nodeActive)
+      .attr('opacity', 0)
+      .attr('filter', 'url(#trie-node-glow)')
+      .attr('pointer-events', 'none')
 
     nodeGroup.append('circle')
       .attr('class', 'trie-node-circle')
@@ -372,6 +400,7 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
 
     if (pos.isEndOfWord) {
       nodeGroup.append('text')
+        .attr('class', 'trie-node-checkmark')
         .attr('dy', radius + 16).attr('text-anchor', 'middle')
         .attr('fill', C.nodeLeaf).attr('font-size', '14px').attr('font-weight', 'bold')
         .text('✓')
@@ -380,7 +409,7 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
     nodeGroup.append('text')
       .attr('dy', -radius - 10).attr('text-anchor', 'middle')
       .attr('fill', C.textLight).attr('font-size', '10px')
-      .attr('font-family', "'JetBrains Mono', monospace")
+      .attr('font-family', 'var(--font-display)')
       .text(isRoot ? tStatic('trie.rootLabel') : pos.prefix)
   }
 }
@@ -395,19 +424,153 @@ function buildPath(word: string): string[] {
   return path
 }
 
-function getPathNodes(container: ReturnType<typeof select>, word: string) {
-  const path = buildPath(word)
-  return path
-    .map(id => container.select(`.node-${id}`))
-    .filter(sel => !sel.empty())
+function getNodeBaseTransform(node: ReturnType<typeof select>): { x: number; y: number; transform: string } {
+  const transform = node.attr('transform') || ''
+  const match = /translate\(([^,]+),\s*([^)]+)\)/.exec(transform)
+  const x = match ? parseFloat(match[1]) : 0
+  const y = match ? parseFloat(match[2]) : 0
+  return { x, y, transform }
 }
 
 function highlightPathEdge(container: ReturnType<typeof select>, fromId: string, toId: string, C: ReturnType<typeof getColors>) {
   const edge = container.select(`.trie-edge.from-${fromId}-to-${toId}`)
   if (edge.empty()) return
   edge
+    .classed('trie-edge-highlight', true)
     .transition().duration(duration(250)).ease(EASING.easeOutCubic)
-    .attr('stroke', C.edgeActive).attr('stroke-width', 3).attr('opacity', 1)
+    .attr('stroke', C.edgeActive).attr('stroke-width', 3.5).attr('opacity', 1)
+}
+
+function dimPathEdge(container: ReturnType<typeof select>, fromId: string, toId: string, C: ReturnType<typeof getColors>) {
+  const edge = container.select(`.trie-edge.from-${fromId}-to-${toId}`)
+  if (edge.empty()) return
+  edge
+    .classed('trie-edge-highlight', false)
+    .classed('trie-edge-dimmed', true)
+    .transition().duration(duration(200)).ease(EASING.easeInCubic)
+    .attr('stroke', C.edgeDefault).attr('stroke-width', 2).attr('opacity', 0.4)
+}
+
+interface PulseOptions {
+  error?: boolean
+  finalFill?: string
+}
+
+async function pulseNodeGlow(node: ReturnType<typeof select>, anim?: Animation, opts: PulseOptions = {}) {
+  if (anim?.isAborted?.()) return
+  const circle = node.select('.trie-node-circle')
+  const glow = node.select('.trie-node-glow')
+  if (circle.empty()) return
+
+  const baseR = parseFloat(circle.attr('r')) || NODE_RADIUS
+  const baseFill = opts.finalFill || circle.attr('fill') || gradUrl('node-default')
+  const activeFill = opts.error ? gradUrl('node-error') : gradUrl('node-active')
+
+  if (!glow.empty()) {
+    glow.transition().duration(duration(220)).ease(EASING.easeOutCubic)
+      .attr('r', baseR + 14)
+      .attr('opacity', opts.error ? 0.4 : 0.5)
+  }
+
+  await transitionEnd(
+    circle.transition().duration(duration(220)).ease(EASING.easeOutBack)
+      .attr('r', baseR + 6)
+      .attr('fill', activeFill)
+  )
+
+  if (anim?.isAborted?.()) return
+
+  if (!glow.empty()) {
+    glow.transition().duration(duration(180)).ease(EASING.easeInCubic)
+      .attr('r', baseR)
+      .attr('opacity', 0)
+  }
+
+  await transitionEnd(
+    circle.transition().duration(duration(180)).ease(EASING.easeOutCubic)
+      .attr('r', baseR)
+      .attr('fill', baseFill)
+  )
+}
+
+async function completeLeafNode(node: ReturnType<typeof select>, anim?: Animation) {
+  if (anim?.isAborted?.()) return
+  const circle = node.select('.trie-node-circle')
+  const glow = node.select('.trie-node-glow')
+  const checkmark = node.select('.trie-node-checkmark')
+  if (circle.empty()) return
+
+  const baseR = parseFloat(circle.attr('r')) || NODE_RADIUS
+
+  if (!glow.empty()) {
+    glow.transition().duration(duration(300)).ease(EASING.easeOutCubic)
+      .attr('r', baseR + 18)
+      .attr('opacity', 0.6)
+  }
+
+  await transitionEnd(
+    circle.transition().duration(duration(350)).ease(EASING.easeOutElastic)
+      .attr('r', baseR)
+      .attr('fill', gradUrl('node-leaf'))
+  )
+
+  if (!checkmark.empty()) {
+    checkmark.attr('font-size', '0px').attr('opacity', 0)
+    if (anim?.isAborted?.()) return
+    await transitionEnd(
+      checkmark.transition().duration(duration(250)).ease(EASING.easeOutBack)
+        .attr('font-size', '14px')
+        .attr('opacity', 1)
+    )
+  }
+
+  if (!glow.empty()) {
+    glow.transition().duration(duration(250)).ease(EASING.easeInCubic)
+      .attr('r', baseR)
+      .attr('opacity', 0)
+  }
+}
+
+async function shakeNode(node: ReturnType<typeof select>, anim?: Animation) {
+  if (anim?.isAborted?.()) return
+  const { x, y } = getNodeBaseTransform(node)
+  const circle = node.select('.trie-node-circle')
+  if (circle.empty()) return
+  const baseFill = circle.attr('fill') || gradUrl('node-default')
+
+  circle.transition().duration(duration(150)).ease(EASING.easeOutCubic)
+    .attr('fill', gradUrl('node-error'))
+
+  for (let i = 0; i < 5; i++) {
+    if (anim?.isAborted?.()) return
+    const offset = i % 2 === 0 ? 4 : -4
+    await transitionEnd(
+      node.transition().duration(duration(60)).ease(EASING.easeInOutCubic)
+        .attr('transform', `translate(${x + offset}, ${y})`)
+    )
+  }
+
+  await transitionEnd(
+    node.transition().duration(duration(100)).ease(EASING.easeOutCubic)
+      .attr('transform', `translate(${x}, ${y})`)
+  )
+
+  await transitionEnd(
+    circle.transition().duration(duration(250)).ease(EASING.easeInCubic)
+      .attr('fill', baseFill)
+  )
+}
+
+async function shrinkEndOfWordRing(node: ReturnType<typeof select>, anim?: Animation) {
+  if (anim?.isAborted?.()) return
+  const ring = node.select('.trie-node-end-ring')
+  if (ring.empty()) return
+  const baseR = parseFloat(ring.attr('r')) || NODE_RADIUS + 5
+  await transitionEnd(
+    ring.transition().duration(duration(250)).ease(EASING.easeInCubic)
+      .attr('r', baseR - 8)
+      .attr('opacity', 0)
+  )
 }
 
 export async function animateInsertTrie(svg: SVGSVGElement, word?: string, anim?: Animation) {
@@ -420,54 +583,34 @@ export async function animateInsertTrie(svg: SVGSVGElement, word?: string, anim?
     for (let i = 0; i < nodeElements.length; i++) {
       if (anim?.isAborted?.()) return
       const node = select(nodeElements[i] as SVGGElement)
-      const circle = node.select('.trie-node-circle')
-      if (circle.empty()) continue
-      const originalFill = circle.attr('fill') || gradUrl('node-default')
-      const originalR = parseFloat(circle.attr('r')) || NODE_RADIUS
-      const isLast = i === nodeElements.length - 1
-
-      await transitionEnd(
-        circle.transition().duration(duration(250)).ease(EASING.easeOutBack)
-          .attr('r', originalR + 5)
-          .attr('fill', gradUrl('node-active'))
-      )
-      await transitionEnd(
-        circle.transition().duration(duration(200)).ease(EASING.easeOutCubic)
-          .attr('r', originalR)
-          .attr('fill', isLast ? gradUrl('node-leaf') : originalFill)
-      )
+      if (i === nodeElements.length - 1) {
+        await completeLeafNode(node, anim)
+      } else {
+        await pulseNodeGlow(node, anim)
+      }
     }
     return
   }
 
-  const pathNodes = getPathNodes(container, word)
-  if (pathNodes.length === 0) return
-
   const pathIds = buildPath(word)
+  if (pathIds.length === 0) return
 
-  for (let i = 0; i < pathNodes.length; i++) {
+  for (let i = 0; i < pathIds.length; i++) {
     if (anim?.isAborted?.()) return
-    const node = pathNodes[i]
-    const circle = node.select('.trie-node-circle')
-    if (circle.empty()) continue
-    const originalFill = circle.attr('fill') || gradUrl('node-default')
-    const originalR = parseFloat(circle.attr('r')) || NODE_RADIUS
-    const isLast = i === pathNodes.length - 1
+    const nodeId = pathIds[i]
+    const node = container.select(`.node-${nodeId}`)
+    if (node.empty()) continue
+    const isLast = i === pathIds.length - 1
 
-    if (i > 0 && i < pathIds.length) {
-      highlightPathEdge(container, pathIds[i - 1], pathIds[i], C)
+    if (i > 0) {
+      highlightPathEdge(container, pathIds[i - 1], nodeId, C)
     }
 
-    await transitionEnd(
-      circle.transition().duration(duration(250)).ease(EASING.easeOutBack)
-        .attr('r', originalR + 5)
-        .attr('fill', gradUrl('node-active'))
-    )
-    await transitionEnd(
-      circle.transition().duration(duration(200)).ease(EASING.easeOutCubic)
-        .attr('r', originalR)
-        .attr('fill', isLast ? gradUrl('node-leaf') : originalFill)
-    )
+    if (isLast) {
+      await completeLeafNode(node, anim)
+    } else {
+      await pulseNodeGlow(node, anim)
+    }
   }
 }
 
@@ -481,54 +624,37 @@ export async function animateSearchTrie(svg: SVGSVGElement, found: boolean, word
     for (let i = 0; i < nodeElements.length; i++) {
       if (anim?.isAborted?.()) return
       const node = select(nodeElements[i] as SVGGElement)
-      const circle = node.select('.trie-node-circle')
-      if (circle.empty()) continue
       const isLast = i === nodeElements.length - 1
-      const originalFill = circle.attr('fill') || gradUrl('node-default')
-      const originalR = parseFloat(circle.attr('r')) || NODE_RADIUS
-
-      await transitionEnd(
-        circle.transition().duration(duration(250)).ease(EASING.easeOutBack)
-          .attr('r', originalR + (isLast ? 8 : 5))
-          .attr('fill', gradUrl('node-active'))
-      )
-      await transitionEnd(
-        circle.transition().duration(duration(isLast ? 350 : 200)).ease(isLast ? EASING.easeOutElastic : EASING.easeOutCubic)
-          .attr('r', originalR)
-          .attr('fill', isLast ? (found ? gradUrl('node-leaf') : gradUrl('node-error')) : originalFill)
-      )
+      if (isLast) {
+        if (found) await completeLeafNode(node, anim)
+        else await shakeNode(node, anim)
+      } else {
+        await pulseNodeGlow(node, anim)
+      }
     }
     return
   }
 
-  const pathNodes = getPathNodes(container, word)
-  if (pathNodes.length === 0) return
-
   const pathIds = buildPath(word)
+  if (pathIds.length === 0) return
 
-  for (let i = 0; i < pathNodes.length; i++) {
+  for (let i = 0; i < pathIds.length; i++) {
     if (anim?.isAborted?.()) return
-    const node = pathNodes[i]
-    const circle = node.select('.trie-node-circle')
-    if (circle.empty()) continue
-    const isLast = i === pathNodes.length - 1
-    const originalFill = circle.attr('fill') || gradUrl('node-default')
-    const originalR = parseFloat(circle.attr('r')) || NODE_RADIUS
+    const nodeId = pathIds[i]
+    const node = container.select(`.node-${nodeId}`)
+    if (node.empty()) continue
+    const isLast = i === pathIds.length - 1
 
-    if (i > 0 && i < pathIds.length) {
-      highlightPathEdge(container, pathIds[i - 1], pathIds[i], C)
+    if (i > 0) {
+      highlightPathEdge(container, pathIds[i - 1], nodeId, C)
     }
 
-    await transitionEnd(
-      circle.transition().duration(duration(250)).ease(EASING.easeOutBack)
-        .attr('r', originalR + (isLast ? 8 : 5))
-        .attr('fill', gradUrl('node-active'))
-    )
-    await transitionEnd(
-      circle.transition().duration(duration(isLast ? 350 : 200)).ease(isLast ? EASING.easeOutElastic : EASING.easeOutCubic)
-        .attr('r', originalR)
-        .attr('fill', isLast ? (found ? gradUrl('node-leaf') : gradUrl('node-error')) : originalFill)
-    )
+    if (isLast) {
+      if (found) await completeLeafNode(node, anim)
+      else await shakeNode(node, anim)
+    } else {
+      await pulseNodeGlow(node, anim)
+    }
   }
 }
 
@@ -542,49 +668,29 @@ export async function animateDeleteTrie(svg: SVGSVGElement, word?: string, anim?
     for (let i = nodeElements.length - 1; i >= 0; i--) {
       if (anim?.isAborted?.()) return
       const node = select(nodeElements[i] as SVGGElement)
-      const circle = node.select('.trie-node-circle')
-      if (circle.empty()) continue
-      const originalR = parseFloat(circle.attr('r')) || NODE_RADIUS
-
-      await transitionEnd(
-        circle.transition().duration(duration(200)).ease(EASING.easeOutCubic)
-          .attr('fill', gradUrl('node-error'))
-          .attr('r', originalR + 3)
-      )
-      await transitionEnd(
-        circle.transition().duration(duration(250)).ease(EASING.easeInCubic)
-          .attr('r', originalR)
-          .attr('fill', gradUrl('node-default'))
-      )
+      await pulseNodeGlow(node, anim, { error: true })
     }
     return
   }
 
-  const pathNodes = getPathNodes(container, word)
-  if (pathNodes.length === 0) return
-
   const pathIds = buildPath(word)
+  if (pathIds.length === 0) return
 
-  for (let i = pathNodes.length - 1; i >= 0; i--) {
+  for (let i = pathIds.length - 1; i >= 0; i--) {
     if (anim?.isAborted?.()) return
-    const node = pathNodes[i]
-    const circle = node.select('.trie-node-circle')
-    if (circle.empty()) continue
-    const originalR = parseFloat(circle.attr('r')) || NODE_RADIUS
+    const nodeId = pathIds[i]
+    const node = container.select(`.node-${nodeId}`)
+    if (node.empty()) continue
+    const isLeaf = i === pathIds.length - 1
 
-    if (i > 0 && i < pathIds.length) {
-      highlightPathEdge(container, pathIds[i - 1], pathIds[i], C)
+    if (i > 0) {
+      dimPathEdge(container, pathIds[i - 1], nodeId, C)
     }
 
-    await transitionEnd(
-      circle.transition().duration(duration(200)).ease(EASING.easeOutCubic)
-        .attr('fill', gradUrl('node-error'))
-        .attr('r', originalR + 3)
-    )
-    await transitionEnd(
-      circle.transition().duration(duration(250)).ease(EASING.easeInCubic)
-        .attr('r', originalR)
-        .attr('fill', gradUrl('node-default'))
-    )
+    if (isLeaf) {
+      await shrinkEndOfWordRing(node, anim)
+    }
+
+    await pulseNodeGlow(node, anim)
   }
 }

@@ -53,4 +53,18 @@ describe('Home', () => {
 
     expect(container).toBeInTheDocument()
   })
+
+  it('uses only two accent colors on data structure cards', () => {
+    renderWithRouter(<Home />)
+
+    const grid = screen.getByTestId('ds-cards-grid')
+    const html = grid.innerHTML
+
+    expect(html).toContain('accent-blue')
+    expect(html).toContain('accent-amber')
+    expect(html).not.toContain('accent-violet')
+    expect(html).not.toContain('accent-emerald')
+    expect(html).not.toContain('accent-teal')
+    expect(html).not.toContain('accent-purple')
+  })
 })

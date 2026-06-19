@@ -59,7 +59,7 @@ describe('learningRecommender', () => {
     })
 
     it('已解锁未开始模块优先级高于进行中模块', () => {
-      const completed = ['array', 'stack', 'queue', 'linkedlist', 'tree', 'hash', 'sort']
+      const completed = ['array', 'stack', 'queue', 'linkedlist', 'tree', 'avlTree', 'hash', 'sort']
       const visited = [...completed, 'heap']
       const progress = {
         visited,

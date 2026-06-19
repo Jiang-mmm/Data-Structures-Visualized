@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 
@@ -104,6 +104,53 @@ describe('Sidebar', () => {
       const { container } = renderSidebar()
       const buttons = container.querySelectorAll('button')
       expect(buttons.length).toBeGreaterThanOrEqual(1)
+    })
+  })
+
+  describe('移动端滚动锁定', () => {
+    beforeEach(() => {
+      document.body.classList.remove('overflow-hidden')
+      vi.stubGlobal('matchMedia', () => ({
+        matches: true,
+        media: '(max-width: 768px)',
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      } as unknown as MediaQueryList))
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+      document.body.classList.remove('overflow-hidden')
+    })
+
+    it('展开侧边栏时锁定 body 滚动，关闭后恢复', () => {
+      renderSidebar()
+      const openBtn = screen.getByLabelText('sidebar.openMenu')
+      fireEvent.click(openBtn)
+      expect(document.body.classList.contains('overflow-hidden')).toBe(true)
+
+      const closeBtn = screen.getAllByLabelText('common.close').find(el => el.tagName === 'BUTTON')
+      expect(closeBtn).toBeTruthy()
+      fireEvent.click(closeBtn!)
+      expect(document.body.classList.contains('overflow-hidden')).toBe(false)
+    })
+
+    it('卸载时恢复 body 滚动', () => {
+      const { unmount } = renderSidebar()
+      const openBtn = screen.getByLabelText('sidebar.openMenu')
+      fireEvent.click(openBtn)
+      expect(document.body.classList.contains('overflow-hidden')).toBe(true)
+
+      unmount()
+      expect(document.body.classList.contains('overflow-hidden')).toBe(false)
+    })
+  })
+
+  describe('焦点环', () => {
+    it('小按钮应包含 focus-ring 类', () => {
+      renderSidebar()
+      const langButton = screen.getByLabelText(/langTooltip/)
+      expect(langButton.className).toContain('focus-ring')
     })
   })
 })

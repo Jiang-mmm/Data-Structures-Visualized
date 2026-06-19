@@ -102,7 +102,7 @@ describe('OperationButton', () => {
     it('应有默认 primary 样式', () => {
       render(<OperationButton>按钮</OperationButton>)
       const btn = screen.getByText('按钮')
-      expect(btn.className).toContain('bg-accent-blue')
+      expect(btn.className).toContain('bg-accent')
     })
 
     it('应支持 success 变体', () => {
@@ -117,10 +117,11 @@ describe('OperationButton', () => {
       expect(btn.className).toContain('bg-accent-rose')
     })
 
-    it('应支持 outline 变体', () => {
-      render(<OperationButton variant="outline">轮廓</OperationButton>)
-      const btn = screen.getByText('轮廓')
-      expect(btn.className).toContain('border-ink')
+    it('应支持 secondary 变体', () => {
+      render(<OperationButton variant="secondary">次要</OperationButton>)
+      const btn = screen.getByText('次要')
+      expect(btn.className).toContain('bg-surface')
+      expect(btn.className).toContain('border-border')
     })
   })
 
@@ -167,14 +168,65 @@ describe('OperationButton', () => {
     it('禁用时应有禁用样式类', () => {
       render(<OperationButton disabled>按钮</OperationButton>)
       const btn = screen.getByText('按钮')
-      expect(btn.className).toContain('disabled:opacity-50')
-      expect(btn.className).toContain('disabled:grayscale')
+      expect(btn).toBeDisabled()
       expect(btn.className).toContain('disabled:cursor-not-allowed')
+      expect(btn.className).toContain('disabled:bg-bg-disabled')
+      expect(btn.className).toContain('disabled:text-text-disabled')
     })
 
     it('popAnimation 为 true 时不应影响渲染', () => {
       render(<OperationButton popAnimation>按钮</OperationButton>)
       expect(screen.getByText('按钮')).toBeInTheDocument()
+    })
+
+    it('isLoading 为 true 时应显示 spinner 并禁用按钮', () => {
+      render(<OperationButton isLoading>加载</OperationButton>)
+      const btn = screen.getByText('加载')
+      expect(btn).toBeDisabled()
+      expect(btn).toHaveAttribute('aria-busy', 'true')
+      expect(screen.getByTestId('button-spinner')).toBeInTheDocument()
+    })
+
+    it('isBusy 为 true 时应设置 aria-busy="true"', () => {
+      render(<OperationButton isBusy>运行中</OperationButton>)
+      const btn = screen.getByText('运行中')
+      expect(btn).toHaveAttribute('aria-busy', 'true')
+    })
+
+    it('禁用时 aria-disabled 应为 true', () => {
+      render(<OperationButton disabled>禁用</OperationButton>)
+      const btn = screen.getByText('禁用')
+      expect(btn).toBeDisabled()
+      expect(btn).toHaveAttribute('aria-disabled', 'true')
+    })
+
+    it('应转发 aria-busy 属性', () => {
+      render(<OperationButton aria-busy="true">转发</OperationButton>)
+      const btn = screen.getByText('转发')
+      expect(btn).toHaveAttribute('aria-busy', 'true')
+    })
+
+    it('primary 变体应使用 accent 背景', () => {
+      const { container: c1 } = render(<OperationButton variant="primary">主要</OperationButton>)
+      expect((c1.firstChild as HTMLElement).className).toContain('bg-accent')
+    })
+
+    it('info 变体应使用 accent-blue 背景', () => {
+      render(<OperationButton variant="info">信息</OperationButton>)
+      const btn = screen.getByText('信息')
+      expect(btn.className).toContain('bg-accent-blue')
+    })
+
+    it('warning 变体应使用 accent-amber 背景', () => {
+      render(<OperationButton variant="warning">警告</OperationButton>)
+      const btn = screen.getByText('警告')
+      expect(btn.className).toContain('bg-accent-amber')
+    })
+
+    it('ghost 变体应渲染为透明背景', () => {
+      render(<OperationButton variant="ghost">幽灵</OperationButton>)
+      const btn = screen.getByText('幽灵')
+      expect(btn.className).toContain('bg-transparent')
     })
   })
 })
@@ -206,11 +258,26 @@ describe('OperationInput', () => {
   })
 
   it('应支持 number 类型', () => {
-    const { container } = render(<OperationInput type="number" />)
-    const input = container.querySelector('input') as HTMLInputElement
-    expect(input.type).toBe('number')
+      const { container } = render(<OperationInput type="number" />)
+      const input = container.querySelector('input') as HTMLInputElement
+      expect(input.type).toBe('number')
+    })
+
+    it('应使用全局 focus-ring 样式', () => {
+      const { container } = render(<OperationInput />)
+      const input = container.querySelector('input') as HTMLInputElement
+      expect(input.className).toContain('focus-ring')
+      expect(input.className).not.toContain('focus:shadow-')
+    })
+
+    it('错误状态应使用 focus-ring 而非阴影焦点环', () => {
+      const { container } = render(<OperationInput error />)
+      const input = container.querySelector('input') as HTMLInputElement
+      expect(input.className).toContain('focus-ring')
+      expect(input.className).toContain('border-accent-rose')
+      expect(input.className).not.toContain('focus:shadow-')
+    })
   })
-})
 
 describe('OperationLabel', () => {
   it('应渲染标签文本', () => {

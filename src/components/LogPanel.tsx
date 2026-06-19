@@ -48,7 +48,7 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
     >
       <button
         onClick={toggleCollapsed}
-        className="flex items-center justify-between px-4 py-2 bg-ink/90 dark:bg-slate-light border-b-2 border-ink/30 dark:border-dark-border/30 w-full text-left hover:bg-ink/80 dark:hover:bg-slate-light/80 transition-colors"
+        className="flex items-center justify-between px-4 py-2 bg-ink/90 dark:bg-dark-muted border-b-2 border-ink/30 dark:border-dark-border/30 w-full text-left hover:bg-ink/80 dark:hover:bg-dark-muted/80 transition-colors"
         aria-expanded={!collapsed}
         aria-label={t('logPanel.title')}
       >

@@ -3,12 +3,12 @@ import { tStatic } from '../i18n/useI18n'
 import { duration, EASING, transitionEnd, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { calculateCenterStart } from '../utils/visualizerLayout'
+import { shouldSkipAnimation } from '../utils/performanceConfig'
 
 export const RECT_WIDTH = 80
 export const RECT_HEIGHT = 50
 export const GAP = 8
 const BASE_DURATION = 400
-const LARGE_DATA_THRESHOLD = 30
 
 interface StackVisualizerOptions {
   width: number
@@ -122,7 +122,7 @@ export function renderStack(svg: SVGSVGElement, data: number[], options: StackVi
     .attr('y', topLabelY + 1)
     .attr('dy', '0.35em').attr('fill', C.textSecondary)
     .attr('font-size', '12px').attr('font-weight', 'bold')
-    .attr('font-family', "'JetBrains Mono', monospace")
+    .attr('font-family', 'var(--font-display)')
     .text('← ' + tStatic('visualizer.stackTop'))
 
   // Stack Bottom label
@@ -136,12 +136,12 @@ export function renderStack(svg: SVGSVGElement, data: number[], options: StackVi
     .attr('y', bottomLabelY + 1)
     .attr('dy', '0.35em').attr('fill', C.textSecondary)
     .attr('font-size', '12px').attr('font-weight', 'bold')
-    .attr('font-family', "'JetBrains Mono', monospace")
+    .attr('font-family', 'var(--font-display)')
     .text('← ' + tStatic('visualizer.stackBottom'))
 }
 
 export async function animatePush(svg: SVGSVGElement, value: number, data: number[], options: StackVisualizerOptions = { width: 800, height: 400 }, anim?: Animation) {
-  if (data.length >= LARGE_DATA_THRESHOLD) return
+  if (shouldSkipAnimation('stack', data.length)) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
@@ -183,7 +183,7 @@ export async function animatePush(svg: SVGSVGElement, value: number, data: numbe
     .attr('font-size', '16px').attr('font-weight', 'bold').text(value)
 
   await transitionEnd(
-    newGroup.transition().duration(duration(300)).ease(EASING.easeOutBack)
+    newGroup.transition().duration(duration(300)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${startX}, ${topY})`)
       .attr('opacity', 1)
   )
@@ -197,7 +197,7 @@ export async function animatePush(svg: SVGSVGElement, value: number, data: numbe
 }
 
 export async function animatePop(svg: SVGSVGElement, data: number[], _options?: StackVisualizerOptions, anim?: Animation) {
-  if (data.length >= LARGE_DATA_THRESHOLD) return
+  if (shouldSkipAnimation('stack', data.length)) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
@@ -225,7 +225,7 @@ export async function animatePop(svg: SVGSVGElement, data: number[], _options?: 
 }
 
 export async function animatePeek(svg: SVGSVGElement, data: number[], _options?: StackVisualizerOptions, anim?: Animation) {
-  if (data.length >= LARGE_DATA_THRESHOLD) return
+  if (shouldSkipAnimation('stack', data.length)) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
@@ -238,7 +238,7 @@ export async function animatePeek(svg: SVGSVGElement, data: number[], _options?:
   const topRect = topGroup.select('rect')
 
   await new Promise<void>((resolve) => {
-    topGroup.transition().duration(duration(200)).ease(EASING.easeOutBack)
+    topGroup.transition().duration(duration(200)).ease(EASING.easeOutCubic)
       .attr('transform', function(this: SVGGElement) {
         const current = select(this).attr('transform') || ''
         const matchX = current.match(/translate\(([^,]+)/)
@@ -266,7 +266,7 @@ export async function animatePeek(svg: SVGSVGElement, data: number[], _options?:
   if (anim?.isAborted?.()) return
 
   await new Promise<void>((resolve) => {
-    topGroup.transition().duration(duration(250)).ease(EASING.easeOutBack)
+    topGroup.transition().duration(duration(250)).ease(EASING.easeOutCubic)
       .attr('transform', function(this: SVGGElement) {
         const current = select(this).attr('transform') || ''
         const matchX = current.match(/translate\(([^,]+)/)

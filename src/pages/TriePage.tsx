@@ -135,7 +135,7 @@ export default function TriePage() {
   const count = wordCount()
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('trie.title')} subtitle={t('trie.subtitle')}>
         <ExportImport dataType="trie" data={flatData} disabled={isAnimating} onImport={({ data: imported }) => {
           if (imported && typeof imported === 'object' && 'children' in (imported as object)) {
@@ -150,20 +150,20 @@ export default function TriePage() {
           }
         }} />
         <ShareButton data={flatData} dataType="trie" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+        <OperationButton variant="secondary" onClick={reset}>{t('common.reset')}</OperationButton>
       </PageHeader>
 
       <OperationBar>
         <SpeedControl />
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="text" placeholder={t('trie.inputPlaceholder')} value={inputValue} onChange={setInputValue} />
-        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('trie.insert')}</OperationButton>
-        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('trie.delete')}</OperationButton>
-        <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating}>{t('trie.search')}</OperationButton>
-        <OperationButton variant="amber" onClick={handlePrefixSearch} disabled={isAnimating}>{t('trie.prefixSearch')}</OperationButton>
-        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating} isBusy={isAnimating}>{t('trie.insert')}</OperationButton>
+        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating} isBusy={isAnimating}>{t('trie.delete')}</OperationButton>
+        <OperationButton variant="warning" onClick={handleSearch} disabled={isAnimating} isBusy={isAnimating}>{t('trie.search')}</OperationButton>
+        <OperationButton variant="warning" onClick={handlePrefixSearch} disabled={isAnimating} isBusy={isAnimating}>{t('trie.prefixSearch')}</OperationButton>
+        {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={undo}
           disabled={isAnimating || !canUndo()}
           previewData={getUndoPreview()}
@@ -172,7 +172,7 @@ export default function TriePage() {
           {t('common.undo')}
         </UndoPreviewButton>
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={redo}
           disabled={isAnimating || !canRedo()}
           previewData={getRedoPreview()}
@@ -190,7 +190,7 @@ export default function TriePage() {
         </OperationInfo>
       </OperationBar>
 
-      <Visualizer data={flatData} renderFn={renderTrie as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.trieLabel")} />
+      <Visualizer data={flatData} renderFn={renderTrie as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.trieLabel")} />
       {flatData.nodes.length === 0 && (
         <EmptyState icon="◈" titleKey="emptyState.emptyTrie" descriptionKey="emptyState.emptyTrieDesc" onFill={reset} />
       )}

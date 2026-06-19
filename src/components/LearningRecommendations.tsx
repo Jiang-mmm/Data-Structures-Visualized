@@ -5,6 +5,23 @@ import { useLearningProgress } from '../hooks/useLearningProgress'
 import { LEARNING_PATH, CATEGORY_COLORS, DIFFICULTY_LABELS } from '../configs/learningPath'
 import { getRecommendations, getPersonalizedAdvice, type LearningProgressData } from '../utils/learningRecommender'
 
+function SparklesIcon({ className, 'aria-hidden': ariaHidden }: { className?: string; 'aria-hidden'?: boolean }) {
+  return (
+    <svg
+      className={className}
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden={ariaHidden}
+      focusable="false"
+    >
+      <path d="M10 2c.28 0 .53.17.64.43l1.28 3.25 3.25 1.28a.72.72 0 010 1.28l-3.25 1.28-1.28 3.25a.72.72 0 01-1.28 0L8.08 9.52 4.83 8.24a.72.72 0 010-1.28l3.25-1.28L9.36 2.43A.72.72 0 0110 2z" />
+      <path d="M15.5 11.5c.22 0 .42.13.51.34l.84 2.16 2.16.84a.57.57 0 010 1.02l-2.16.84-.84 2.16a.57.57 0 01-1.02 0l-.84-2.16-2.16-.84a.57.57 0 010-1.02l2.16-.84.84-2.16c.09-.21.29-.34.51-.34z" />
+    </svg>
+  )
+}
+
 function LearningRecommendations() {
   const { t } = useGlobalSettings()
   const { isVisited, isCompleted } = useLearningProgress()
@@ -44,7 +61,7 @@ function LearningRecommendations() {
 
   return (
     <section className="mb-8 animate-slide-up" style={{ animationDelay: '180ms', animationFillMode: 'both' }}>
-      <div className="border-2 border-ink dark:border-dark-border bg-white dark:bg-slate p-5 md:p-6">
+      <div className="border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface p-5 md:p-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-5">
           <div className="w-8 h-8 bg-accent-amber flex items-center justify-center text-paper text-sm font-bold shadow-button dark:shadow-button-dark">
@@ -56,7 +73,7 @@ function LearningRecommendations() {
         {/* Personalized Advice */}
         <div className="border-2 border-accent-amber/40 bg-accent-amber/5 dark:bg-accent-amber/10 p-3 mb-5">
           <div className="flex items-start gap-2">
-            <span className="text-accent-amber font-bold text-sm flex-shrink-0">💡</span>
+            <SparklesIcon className="w-5 h-5 text-accent-amber flex-shrink-0" aria-hidden={true} />
             <div>
               <div className="text-[10px] font-mono text-ink-light dark:text-dark-ink-light mb-1 uppercase tracking-widest">
                 {t('recommendations.personalizedAdvice')}

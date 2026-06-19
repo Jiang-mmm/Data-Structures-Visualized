@@ -60,6 +60,8 @@ import {
   getPerformanceMode,
   getPerformanceFactor,
   EASING,
+  isFPSDegraded,
+  resetFPSDegradation,
 } from '../utils/animationEngine'
 import { showToast } from '../components/toastStore'
 
@@ -155,6 +157,102 @@ describe('animationEngine.ts', () => {
       stopFPSMonitoring()
 
       expect(rAFSpy.mock.calls.length).toBeGreaterThanOrEqual(0)
+      rAFSpy.mockRestore()
+    })
+  })
+
+  // ============================================================
+  // FPS auto-degradation
+  // ============================================================
+  describe('FPS auto-degradation', () => {
+    beforeEach(() => {
+      vi.useFakeTimers()
+      stopFPSMonitoring()
+    })
+
+    afterEach(() => {
+      stopFPSMonitoring()
+      vi.useRealTimers()
+    })
+
+    it('should degrade after 3 continuous seconds of FPS < 20', () => {
+      const rAFSpy = vi.spyOn(globalThis, 'requestAnimationFrame')
+      startFPSMonitoring()
+
+      const measureFPSFn = rAFSpy.mock.calls[0]?.[0] as () => void
+      expect(measureFPSFn).toBeDefined()
+
+      let time = 0
+      const nowSpy = vi.spyOn(performance, 'now').mockImplementation(() => time)
+
+      if (measureFPSFn) {
+        time = 1000
+        measureFPSFn()
+        expect(getCurrentFPS()).toBe(1)
+        expect(isFPSDegraded()).toBe(false)
+
+        time = 2000
+        measureFPSFn()
+        expect(isFPSDegraded()).toBe(false)
+
+        time = 3000
+        measureFPSFn()
+        expect(isFPSDegraded()).toBe(false)
+
+        time = 4000
+        measureFPSFn()
+        expect(isFPSDegraded()).toBe(true)
+
+        expect(duration(500)).toBe(0)
+
+        resetFPSDegradation()
+        expect(isFPSDegraded()).toBe(false)
+
+        stopFPSMonitoring()
+        expect(duration(500)).toBe(500)
+      }
+
+      nowSpy.mockRestore()
+      rAFSpy.mockRestore()
+    })
+
+    it('should reset degradation timer when FPS recovers', () => {
+      const rAFSpy = vi.spyOn(globalThis, 'requestAnimationFrame')
+      startFPSMonitoring()
+
+      const measureFPSFn = rAFSpy.mock.calls[0]?.[0] as () => void
+      expect(measureFPSFn).toBeDefined()
+
+      let time = 0
+      const nowSpy = vi.spyOn(performance, 'now').mockImplementation(() => time)
+
+      if (measureFPSFn) {
+        time = 1000
+        measureFPSFn()
+        expect(getCurrentFPS()).toBe(1)
+        expect(isFPSDegraded()).toBe(false)
+
+        time = 1999
+        for (let i = 0; i < 29; i++) {
+          measureFPSFn()
+        }
+        time = 2000
+        measureFPSFn()
+        expect(getCurrentFPS()).toBe(30)
+        expect(isFPSDegraded()).toBe(false)
+
+        time = 3000
+        measureFPSFn()
+        expect(getCurrentFPS()).toBe(1)
+        expect(isFPSDegraded()).toBe(false)
+
+        time = 4000
+        measureFPSFn()
+        expect(getCurrentFPS()).toBe(1)
+        expect(isFPSDegraded()).toBe(false)
+      }
+
+      nowSpy.mockRestore()
       rAFSpy.mockRestore()
     })
   })

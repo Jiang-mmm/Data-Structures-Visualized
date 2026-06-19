@@ -24,6 +24,7 @@ const STRUCTURE_KEYS: StructureItem[] = [
   { path: '/queue', key: 'queue' },
   { path: '/linkedlist', key: 'linkedlist' },
   { path: '/tree', key: 'tree' },
+  { path: '/avl-tree', key: 'avlTree' },
   { path: '/graph', key: 'graph' },
   { path: '/sort', key: 'sort' },
   { path: '/hash', key: 'hash' },
@@ -56,19 +57,21 @@ function getIconSvg(index: number): React.ReactNode {
       return <svg {...p}><circle cx="5" cy="10" r="2.5" /><circle cx="15" cy="10" r="2.5" /><line x1="7.5" y1="10" x2="12.5" y2="10" /></svg>
     case 5: // Tree
       return <svg {...p}><circle cx="10" cy="4.5" r="2" /><circle cx="5" cy="14" r="2" /><circle cx="15" cy="14" r="2" /><line x1="8.5" y1="6.2" x2="6.2" y2="12.2" /><line x1="11.5" y1="6.2" x2="13.8" y2="12.2" /></svg>
-    case 6: // Graph - triangle network
+    case 6: // AVL Tree - balanced tree with height indicator
+      return <svg {...p}><circle cx="10" cy="4" r="2" /><circle cx="5" cy="13" r="2" /><circle cx="15" cy="13" r="2" /><line x1="8.5" y1="5.7" x2="6.2" y2="11.3" /><line x1="11.5" y1="5.7" x2="13.8" y2="11.3" /><line x1="3" y1="17" x2="17" y2="17" strokeDasharray="2,1.5" /></svg>
+    case 7: // Graph - triangle network
       return <svg {...p}><circle cx="10" cy="4.5" r="2" /><circle cx="4.5" cy="15" r="2" /><circle cx="15.5" cy="15" r="2" /><line x1="8.5" y1="6.2" x2="5.8" y2="13.2" /><line x1="11.5" y1="6.2" x2="14.2" y2="13.2" /><line x1="6.5" y1="15" x2="13.5" y2="15" /></svg>
-    case 7: // Sort - ascending bars
+    case 8: // Sort - ascending bars
       return <svg {...p}><rect x="3" y="13" width="3" height="4" rx="0.5" /><rect x="7.5" y="9" width="3" height="8" rx="0.5" /><rect x="12" y="5" width="3" height="12" rx="0.5" /></svg>
-    case 8: // Hash
+    case 9: // Hash
       return <svg {...p}><line x1="7" y1="3" x2="6" y2="17" /><line x1="13" y1="3" x2="12" y2="17" /><line x1="3" y1="7" x2="17" y2="7" /><line x1="3" y1="13" x2="17" y2="13" /></svg>
-    case 9: // Heap - pyramid
+    case 10: // Heap - pyramid
       return <svg {...p}><circle cx="10" cy="4.5" r="2" /><circle cx="5.5" cy="14" r="2" /><circle cx="14.5" cy="14" r="2" /><line x1="8.5" y1="6.2" x2="6.8" y2="12.2" /><line x1="11.5" y1="6.2" x2="13.2" y2="12.2" /></svg>
-    case 10: // Trie - root with branches
+    case 11: // Trie - root with branches
       return <svg {...p}><circle cx="10" cy="4" r="2" /><circle cx="5" cy="13" r="1.5" /><circle cx="10" cy="15" r="1.5" /><circle cx="15" cy="13" r="1.5" /><line x1="8.8" y1="5.7" x2="5.6" y2="11.6" /><line x1="10" y1="6" x2="10" y2="13.5" /><line x1="11.2" y1="5.7" x2="14.4" y2="11.6" /></svg>
-    case 11: // Compare - two bar charts
+    case 12: // Compare - two bar charts
       return <svg {...p}><rect x="3" y="9" width="3" height="8" rx="0.5" /><rect x="7.5" y="5" width="3" height="12" rx="0.5" /><rect x="12.5" y="7" width="3" height="10" rx="0.5" /><line x1="2" y1="17" x2="17" y2="17" /></svg>
-    case 12: // Graph Algorithm - node with circular arrow
+    case 13: // Graph Algorithm - node with circular arrow
       return <svg {...p}><circle cx="10" cy="10" r="6" /><polyline points="10,6 12,8 10,10" /><path d="M7 15a6 6 0 016-6" /></svg>
     default:
       return <svg {...p}><circle cx="10" cy="10" r="6" /></svg>
@@ -82,10 +85,10 @@ const THEME_SWATCH_COLORS: Record<string, string> = {
   royal: '#7c3aed',
 }
 
-const SIDEBAR_CONTAINER_BASE = 'bg-white dark:bg-slate border-r-2 border-ink dark:border-dark-border flex flex-col h-screen transition-all duration-300 ease-out'
-const NAV_ITEM_BASE = 'flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-sm font-medium transition-all duration-200 ease-out border-l-4'
-const NAV_ITEM_ACTIVE = 'border-l-accent-blue bg-accent-blue/12 dark:bg-accent-blue/20 text-blue-800 dark:text-blue-300 font-semibold'
-const NAV_ITEM_INACTIVE = 'border-l-transparent text-ink-light dark:text-dark-ink-light/80 hover:border-l-ink/20 dark:hover:border-l-dark-border/50 hover:bg-paper-warm/60 dark:hover:bg-slate-light/60 hover:translate-x-0.5 hover:text-ink dark:hover:text-dark-ink'
+const SIDEBAR_CONTAINER_BASE = 'bg-surface dark:bg-dark-surface border-r-2 border-ink dark:border-dark-border flex flex-col h-dvh transition-all duration-300 ease-out'
+const NAV_ITEM_BASE = 'flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-sm font-medium transition-all duration-200 ease-out'
+const NAV_ITEM_ACTIVE = 'bg-accent-blue/10 dark:bg-accent-blue/20 text-ink dark:text-dark-ink font-semibold'
+const NAV_ITEM_INACTIVE = 'text-ink-light dark:text-dark-ink-light/80 hover:bg-muted/60 dark:hover:bg-dark-muted/60 hover:translate-x-0.5 hover:text-ink dark:hover:text-dark-ink'
 
 export default function Sidebar() {
   const location = useLocation()
@@ -155,6 +158,15 @@ export default function Sidebar() {
     return () => window.removeEventListener('keydown', handleEscape)
   }, [mobileOpen])
 
+  // 移动端侧边栏展开时锁定 body 滚动，关闭或卸载时恢复
+  useEffect(() => {
+    if (!mobileOpen) return
+    document.body.classList.add('overflow-hidden')
+    return () => {
+      document.body.classList.remove('overflow-hidden')
+    }
+  }, [mobileOpen])
+
   useEffect(() => {
     if (!showThemePopover) return
     const handleEscape = (e: KeyboardEvent) => {
@@ -215,7 +227,7 @@ export default function Sidebar() {
           <button
             onClick={() => setMobileOpen(false)}
             aria-label={t('common.close')}
-            className="w-9 h-9 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-slate hover:bg-accent-rose hover:text-paper transition-colors text-sm font-bold touch-manipulation"
+            className="w-9 h-9 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper hover:bg-accent-blue hover:text-paper transition-colors text-sm font-bold touch-manipulation focus-ring"
           >
             ✕
           </button>
@@ -226,9 +238,9 @@ export default function Sidebar() {
             aria-expanded={!collapsed}
             className={`
               w-7 h-7 flex items-center justify-center
-              border-2 border-ink dark:border-dark-border bg-paper dark:bg-slate
+              border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper
               hover:bg-accent-blue hover:text-paper dark:hover:bg-accent-blue dark:hover:text-paper
-              transition-colors text-xs font-bold
+              transition-colors text-xs font-bold focus-ring
               ${collapsed ? 'mx-auto' : ''}
             `}
           >
@@ -273,7 +285,7 @@ export default function Sidebar() {
                 title={t('sidebar.themeTooltip')}
                 aria-label={t('sidebar.themeTooltip')}
                 aria-expanded={showThemePopover}
-                className="w-7 h-7 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-slate hover:border-accent-blue dark:hover:border-accent-blue transition-colors"
+                className="w-7 h-7 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper hover:border-accent-blue dark:hover:border-accent-blue transition-colors focus-ring"
               >
                 <span
                   className="w-3.5 h-3.5 rounded-full border border-ink/20 dark:border-dark-border"
@@ -281,7 +293,7 @@ export default function Sidebar() {
                 />
               </button>
               {showThemePopover && (
-                <div className="absolute bottom-full left-0 mb-2 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark p-2 min-w-[120px] animate-slide-down z-50">
+                <div className="absolute bottom-full left-0 mb-2 bg-surface dark:bg-dark-surface border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark p-2 min-w-[120px] animate-slide-down z-50">
                   <div className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light tracking-[0.15em] uppercase mb-1.5 px-1">
                     {t('sidebar.themeTooltip')}
                   </div>
@@ -293,10 +305,10 @@ export default function Sidebar() {
                         title={theme.nameKey ? t(theme.nameKey) : theme.name}
                         className={`
                           flex-1 h-7 flex items-center justify-center
-                          border-2 transition-all duration-200
+                          border-2 transition-all duration-200 focus-ring
                           ${colorTheme === theme.key
                             ? 'border-ink dark:border-dark-border shadow-button dark:shadow-button-dark'
-                            : 'border-border dark:border-dark-border bg-paper dark:bg-slate hover:border-ink dark:hover:border-dark-border hover:translate-y-[-1px]'
+                            : 'border-border dark:border-dark-border bg-paper dark:bg-dark-paper hover:border-ink dark:hover:border-dark-border hover:translate-y-[-1px]'
                           }
                         `}
                       >
@@ -320,15 +332,15 @@ export default function Sidebar() {
               }}
               title={`${t('sidebar.langTooltip')}: ${lang.toUpperCase()}`}
               aria-label={`${t('sidebar.langTooltip')}: ${lang.toUpperCase()}`}
-              className="w-7 h-7 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-slate hover:bg-accent-teal hover:text-paper dark:hover:bg-accent-teal dark:hover:text-paper transition-colors text-[10px] font-bold font-mono"
+              className="w-7 h-7 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper hover:bg-accent-blue hover:text-paper dark:hover:bg-accent-blue dark:hover:text-paper transition-colors text-[10px] font-bold font-mono focus-ring"
             >
               {lang.toUpperCase()}
             </button>
             <button
               onClick={cycle}
-              title={`${t('sidebar.themeTooltip')}: ${mode}`}
-              aria-label={`${t('sidebar.themeTooltip')}: ${mode}`}
-              className="w-7 h-7 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-slate hover:bg-accent-amber hover:text-paper dark:hover:bg-accent-amber dark:hover:text-paper transition-colors text-xs"
+              title={`${t('sidebar.themeModeTooltip')}: ${mode}`}
+              aria-label={`${t('sidebar.themeModeTooltip')}: ${mode}`}
+              className="w-7 h-7 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper hover:bg-accent-amber hover:text-paper dark:hover:bg-accent-amber dark:hover:text-paper transition-colors text-xs focus-ring"
             >
               {themeIcon}
             </button>
@@ -343,7 +355,7 @@ export default function Sidebar() {
       {isMobile && (
         <button
           onClick={() => setMobileOpen(true)}
-          className="fixed top-3 left-3 z-50 w-10 h-10 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-white dark:bg-slate shadow-button dark:shadow-button-dark hover:bg-accent-blue hover:text-paper transition-colors text-lg font-bold md:hidden"
+          className="fixed top-3 left-3 z-50 w-10 h-10 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface shadow-button dark:shadow-button-dark hover:bg-accent-blue hover:text-paper transition-colors text-lg font-bold md:hidden"
           aria-label={t('sidebar.openMenu')}
         >
           ☰

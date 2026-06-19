@@ -49,13 +49,13 @@ export default memo(function SpeedControl() {
           onClick={() => setShowPresets(!showPresets)}
           aria-label={t('speedControl.presetDefault')}
           aria-expanded={showPresets}
-          className="flex items-center gap-1.5 px-2.5 py-1 font-mono text-xs border-2 border-ink/30 dark:border-dark-border bg-white dark:bg-slate text-ink-light dark:text-dark-ink-light hover:bg-accent-violet/10 hover:border-accent-violet hover:text-accent-violet transition-all duration-200"
+          className="flex items-center gap-1.5 px-2.5 py-1 font-mono text-xs border-2 border-ink/30 dark:border-dark-border bg-surface dark:bg-dark-surface text-ink-light dark:text-dark-ink-light hover:bg-accent-blue/10 hover:border-accent-blue hover:text-accent-blue transition-all duration-200"
         >
           <span>{ANIMATION_PRESETS[currentPreset]?.icon}</span>
           <span className="hidden sm:inline">{ANIMATION_PRESETS[currentPreset]?.nameKey ? t(ANIMATION_PRESETS[currentPreset].nameKey!) : ANIMATION_PRESETS[currentPreset]?.name}</span>
         </button>
         {showPresets && (
-          <div className="absolute top-full left-0 mt-1.5 z-50 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark min-w-[150px] animate-slide-down overflow-hidden">
+          <div className="absolute top-full left-0 mt-1.5 z-50 bg-surface dark:bg-dark-surface border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark min-w-[150px] animate-slide-down overflow-hidden">
             {PRESET_KEYS.map((key, index) => {
               const preset = ANIMATION_PRESETS[key]
               return (
@@ -68,7 +68,7 @@ export default memo(function SpeedControl() {
                       ? 'bg-accent-blue text-paper'
                       : focusedIndex === index
                         ? 'bg-ink/10 dark:bg-dark-ink/10 text-ink dark:text-dark-ink'
-                        : 'hover:bg-paper-warm dark:hover:bg-slate-light text-ink-light dark:text-dark-ink-light'
+                        : 'hover:bg-muted dark:hover:bg-dark-muted text-ink-light dark:text-dark-ink-light'
                     }`}
                 >
                   <span className="w-5 text-center">{preset.icon}</span>
@@ -93,7 +93,7 @@ export default memo(function SpeedControl() {
             className={`px-2 py-0.5 font-mono text-xs transition-all duration-200 border-2
               ${animationSpeed === opt.value
                 ? 'bg-accent-blue border-accent-blue text-paper shadow-button dark:shadow-button-dark'
-                : 'bg-white dark:bg-slate text-ink-light dark:text-dark-ink-light border-ink/20 dark:border-dark-border hover:bg-ink/5 dark:hover:bg-dark-ink/5 hover:border-ink/40 dark:hover:border-dark-ink/40'
+                : 'bg-surface dark:bg-dark-surface text-ink-light dark:text-dark-ink-light border-ink/20 dark:border-dark-border hover:bg-ink/5 dark:hover:bg-dark-ink/5 hover:border-ink/40 dark:hover:border-dark-ink/40'
               }`}
           >
             {opt.label}

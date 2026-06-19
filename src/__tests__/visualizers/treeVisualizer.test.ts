@@ -43,6 +43,7 @@ vi.mock('../../utils/animationEngine', () => ({
   EASING: { easeOutCubic: 'easeOutCubic', easeInCubic: 'easeInCubic', easeOutBack: 'easeOutBack', easeOutElastic: 'easeOutElastic' },
   transitionEnd: vi.fn(() => Promise.resolve()),
   getDefaultEasing: () => 'easeOutCubic',
+  measureRender: vi.fn((_label: string, fn: () => unknown) => fn()),
 }))
 vi.mock('../../i18n/useI18n', () => ({ tStatic: (key: string) => key }))
 
@@ -74,6 +75,11 @@ describe('treeVisualizer', () => {
     it('应该能够执行插入动画', async () => {
       await expect(animateInsertNode(svg, 4, [5, 3, 7], { width: 800, height: 500 })).resolves.toBeUndefined()
     })
+
+    it('应在大于阈值时跳过动画', async () => {
+      const largeData = Array.from({ length: 31 }, (_, i) => i + 1)
+      await expect(animateInsertNode(svg, 99, largeData, { width: 800, height: 500 })).resolves.toBeUndefined()
+    })
   })
 
   describe('animateSearch', () => {
@@ -84,11 +90,21 @@ describe('treeVisualizer', () => {
     it('应该能够执行搜索动画（未找到）', async () => {
       await expect(animateSearch(svg, [], 0, [5, 3, 7], { width: 800, height: 500 })).resolves.toBeUndefined()
     })
+
+    it('应在大于阈值时跳过动画', async () => {
+      const largeData = Array.from({ length: 31 }, (_, i) => i + 1)
+      await expect(animateSearch(svg, [], 0, largeData, { width: 800, height: 500 })).resolves.toBeUndefined()
+    })
   })
 
   describe('animateDeleteNode', () => {
     it('应该能够执行删除动画', async () => {
       await expect(animateDeleteNode(svg, 3, [5, 3, 7, 1, 4], { width: 800, height: 500 })).resolves.toBeUndefined()
+    })
+
+    it('应在大于阈值时跳过动画', async () => {
+      const largeData = Array.from({ length: 31 }, (_, i) => i + 1)
+      await expect(animateDeleteNode(svg, 1, largeData, { width: 800, height: 500 })).resolves.toBeUndefined()
     })
   })
 

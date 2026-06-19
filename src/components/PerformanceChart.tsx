@@ -172,7 +172,7 @@ function PerformanceChart({ results }: PerformanceChartProps) {
   }, [results, mode, t, metricColors, labels])
 
   return (
-    <div ref={containerRef} className="w-full h-48 neo-border bg-white dark:bg-slate overflow-hidden">
+    <div ref={containerRef} className="w-full h-48 neo-border bg-surface dark:bg-dark-surface overflow-hidden">
       <svg ref={svgRef} className="w-full h-full" role="img" aria-label={t('performanceChart.title')} />
     </div>
   )

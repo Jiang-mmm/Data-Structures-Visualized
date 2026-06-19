@@ -45,6 +45,62 @@ describe('sortVisualizer 集成测试', () => {
       const bars = svg.querySelectorAll('g.bar')
       expect(bars.length).toBe(50)
     })
+
+    it('排序柱状图索引应使用 CSS 变量字体', () => {
+      const data = [50, 30, 80, 20, 60]
+      renderSortBars(svg, data, { width: 800, height: 400 })
+
+      const indexTexts = svg.querySelectorAll('text.bar-index')
+      expect(indexTexts.length).toBeGreaterThan(0)
+      indexTexts.forEach(text => {
+        expect(text.getAttribute('font-family')).toContain('var(--font-')
+      })
+    })
+
+    it('应该在每个柱子底部渲染下标序号', () => {
+      const data = [50, 30, 80, 20, 60]
+      renderSortBars(svg, data, { width: 800, height: 400 })
+
+      const bottomIndexTexts = svg.querySelectorAll('text.bar-index-bottom')
+      expect(bottomIndexTexts.length).toBe(data.length)
+      bottomIndexTexts.forEach((text, i) => {
+        expect(text.textContent).toBe(String(i))
+      })
+    })
+
+    it('底部下标序号应位于柱子下方', () => {
+      const data = [50, 30, 80, 20, 60]
+      const height = 400
+      renderSortBars(svg, data, { width: 800, height })
+
+      const bottomIndexTexts = svg.querySelectorAll('text.bar-index-bottom')
+      bottomIndexTexts.forEach(text => {
+        const y = parseFloat(text.getAttribute('y') || '0')
+        expect(y).toBeGreaterThan(height - 45)
+      })
+    })
+
+    it('应该在数据量大于 50 时隐藏底部下标序号', () => {
+      const data = Array.from({ length: 51 }, (_, i) => i + 1)
+      renderSortBars(svg, data, { width: 800, height: 400 })
+
+      const bottomIndexTexts = svg.querySelectorAll('text.bar-index-bottom')
+      expect(bottomIndexTexts.length).toBe(51)
+      bottomIndexTexts.forEach(text => {
+        expect(text.textContent).toBe('')
+      })
+    })
+
+    it('应该在数据量大于 30 时缩小底部下标字号', () => {
+      const data = Array.from({ length: 31 }, (_, i) => i + 1)
+      renderSortBars(svg, data, { width: 800, height: 400 })
+
+      const bottomIndexTexts = svg.querySelectorAll('text.bar-index-bottom')
+      expect(bottomIndexTexts.length).toBeGreaterThan(0)
+      bottomIndexTexts.forEach(text => {
+        expect(text.getAttribute('font-size')).toBe('8px')
+      })
+    })
   })
 
   describe('animateCompare', () => {

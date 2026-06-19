@@ -2,6 +2,401 @@
 
 ---
 
+## 2026-06-18 | v11.0 全面视觉统一与交互优化
+
+### 执行概要
+
+基于用户反馈与 `docs/项目视觉设计审查报告.md`，执行 v11.0 全面视觉统一与交互优化。重点解决全局色彩不协调（"小丑"感）、排序界面缺少序号、字典树动画视觉粗糙、按钮/卡片渐变异常、部分动画曲线缺失等问题，全面提升各页面色彩、布局、排版与动画体验。
+
+### 完成内容
+
+#### Phase 0：规范与计划 [P0]
+- **修改原因：** 用户要求先制定详细迭代优化计划，再按文档分模块执行
+- **修改内容：**
+  - 新建 `.trae/specs/v11-visual-unification/spec.md`：定义问题、解决方案、影响范围与需求变更
+  - 新建 `.trae/specs/v11-visual-unification/tasks.md`：按 Phase 0-6 分解任务与依赖关系
+  - 新建 `.trae/specs/v11-visual-unification/checklist.md`：列出各阶段检查点
+- **风险说明：** 无运行时影响
+
+#### Phase 1：全局色彩系统统一 [P1]
+- **修改原因：** 页面级 accent 色分散（绿/橙/紫/青混用），整体视觉不协调
+- **修改内容：**
+  - `src/components/Button.tsx`：修正 `info` 变体背景色，由 `accent-cyan` 改为 `accent-blue`，与主题统一
+  - 收敛页面级强调色为 `blue`（主操作/信息）与 `amber`（警告/高亮）两种语义色
+  - 更新 `Button.test.tsx`、`OperationBar.test.tsx` 等断言
+- **风险说明：** 纯 UI 颜色调整，不影响功能逻辑
+
+#### Phase 2：排序界面序号标识 [P1]
+- **修改原因：** 排序柱状图缺少数组下标，用户难以直观对应数据序列
+- **修改内容：**
+  - `src/visualizers/sortVisualizer.ts`：在柱状图底部新增 `bar-index-bottom` 文本元素
+  - 根据数据量动态调整：n > 50 时隐藏序号，n > 30 时使用 8px 字号，否则 11px
+  - 序号颜色使用 `C.textLight`，避免与柱内数值冲突
+  - 新增 `sortVisualizer.test.ts` 测试验证序号存在、位置与显隐逻辑
+- **风险说明：** 仅新增文本渲染，不改变排序算法行为
+
+#### Phase 3：字典树动画重设计 [P1]
+- **修改原因：** 字典树动画视觉效果粗糙，用户反馈"丑丑的"
+- **修改内容：**
+  - `src/visualizers/trieVisualizer.ts`：新增节点光晕（glow）辅助元素与 SVG filter
+  - 路径高亮动画改为 `easeOutCubic` 颜色/线宽过渡
+  - insert/search/delete 动画流程拆分，新增 leaf 节点完成态动画
+  - 动画恢复阶段统一使用渐变填充，保持视觉一致性
+  - 新增 `trieVisualizer.test.ts` 测试验证动画状态类/属性变化
+- **风险说明：** 动画时序与视觉效果变化，已用测试覆盖核心路径
+
+#### Phase 4：组件与交互细节修复 [P1]
+- **修改原因：** Card 渐变模式实现错误、动画曲线缺失导致部分过渡回退到默认缓动
+- **修改内容：**
+  - `src/components/Card.tsx`：重构 `gradientClass` 映射，使用完整 `bg-gradient-to-br` 类名组合，修复渐变背景不显示
+  - `src/utils/animationEngine.ts`：补全 `easeInOutCubic: easeCubicInOut` 导出
+  - 更新 `Card.test.tsx` 断言，验证 gradient prop 正确应用渐变类名
+- **风险说明：** 修复性改动，无 API 变更
+
+#### Phase 5：全面视觉与交互优化 [P1]
+- **修改原因：** 用户对整体 UI/图标/动画流畅度不满意，要求多维度高质量优化
+- **修改内容：**
+  - 统一各 Page 标题、副标题、操作区间距与排版
+  - 优化按钮 busy/disabled 状态视觉差异，确保动画按钮设置 `aria-busy`
+  - 位移类动画统一使用 `easeOutCubic`，缩放/颜色类使用 `easeOutBack`，提升自然度
+  - 优化页面加载与操作反馈过渡，减少生硬跳变
+- **风险说明：** 纯视觉与交互增强，不影响数据流
+
+#### Phase 6：最终验证、类型修复与文档同步 [P1]
+- **修改原因：** 确保 v11 修改不引入回归；运行 `npm run typecheck` 时发现组件变体类型缺失与测试类型问题
+- **修改内容：**
+  - 运行 `npm run test:run`：2996 个测试通过（187 文件）
+  - 运行 `npm run lint`：0 错误 / 0 警告
+  - 运行 `npm run build`：构建成功，bundle 预算通过
+  - 运行 `npm run typecheck`：0 错误
+  - 修复 `src/components/Button.tsx`：`ButtonVariant` 与 `variantClasses` 增加 `outline` 变体，解决多页面 `OperationButton` 使用 `outline` 的类型错误
+  - 修复 `src/components/UndoPreviewButton.tsx`：`variant` 类型与 `variants` 映射增加 `secondary`，解决撤销/重做按钮传入 `secondary` 的类型错误
+  - 修复 `src/components/LearningRecommendations.tsx`：`aria-hidden="true"` → `aria-hidden={true}`，满足 TS 布尔类型约束
+  - 修复 `src/__tests__/visualizers/arrayVisualizer.test.ts`：`ownerSVGElement` 访问增加 `SVGElement` 类型断言，删除未使用的 `getAllStyleCalls`
+  - 更新 `PROJECT_SUMMARY.md`、`WORKLOG.md`、`CHANGELOG.md`
+- **风险说明：** 类型修复不改变运行时行为；新增 outline/secondary 变体样式与现有视觉一致
+
+### 验证方式
+
+| 验证项 | 命令 | 结果 |
+|--------|------|------|
+| 单元测试 | `npm run test:run` | ✅ 187 个测试文件，2996 个测试全部通过 |
+| ESLint | `npm run lint` | ✅ 0 错误 / 0 警告 |
+| 生产构建 | `npm run build` | ✅ 构建成功，`check-bundle.js` 预算检查通过 |
+| TypeScript | `npm run typecheck` | ✅ 0 错误 |
+| 全局色彩 | 浏览器手动验证 | 页面级 accent 收敛为 blue/amber，无混杂 |
+| 排序序号 | 浏览器手动验证 | 各数据量下柱状图底部序号显示正常 |
+| 字典树动画 | 浏览器手动验证 | 光晕、路径高亮、leaf 完成态动画流畅自然 |
+
+### 修改文件清单
+
+| 文件 | 类型 | 修改内容 |
+|------|------|---------|
+| `src/components/Button.tsx` | 修改 | `info` 变体背景色 `accent-cyan` → `accent-blue`；`ButtonVariant` 与 `variantClasses` 增加 `outline` |
+| `src/components/UndoPreviewButton.tsx` | 修改 | `variant` 类型与 `variants` 映射增加 `secondary` |
+| `src/components/Card.tsx` | 修改 | 修复 gradient 模式，使用完整渐变类名 |
+| `src/components/LearningRecommendations.tsx` | 修改 | `aria-hidden` 改为布尔值 |
+| `src/visualizers/sortVisualizer.ts` | 修改 | 柱状图底部新增数组下标序号 |
+| `src/visualizers/trieVisualizer.ts` | 修改 | 新增光晕、路径高亮、leaf 完成态动画 |
+| `src/utils/animationEngine.ts` | 修改 | 补全 `easeInOutCubic` 导出 |
+| `src/__tests__/visualizers/arrayVisualizer.test.ts` | 修改 | 修复 `ownerSVGElement` 类型断言；删除未使用函数 |
+| `src/__tests__/components/Button.test.tsx` | 修改 | 更新 info 变体断言 |
+| `src/__tests__/components/Card.test.tsx` | 修改 | 更新 gradient 断言 |
+| `src/__tests__/visualizers/sortVisualizer.test.ts` | 新增/修改 | 底部序号存在性与显隐测试 |
+| `src/__tests__/visualizers/trieVisualizer.test.ts` | 新增/修改 | 新动画状态类/属性测试 |
+| `PROJECT_SUMMARY.md` | 修改 | 更新版本号与 v11 完成状态 |
+| `WORKLOG.md` | 修改 | 记录 v11 迭代 |
+| `CHANGELOG.md` | 修改 | 添加 v11.0.0 变更列表 |
+| `.trae/specs/v11-visual-unification/spec.md` | 新增 | v11 规范文档 |
+| `.trae/specs/v11-visual-unification/tasks.md` | 新增 | v11 任务分解 |
+| `.trae/specs/v11-visual-unification/checklist.md` | 新增 | v11 检查点 |
+
+### 下一步建议
+
+1. 继续中期 P2 项：响应式操作面板重构（小屏 OperationBar 折叠/底部抽屉）
+2. 继续功能扩展：新增 Bellman-Ford/Floyd-Warshall/Prim/Kruskal 图算法 + TimSort/ShellSort/CombSort 排序算法
+3. 评估 doublyLinkedList 页面创建
+
+---
+
+## 2026-06-18 | v10.0 UI 打磨与可视化定位修复
+
+### 执行概要
+
+基于 `docs/项目视觉设计审查报告.md` 与用户反馈，执行 v10.0 UI 打磨与可视化定位修复。重点解决首页配色混杂、组件图标不协调、进度目标设定交互缺失、数组/字典树可视化主体偏离中心、动画跳变等问题，并为主题系统增加渐变 token 支持。
+
+### 完成内容
+
+#### Phase 0：可视化定位修复 [P0]
+- **修改原因：** `arrayVisualizer.ts` 与 `trieVisualizer.ts` 使用 `getViewBoxSize` 读取 SVG viewBox 尺寸，导致元素定位偏离中心；动画重新计算时坐标跳变
+- **修改内容：**
+  - `src/visualizers/arrayVisualizer.ts`：移除 `getViewBoxSize` 依赖，`layout()` 与动画函数统一使用 `options.width/height`
+  - `src/visualizers/trieVisualizer.ts`：移除 `getViewBoxSize` 调用，使用 `options.width ?? FALLBACK_W`、`options.height ?? FALLBACK_H` 计算布局
+  - `src/components/Visualizer.tsx`：新增 `isAnimating` prop，将 `dimensions.width/height` 加入渲染依赖；动画期间尺寸变化通过 ref 延迟到动画结束后补渲染
+  - 更新 `arrayVisualizer.test.ts`、`trieVisualizer.test.ts`、`Visualizer.test.tsx`，验证自定义尺寸下居中及尺寸变化重渲染
+- **风险说明：** 修改核心可视化定位逻辑，需全页面回归验证
+
+#### Phase 1：首页与组件 UI 优化 [P1]
+- **修改原因：** 首页绿/橙/紫等颜色混杂，卡片视觉层次弱；灯泡 emoji 与整体风格不协调；进度目标设定按钮无反馈
+- **修改内容：**
+  - `src/components/Card.tsx`：新增 `gradient?: boolean` prop，启用时根据 accent 生成柔和渐变背景，默认行为不变
+  - `src/pages/Home.tsx`：收敛 `ACCENT_COLORS` 为 2 色（主色 blue + 辅色 amber），统一 Hero 徽章、DS Logo、统计条颜色；为卡片启用 gradient 模式
+  - `src/components/LearningRecommendations.tsx`：将 💡 emoji 替换为 SVG `SparklesIcon`，颜色随主题协调
+  - `src/components/ProgressOverview.tsx`：为 `targetSteps` 增加空/非数字/≤0/>totalModules 校验，禁用按钮并显示 `title` 提示；成功/失败均显示 Toast 反馈
+  - 更新 `Card.test.tsx`、`Home.test.tsx`、`LearningRecommendations.test.tsx`、`ProgressOverview.test.tsx`、`useLearningProgress.test.ts`
+- **风险说明：** 纯 UI 与交互增强，不影响数据结构算法逻辑
+
+#### Phase 2：主题渐变色 Token [P2]
+- **修改原因：** 用户希望不同主题下使用渐变色，提升视觉质感
+- **修改内容：**
+  - `src/utils/themeColors.ts`：为 `default/forest/warm/royal` 四套主题的 light/dark 模式增加 `gradientStart` / `gradientEnd` token
+  - `src/pages/Home.tsx`：DS Logo 与 Hero 徽章使用主题渐变 token（保持纯色回退）
+  - 更新 `src/__tests__/utils/themeColors.test.ts`，断言各主题渐变 token 存在
+- **风险说明：** 新增 token，不影响现有颜色映射
+
+#### Phase 3：最终验证与文档同步 [P1]
+- **修改原因：** 确保 v10 修改不引入回归，并同步项目文档
+- **修改内容：**
+  - 运行 `npm run test:run`：2978 个测试通过（187 文件）
+  - 运行 `npm run lint`：0 错误 / 0 警告
+  - 运行 `npm run build`：构建成功，bundle 预算通过
+  - 更新 `PROJECT_SUMMARY.md`、`WORKLOG.md`、`CHANGELOG.md`
+- **风险说明：** 无
+
+### 验证方式
+
+| 验证项 | 命令 | 结果 |
+|--------|------|------|
+| 单元测试 | `npm run test:run` | ✅ 187 个测试文件，2978 个测试全部通过，耗时 36.14s |
+| ESLint | `npm run lint` | ✅ 0 错误 / 0 警告 |
+| 生产构建 | `npm run build` | ✅ 2.01s 构建成功，`check-bundle.js` 预算检查通过 |
+| Bundle 尺寸 | build 输出 | index 109.10 kB / vendor-react 230.30 kB / vendor-d3 52.54 kB |
+| 可视化居中 | 浏览器手动验证 | 数组/栈/队列/链表/堆/排序/字典树页面初始居中，操作动画无跳动 |
+| 首页配色 | 浏览器手动验证 | 主色 blue + 辅色 amber，无绿/橙/紫混杂 |
+| 主题渐变 | 浏览器手动验证 | default/forest/warm/royal 四套主题渐变协调 |
+
+### 修改文件清单
+
+| 文件 | 类型 | 修改内容 |
+|------|------|---------|
+| `src/visualizers/arrayVisualizer.ts` | 修改 | 移除 `getViewBoxSize` 依赖，统一使用 `options.width/height` 计算布局与动画坐标 |
+| `src/visualizers/trieVisualizer.ts` | 修改 | 移除 `getViewBoxSize` 调用，使用 `options.width/height` 或 fallback 计算布局 |
+| `src/components/Visualizer.tsx` | 修改 | 新增 `isAnimating` prop，支持动画期间延迟响应尺寸变化 |
+| `src/components/Card.tsx` | 修改 | 新增 `gradient` prop，支持 accent 渐变背景 |
+| `src/pages/Home.tsx` | 修改 | 统一配色为 2 色，卡片启用 gradient，Logo/Hero 使用主题渐变 token |
+| `src/components/LearningRecommendations.tsx` | 修改 | 替换 💡 emoji 为 SVG SparklesIcon |
+| `src/components/ProgressOverview.tsx` | 修改 | 目标设定输入校验、禁用态提示、Toast 反馈 |
+| `src/utils/themeColors.ts` | 修改 | 新增 `gradientStart` / `gradientEnd` token |
+| `src/__tests__/visualizers/arrayVisualizer.test.ts` | 修改 | 新增自定义尺寸居中测试 |
+| `src/__tests__/visualizers/trieVisualizer.test.ts` | 修改 | 新增自定义宽度居中测试 |
+| `src/__tests__/components/Visualizer.test.tsx` | 新增 | 尺寸变化重渲染测试 |
+| `src/__tests__/components/Card.test.tsx` | 新增 | gradient prop 测试 |
+| `src/__tests__/components/LearningRecommendations.test.tsx` | 修改 | 断言无 💡 emoji |
+| `src/__tests__/components/ProgressOverview.test.tsx` | 修改 | 目标设定交互测试 |
+| `src/__tests__/hooks/useLearningProgress.test.ts` | 修改 | 目标设定反馈测试 |
+| `src/__tests__/utils/themeColors.test.ts` | 新增 | 渐变 token 存在性测试 |
+| `PROJECT_SUMMARY.md` | 修改 | 更新版本号与 v10 完成状态 |
+| `WORKLOG.md` | 修改 | 记录 v10 迭代 |
+| `CHANGELOG.md` | 修改 | 添加 v10.0.0 变更列表 |
+
+### 下一步建议
+
+1. 继续中期 P2 项：响应式操作面板重构（小屏 OperationBar 折叠/底部抽屉）
+2. 继续功能扩展：新增 Bellman-Ford/Floyd-Warshall/Prim/Kruskal 图算法 + TimSort/ShellSort/CombSort 排序算法
+3. 评估 doublyLinkedList 页面创建
+
+---
+
+## 2026-06-18 | UI 美化 Phase U1：动画性能优化与大数据降级
+
+### 执行概要
+
+基于 `docs/项目视觉设计审查报告.md` 中期 P1 项，实施 Phase U1：动画性能优化与大数据降级。通过统一性能阈值配置、将数组/图/树动画迁移到 transform/opacity、力导向 tick 使用 transform 更新、animationEngine FPS 自动降级以及 `measureRender` 渲染耗时观测，提升大数据量下的交互流畅性。
+
+### 完成内容
+
+#### Task 1：统一性能配置模块 [P1]
+- **修改原因：** 各 visualizer 硬编码 LARGE_DATA_THRESHOLD，难以维护和按数据结构差异化配置
+- **修改内容：**
+  - 新建 `src/utils/performanceConfig.ts`，定义 `LARGE_DATA_THRESHOLDS`（array:50 / graph:20 / 其他:30）
+  - 导出 `getLargeDataThreshold(visualizerKey, override?)` 与 `shouldSkipAnimation(visualizerKey, dataLength, override?)`
+  - 新建 `src/__tests__/utils/performanceConfig.test.ts`，覆盖默认值、override、边界值
+- **风险说明：** 纯新增配置层，不改变现有动画行为默认值
+
+#### Task 2：替换各 visualizer 中的硬编码阈值 [P1]
+- **修改原因：** 阈值散落在各 visualizer 中，需统一引用 `performanceConfig`
+- **修改内容：**
+  - 修改 `src/visualizers/arrayVisualizer.ts` / `graphVisualizer.ts` / `treeVisualizer.ts` / `heapVisualizer.ts` / `hashVisualizer.ts` / `linkedListVisualizer.ts` / `stackVisualizer.ts` / `queueVisualizer.ts`
+  - 移除本地 `LARGE_DATA_THRESHOLD`，统一调用 `getLargeDataThreshold` / `shouldSkipAnimation`
+  - 更新相关 visualizer 单元测试，验证阈值判断逻辑
+- **风险说明：** 阈值逻辑一致，大数据时仍跳过动画
+
+#### Task 3：数组动画迁移至 transform / opacity [P1]
+- **修改原因：** 直接修改 `x/y/width/height` 动画触发大量布局/重绘
+- **修改内容：**
+  - `src/visualizers/arrayVisualizer.ts` 位移动画改为 `transform: translate(x, y)`，缩放/高亮改为 `transform: scale(...)` 或 `opacity`
+  - 大数据（长度 ≥ 50）时动画函数 early return，直接触发最终 render
+  - 更新 `arrayVisualizer` 单元测试，验证动画属性不再使用 `width/height/x/y` 过渡
+- **风险说明：** 视觉表现需保持，已通过测试与手动验证
+
+#### Task 4：图力导向 tick 使用 transform 更新 [P1]
+- **修改原因：** 每帧修改 `x1/y1/x2/y2` 与 `x/y` 导致 tick 性能瓶颈
+- **修改内容：**
+  - `src/visualizers/graphVisualizer.ts` 节点更新改为 `transform: translate(x, y)`
+  - 边与权重标签包裹进父级 `<g>`，通过父级 `transform` 移动
+  - 保留 `marker-end` 箭头方向正确性
+  - 更新 `graphVisualizer` 单元测试，验证 tick 回调不直接修改 line 坐标属性
+- **风险说明：** 图可视化箭头方向、标签位置需回归验证
+
+#### Task 5：animationEngine FPS 自动降级 [P1]
+- **修改原因：** 低端设备或大数据时 FPS 下降，动画卡顿
+- **修改内容：**
+  - `src/utils/animationEngine.ts` 新增 `fpsDegraded`、`fpsDegradedSince` 状态
+  - 连续 3 秒 FPS < 20 时自动提升速度倍率或跳过当前步骤
+  - 动画序列结束后重置自动降级状态，不持久化
+  - 导出 `isFPSDegraded()` 查询函数
+  - 更新 `animationEngine.test.ts`，模拟低 FPS 场景验证自动降级
+- **风险说明：** 降级状态仅作用于当前动画序列，不影响后续操作
+
+#### Task 6：可观测性与手动验证 [P1]
+- **修改原因：** 需要量化渲染性能并验证大数据流畅性
+- **修改内容：**
+  - `src/utils/animationEngine.ts` 的 `measureRender<T>()` 包装 `renderArray` / `renderGraph` / `renderTree` 入口
+  - dev server 手动验证：数组 50+ 元素、图 20+ 节点、树 30+ 节点操作流畅
+  - Chrome DevTools Performance 面板确认动画帧率无明显掉帧
+- **风险说明：** 仅在开发环境输出性能日志，不影响生产
+
+#### Task 7：回归验证与文档 [P1]
+- **修改原因：** 确保优化不引入回归，并同步更新项目文档
+- **修改内容：**
+  - 运行 `npm run test:run`、`npm run lint`、`npm run build`，全部通过
+  - 更新 `TODO.md` / `PROJECT_SUMMARY.md` / `WORKLOG.md` / `project_memory.md` / `checklist.md` / `tasks.md`
+- **风险说明：** 无
+
+### 验证方式
+
+| 验证项 | 命令 | 结果 |
+|--------|------|------|
+| 单元测试 | `npm run test:run` | ✅ 186 个测试文件，2956 个测试全部通过，耗时 37.95s |
+| ESLint | `npm run lint` | ✅ 0 错误 / 0 警告 |
+| 生产构建 | `npm run build` | ✅ 873ms 构建成功，`check-bundle.js` 预算检查通过 |
+| Bundle 尺寸 | build 输出 | index 108.29 kB / vendor-react 230.30 kB / vendor-d3 52.54 kB |
+| 大数据流畅性 | dev server 手动验证 | 数组 50+ / 图 20+ / 树 30+ 节点操作流畅 |
+
+### 修改文件清单
+
+| 文件 | 类型 | 修改内容 |
+|------|------|---------|
+| `src/utils/performanceConfig.ts` | 新增 | 统一性能阈值配置与 `shouldSkipAnimation` 辅助函数 |
+| `src/__tests__/utils/performanceConfig.test.ts` | 新增 | 阈值配置单元测试 |
+| `src/visualizers/arrayVisualizer.ts` | 修改 | 移除硬编码阈值；transform/opacity 动画迁移；大数据 early return |
+| `src/visualizers/graphVisualizer.ts` | 修改 | 移除硬编码阈值；力导向 tick 使用 transform 更新 |
+| `src/visualizers/treeVisualizer.ts` | 修改 | 引用统一性能配置 |
+| `src/visualizers/heapVisualizer.ts` | 修改 | 引用统一性能配置 |
+| `src/visualizers/hashVisualizer.ts` | 修改 | 引用统一性能配置 |
+| `src/visualizers/linkedListVisualizer.ts` | 修改 | 引用统一性能配置 |
+| `src/visualizers/stackVisualizer.ts` | 修改 | 引用统一性能配置 |
+| `src/visualizers/queueVisualizer.ts` | 修改 | 引用统一性能配置 |
+| `src/utils/animationEngine.ts` | 修改 | FPS 自动降级、`isFPSDegraded()`、`measureRender` 包装 |
+| `src/__tests__/animationEngine.test.ts` | 修改 | FPS 自动降级场景测试 |
+| `src/__tests__/visualizers/arrayVisualizer.test.ts` | 修改 | transform/opacity 动画属性测试 |
+| `src/__tests__/visualizers/graphVisualizer.test.ts` | 修改 | tick 不修改 line 坐标属性测试 |
+| `src/components/Visualizer.tsx` | 修改 | `renderArray` / `renderGraph` / `renderTree` 入口使用 `measureRender` 包装 |
+| `TODO.md` | 修改 | Phase U1 状态更新为 ✅ |
+| `PROJECT_SUMMARY.md` | 修改 | Phase U1 完成状态与验证基线 |
+| `.trae/specs/optimize-animation-performance/checklist.md` | 修改 | 勾选全部完成项 |
+| `.trae/specs/optimize-animation-performance/tasks.md` | 修改 | Task 7 完成 |
+
+### 下一步建议
+
+1. 继续中期 P2 项：响应式操作面板重构（小屏 OperationBar 折叠/底部抽屉）
+2. 继续 Phase D 功能扩展：Bellman-Ford/Floyd-Warshall/Prim/Kruskal 图算法 + TimSort/ShellSort/CombSort 排序算法
+3. 评估 doublyLinkedList 页面创建
+
+---
+
+## 2026-06-18 | UI 美化 Phase 3：构建完整 Design Token 体系
+
+### 执行概要
+
+基于 `docs/项目视觉设计审查报告.md` 的长期 UI 美化计划，在 Phase 1（原子组件统一 + 对比度修复）和 Phase 2（视口单位/滚动策略/焦点反馈统一）完成后，继续实施 Phase 3：构建完整 Design Token 体系。通过语义化 token、主题完整调色板、按钮语义变体、卡片统一、SVG 字体 token 化等手段，显著提升视觉一致性与主题氛围差异。
+
+### 完成内容
+
+#### Phase 1：统一原子组件与对比度修复 [P0/P1]
+- **修改原因：** 项目缺少通用 Button/Card 原子组件，placeholder / disabled / 副标题文字对比度不足
+- **修改内容：**
+  - 新建/完善 `src/components/Button.tsx` 与 `src/components/Card.tsx`
+  - 修复 `OperationInput` placeholder、disabled 按钮、副标题文字对比度至 WCAG 2 AA
+- **风险说明：** 纯 UI 增强，不影响数据结构与算法逻辑
+
+#### Phase 2：视口单位、滚动策略与焦点反馈统一 [P1]
+- **修改原因：** `h-screen` 在移动端导致高度抖动；侧边栏打开时存在双重滚动；焦点环样式不统一
+- **修改内容：**
+  - `Layout.tsx` / `Sidebar.tsx` / 各页面根节点：`h-screen` → `h-dvh` / `min-h-dvh`
+  - `Sidebar.tsx`：移动端展开时给 `document.body` 加 `overflow-hidden`，关闭/卸载时恢复
+  - `OperationInput` 与侧边栏小按钮统一使用全局 `focus-ring`
+  - `OperationButton` 增加 `isBusy` 状态，`aria-busy="true"` / `aria-disabled="true"`
+- **风险说明：** 仅 CSS 与 ARIA 属性调整，低风险
+
+#### Phase 3：构建完整 Design Token 体系 [P1]
+- **修改原因：** 圆角/阴影/边框多轨并行；按钮变体以颜色命名；主题切换只换强调色；SVG 内硬编码字体
+- **修改内容：**
+  - `src/index.css`：在 `@theme` 中新增语义化颜色 token、圆角 token、硬阴影 token；删除 `shadow-soft` / `shadow-soft-lg`
+  - `src/utils/themeColors.ts`：为 `default / forest / warm / royal` 四套主题定义完整 `paper / ink / surface / muted / accent` 映射
+  - `src/components/Button.tsx`：收敛变体为 `primary / secondary / danger / success / warning / info / ghost`
+  - `src/components/OperationBar.tsx`：移除 `purple / teal / accent / amber` 颜色名变体与映射
+  - `src/components/Card.tsx` / `Home.tsx` / `GraphAlgorithmPage.tsx` / `ComplexityChart.tsx`：统一卡片样式，移除 `border-l-4` 侧条与 `border-dashed`
+  - `src/visualizers/arrayVisualizer.ts` / `trieVisualizer.ts`：SVG 字体通过 CSS 变量注入
+  - 新增/更新 token、主题、Button、OperationButton、visualizer 字体相关单元测试
+- **风险说明：** 涉及全局 CSS token 与大量组件样式引用，视觉回归风险中等；通过全量测试与构建验证控制
+
+### 验证方式
+
+| 验证项 | 命令 | 结果 |
+|--------|------|------|
+| 单元测试 | `npm run test:run` | ✅ 2929 passed（185 文件） |
+| ESLint | `npm run lint` | ✅ 0 错误 / 0 警告 |
+| 生产构建 | `npm run build` | ✅ 成功，bundle 预算符合 |
+| light/dark 模式 | dev server 手动检查 | ✅ 修复后页面背景、表面色、边框色、强调色同步变化 |
+| 四套主题 | dev server 手动检查 | ✅ default/forest/warm/royal 整体氛围差异明显 |
+
+### 验证过程中发现并修复的问题
+
+#### 暗色模式未生效
+- **发现时机：** dev server 手动验证阶段
+- **根因：** Tailwind CSS v4 默认使用 `prefers-color-scheme` 媒体查询作为 `dark:` 变体，而项目通过 `useTheme` hook 在 `html` 元素上切换 `.dark` class。未配置 class-based dark variant 导致 `html.dark` 切换对 `dark:bg-dark-paper` 等工具类不生效。
+- **修复文件：** `src/index.css`
+- **修复内容：** 在 `@import 'tailwindcss';` 后添加 `@variant dark (&:where(.dark, .dark *));`，使 `dark:` 变体响应 `.dark` class
+- **修复后验证：** 背景色从 `#faf8f5` 正确切换为 `#0f172a`，文字/卡片/边框同步反转；forest/warm/royal 主题在 dark 模式下也呈现对应深色基调。
+
+### 修改文件清单（Phase 3 核心）
+
+| 文件 | 类型 | 修改内容 |
+|------|------|---------|
+| `src/index.css` | 修改 | 新增语义化颜色/圆角/硬阴影 token，删除 soft 阴影；验证阶段补充 `@variant dark` 修复暗色模式 |
+| `src/utils/themeColors.ts` | 修改 | 四套主题完整 surface token 映射 |
+| `src/components/Button.tsx` | 修改 | 语义变体收敛 |
+| `src/components/OperationBar.tsx` | 修改 | 移除颜色名变体映射 |
+| `src/components/Card.tsx` | 修改 | token 化 `variant / shadow / radius` 属性 |
+| `src/pages/Home.tsx` | 修改 | 移除 `border-l-4`，统一使用 `Card` |
+| `src/pages/GraphAlgorithmPage.tsx` | 修改 | 卡片与边框统一 |
+| `src/components/ComplexityChart.tsx` | 修改 | 移除不一致边框/阴影 |
+| `src/components/OperationGroup.tsx` | 修改 | 移除 `border-dashed`，统一边框语义 |
+| `src/visualizers/arrayVisualizer.ts` | 修改 | SVG 字体 CSS 变量注入 |
+| `src/visualizers/trieVisualizer.ts` | 修改 | SVG 字体 CSS 变量注入 |
+| `src/__tests__/themeColors.test.ts` | 修改 | 主题 token 对比度测试 |
+| `src/__tests__/components/Button.test.tsx` | 修改 | 语义变体测试 |
+| `src/__tests__/components/OperationButton.test.tsx` | 修改 | `aria-busy` / `aria-disabled` 测试 |
+
+### 下一步建议
+
+1. 继续中期 P1 项：动画性能优化与大数据降级
+2. 继续中期 P2 项：响应式操作面板重构
+3. 补齐条件禁用按钮的 `title` / `aria-describedby` 原因说明（可选）
+
+---
+
 ## 2026-06-18 | v9.0 全面迭代优化
 
 ### 执行概要

@@ -1,7 +1,8 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import PageHeader from '../components/PageHeader'
 import OperationBar, { OperationButton, OperationInfo } from '../components/OperationBar'
 import LogPanel from '../components/LogPanel'
+import Timeline from '../components/Timeline'
 import SpeedControl from '../components/SpeedControl'
 import PerformanceChart from '../components/PerformanceChart'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
@@ -76,8 +77,8 @@ function ComparePanel({ algoKey, algorithm, data, svgRef, onDimensions, result }
   }, [svgRef])
 
   return (
-    <div className="border-2 border-ink dark:border-dark-border bg-white dark:bg-slate overflow-hidden shadow-button dark:shadow-button-dark">
-      <div className="p-2 border-b-2 border-ink dark:border-dark-border bg-paper dark:bg-slate">
+    <div className="border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface overflow-hidden shadow-button dark:shadow-button-dark">
+      <div className="p-2 border-b-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper">
         <div className="flex items-center gap-2">
           <span className="text-base">{algorithm.icon}</span>
           <span className="font-bold text-xs text-ink dark:text-dark-ink">{algorithm.nameKey ? t(algorithm.nameKey) : algorithm.name}</span>
@@ -98,7 +99,7 @@ function ComparePanel({ algoKey, algorithm, data, svgRef, onDimensions, result }
         {result?.progress !== undefined && result.progress < 100 && (
           <div className="mt-1 h-1 bg-border dark:bg-dark-border overflow-hidden">
             <div
-              className="h-full bg-accent-emerald transition-all duration-100"
+              className="h-full bg-accent-blue transition-all duration-100"
               style={{ width: `${Math.min(100, result.progress)}%` }}
             />
           </div>
@@ -287,38 +288,43 @@ export default function SortComparePage() {
   const allAlgorithms = Array.from(getAllSortAlgorithms().entries())
   const allDone = selectedAlgos.length > 0 && selectedAlgos.every(k => algoResults[k]?.done)
 
+  const timelineHistory = useMemo(() =>
+    logs.map(log => ({ type: log.type, description: log.message })),
+    [logs]
+  )
+
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('compare.title')} subtitle={t('compare.subtitle')}>
-        <OperationButton variant="outline" onClick={handleReset}>{t('compare.reset')}</OperationButton>
+        <OperationButton variant="secondary" onClick={handleReset}>{t('compare.reset')}</OperationButton>
       </PageHeader>
 
       <OperationBar>
         <SpeedControl />
-        <OperationButton variant="primary" onClick={handleRunAll} disabled={isRunning || selectedAlgos.length === 0}>
+        <OperationButton variant="primary" onClick={handleRunAll} disabled={isRunning || selectedAlgos.length === 0} isBusy={isRunning}>
           {t('compare.runAll')}
         </OperationButton>
-        <OperationButton variant="outline" onClick={handleStop} disabled={!isRunning}>
+        <OperationButton variant="secondary" onClick={handleStop} disabled={!isRunning}>
           {t('common.stop')}
         </OperationButton>
-        <OperationButton variant="outline" onClick={handleRandomize} disabled={isRunning}>
+        <OperationButton variant="secondary" onClick={handleRandomize} disabled={isRunning} isBusy={isRunning}>
           {t('compare.randomize')}
         </OperationButton>
         {allDone && (
           <div className="relative" ref={exportMenuRef}>
-            <OperationButton variant="outline" onClick={() => setShowExportMenu(!showExportMenu)}>
+            <OperationButton variant="secondary" onClick={() => setShowExportMenu(!showExportMenu)}>
               {t('compare.exportResults')}
             </OperationButton>
             {showExportMenu && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark z-10 min-w-[120px]">
+              <div className="absolute top-full left-0 mt-1 bg-surface dark:bg-dark-surface border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark z-10 min-w-[120px]">
                 <button
-                  className="w-full px-3 py-2 text-left text-sm text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light transition-colors"
+                  className="w-full px-3 py-2 text-left text-sm text-ink dark:text-dark-ink hover:bg-muted dark:hover:bg-dark-muted transition-colors"
                   onClick={handleExportCSV}
                 >
                   {t('compare.exportCSV')}
                 </button>
                 <button
-                  className="w-full px-3 py-2 text-left text-sm text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light transition-colors border-t border-border dark:border-dark-border"
+                  className="w-full px-3 py-2 text-left text-sm text-ink dark:text-dark-ink hover:bg-muted dark:hover:bg-dark-muted transition-colors border-t border-border dark:border-dark-border"
                   onClick={handleExportJSON}
                 >
                   {t('compare.exportJSON')}
@@ -349,8 +355,8 @@ export default function SortComparePage() {
                 className={`
                   p-2 border-2 cursor-pointer transition-all text-center
                   ${isSelected
-                    ? 'border-ink dark:border-dark-border bg-white dark:bg-slate'
-                    : 'border-border dark:border-dark-border bg-paper-warm dark:bg-slate opacity-50'
+                    ? 'border-ink dark:border-dark-border bg-surface dark:bg-dark-surface'
+                    : 'border-border dark:border-dark-border bg-muted dark:bg-dark-muted opacity-50'
                   }
                   ${isRunning ? 'pointer-events-none' : ''}
                 `}
@@ -403,6 +409,7 @@ export default function SortComparePage() {
         )}
       </div>
 
+      <Timeline history={timelineHistory} currentIndex={Math.max(0, timelineHistory.length - 1)} />
       <LogPanel logs={logs} />
     </div>
   )

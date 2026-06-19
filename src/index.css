@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* 使用 class-based dark mode：useTheme hook 通过 html.dark 控制 */
+@variant dark (&:where(.dark, .dark *));
+
 @layer base {
   button, a, input, select, textarea, [role="button"] {
     touch-action: manipulation;
@@ -14,13 +17,23 @@
   --font-display: 'Noto Sans SC', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
+  /* Light semantic colors */
   --color-paper: #faf8f5;
   --color-ink: #1a1a2e;
   --color-ink-light: #4a4a6a;
-  --color-slate: #2d2d44;
-  --color-slate-light: #3d3d5c;
-  --color-paper-warm: #f5f3ef;
-  --color-accent-blue: #2563eb;
+  --color-surface: #ffffff;
+  --color-surface-strong: #f5f3ef;
+  --color-muted: #f5f3ef;
+  --color-muted-foreground: #6b6b80;
+  --color-subtle: #fbfaf8;
+  --color-info: #2563eb;
+  --color-border: #e5e0d8;
+  --color-border-subtle: #efebe5;
+  --color-border-strong: #d4d2cc;
+  --color-accent: #2563eb;
+  --color-accent-foreground: #ffffff;
+
+  /* Auxiliary accent colors (for D3 visualizers) */
   --color-accent-teal: #0d9488;
   --color-accent-rose: #dc2626;
   --color-accent-amber: #d97706;
@@ -28,9 +41,55 @@
   --color-accent-emerald: #059669;
   --color-accent-cyan: #0891b2;
   --color-accent-pink: #db2777;
-  --color-border: #e5e0d8;
+
+  /* Legacy compatibility tokens */
+  --color-slate: #2d2d44;
+  --color-slate-light: #3d3d5c;
+  --color-paper-warm: #f5f3ef;
+  --color-accent-blue: #2563eb;
   --color-border-dark: #2d2d44;
 
+  /* Dark semantic colors */
+  --color-dark-paper: #0f172a;
+  --color-dark-ink: #e2e8f0;
+  --color-dark-ink-light: #b4c0d4;
+  --color-dark-surface: #1e293b;
+  --color-dark-surface-strong: #334155;
+  --color-dark-muted: #334155;
+  --color-dark-muted-foreground: #94a3b8;
+  --color-dark-subtle: #0f172a;
+  --color-dark-info: #60a5fa;
+  --color-dark-border: #334155;
+  --color-dark-border-subtle: #1e293b;
+  --color-dark-border-strong: #475569;
+  --color-dark-accent: #60a5fa;
+  --color-dark-accent-foreground: #0f172a;
+
+  /* Accessibility contrast tokens */
+  --color-text-placeholder: #6b6b80;
+  --color-text-placeholder-dark: #9ca3af;
+  --color-text-disabled: #6b6b80;
+  --color-text-disabled-dark: #9ca3af;
+  --color-bg-disabled: #e8e6e3;
+  --color-bg-disabled-dark: #1e293b;
+  --color-border-disabled: #d4d2cc;
+  --color-border-disabled-dark: #334155;
+
+  /* Radius */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-full: 9999px;
+
+  /* Hard shadows */
+  --shadow-hard-sm: 2px 2px 0px #1a1a2e;
+  --shadow-hard-sm-hover: 3px 3px 0px #1a1a2e;
+  --shadow-hard-md: 3px 3px 0px #1a1a2e;
+  --shadow-hard-md-hover: 5px 5px 0px #2563eb;
+  --shadow-hard-lg: 5px 5px 0px #1a1a2e;
+  --shadow-hard-lg-hover: 7px 7px 0px #2563eb;
+
+  /* Legacy shadow aliases */
   --shadow-card: 3px 3px 0px #1a1a2e;
   --shadow-card-hover: 5px 5px 0px #2563eb;
   --shadow-button: 2px 2px 0px #1a1a2e;
@@ -39,15 +98,9 @@
   --shadow-card-dark-hover: 5px 5px 0px #3b82f6;
   --shadow-button-dark: 2px 2px 0px #334155;
   --shadow-button-dark-hover: 3px 3px 0px #334155;
-  --shadow-soft: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
-  --shadow-soft-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
-
-  --color-dark-paper: #0f172a;
-  --color-dark-ink: #e2e8f0;
-  --color-dark-ink-light: #b4c0d4;
-  --color-dark-border: #334155;
 
   --animate-fade-in: fade-in 0.4s ease-out;
+  --animate-spin: spin 1s linear infinite;
   --animate-slide-up: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   --animate-slide-down: slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   --animate-pop: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -102,6 +155,10 @@
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
   @keyframes heap-violation-pulse {
     0% { stroke-dashoffset: 0; stroke-opacity: 0.7; }

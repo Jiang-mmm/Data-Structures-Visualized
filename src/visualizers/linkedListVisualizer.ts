@@ -2,11 +2,11 @@ import { select } from '../utils/d3Imports'
 import { duration, EASING, transitionEnd, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
+import { shouldSkipAnimation } from '../utils/performanceConfig'
 
 const NODE_RADIUS = 24
 const NODE_GAP = 80
 const BASE_DURATION = 350
-const LARGE_DATA_THRESHOLD = 30
 
 interface LLOptions {
   width: number
@@ -79,7 +79,7 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
       .attr('stroke', C.nodeRootStroke).attr('stroke-width', 1).attr('stroke-opacity', 0.3)
     container.append('text').attr('x', headX - boxW / 2).attr('y', cy + 5)
       .attr('text-anchor', 'middle').attr('fill', C.nodeRootStroke).attr('font-size', '11px').attr('font-weight', 'bold')
-      .attr('font-family', "'JetBrains Mono', monospace")
+      .attr('font-family', 'var(--font-display)')
       .text(tStatic('linkedlist.headLabel'))
     // Arrow
     container.append('line')
@@ -90,7 +90,7 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
     const nullX = headX + 2 + arrowLen + 20
     container.append('text').attr('x', nullX).attr('y', cy + 5)
       .attr('text-anchor', 'middle').attr('fill', C.textMuted).attr('font-size', '12px').attr('font-weight', 'bold')
-      .attr('font-family', "'JetBrains Mono', monospace")
+      .attr('font-family', 'var(--font-mono)')
       .text('NULL')
     return
   }
@@ -110,7 +110,7 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
     .attr('stroke', C.nodeRootStroke).attr('stroke-width', 1).attr('stroke-opacity', 0.3)
   container.append('text').attr('x', headBoxRight - headBoxWidth / 2).attr('y', startY + 5)
     .attr('text-anchor', 'middle').attr('fill', C.nodeRootStroke).attr('font-size', '11px').attr('font-weight', 'bold')
-    .attr('font-family', "'JetBrains Mono', monospace")
+    .attr('font-family', 'var(--font-display)')
     .text(tStatic('linkedlist.headLabel'))
 
   // Arrow from HEAD box to first node
@@ -178,7 +178,7 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
     .attr('fill', C.containerStroke).attr('opacity', 0.15)
   container.append('text').attr('x', nullLabelX + 15).attr('y', startY + 5)
     .attr('text-anchor', 'middle').attr('fill', C.textMuted).attr('font-size', '12px').attr('font-weight', 'bold')
-    .attr('font-family', "'JetBrains Mono', monospace")
+    .attr('font-family', 'var(--font-mono)')
     .text('NULL')
 }
 
@@ -189,7 +189,7 @@ export function renderLinkedList(svg: SVGSVGElement, data: number[], options: LL
  * @param {Array} data - 当前链表数据
  */
 export async function animateInsertHead(svg: SVGSVGElement, value: number, data: number[], options: LLOptions = {} as LLOptions, anim?: Animation) {
-  if (data.length >= LARGE_DATA_THRESHOLD) return
+  if (shouldSkipAnimation('linkedList', data.length)) return
   const container = select(svg)
   const { width, height } = options
   const isDark = detectDarkMode()
@@ -208,9 +208,9 @@ export async function animateInsertHead(svg: SVGSVGElement, value: number, data:
   newGroup.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
     .attr('fill', C.textWhite).attr('font-size', Math.max(10, Math.min(14, r * 0.6)) + 'px').attr('font-weight', 'bold').text(value)
 
-  // Phase 1: Enter with overshoot bounce
+  // Phase 1: Enter with position movement (cubic) + overshoot scale (back)
   await transitionEnd(
-    newGroup.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutBack)
+    newGroup.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${startX}, ${startY}) scale(1.15)`)
       .attr('opacity', 1)
   )
@@ -219,7 +219,7 @@ export async function animateInsertHead(svg: SVGSVGElement, value: number, data:
 
   // Phase 2: Settle to normal size
   await transitionEnd(
-    newGroup.transition().duration(duration(200)).ease(EASING.easeOutCubic)
+    newGroup.transition().duration(duration(200)).ease(EASING.easeOutBack)
       .attr('transform', `translate(${startX}, ${startY}) scale(1)`)
   )
   await transitionEnd(
@@ -235,7 +235,7 @@ export async function animateInsertHead(svg: SVGSVGElement, value: number, data:
  * @param {Array} data - 当前链表数据
  */
 export async function animateInsertTail(svg: SVGSVGElement, value: number, data: number[], options: LLOptions = {} as LLOptions, anim?: Animation) {
-  if (data.length >= LARGE_DATA_THRESHOLD) return
+  if (shouldSkipAnimation('linkedList', data.length)) return
   const container = select(svg)
   const { width, height } = options
   const isDark = detectDarkMode()
@@ -255,9 +255,9 @@ export async function animateInsertTail(svg: SVGSVGElement, value: number, data:
   newGroup.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
     .attr('fill', C.textWhite).attr('font-size', Math.max(10, Math.min(14, r * 0.6)) + 'px').attr('font-weight', 'bold').text(value)
 
-  // Phase 1: Enter with overshoot bounce
+  // Phase 1: Enter with position movement (cubic) + overshoot scale (back)
   await transitionEnd(
-    newGroup.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutBack)
+    newGroup.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${lastX}, ${startY}) scale(1.15)`)
       .attr('opacity', 1)
   )
@@ -266,7 +266,7 @@ export async function animateInsertTail(svg: SVGSVGElement, value: number, data:
 
   // Phase 2: Settle to normal size
   await transitionEnd(
-    newGroup.transition().duration(duration(200)).ease(EASING.easeOutCubic)
+    newGroup.transition().duration(duration(200)).ease(EASING.easeOutBack)
       .attr('transform', `translate(${lastX}, ${startY}) scale(1)`)
   )
   await transitionEnd(
@@ -282,7 +282,7 @@ export async function animateInsertTail(svg: SVGSVGElement, value: number, data:
  * @param {Array} data - 当前链表数据
  */
 export async function animateDeleteNode(svg: SVGSVGElement, index: number, data: number[], options: LLOptions = {} as LLOptions, anim?: Animation) {
-  if (data.length >= LARGE_DATA_THRESHOLD) return
+  if (shouldSkipAnimation('linkedList', data.length)) return
   const container = select(svg)
   const { width, height } = options
   const isDark = detectDarkMode()
@@ -319,7 +319,7 @@ export async function animateDeleteNode(svg: SVGSVGElement, index: number, data:
  * @param {Array} data - 当前链表数据
  */
 export async function animateSearchNode(svg: SVGSVGElement, index: number, data: number[], options: LLOptions, anim?: Animation) {
-  if (data.length >= LARGE_DATA_THRESHOLD) return
+  if (shouldSkipAnimation('linkedList', data.length)) return
   const container = select(svg)
   const isDark = detectDarkMode()
   const C = getColors(isDark)
@@ -365,7 +365,7 @@ export async function animateSearchNode(svg: SVGSVGElement, index: number, data:
  * @param {Array} data - 当前链表数据
  */
 export async function animateInsertAt(svg: SVGSVGElement, index: number, value: number, data: number[], options: LLOptions = {} as LLOptions, anim?: Animation) {
-  if (data.length >= LARGE_DATA_THRESHOLD) return
+  if (shouldSkipAnimation('linkedList', data.length)) return
   const container = select(svg)
   const { width, height } = options
   const isDark = detectDarkMode()
@@ -386,9 +386,9 @@ export async function animateInsertAt(svg: SVGSVGElement, index: number, value: 
   newGroup.append('text').attr('dy', '0.35em').attr('text-anchor', 'middle')
     .attr('fill', C.textWhite).attr('font-size', Math.max(10, Math.min(14, r * 0.6)) + 'px').attr('font-weight', 'bold').text(value)
 
-  // Phase 1: Enter with overshoot bounce
+  // Phase 1: Enter with position movement (cubic) + overshoot scale (back)
   await transitionEnd(
-    newGroup.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutBack)
+    newGroup.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${targetX}, ${startY}) scale(1.15)`)
       .attr('opacity', 1)
   )
@@ -397,7 +397,7 @@ export async function animateInsertAt(svg: SVGSVGElement, index: number, value: 
 
   // Phase 2: Settle to normal size
   await transitionEnd(
-    newGroup.transition().duration(duration(200)).ease(EASING.easeOutCubic)
+    newGroup.transition().duration(duration(200)).ease(EASING.easeOutBack)
       .attr('transform', `translate(${targetX}, ${startY}) scale(1)`)
   )
   await transitionEnd(
@@ -412,7 +412,7 @@ export async function animateInsertAt(svg: SVGSVGElement, index: number, value: 
  * @param {Array} data - 当前链表数据
  */
 export async function animateReverse(svg: SVGSVGElement, data: number[], options: LLOptions = {} as LLOptions, anim?: Animation) {
-  if (data.length >= LARGE_DATA_THRESHOLD) return
+  if (shouldSkipAnimation('linkedList', data.length)) return
   const container = select(svg)
   const { width, height } = options
   const isDark = detectDarkMode()

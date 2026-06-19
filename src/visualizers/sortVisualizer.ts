@@ -94,7 +94,18 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
             .attr('fill', C.textWhite)
             .attr('font-size', n > 30 ? '8px' : n > 15 ? '9px' : '11px')
             .attr('font-weight', '700')
-            .attr('font-family', 'monospace')
+            .attr('font-family', 'var(--font-mono)')
+            .text(n > 50 ? '' : (_d: number, i: number) => i)
+
+          g.append('text')
+            .attr('class', 'bar-index-bottom')
+            .attr('x', barWidth / 2)
+            .attr('y', height - 30)
+            .attr('text-anchor', 'middle')
+            .attr('fill', C.textLight)
+            .attr('font-size', n > 30 ? '8px' : n > 15 ? '9px' : '11px')
+            .attr('font-weight', '500')
+            .attr('font-family', 'var(--font-mono)')
             .text(n > 50 ? '' : (_d: number, i: number) => i)
 
           return g
@@ -108,7 +119,13 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
             .attr('stroke', C.sortDefaultStroke)
             .attr('stroke-width', 1.5)
 
-          return update.transition().duration(duration(200))
+          update.select('text.bar-index-bottom')
+            .attr('y', height - 30)
+            .attr('fill', C.textLight)
+            .attr('font-size', n > 30 ? '8px' : n > 15 ? '9px' : '11px')
+            .text(n > 50 ? '' : (_d: number, i: number) => i)
+
+          return update.transition().duration(duration(200)).ease(EASING.easeOutCubic)
             .attr('transform', (_d: number, i: number) => `translate(${indexToX(i, barWidth, gap, offsetX)}, 0)`)
         },
         (exit: any) => exit.transition().duration(duration(200)).attr('opacity', 0).remove()
@@ -118,7 +135,7 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
 
 function renderSortBarsImmediate(_svg: SVGSVGElement, data: number[], options: SortOptions, container: ReturnType<typeof select>, layout: LayoutResult & { C: ReturnType<typeof getColors> }): void {
   const { height } = options
-  const { barWidth, maxBarHeight, maxVal, gap, offsetX, C } = layout
+  const { barWidth, maxBarHeight, maxVal, gap, offsetX, n, C } = layout
 
 
   container.selectAll('g.bar')
@@ -147,8 +164,19 @@ function renderSortBarsImmediate(_svg: SVGSVGElement, data: number[], options: S
           .attr('fill', C.textWhite)
           .attr('font-size', '11px')
           .attr('font-weight', '700')
-          .attr('font-family', 'monospace')
+          .attr('font-family', 'var(--font-mono)')
           .text((_d: number, i: number) => i)
+
+        g.append('text')
+          .attr('class', 'bar-index-bottom')
+          .attr('x', barWidth / 2)
+          .attr('y', height - 30)
+          .attr('text-anchor', 'middle')
+          .attr('fill', C.textLight)
+          .attr('font-size', n > 30 ? '8px' : '11px')
+          .attr('font-weight', '500')
+          .attr('font-family', 'var(--font-mono)')
+          .text(n > 50 ? '' : (_d: number, i: number) => i)
 
         return g
       },
@@ -159,6 +187,12 @@ function renderSortBarsImmediate(_svg: SVGSVGElement, data: number[], options: S
           .attr('fill', gradUrl('bar-default'))
           .attr('stroke', C.sortDefaultStroke)
           .attr('stroke-width', 1.5)
+
+        update.select('text.bar-index-bottom')
+          .attr('y', height - 30)
+          .attr('fill', C.textLight)
+          .attr('font-size', n > 30 ? '8px' : '11px')
+          .text(n > 50 ? '' : (_d: number, i: number) => i)
 
         return update
           .attr('transform', (_d: number, i: number) => `translate(${indexToX(i, barWidth, gap, offsetX)}, 0)`)
@@ -244,33 +278,33 @@ export async function animateSwap(svg: SVGSVGElement, i: number, j: number, data
   if (anim?.isAborted?.()) return
 
   await transitionEnd(
-    barI.transition().duration(duration(250)).ease(EASING.easeOutBack)
+    barI.transition().duration(duration(250)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${xI}, ${liftY})`)
   )
   await transitionEnd(
-    barJ.transition().duration(duration(250)).ease(EASING.easeOutBack)
+    barJ.transition().duration(duration(250)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${xJ}, ${liftY})`)
   )
 
   if (anim?.isAborted?.()) return
 
   await transitionEnd(
-    barI.transition().duration(duration(300)).ease(EASING.easeInOut)
+    barI.transition().duration(duration(300)).ease(EASING.easeInOutCubic)
       .attr('transform', `translate(${midX}, ${-arcHeight})`)
   )
   await transitionEnd(
-    barJ.transition().duration(duration(300)).ease(EASING.easeInOut)
+    barJ.transition().duration(duration(300)).ease(EASING.easeInOutCubic)
       .attr('transform', `translate(${midX}, ${arcHeight})`)
   )
 
   if (anim?.isAborted?.()) return
 
   await transitionEnd(
-    barI.transition().duration(duration(400)).ease(EASING.easeOutBack)
+    barI.transition().duration(duration(400)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${xJ}, 0)`)
   )
   await transitionEnd(
-    barJ.transition().duration(duration(400)).ease(EASING.easeOutBack)
+    barJ.transition().duration(duration(400)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${xI}, 0)`)
   )
 

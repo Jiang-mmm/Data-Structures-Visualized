@@ -2,13 +2,13 @@ import { select } from '../utils/d3Imports'
 import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
+import { shouldSkipAnimation } from '../utils/performanceConfig'
 
 const BUCKET_HEIGHT = 48
 const BUCKET_WIDTH = 56
 const ENTRY_RADIUS = 18
 const GAP_Y = 52
 const BUCKET_GROUP_GAP = 20
-const LARGE_DATA_THRESHOLD = 50
 const MAX_CHAIN_DISPLAY = 5
 
 interface HashEntry {
@@ -83,7 +83,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       .attr('x', BUCKET_WIDTH / 2).attr('y', -8)
       .attr('text-anchor', 'middle')
       .attr('fill', C.textMuted).attr('font-size', '11px').attr('font-weight', '600')
-      .attr('font-family', 'JetBrains Mono, monospace')
+      .attr('font-family', 'var(--font-mono)')
       .text(`[${bi}]`)
 
     // Bucket box
@@ -171,7 +171,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       entryGroup.append('text')
         .attr('dy', '-0.2em').attr('text-anchor', 'middle')
         .attr('fill', C.textWhite).attr('font-size', '12px').attr('font-weight', 'bold')
-        .attr('font-family', 'JetBrains Mono, monospace')
+        .attr('font-family', 'var(--font-mono)')
         .text(entry.key)
 
       // Value text (below circle, not inside)
@@ -257,10 +257,10 @@ export async function animateInsertHash(svg: SVGSVGElement, key: number | string
     circle.attr('opacity', 0)
     texts.attr('opacity', 0)
 
-    // Drop down with bounce
+    // Drop down with smooth cubic movement
     await transitionEnd(
       entryGroup
-        .transition().duration(duration(350)).ease(EASING.easeOutBack)
+        .transition().duration(duration(350)).ease(EASING.easeOutCubic)
         .attr('transform', originalTransform)
         .attr('opacity', 1)
     )
@@ -286,7 +286,7 @@ export async function animateInsertHash(svg: SVGSVGElement, key: number | string
 }
 
 export async function animateSearchHash(svg: SVGSVGElement, key: number | string, found: boolean, data: HashEntry[], options: HashVisualizerOptions = {} as HashVisualizerOptions, anim?: Animation) {
-  if (data.length >= LARGE_DATA_THRESHOLD) return
+  if (shouldSkipAnimation('hash', data.length)) return
   if (anim?.isAborted?.()) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
@@ -360,7 +360,7 @@ export async function animateSearchHash(svg: SVGSVGElement, key: number | string
 }
 
 export async function animateDeleteHash(svg: SVGSVGElement, key: number | string, data: HashEntry[], options: HashVisualizerOptions = {} as HashVisualizerOptions, anim?: Animation) {
-  if (data.length >= LARGE_DATA_THRESHOLD) return
+  if (shouldSkipAnimation('hash', data.length)) return
   if (anim?.isAborted?.()) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)

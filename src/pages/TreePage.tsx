@@ -163,7 +163,7 @@ export default function TreePage() {
   }, [reset])
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('tree.title')} subtitle={t('tree.subtitle')}>
         <ExportImport dataType="tree" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           const result = validateImportData(imported)
@@ -174,35 +174,35 @@ export default function TreePage() {
           }
         }} />
         <ShareButton data={data} dataType="tree" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={handleReset}>{t('common.reset')}</OperationButton>
+        <OperationButton variant="secondary" onClick={handleReset}>{t('common.reset')}</OperationButton>
       </PageHeader>
       <OperationBar>
         <SpeedControl />
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
-        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('tree.insert')}</OperationButton>
-        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('common.delete')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating || isDelaying} isBusy={isAnimating || isDelaying}>{t('tree.insert')}</OperationButton>
+        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating || isDelaying} isBusy={isAnimating || isDelaying}>{t('common.delete')}</OperationButton>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={searchValue} onChange={setSearchValue} />
-        <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating}>{t('tree.search')}</OperationButton>
-        <OperationButton variant="purple" onClick={() => handleTraversal(preorder)} disabled={isAnimating || isDelaying} popAnimation>{t('tree.preorder')}</OperationButton>
-        <OperationButton variant="purple" onClick={() => handleTraversal(inorder)} disabled={isAnimating || isDelaying} popAnimation>{t('tree.inorder')}</OperationButton>
-        {(isAnimating || isDelaying) && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        <OperationButton variant="warning" onClick={handleSearch} disabled={isAnimating || isDelaying} isBusy={isAnimating || isDelaying}>{t('tree.search')}</OperationButton>
+        <OperationButton variant="primary" onClick={() => handleTraversal(preorder)} disabled={isAnimating || isDelaying} isBusy={isAnimating || isDelaying} popAnimation>{t('tree.preorder')}</OperationButton>
+        <OperationButton variant="primary" onClick={() => handleTraversal(inorder)} disabled={isAnimating || isDelaying} isBusy={isAnimating || isDelaying} popAnimation>{t('tree.inorder')}</OperationButton>
+        {(isAnimating || isDelaying) && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <OperationGroup label={t('common.more')}>
-          <OperationButton variant="purple" onClick={() => handleTraversal(postorder)} disabled={isAnimating || isDelaying} popAnimation>{t('tree.postorder')}</OperationButton>
-          <OperationButton variant="purple" onClick={handleLevelOrder} disabled={isAnimating || isDelaying} popAnimation>{t('tree.levelorder')}</OperationButton>
+          <OperationButton variant="primary" onClick={() => handleTraversal(postorder)} disabled={isAnimating || isDelaying} isBusy={isAnimating || isDelaying} popAnimation>{t('tree.postorder')}</OperationButton>
+          <OperationButton variant="primary" onClick={handleLevelOrder} disabled={isAnimating || isDelaying} isBusy={isAnimating || isDelaying} popAnimation>{t('tree.levelorder')}</OperationButton>
           <OperationButton
-            variant="outline"
+            variant="secondary"
             onClick={() => {
               const next = edgeStyle === 'straight' ? 'curved' : edgeStyle === 'curved' ? 'orthogonal' : 'straight'
               setEdgeStyle(next)
               localStorage.setItem('ds-tree-edge-style', next)
             }}
-            disabled={isAnimating}
+            disabled={isAnimating} isBusy={isAnimating}
           >
             {edgeStyle === 'straight' ? '⤿ ' : edgeStyle === 'curved' ? '⌇ ' : '⊞ '}{t('tree.edgeStyle')}
           </OperationButton>
           <UndoPreviewButton
-            variant="outline"
+            variant="secondary"
             onClick={undo}
             disabled={isAnimating || !canUndo()}
             previewData={getUndoPreview()}
@@ -211,7 +211,7 @@ export default function TreePage() {
             {t('common.undo')}
           </UndoPreviewButton>
           <UndoPreviewButton
-            variant="outline"
+            variant="secondary"
             onClick={redo}
             disabled={isAnimating || !canRedo()}
             previewData={getRedoPreview()}
@@ -230,7 +230,7 @@ export default function TreePage() {
         </OperationInfo>
       </OperationBar>
       <ContentTier structureKey="tree" />
-      <Visualizer data={data} renderFn={renderTree as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.treeLabel")} renderOptions={{ edgeStyle }} overlay={isDelaying ? <AnimationDelayIndicator /> : undefined} />
+      <Visualizer data={data} renderFn={renderTree as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.treeLabel")} renderOptions={{ edgeStyle }} overlay={isDelaying ? <AnimationDelayIndicator /> : undefined} />
       {data.length === 0 && (
         <EmptyState icon="◆" titleKey="emptyState.emptyTree" descriptionKey="emptyState.emptyTreeDesc" onFill={reset} />
       )}

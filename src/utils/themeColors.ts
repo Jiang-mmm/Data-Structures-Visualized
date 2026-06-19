@@ -47,6 +47,28 @@ export interface ThemeColors {
   entryValue: string
 }
 
+/**
+ * 界面表面色 token（与 D3 用色 ThemeColors 分离）
+ * 用于页面背景、卡片表面、边框、强调色等 UI 语义。
+ */
+export interface ThemeSurfaceTokens {
+  paper: string
+  ink: string
+  surface: string
+  surfaceStrong: string
+  muted: string
+  mutedForeground: string
+  subtle: string
+  info: string
+  border: string
+  borderSubtle: string
+  borderStrong: string
+  accent: string
+  accentForeground: string
+  gradientStart: string
+  gradientEnd: string
+}
+
 const palettes: Record<string, { light: ThemeColors; dark: ThemeColors }> = {
   default: {
     light: {
@@ -386,6 +408,153 @@ const palettes: Record<string, { light: ThemeColors; dark: ThemeColors }> = {
   },
 }
 
+const surfacePalettes: Record<string, { light: ThemeSurfaceTokens; dark: ThemeSurfaceTokens }> = {
+  default: {
+    light: {
+      paper: '#faf8f5',
+      ink: '#1a1a2e',
+      surface: '#ffffff',
+      surfaceStrong: '#f5f3ef',
+      muted: '#f5f3ef',
+      mutedForeground: '#6b6b80',
+      subtle: '#fbfaf8',
+      info: '#2563eb',
+      border: '#e5e0d8',
+      borderSubtle: '#efebe5',
+      borderStrong: '#d4d2cc',
+      accent: '#2563eb',
+      accentForeground: '#ffffff',
+      gradientStart: '#2563eb',
+      gradientEnd: '#60a5fa',
+    },
+    dark: {
+      paper: '#0f172a',
+      ink: '#e2e8f0',
+      surface: '#1e293b',
+      surfaceStrong: '#334155',
+      muted: '#334155',
+      mutedForeground: '#94a3b8',
+      subtle: '#0f172a',
+      info: '#60a5fa',
+      border: '#334155',
+      borderSubtle: '#1e293b',
+      borderStrong: '#475569',
+      accent: '#60a5fa',
+      accentForeground: '#0f172a',
+      gradientStart: '#60a5fa',
+      gradientEnd: '#93c5fd',
+    },
+  },
+  forest: {
+    light: {
+      paper: '#f4f9f4',
+      ink: '#122b1e',
+      surface: '#ffffff',
+      surfaceStrong: '#e8f3ea',
+      muted: '#e8f3ea',
+      mutedForeground: '#4a6b55',
+      subtle: '#f4f9f4',
+      info: '#047857',
+      border: '#cfe3d4',
+      borderSubtle: '#e5f0e8',
+      borderStrong: '#9fc6a8',
+      accent: '#047857',
+      accentForeground: '#ffffff',
+      gradientStart: '#047857',
+      gradientEnd: '#34d399',
+    },
+    dark: {
+      paper: '#0b1f14',
+      ink: '#e6f4ea',
+      surface: '#142e1f',
+      surfaceStrong: '#1e4530',
+      muted: '#1e4530',
+      mutedForeground: '#8ab89a',
+      subtle: '#0b1f14',
+      info: '#34d399',
+      border: '#27533b',
+      borderSubtle: '#142e1f',
+      borderStrong: '#3a6b4d',
+      accent: '#34d399',
+      accentForeground: '#0b1f14',
+      gradientStart: '#34d399',
+      gradientEnd: '#86efac',
+    },
+  },
+  warm: {
+    light: {
+      paper: '#faf6f0',
+      ink: '#2a1f16',
+      surface: '#ffffff',
+      surfaceStrong: '#f5efe6',
+      muted: '#f5efe6',
+      mutedForeground: '#7c6550',
+      subtle: '#faf6f0',
+      info: '#c2410c',
+      border: '#e8ddd0',
+      borderSubtle: '#f2ebe1',
+      borderStrong: '#d4c4b0',
+      accent: '#c2410c',
+      accentForeground: '#ffffff',
+      gradientStart: '#c2410c',
+      gradientEnd: '#fb923c',
+    },
+    dark: {
+      paper: '#1f1812',
+      ink: '#f5e9db',
+      surface: '#332922',
+      surfaceStrong: '#4a3b2f',
+      muted: '#4a3b2f',
+      mutedForeground: '#c4a98e',
+      subtle: '#1f1812',
+      info: '#fb923c',
+      border: '#5c4a3d',
+      borderSubtle: '#332922',
+      borderStrong: '#7a6652',
+      accent: '#fb923c',
+      accentForeground: '#1f1812',
+      gradientStart: '#fb923c',
+      gradientEnd: '#fdba74',
+    },
+  },
+  royal: {
+    light: {
+      paper: '#f6f4fa',
+      ink: '#221a33',
+      surface: '#ffffff',
+      surfaceStrong: '#ede9f5',
+      muted: '#ede9f5',
+      mutedForeground: '#665a80',
+      subtle: '#f6f4fa',
+      info: '#7c3aed',
+      border: '#ddd6eb',
+      borderSubtle: '#eeeaf5',
+      borderStrong: '#b8aed0',
+      accent: '#7c3aed',
+      accentForeground: '#ffffff',
+      gradientStart: '#7c3aed',
+      gradientEnd: '#a78bfa',
+    },
+    dark: {
+      paper: '#17122b',
+      ink: '#eae4f7',
+      surface: '#251d40',
+      surfaceStrong: '#352b5a',
+      muted: '#352b5a',
+      mutedForeground: '#a99bc9',
+      subtle: '#17122b',
+      info: '#a78bfa',
+      border: '#453a6b',
+      borderSubtle: '#251d40',
+      borderStrong: '#63548a',
+      accent: '#a78bfa',
+      accentForeground: '#17122b',
+      gradientStart: '#a78bfa',
+      gradientEnd: '#c4b5fd',
+    },
+  },
+}
+
 const availableThemes = [
   { key: 'default', name: '默认', nameKey: 'sidebar.themeDefault', icon: '◉' },
   { key: 'forest', name: '森林', nameKey: 'sidebar.themeForest', icon: '◈' },
@@ -406,25 +575,25 @@ const THEME_CSS_MAP: Record<string, Record<string, string>> = {
     '--shadow-card-dark-hover': '6px 6px 0px #60a5fa',
   },
   forest: {
-    '--color-accent-blue': '#059669',
+    '--color-accent-blue': '#047857',
     '--color-accent-teal': '#0f766e',
     '--color-accent-rose': '#dc2626',
     '--color-accent-amber': '#b45309',
     '--color-accent-violet': '#6d28d9',
     '--color-accent-emerald': '#10b981',
     '--color-accent-cyan': '#0e7490',
-    '--shadow-card-hover': '6px 6px 0px #059669',
+    '--shadow-card-hover': '6px 6px 0px #047857',
     '--shadow-card-dark-hover': '6px 6px 0px #34d399',
   },
   warm: {
-    '--color-accent-blue': '#ea580c',
+    '--color-accent-blue': '#c2410c',
     '--color-accent-teal': '#0d9488',
     '--color-accent-rose': '#dc2626',
     '--color-accent-amber': '#f59e0b',
     '--color-accent-violet': '#7c3aed',
     '--color-accent-emerald': '#059669',
     '--color-accent-cyan': '#0891b2',
-    '--shadow-card-hover': '6px 6px 0px #ea580c',
+    '--shadow-card-hover': '6px 6px 0px #c2410c',
     '--shadow-card-dark-hover': '6px 6px 0px #fb923c',
   },
   royal: {
@@ -440,11 +609,36 @@ const THEME_CSS_MAP: Record<string, Record<string, string>> = {
   },
 }
 
+const SURFACE_TOKEN_KEYS: Array<{ lightProp: string; darkProp: string; token: keyof ThemeSurfaceTokens }> = [
+  { lightProp: '--color-paper', darkProp: '--color-dark-paper', token: 'paper' },
+  { lightProp: '--color-ink', darkProp: '--color-dark-ink', token: 'ink' },
+  { lightProp: '--color-surface', darkProp: '--color-dark-surface', token: 'surface' },
+  { lightProp: '--color-surface-strong', darkProp: '--color-dark-surface-strong', token: 'surfaceStrong' },
+  { lightProp: '--color-muted', darkProp: '--color-dark-muted', token: 'muted' },
+  { lightProp: '--color-muted-foreground', darkProp: '--color-dark-muted-foreground', token: 'mutedForeground' },
+  { lightProp: '--color-subtle', darkProp: '--color-dark-subtle', token: 'subtle' },
+  { lightProp: '--color-info', darkProp: '--color-dark-info', token: 'info' },
+  { lightProp: '--color-border', darkProp: '--color-dark-border', token: 'border' },
+  { lightProp: '--color-border-subtle', darkProp: '--color-dark-border-subtle', token: 'borderSubtle' },
+  { lightProp: '--color-border-strong', darkProp: '--color-dark-border-strong', token: 'borderStrong' },
+  { lightProp: '--color-accent', darkProp: '--color-dark-accent', token: 'accent' },
+  { lightProp: '--color-accent-foreground', darkProp: '--color-dark-accent-foreground', token: 'accentForeground' },
+  { lightProp: '--color-gradient-start', darkProp: '--color-dark-gradient-start', token: 'gradientStart' },
+  { lightProp: '--color-gradient-end', darkProp: '--color-dark-gradient-end', token: 'gradientEnd' },
+]
+
 function applyThemeToCSS(theme: string) {
   const vars = THEME_CSS_MAP[theme] || THEME_CSS_MAP.default
   const root = document.documentElement
   for (const [prop, val] of Object.entries(vars)) {
     root.style.setProperty(prop, val)
+  }
+
+  const surface = getThemeSurfaceTokens(theme, false)
+  const surfaceDark = getThemeSurfaceTokens(theme, true)
+  for (const { lightProp, darkProp, token } of SURFACE_TOKEN_KEYS) {
+    root.style.setProperty(lightProp, surface[token])
+    root.style.setProperty(darkProp, surfaceDark[token])
   }
 }
 
@@ -453,6 +647,11 @@ let themeListeners: Array<() => void> = []
 
 export function getColors(isDark = false): ThemeColors {
   const palette = palettes[currentTheme] || palettes.default
+  return isDark ? palette.dark : palette.light
+}
+
+export function getThemeSurfaceTokens(themeName: string, isDark = false): ThemeSurfaceTokens {
+  const palette = surfacePalettes[themeName] || surfacePalettes.default
   return isDark ? palette.dark : palette.light
 }
 

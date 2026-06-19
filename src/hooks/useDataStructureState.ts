@@ -5,7 +5,7 @@ import { tStatic } from '../i18n/useI18n'
 
 const STORAGE_PREFIX = 'ds-visualizer-data-'
 const MAX_LOGS = 100
-const STORAGE_WRITE_DEBOUNCE_MS = 500
+const STORAGE_WRITE_DEBOUNCE_MS = 150
 
 function getStorageKey(key: string): string {
   return `${STORAGE_PREFIX}${key}`
@@ -25,10 +25,13 @@ function isValidStoredData(data: unknown): boolean {
     const obj = data as Record<string, unknown>
     const keys = Object.keys(obj)
     if (keys.length === 0) return false
-    // Validate that object values are proper types (arrays or objects), not primitives
+    // Validate that object values are safe JSON-like primitives/objects/arrays
     return keys.every(k => {
       const v = obj[k]
-      return v === null || v === undefined || typeof v === 'object' || Array.isArray(v)
+      if (v === null || v === undefined || typeof v === 'boolean' || typeof v === 'string') return true
+      if (typeof v === 'number') return Number.isFinite(v)
+      if (typeof v === 'object') return true
+      return false
     })
   }
   return false
@@ -118,7 +121,10 @@ export function useDataStructureState<T>(initialData: T, options: DataStructureS
     }
   }, [storageKey, data])
 
-  // Flush pending save before page unload to prevent data loss
+  // Flush pending save before page unload to prevent data loss.
+  // Only save when there is a pending debounced write; otherwise external
+  // modifications to localStorage (e.g. test setup) could be overwritten by
+  // stale in-memory data during reload/navigation.
   useEffect(() => {
     if (!storageKey) return
     const handleBeforeUnload = () => {

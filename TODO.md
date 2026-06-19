@@ -69,7 +69,39 @@
 
 ---
 
+## 已完成（UI 美化 Phase 1-3）
+
+基于 `docs/项目视觉设计审查报告.md` 的长期 UI 美化计划。
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| UI-P1-1 | 统一原子组件（Button / Card） | P0 | ✅ | 新建/完善 Button、Card，OperationButton 收敛为工具栏变体 |
+| UI-P1-2 | 修复 WCAG 2 AA 对比度 | P0 | ✅ | placeholder / disabled / 副标题文字对比度达标 |
+| UI-P2-1 | 修正视口单位 | P1 | ✅ | `h-screen` → `h-dvh` / `min-h-dvh` |
+| UI-P2-2 | 统一移动端滚动策略 | P1 | ✅ | 侧边栏展开时锁定 `body` 滚动 |
+| UI-P2-3 | 统一焦点环 | P1 | ✅ | 全局 `focus-ring` utility，输入框与小按钮统一 |
+| UI-P2-4 | 加载/禁用状态 ARIA 语义 | P1 | ✅ | `aria-busy="true"` / `aria-disabled="true"` |
+| UI-P3-1 | 语义化颜色 token | P1 | ✅ | paper / ink / surface / muted / accent 等 light/dark token |
+| UI-P3-2 | 圆角与硬阴影 token | P1 | ✅ | `--radius-*` 与 `--shadow-hard-*`，移除 `shadow-soft` |
+| UI-P3-3 | 主题完整调色板 | P1 | ✅ | default/forest/warm/royal 四套主题完整 surface 映射 |
+| UI-P3-4 | 按钮语义变体收敛 | P1 | ✅ | primary/secondary/danger/success/warning/info/ghost |
+| UI-P3-5 | 卡片与边框统一 | P1 | ✅ | 移除 `border-l-4` / `border-dashed`，Card 支持 variant/shadow/radius |
+| UI-P3-6 | SVG 字体 token 化 | P1 | ✅ | arrayVisualizer / trieVisualizer 通过 CSS 变量注入字体 |
+| UI-P3-7 | 验证与文档 | P1 | ✅ | 2929 tests / lint 0 / build 成功，PROJECT_SUMMARY/WORKLOG/TODO 更新 |
+
+---
+
 ## 当前迭代（后续功能扩展 - 待开始）
+
+### Phase U：UI 美化后续（基于审查报告中期项 - 待开始）
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| U1 | 动画性能优化与大数据降级 | P1 | ✅ | 统一性能配置模块 performanceConfig；数组/图/树 transform/opacity 动画迁移；力导向 tick transform 优化；animationEngine FPS 自动降级；渲染耗时 measureRender 观测；全部测试通过 |
+| U2 | 响应式操作面板重构 | P2 | ⬜ | 小屏下 OperationBar 改为纵向折叠或底部抽屉；增加滑动提示与手势引导 |
+| U3 | 跨页面布局一致性 | P2 | ⬜ | 页面内容区 `max-w-7xl` / `max-w-[1440px]`；右侧边栏自适应宽度 |
+| U4 | SVG 图标系统 | P2 | ⬜ | 替换 Unicode 图标为统一 SVG icon 库 |
+| U5 | 条件禁用按钮原因说明 | P3 | ⬜ | 统一 `title` / `aria-describedby` 说明禁用原因 |
 
 ### Phase D：功能扩展（P1 - 待开始）
 
@@ -85,8 +117,8 @@
 | # | 任务 | 优先级 | 状态 | 说明 |
 |---|------|--------|------|------|
 | E1 | PWA 离线验证 | P2 | ⬜ | 验证 13 个页面离线可访问 |
-| E2 | 大数据量可视化优化 | P2 | ⬜ | treeVisualizer >30 跳动画、graphVisualizer >20 跳动画、heapVisualizer >30 跳动画 |
-| E3 | 移动端手势增强 | P3 | ⬜ | 左右滑动切换页面、操作栏底部固定 |
+| E2 | 大数据量可视化优化 | P2 | ⬜ | treeVisualizer >30 跳动画、graphVisualizer >20 跳动画、heapVisualizer >30 跳动画；注意与 U1 协同 |
+| E3 | 移动端手势增强 | P3 | ⬜ | 左右滑动切换页面、操作栏底部固定；注意与 U2 协同 |
 | E4 | 键盘快捷键搜索 | P3 | ⬜ | KeyboardHelp 支持模糊匹配 |
 | E5 | 排序操作撤销支持 | P3 | ⬜ | ISSUE-007: 排序后保留撤销点 |
 

@@ -2,7 +2,7 @@ import { useState, memo } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
 type Tier = 'beginner' | 'intermediate' | 'advanced'
-type StructureKey = 'array' | 'stack' | 'queue' | 'linkedlist' | 'tree'
+type StructureKey = 'array' | 'stack' | 'queue' | 'linkedlist' | 'tree' | 'avlTree'
 
 interface ContentTierProps {
   structureKey: StructureKey
@@ -53,10 +53,10 @@ function ContentTier({ structureKey, defaultTier = 'beginner', defaultExpanded =
   }
 
   return (
-    <div className="border-b-2 border-ink/10 dark:border-dark-border/30 bg-paper-warm/30 dark:bg-slate-light/20">
+    <div className="border-b-2 border-ink/10 dark:border-dark-border/30 bg-muted/30 dark:bg-dark-muted/20">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full px-4 py-2 flex items-center gap-3 text-sm hover:bg-paper-warm/60 dark:hover:bg-slate-light/40 transition-colors text-left"
+        className="w-full px-4 py-2 flex items-center gap-3 text-sm hover:bg-muted/60 dark:hover:bg-dark-muted/40 transition-colors text-left"
         aria-expanded={expanded}
         aria-label={expanded ? t('contentTier.collapse') : t('contentTier.expand')}
       >
@@ -78,7 +78,7 @@ function ContentTier({ structureKey, defaultTier = 'beginner', defaultExpanded =
                 className={`px-3 py-1.5 text-xs font-bold border-2 transition-all duration-200 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none ${
                   tier === tierName
                     ? TIER_ACTIVE_STYLES[tierName]
-                    : 'bg-white dark:bg-slate border-ink/20 dark:border-dark-border/40 text-ink-light dark:text-dark-ink-light hover:bg-ink/5 dark:hover:bg-dark-ink/5'
+                    : 'bg-surface dark:bg-dark-surface border-ink/20 dark:border-dark-border/40 text-ink-light dark:text-dark-ink-light hover:bg-ink/5 dark:hover:bg-dark-ink/5'
                 }`}
                 aria-pressed={tier === tierName}
               >

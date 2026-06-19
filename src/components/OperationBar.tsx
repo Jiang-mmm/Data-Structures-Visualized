@@ -1,5 +1,6 @@
 import { memo, ReactNode, ButtonHTMLAttributes } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import Button, { type ButtonVariant } from './Button'
 
 interface OperationBarProps {
   label?: string
@@ -8,8 +9,11 @@ interface OperationBarProps {
 }
 
 interface OperationButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'outline' | 'danger' | 'success' | 'purple' | 'teal' | 'accent' | 'amber'
+  variant?: ButtonVariant
   popAnimation?: boolean
+  isLoading?: boolean
+  isBusy?: boolean
+  icon?: ReactNode
   children: ReactNode
   className?: string
 }
@@ -39,7 +43,7 @@ function OperationBar({ children, className = '' }: OperationBarProps) {
       role="toolbar"
       aria-label={t('page.operations')}
       className={`
-        bg-paper-warm dark:bg-slate-light border-b border-ink/30 dark:border-dark-border/40
+        bg-muted dark:bg-dark-muted border-b border-ink/30 dark:border-dark-border/40
         px-3 sm:px-6 py-1.5 sm:py-2.5
         operation-bar operation-bar-scroll-hint
         ${className}
@@ -69,16 +73,16 @@ export const OperationInput = memo(({ value, onChange, placeholder, type = 'text
       aria-invalid={error || undefined}
       className={`
         w-20 sm:w-24 px-2.5 py-1.5 text-sm font-mono whitespace-nowrap shrink-0
-        border-2 bg-paper dark:bg-slate
+        border-2 bg-paper dark:bg-dark-paper
         outline-none rounded-none
         text-ink dark:text-dark-ink
-        placeholder:text-ink-light/30 dark:placeholder:text-dark-ink-light/30
+        placeholder:text-text-placeholder dark:placeholder:text-text-placeholder-dark
         hover:border-ink dark:hover:border-dark-ink
         transition-all duration-200
         touch-manipulation
         ${error
-          ? 'border-accent-rose dark:border-accent-rose focus:border-accent-rose focus:shadow-[0_0_0_3px_rgba(220,38,38,0.12)]'
-          : 'border-ink/80 dark:border-dark-border focus:border-accent-blue focus:shadow-[0_0_0_3px_rgba(37,99,235,0.12)]'
+          ? 'border-accent-rose dark:border-accent-rose focus:border-accent-rose focus-ring'
+          : 'border-ink/80 dark:border-dark-border focus:border-accent-blue focus-ring'
         }
         ${className}
       `}
@@ -86,49 +90,54 @@ export const OperationInput = memo(({ value, onChange, placeholder, type = 'text
   )
 })
 
-export const OperationButton = memo(({ onClick, disabled, variant = 'primary', popAnimation = false, children, className = '', ...rest }: OperationButtonProps) => {
+
+export const OperationButton = memo(({
+  onClick,
+  disabled,
+  variant = 'primary',
+  popAnimation = false,
+  isLoading = false,
+  isBusy,
+  icon,
+  children,
+  className = '',
+  'aria-busy': ariaBusyProp,
+  'aria-disabled': ariaDisabledProp,
+  title: titleProp,
+  ...rest
+}: OperationButtonProps) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (onClick && !disabled) {
+    if (popAnimation && !disabled && !isLoading) {
       const btn = e.currentTarget
-      if (popAnimation) {
-        btn.classList.add('animate-[button-pop_0.35s_ease-out]')
-        btn.addEventListener('animationend', () => {
-          btn.classList.remove('animate-[button-pop_0.35s_ease-out]')
-        }, { once: true })
-      }
-      onClick(e)
+      btn.classList.add('animate-[button-pop_0.35s_ease-out]')
+      btn.addEventListener('animationend', () => {
+        btn.classList.remove('animate-[button-pop_0.35s_ease-out]')
+      }, { once: true })
     }
+    onClick?.(e)
   }
 
-  const variants: Record<string, string> = {
-    primary: 'bg-accent-blue border-accent-blue text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
-    success: 'bg-accent-emerald border-accent-emerald text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
-    danger: 'bg-accent-rose border-accent-rose text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
-    purple: 'bg-accent-violet border-accent-violet text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
-    teal: 'bg-accent-teal border-accent-teal text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
-    accent: 'bg-accent-cyan border-accent-cyan text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
-    amber: 'bg-amber-500 border-amber-500 text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
-    outline: 'bg-white dark:bg-slate border-ink/60 dark:border-dark-border text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light hover:border-ink dark:hover:border-dark-ink hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
-  }
+  const ariaBusy = isBusy || ariaBusyProp || isLoading || undefined
+  const ariaDisabled = ariaDisabledProp || (disabled ? true : undefined)
+  const title = titleProp || (isBusy ? '动画进行中，请稍候' : undefined)
 
   return (
-    <button
-      {...rest}
-      onClick={handleClick}
+    <Button
+      variant={variant}
+      size="sm"
+      isLoading={isLoading}
+      isBusy={isBusy}
       disabled={disabled}
-      className={`
-        px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold whitespace-nowrap shrink-0
-        border-2
-        shadow-button dark:shadow-button-dark
-        transition-all duration-200 ease-out
-        active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
-        disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-button dark:disabled:active:shadow-button-dark
-        ${variants[variant] || variants.primary}
-        ${className}
-      `}
+      onClick={handleClick}
+      className={className}
+      aria-busy={ariaBusy}
+      aria-disabled={ariaDisabled}
+      title={title}
+      {...rest}
     >
+      {icon && <span className="inline-flex items-center justify-center">{icon}</span>}
       {children}
-    </button>
+    </Button>
   )
 })
 

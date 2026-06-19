@@ -65,7 +65,7 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ].filter(Boolean),
-  base: '/Data-Structures-Visualized/',
+  base: mode === 'production' ? './' : '/Data-Structures-Visualized/',
   server: {
     port: 3000,
     open: true,
@@ -86,6 +86,10 @@ export default defineConfig(({ mode }) => ({
           }
           if (id.includes('node_modules/d3-')) {
             return 'vendor-d3';
+          }
+          // i18n 文案较大，拆分到独立 chunk 以控制 index 体积
+          if (id.includes('src/i18n/locales')) {
+            return 'i18n-locales';
           }
         },
       },

@@ -1,5 +1,7 @@
 import { chromium, firefox } from 'playwright';
 import path from 'path';
+import { writeFileSync } from 'fs';
+import { fileURLToPath } from 'url';
 import { sleep, clickButtonIfEnabled, closeModalIfOpen, getVisibleInputs, fillInput, SCREENSHOTS_DIR } from './test-helpers.js';
 
 const BASE_URL = 'http://localhost:3000/Data-Structures-Visualized/';
@@ -1041,6 +1043,31 @@ async function runComprehensiveTests() {
     allResults.forEach(r => {
       r.failed.forEach(f => console.log(`  [FAIL] ${f}`));
     });
+  }
+
+  // Unbuffered summary markers for the runner to parse reliably.
+  console.log(`\n汇总: 通过=${totalPassed}, 失败=${totalFailed}`);
+  console.log(`通过: ${totalPassed}`);
+  console.log(`失败: ${totalFailed}`);
+
+  // Also persist results to a JSON file so the runner can read them even if
+  // stdout is truncated or buffered.
+  const resultFile = path.join(path.dirname(fileURLToPath(import.meta.url)), `test-comprehensive-result-${browserType}.json`);
+  try {
+    writeFileSync(
+      resultFile,
+      JSON.stringify({
+        name: '综合功能测试',
+        browser: browserType,
+        totalPassed,
+        totalFailed,
+        total: totalPassed + totalFailed,
+        details: allResults.map(r => ({ name: r.name, passed: r.passed.length, failed: r.failed.length, failures: r.failed })),
+        timestamp: new Date().toISOString(),
+      }, null, 2)
+    );
+  } catch (e) {
+    console.error('写入结果文件失败:', e.message);
   }
 
   process.exit(totalFailed > 0 ? 1 : 0);

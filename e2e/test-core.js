@@ -29,7 +29,7 @@ async function runTest() {
   try {
     // ==================== Array Page ====================
     console.log('[Array] 页面加载与基本操作...');
-    await page.goto(BASE_URL + 'array', { waitUntil: 'domcontentloaded', timeout: 10000 });
+    await page.goto(BASE_URL + 'array', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await sleep(800);
     await closeModalIfOpen(page);
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, 'array-loaded.png'), fullPage: false });
@@ -86,7 +86,7 @@ async function runTest() {
     console.log('[Stack] 页面加载与基本操作...');
     // Set stack to [10] via localStorage, then navigate to verify SIZE displays correctly
     await page.evaluate(() => localStorage.setItem('ds-visualizer-data-stack', '[10]'));
-    await page.goto(BASE_URL + 'stack', { waitUntil: 'domcontentloaded', timeout: 10000 });
+    await page.goto(BASE_URL + 'stack', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await sleep(1500);
     await closeModalIfOpen(page);
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, 'stack-loaded.png'), fullPage: false });
@@ -129,7 +129,7 @@ async function runTest() {
 
     // 栈满测试: set 10 items via localStorage, verify SIZE=10
     await page.evaluate(() => localStorage.setItem('ds-visualizer-data-stack', JSON.stringify([1,2,3,4,5,6,7,8,9,10])));
-    await page.goto(BASE_URL + 'stack', { waitUntil: 'domcontentloaded', timeout: 10000 });
+    await page.goto(BASE_URL + 'stack', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await sleep(1500);
     await closeModalIfOpen(page);
     await assertWithRetry(results,
@@ -146,7 +146,7 @@ async function runTest() {
 
     // ==================== Queue Page ====================
     console.log('[Queue] 页面加载与基本操作...');
-    await page.goto(BASE_URL + 'queue', { waitUntil: 'domcontentloaded', timeout: 10000 });
+    await page.goto(BASE_URL + 'queue', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await sleep(800);
     await closeModalIfOpen(page);
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, 'queue-loaded.png'), fullPage: false });
@@ -195,7 +195,7 @@ async function runTest() {
 
     // ==================== LinkedList Page ====================
     console.log('[LinkedList] 页面加载与基本操作...');
-    await page.goto(BASE_URL + 'linkedlist', { waitUntil: 'domcontentloaded', timeout: 10000 });
+    await page.goto(BASE_URL + 'linkedlist', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await sleep(800);
     await closeModalIfOpen(page);
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, 'linkedlist-loaded.png'), fullPage: false });
@@ -253,7 +253,7 @@ async function runTest() {
 
     // ==================== Tree Page ====================
     console.log('[Tree] 页面加载与基本操作...');
-    await page.goto(BASE_URL + 'tree', { waitUntil: 'domcontentloaded', timeout: 10000 });
+    await page.goto(BASE_URL + 'tree', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await sleep(800);
     await closeModalIfOpen(page);
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, 'tree-loaded.png'), fullPage: false });

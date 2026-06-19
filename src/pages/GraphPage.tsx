@@ -136,7 +136,7 @@ export default function GraphPage() {
   const adjList = getAdjacencyList()
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('graph.title')} subtitle={t('graph.subtitle')}>
         <ExportImport dataType="graph" data={{ nodes, links }} disabled={isAnimating} onImport={({ data: imported }) => {
           if (imported && typeof imported === 'object' && 'nodes' in imported) {
@@ -153,8 +153,8 @@ export default function GraphPage() {
           }
         }} />
         <ShareButton data={{ nodes, links }} dataType="graph" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={handleReset}>{t('common.reset')}</OperationButton>
-        <OperationButton variant="primary" onClick={handleAddNode} disabled={isAnimating}>{t('graph.addNode')}</OperationButton>
+        <OperationButton variant="secondary" onClick={handleReset}>{t('common.reset')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleAddNode} disabled={isAnimating} isBusy={isAnimating}>{t('graph.addNode')}</OperationButton>
       </PageHeader>
 
       <OperationBar>
@@ -163,12 +163,12 @@ export default function GraphPage() {
         <OperationInput placeholder={t('graph.source')} value={sourceInput} onChange={setSourceInput} className="w-16" />
         <OperationInput placeholder={t('graph.target')} value={targetInput} onChange={setTargetInput} className="w-16" />
         <OperationInput type="number" placeholder={t('graph.weight')} value={weightInput} onChange={setWeightInput} className="w-14" />
-        <OperationButton variant="primary" onClick={handleAddEdge} disabled={isAnimating}>{t('graph.addEdge')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleAddEdge} disabled={isAnimating} isBusy={isAnimating}>{t('graph.addEdge')}</OperationButton>
         <OperationGroup label={t('common.more')}>
-          <OperationButton variant="danger" onClick={handleDeleteEdge} disabled={isAnimating}>{t('graph.removeEdge')}</OperationButton>
-          <OperationButton variant="danger" onClick={handleDeleteNode} disabled={isAnimating}>{t('graph.removeNode')}</OperationButton>
+          <OperationButton variant="danger" onClick={handleDeleteEdge} disabled={isAnimating} isBusy={isAnimating}>{t('graph.removeEdge')}</OperationButton>
+          <OperationButton variant="danger" onClick={handleDeleteNode} disabled={isAnimating} isBusy={isAnimating}>{t('graph.removeNode')}</OperationButton>
           <UndoPreviewButton
-            variant="outline"
+            variant="secondary"
             onClick={undo}
             disabled={isAnimating || !canUndo()}
             previewData={getUndoPreview()}
@@ -177,7 +177,7 @@ export default function GraphPage() {
             {t('common.undo')}
           </UndoPreviewButton>
           <UndoPreviewButton
-            variant="outline"
+            variant="secondary"
             onClick={redo}
             disabled={isAnimating || !canRedo()}
             previewData={getRedoPreview()}
@@ -192,10 +192,10 @@ export default function GraphPage() {
         <OperationLabel>{t('page.algorithms')}</OperationLabel>
         <OperationInput placeholder={t('graph.source')} value={algorithmStart} onChange={setAlgorithmStart} className="w-16" />
         <OperationInput placeholder={t('graph.target')} value={algorithmEnd} onChange={setAlgorithmEnd} className="w-16" />
-        <OperationButton variant="purple" onClick={handleBFS} disabled={isAnimating} popAnimation>{t('graph.bfs')}</OperationButton>
-        <OperationButton variant="purple" onClick={handleDFS} disabled={isAnimating} popAnimation>{t('graph.dfs')}</OperationButton>
-        <OperationButton variant="purple" onClick={handleDijkstra} disabled={isAnimating}>{t('graph.dijkstra')}</OperationButton>
-        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        <OperationButton variant="primary" onClick={handleBFS} disabled={isAnimating} isBusy={isAnimating} popAnimation>{t('graph.bfs')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleDFS} disabled={isAnimating} isBusy={isAnimating} popAnimation>{t('graph.dfs')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleDijkstra} disabled={isAnimating} isBusy={isAnimating}>{t('graph.dijkstra')}</OperationButton>
+        {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <div className="flex items-center gap-1">
           {[{ k: 'force', l: t('graphView.force') }, { k: 'matrix', l: t('graphView.matrix') }, { k: 'list', l: t('graphView.list') }].map(({ k, l }) => (
             <button key={k} aria-pressed={viewMode === k} onClick={() => setViewMode(k)}
@@ -213,32 +213,32 @@ export default function GraphPage() {
 
       {viewMode === 'force' ? (
         <>
-          <Visualizer data={nodes} renderFn={handleGraphRender} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.graphLabel")} />
+          <Visualizer data={nodes} renderFn={handleGraphRender} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.graphLabel")} />
           {nodes.length === 0 && (
             <EmptyState icon="⬡" titleKey="emptyState.emptyGraph" descriptionKey="emptyState.emptyGraphDesc" onFill={reset} />
           )}
         </>
       ) : viewMode === 'matrix' ? (
-        <div className="flex-1 overflow-auto p-6 border-b-2 border-ink dark:border-dark-border bg-white dark:bg-slate">
+        <div className="flex-1 overflow-auto p-6 border-b-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <h3 className="font-bold text-sm text-ink dark:text-dark-ink">{t('graph.adjacencyMatrix')}</h3>
             <div className="flex items-center gap-2 font-mono text-[10px]">
-              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{nodes.length} {t('graph.nodes')}</span>
-              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{links.length} {t('graph.edges')}</span>
-              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-accent-blue/10 text-accent-blue font-bold">{nodes.length > 1 ? (links.length / (nodes.length * (nodes.length - 1))).toFixed(2) : '0.00'} {t('graph.density')}</span>
+              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 rounded-sm bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{nodes.length} {t('graph.nodes')}</span>
+              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 rounded-sm bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{links.length} {t('graph.edges')}</span>
+              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 rounded-sm bg-accent-blue/10 text-accent-blue font-bold">{nodes.length > 1 ? (links.length / (nodes.length * (nodes.length - 1))).toFixed(2) : '0.00'} {t('graph.density')}</span>
             </div>
           </div>
           <div className="flex items-center gap-3 mb-4 flex-wrap">
             <div className="flex items-center gap-1">
-              <span className="w-3 h-3 border-2 border-ink dark:border-dark-border bg-accent-blue/20"></span>
+              <span className="w-3 h-3 rounded-sm border-2 border-ink dark:border-dark-border bg-accent-blue/20"></span>
               <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light">{t('graph.legendEdge')}</span>
             </div>
             <div className="flex items-center gap-1">
-              <span className="w-3 h-3 border-2 border-ink/20 dark:border-dark-border"></span>
+              <span className="w-3 h-3 rounded-sm border-2 border-ink/20 dark:border-dark-border"></span>
               <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light">{t('graph.legendNoEdge')}</span>
             </div>
             <div className="flex items-center gap-1">
-              <span className="w-3 h-3 border-2 border-ink dark:border-dark-border bg-accent-amber/20" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(217,119,6,0.3) 2px, rgba(217,119,6,0.3) 4px)' }}></span>
+              <span className="w-3 h-3 rounded-sm border-2 border-ink dark:border-dark-border bg-accent-amber/20" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 2px, color-mix(in srgb, var(--color-accent-amber) 30%, transparent) 2px, color-mix(in srgb, var(--color-accent-amber) 30%, transparent) 4px)' }}></span>
               <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light">{t('graph.legendSelfLoop')}</span>
             </div>
           </div>
@@ -272,21 +272,21 @@ export default function GraphPage() {
           </div>
         </div>
       ) : (
-        <div className="flex-1 overflow-auto p-6 border-b-2 border-ink dark:border-dark-border bg-white dark:bg-slate">
+        <div className="flex-1 overflow-auto p-6 border-b-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <h3 className="font-bold text-sm text-ink dark:text-dark-ink">{t('graph.adjacencyList')}</h3>
             <div className="flex items-center gap-2 font-mono text-[10px]">
-              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{nodes.length} {t('graph.nodes')}</span>
-              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{links.length} {t('graph.edges')}</span>
+              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 rounded-sm bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{nodes.length} {t('graph.nodes')}</span>
+              <span className="border-2 border-ink dark:border-dark-border px-2 py-0.5 rounded-sm bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-bold">{links.length} {t('graph.edges')}</span>
             </div>
           </div>
           <div className="flex items-center gap-3 mb-4 flex-wrap">
             <div className="flex items-center gap-1">
-              <span className="w-3 h-3 border-2 border-ink dark:border-dark-border bg-accent-blue/20"></span>
+              <span className="w-3 h-3 rounded-sm border-2 border-ink dark:border-dark-border bg-accent-blue/20"></span>
               <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light">{t('graph.legendEdge')}</span>
             </div>
             <div className="flex items-center gap-1">
-              <span className="w-3 h-3 border-2 border-ink/20 dark:border-dark-border"></span>
+              <span className="w-3 h-3 rounded-sm border-2 border-ink/20 dark:border-dark-border"></span>
               <span className="font-mono text-[10px] text-ink-light dark:text-dark-ink-light">{t('graph.noNeighbors')}</span>
             </div>
           </div>
@@ -300,7 +300,7 @@ export default function GraphPage() {
                 <div className="flex flex-wrap gap-1 min-h-6 items-center">
                   {neighbors.length > 0
                     ? neighbors.map((n, i) => (
-                      <span key={i} className="font-mono text-xs border-2 border-ink dark:border-dark-border px-2 py-0.5 bg-accent-blue/15 text-accent-blue font-bold flex items-center gap-1">
+                      <span key={i} className="font-mono text-xs border-2 border-ink dark:border-dark-border px-2 py-0.5 rounded-sm bg-accent-blue/15 text-accent-blue font-bold flex items-center gap-1">
                         {n.node}<span className="text-ink-light/60 dark:text-dark-ink-light/60 font-normal">:{n.weight}</span>
                       </span>
                     ))

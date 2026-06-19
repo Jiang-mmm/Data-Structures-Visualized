@@ -18,7 +18,7 @@ function UndoRedoBar({ undo, redo, canUndo, canRedo, getUndoPreview, getRedoPrev
   return (
     <>
       <UndoPreviewButton
-        variant="outline"
+        variant="secondary"
         onClick={undo}
         disabled={isAnimating || !canUndo}
         previewData={getUndoPreview()}
@@ -27,7 +27,7 @@ function UndoRedoBar({ undo, redo, canUndo, canRedo, getUndoPreview, getRedoPrev
         {t('common.undo')}
       </UndoPreviewButton>
       <UndoPreviewButton
-        variant="outline"
+        variant="secondary"
         onClick={redo}
         disabled={isAnimating || !canRedo}
         previewData={getRedoPreview()}

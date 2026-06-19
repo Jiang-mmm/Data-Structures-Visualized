@@ -103,7 +103,7 @@ describe('heapVisualizer', () => {
     })
 
     it('应该跳过大型堆的动画', async () => {
-      const largeData = Array.from({ length: 40 }, (_, i) => 100 - i)
+      const largeData = Array.from({ length: 30 }, (_, i) => 100 - i)
       await expect(animateInsertHeap(svg, 101, largeData, anim)).resolves.toBeUndefined()
     })
 

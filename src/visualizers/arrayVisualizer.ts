@@ -1,7 +1,8 @@
 import { select } from '../utils/d3Imports'
-import { duration, EASING, transitionEnd, wait, type Animation } from '../utils/animationEngine'
+import { duration, EASING, transitionEnd, wait, measureRender, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
-import { getViewBoxSize, calculateCenterStart } from '../utils/visualizerLayout'
+import { calculateCenterStart } from '../utils/visualizerLayout'
+import { getLargeDataThreshold } from '../utils/performanceConfig'
 
 const RECT_WIDTH = 60
 const RECT_HEIGHT = 50
@@ -9,8 +10,15 @@ const INDEX_LABEL_HEIGHT = 20
 const CONTENT_HEIGHT = RECT_HEIGHT + INDEX_LABEL_HEIGHT
 const GAP = 10
 
-/** 大数据量阈值，超过此值跳过动画直接更新 */
-const LARGE_DATA_THRESHOLD = 50
+/**
+ * 生成以单元格中心为原点的 transform 字符串
+ * 用于替代修改 width/height/x/y 的高性能缩放动画
+ */
+function cellTransform(x: number, y: number, scaleX: number, scaleY: number) {
+  const cx = RECT_WIDTH / 2
+  const cy = RECT_HEIGHT / 2
+  return `translate(${x + cx}, ${y + cy}) scale(${scaleX}, ${scaleY}) translate(${-cx}, ${-cy})`
+}
 
 export interface ArrayVisualizerOptions {
   width: number
@@ -58,100 +66,101 @@ function purgeSVG(svg: SVGSVGElement) {
  * 纯静态渲染，无 D3 数据绑定，确保每次渲染都是全新的干净状态
  */
 export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVisualizerOptions = { width: 800, height: 400 }) {
-  const { width, height, isDark = detectDarkMode() } = options
-  const C = getColors(isDark)
+  return measureRender('renderArray', () => {
+    const { width, height, isDark = detectDarkMode() } = options
+    const C = getColors(isDark)
 
-  purgeSVG(svg)
+    purgeSVG(svg)
 
-  if (!data || data.length === 0) return
+    if (!data || data.length === 0) return
 
-  ensureGradientDefs(svg, isDark)
+    ensureGradientDefs(svg, isDark)
 
-  const ns = 'http://www.w3.org/2000/svg'
+    const ns = 'http://www.w3.org/2000/svg'
 
-  // Add drop shadow filter for array cells
-  const defs = svg.querySelector('defs')
-  if (defs && !defs.querySelector('#array-shadow')) {
-    const filter = document.createElementNS(ns, 'filter')
-    filter.setAttribute('id', 'array-shadow')
-    filter.setAttribute('x', '-20%')
-    filter.setAttribute('y', '-20%')
-    filter.setAttribute('width', '140%')
-    filter.setAttribute('height', '140%')
-    const shadow = document.createElementNS(ns, 'feDropShadow')
-    shadow.setAttribute('dx', '1')
-    shadow.setAttribute('dy', '2')
-    shadow.setAttribute('stdDeviation', '2')
-    shadow.setAttribute('flood-opacity', '0.15')
-    filter.appendChild(shadow)
-    defs.appendChild(filter)
-  }
+    // Add drop shadow filter for array cells
+    const defs = svg.querySelector('defs')
+    if (defs && !defs.querySelector('#array-shadow')) {
+      const filter = document.createElementNS(ns, 'filter')
+      filter.setAttribute('id', 'array-shadow')
+      filter.setAttribute('x', '-20%')
+      filter.setAttribute('y', '-20%')
+      filter.setAttribute('width', '140%')
+      filter.setAttribute('height', '140%')
+      const shadow = document.createElementNS(ns, 'feDropShadow')
+      shadow.setAttribute('dx', '1')
+      shadow.setAttribute('dy', '2')
+      shadow.setAttribute('stdDeviation', '2')
+      shadow.setAttribute('flood-opacity', '0.15')
+      filter.appendChild(shadow)
+      defs.appendChild(filter)
+    }
 
-  const vbSize = getViewBoxSize(svg, width, height)
-  const { startX, startY } = layout(data.length, vbSize.width, vbSize.height)
+    const { startX, startY } = layout(data.length, width, height)
 
-  data.forEach((value, i) => {
-    const g = document.createElementNS(ns, 'g')
-    g.setAttribute('class', 'array-item')
-    g.setAttribute('transform', `translate(${posX(startX, i)}, ${startY})`)
-    g.setAttribute('tabindex', '0')
-    g.setAttribute('role', 'group')
-    g.setAttribute('aria-label', `Array element [${i}]: ${value}`)
-    g.addEventListener('focus', () => {
-      rect.setAttribute('stroke', C.nodeActive)
-      rect.setAttribute('stroke-width', '3')
-    })
-    g.addEventListener('blur', () => {
+    data.forEach((value, i) => {
+      const g = document.createElementNS(ns, 'g')
+      g.setAttribute('class', 'array-item')
+      g.setAttribute('transform', `translate(${posX(startX, i)}, ${startY})`)
+      g.setAttribute('tabindex', '0')
+      g.setAttribute('role', 'group')
+      g.setAttribute('aria-label', `Array element [${i}]: ${value}`)
+      g.addEventListener('focus', () => {
+        rect.setAttribute('stroke', C.nodeActive)
+        rect.setAttribute('stroke-width', '3')
+      })
+      g.addEventListener('blur', () => {
+        rect.setAttribute('stroke', C.nodeDefaultStroke)
+        rect.setAttribute('stroke-width', '2')
+      })
+      g.addEventListener('keydown', (event) => {
+        const allItems = Array.from(svg.querySelectorAll('.array-item'))
+        const idx = allItems.indexOf(g)
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          event.preventDefault()
+          const next = allItems[(idx + 1) % allItems.length] as HTMLElement
+          next.focus()
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          event.preventDefault()
+          const prev = allItems[(idx - 1 + allItems.length) % allItems.length] as HTMLElement
+          prev.focus()
+        }
+      })
+
+      const rect = document.createElementNS(ns, 'rect')
+      rect.setAttribute('width', String(RECT_WIDTH))
+      rect.setAttribute('height', String(RECT_HEIGHT))
+      rect.setAttribute('rx', '8')
+      rect.setAttribute('fill', gradUrl('bar-default'))
       rect.setAttribute('stroke', C.nodeDefaultStroke)
       rect.setAttribute('stroke-width', '2')
+      rect.setAttribute('filter', 'url(#array-shadow)')
+      g.appendChild(rect)
+
+      const textValue = document.createElementNS(ns, 'text')
+      textValue.setAttribute('x', String(RECT_WIDTH / 2))
+      textValue.setAttribute('y', String(RECT_HEIGHT / 2))
+      textValue.setAttribute('dy', '0.35em')
+      textValue.setAttribute('text-anchor', 'middle')
+      textValue.setAttribute('fill', C.textWhite)
+      textValue.setAttribute('font-size', '16px')
+      textValue.setAttribute('font-weight', 'bold')
+      textValue.textContent = String(value)
+      g.appendChild(textValue)
+
+      const textIndex = document.createElementNS(ns, 'text')
+      textIndex.setAttribute('x', String(RECT_WIDTH / 2))
+      textIndex.setAttribute('y', String(RECT_HEIGHT + 18))
+      textIndex.setAttribute('text-anchor', 'middle')
+      textIndex.setAttribute('fill', C.textMuted)
+      textIndex.setAttribute('font-size', '11px')
+      textIndex.setAttribute('font-weight', '600')
+      textIndex.setAttribute('font-family', 'var(--font-mono)')
+      textIndex.textContent = `[${i}]`
+      g.appendChild(textIndex)
+
+      svg.appendChild(g)
     })
-    g.addEventListener('keydown', (event) => {
-      const allItems = Array.from(svg.querySelectorAll('.array-item'))
-      const idx = allItems.indexOf(g)
-      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-        event.preventDefault()
-        const next = allItems[(idx + 1) % allItems.length] as HTMLElement
-        next.focus()
-      } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-        event.preventDefault()
-        const prev = allItems[(idx - 1 + allItems.length) % allItems.length] as HTMLElement
-        prev.focus()
-      }
-    })
-
-    const rect = document.createElementNS(ns, 'rect')
-    rect.setAttribute('width', String(RECT_WIDTH))
-    rect.setAttribute('height', String(RECT_HEIGHT))
-    rect.setAttribute('rx', '8')
-    rect.setAttribute('fill', gradUrl('bar-default'))
-    rect.setAttribute('stroke', C.nodeDefaultStroke)
-    rect.setAttribute('stroke-width', '2')
-    rect.setAttribute('filter', 'url(#array-shadow)')
-    g.appendChild(rect)
-
-    const textValue = document.createElementNS(ns, 'text')
-    textValue.setAttribute('x', String(RECT_WIDTH / 2))
-    textValue.setAttribute('y', String(RECT_HEIGHT / 2))
-    textValue.setAttribute('dy', '0.35em')
-    textValue.setAttribute('text-anchor', 'middle')
-    textValue.setAttribute('fill', C.textWhite)
-    textValue.setAttribute('font-size', '16px')
-    textValue.setAttribute('font-weight', 'bold')
-    textValue.textContent = String(value)
-    g.appendChild(textValue)
-
-    const textIndex = document.createElementNS(ns, 'text')
-    textIndex.setAttribute('x', String(RECT_WIDTH / 2))
-    textIndex.setAttribute('y', String(RECT_HEIGHT + 18))
-    textIndex.setAttribute('text-anchor', 'middle')
-    textIndex.setAttribute('fill', C.textMuted)
-    textIndex.setAttribute('font-size', '11px')
-    textIndex.setAttribute('font-weight', '600')
-    textIndex.setAttribute('font-family', 'monospace')
-    textIndex.textContent = `[${i}]`
-    g.appendChild(textIndex)
-
-    svg.appendChild(g)
   })
 }
 
@@ -160,7 +169,7 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVi
  * 指示器弹入 → 右侧元素逐个高亮让位 → 新元素弹入 → 颜色脉冲恢复
  */
 export async function animateInsert(svg: SVGSVGElement, index: number, _value: number, oldData: number[], options: ArrayVisualizerOptions = { width: 800, height: 400 }, anim?: Animation) {
-  if (oldData.length > LARGE_DATA_THRESHOLD) return
+  if (oldData.length > getLargeDataThreshold('array')) return
   if (anim?.isAborted?.()) return
 
   const container = select(svg)
@@ -170,8 +179,7 @@ export async function animateInsert(svg: SVGSVGElement, index: number, _value: n
   container.selectAll('.insert-indicator').remove()
 
   const newLength = oldData.length + 1
-  const vbSize = getViewBoxSize(svg, width, height)
-  const { startX: finalStartX, startY } = layout(newLength, vbSize.width, vbSize.height)
+  const { startX: finalStartX, startY } = layout(newLength, width, height)
   const insertX = posX(finalStartX, index)
 
   // Phase 1: 插入指示器弹入
@@ -212,7 +220,7 @@ export async function animateInsert(svg: SVGSVGElement, index: number, _value: n
     const newX = posX(finalStartX, giIndex + 1)
     await transitionEnd(
       sel.interrupt()
-        .transition().duration(duration(250)).ease(EASING.easeOutBack)
+        .transition().duration(duration(250)).ease(EASING.easeOutCubic)
         .attr('transform', `translate(${newX}, ${startY})`)
     )
     await wait(30, anim)
@@ -261,7 +269,7 @@ export async function animateInsert(svg: SVGSVGElement, index: number, _value: n
  * 目标变红脉冲 → 缩小滑出消失 → 右侧元素逐个合拢
  */
 export async function animateDelete(svg: SVGSVGElement, index: number, _data: number[], options: ArrayVisualizerOptions = { width: 800, height: 400 }, anim?: Animation) {
-  if (_data && _data.length > LARGE_DATA_THRESHOLD) return
+  if (_data && _data.length > getLargeDataThreshold('array')) return
   if (anim?.isAborted?.()) return
 
   const container = select(svg)
@@ -272,13 +280,14 @@ export async function animateDelete(svg: SVGSVGElement, index: number, _data: nu
   if (targetGroup.empty()) return
 
   // Phase 1: 变红 + 脉冲放大（easeOutBack 过冲效果）
+  const deletePulseSX = (RECT_WIDTH + 8) / RECT_WIDTH
+  const deletePulseSY = (RECT_HEIGHT + 6) / RECT_HEIGHT
   await transitionEnd(
     targetGroup.select('rect')
       .interrupt()
       .transition().duration(duration(200)).ease(EASING.easeOutBack)
       .attr('fill', C.nodeError).attr('stroke', C.nodeErrorStroke)
-      .attr('width', RECT_WIDTH + 8).attr('height', RECT_HEIGHT + 6)
-      .attr('x', -4).attr('y', -3)
+      .attr('transform', cellTransform(0, 0, deletePulseSX, deletePulseSY))
   )
   if (anim?.isAborted?.()) return
 
@@ -293,22 +302,21 @@ export async function animateDelete(svg: SVGSVGElement, index: number, _data: nu
     await transitionEnd(
       targetGroup.interrupt()
         .transition().duration(duration(300)).ease(EASING.easeInCubic)
-        .attr('transform', `translate(${x + RECT_WIDTH / 2}, ${y + RECT_HEIGHT + 20}) scale(0)`)
+        .attr('transform', cellTransform(x, y + RECT_HEIGHT + 20, 0, 0))
         .attr('opacity', 0)
     )
   }
   if (anim?.isAborted?.()) return
 
   // Phase 3: 右侧元素逐个左移合拢
-  const vbSize = getViewBoxSize(svg, width, height)
-  const { startX: newStartX, startY } = layout(_data.length - 1, vbSize.width, vbSize.height)
+  const { startX: newStartX, startY } = layout(_data.length - 1, width, height)
   const allGroups = container.selectAll('g.array-item').nodes()
   for (let gi = index + 1; gi < allGroups.length; gi++) {
     if (anim?.isAborted?.()) return
     const newX = posX(newStartX, gi - 1)
     await transitionEnd(
       select(allGroups[gi] as SVGGElement).interrupt()
-        .transition().duration(duration(250)).ease(EASING.easeOutBack)
+        .transition().duration(duration(250)).ease(EASING.easeOutCubic)
         .attr('transform', `translate(${newX}, ${startY})`)
     )
     await wait(30, anim)
@@ -322,7 +330,7 @@ export async function animateDelete(svg: SVGSVGElement, index: number, _data: nu
  * 逐个检查 + 缩放脉冲 + 找到时两阶段高亮
  */
 export async function animateSearch(svg: SVGSVGElement, index: number, data: number[], options: ArrayVisualizerOptions, anim?: Animation) {
-  if (data.length > LARGE_DATA_THRESHOLD) return
+  if (data.length > getLargeDataThreshold('array')) return
   if (anim?.isAborted?.()) return
 
   const container = select(svg)
@@ -340,13 +348,14 @@ export async function animateSearch(svg: SVGSVGElement, index: number, data: num
 
     if (i === index) {
       // 找到目标：两阶段脉冲（放大弹跳 → 弹性缩回）
+      const foundPulseSX = (RECT_WIDTH + 10) / RECT_WIDTH
+      const foundPulseSY = (RECT_HEIGHT + 8) / RECT_HEIGHT
       await transitionEnd(
         sel.select('rect')
           .interrupt()
           .transition().duration(duration(280)).ease(EASING.easeOutBack)
           .attr('fill', C.nodeLeaf).attr('stroke', C.nodeLeafStroke)
-          .attr('width', RECT_WIDTH + 10).attr('height', RECT_HEIGHT + 8)
-          .attr('x', -5).attr('y', -4)
+          .attr('transform', cellTransform(0, 0, foundPulseSX, foundPulseSY))
       )
       if (anim?.isAborted?.()) return
 
@@ -354,8 +363,7 @@ export async function animateSearch(svg: SVGSVGElement, index: number, data: num
         sel.select('rect')
           .interrupt()
           .transition().duration(duration(350)).ease(EASING.easeOutElastic)
-          .attr('width', RECT_WIDTH).attr('height', RECT_HEIGHT)
-          .attr('x', 0).attr('y', 0)
+          .attr('transform', cellTransform(0, 0, 1, 1))
       )
 
       await wait(400, anim)
@@ -363,13 +371,14 @@ export async function animateSearch(svg: SVGSVGElement, index: number, data: num
     }
 
     // 检查当前元素：缩放脉冲 + 颜色变化
+    const checkPulseSX = (RECT_WIDTH + 4) / RECT_WIDTH
+    const checkPulseSY = (RECT_HEIGHT + 3) / RECT_HEIGHT
     await transitionEnd(
       sel.select('rect')
         .interrupt()
         .transition().duration(duration(200)).ease(EASING.easeOutBack)
         .attr('fill', C.nodeActive).attr('stroke', C.nodeActiveStroke)
-        .attr('width', RECT_WIDTH + 4).attr('height', RECT_HEIGHT + 3)
-        .attr('x', -2).attr('y', -1.5)
+        .attr('transform', cellTransform(0, 0, checkPulseSX, checkPulseSY))
     )
 
     await wait(80, anim)
@@ -383,8 +392,7 @@ export async function animateSearch(svg: SVGSVGElement, index: number, data: num
           .interrupt()
           .transition().duration(duration(300)).ease(EASING.easeOutCubic)
           .attr('fill', C.nodeError).attr('stroke', C.nodeErrorStroke)
-          .attr('width', RECT_WIDTH).attr('height', RECT_HEIGHT)
-          .attr('x', 0).attr('y', 0)
+          .attr('transform', cellTransform(0, 0, 1, 1))
       )
       await wait(400, anim)
     } else {
@@ -393,8 +401,7 @@ export async function animateSearch(svg: SVGSVGElement, index: number, data: num
           .interrupt()
           .transition().duration(duration(180)).ease(EASING.easeOutCubic)
           .attr('fill', C.nodeDefault).attr('stroke', C.nodeDefaultStroke)
-          .attr('width', RECT_WIDTH).attr('height', RECT_HEIGHT)
-          .attr('x', 0).attr('y', 0)
+          .attr('transform', cellTransform(0, 0, 1, 1))
       )
     }
   }

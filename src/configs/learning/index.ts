@@ -20,6 +20,7 @@ import { timConfig } from './tim.config'
 import { linkedlistConfig } from './linkedlist.config'
 import { doublyLinkedListConfig } from './doublyLinkedList.config'
 import { treeConfig } from './tree.config'
+import { avlTreeConfig } from './avlTree.config'
 import { hashConfig } from './hash.config'
 import { arrayConfig } from './array.config'
 import { stackConfig } from './stack.config'
@@ -54,6 +55,7 @@ export const learningConfigs = {
   linkedlist: linkedlistConfig,
   doublyLinkedList: doublyLinkedListConfig,
   tree: treeConfig,
+  avlTree: avlTreeConfig,
   hash: hashConfig,
   array: arrayConfig,
   stack: stackConfig,

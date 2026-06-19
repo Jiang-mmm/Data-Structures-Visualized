@@ -53,9 +53,17 @@ async function runTest() {
     await sleep(800);
     await closeModalIfOpen(page);
 
-    // Find theme toggle button (cycles light -> dark -> system)
-    // The theme toggle has a title attribute containing "主题" or "Theme"
-    const themeBtn = page.locator('button[title*="主题"], button[title*="Theme"], button[aria-label*="主题"], button[aria-label*="Theme"]').first();
+    // Find theme toggle button (cycles light -> dark -> system).
+    // The product now uses an independent tooltip (sidebar.themeModeTooltip):
+    // "明暗主题" (zh) / "Light/Dark Theme" (en) followed by the current mode
+    // (": light" / ": dark" / ": system"). The color-theme popover button uses
+    // "主题"/"Theme" only and must not be matched.
+    const themeBtn = page.locator(
+      'button[aria-label^="明暗主题"], button[title^="明暗主题"], ' +
+      'button[aria-label^="Light/Dark Theme"], button[title^="Light/Dark Theme"], ' +
+      'button[title*="light" i], button[title*="dark" i], button[title*="system" i], ' +
+      'button[aria-label*="light" i], button[aria-label*="dark" i], button[aria-label*="system" i]'
+    ).first();
     const themeBtnExists = await themeBtn.count() > 0;
     await assert(themeBtnExists, 'Theme: 主题切换按钮存在', 'Theme: 未找到主题切换按钮');
 

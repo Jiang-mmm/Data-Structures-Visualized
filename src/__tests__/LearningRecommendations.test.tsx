@@ -30,6 +30,11 @@ describe('LearningRecommendations', () => {
     expect(screen.getByText('recommendations.personalizedAdvice')).toBeDefined()
   })
 
+  it('个性化建议区域不应使用灯泡 emoji', () => {
+    const { container } = render(<MemoryRouter><LearningRecommendations /></MemoryRouter>)
+    expect(container.textContent).not.toContain('💡')
+  })
+
   it('空进度时应该显示欢迎建议', () => {
     render(<MemoryRouter><LearningRecommendations /></MemoryRouter>)
     expect(screen.getByText('recommendations.advice.welcome')).toBeDefined()
@@ -69,7 +74,7 @@ describe('LearningRecommendations', () => {
   })
 
   it('有进度时应该显示继续学习推荐', () => {
-    const allIds = ['array', 'stack', 'queue', 'linkedlist', 'tree', 'heap', 'trie', 'hash', 'graph', 'sort']
+    const allIds = ['array', 'stack', 'queue', 'linkedlist', 'tree', 'avlTree', 'heap', 'trie', 'hash', 'graph', 'sort']
     const completed = allIds.filter(id => id !== 'graph')
     localStorage.setItem('ds-visualizer-learning-progress', JSON.stringify({
       visited: allIds,
@@ -81,7 +86,7 @@ describe('LearningRecommendations', () => {
   })
 
   it('全部完成时应该显示复习推荐', () => {
-    const allIds = ['array', 'stack', 'queue', 'linkedlist', 'tree', 'heap', 'trie', 'hash', 'graph', 'sort']
+    const allIds = ['array', 'stack', 'queue', 'linkedlist', 'tree', 'avlTree', 'heap', 'trie', 'hash', 'graph', 'sort']
     localStorage.setItem('ds-visualizer-learning-progress', JSON.stringify({
       visited: allIds,
       completed: allIds,

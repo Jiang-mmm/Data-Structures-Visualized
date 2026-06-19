@@ -84,7 +84,7 @@ export default function QueuePage() {
   }, [isAnimating, data, setIsAnimating, getAnimationContext, svgRef, dimensions, front])
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('queue.title')} subtitle={t('queue.subtitle')}>
         <ExportImport dataType="queue" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
@@ -95,19 +95,19 @@ export default function QueuePage() {
           }
         }} />
         <ShareButton data={data} dataType="queue" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+        <OperationButton variant="secondary" onClick={reset}>{t('common.reset')}</OperationButton>
       </PageHeader>
       <OperationBar>
         <SpeedControl />
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
-        <OperationButton variant="primary" onClick={handleEnqueue} disabled={isAnimating}>{'+ ' + t('queue.enqueue')}</OperationButton>
-        <OperationButton variant="danger" onClick={handleDequeue} disabled={isAnimating || data.length === 0}>{'- ' + t('queue.dequeue')}</OperationButton>
-        <OperationButton variant="outline" onClick={handleFront} popAnimation>{t('queue.peek')}</OperationButton>
-        <OperationButton variant="outline" onClick={() => { if (window.confirm(t('common.confirmClear'))) clear() }} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
-        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        <OperationButton variant="primary" onClick={handleEnqueue} disabled={isAnimating} isBusy={isAnimating}>{'+ ' + t('queue.enqueue')}</OperationButton>
+        <OperationButton variant="danger" onClick={handleDequeue} disabled={isAnimating || data.length === 0} isBusy={isAnimating}>{'- ' + t('queue.dequeue')}</OperationButton>
+        <OperationButton variant="secondary" onClick={handleFront} disabled={isAnimating || data.length === 0} isBusy={isAnimating} popAnimation>{t('queue.peek')}</OperationButton>
+        <OperationButton variant="secondary" onClick={() => { if (window.confirm(t('common.confirmClear'))) clear() }} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
+        {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={undo}
           disabled={isAnimating || !canUndo()}
           previewData={getUndoPreview()}
@@ -116,7 +116,7 @@ export default function QueuePage() {
           {t('common.undo')}
         </UndoPreviewButton>
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={redo}
           disabled={isAnimating || !canRedo()}
           previewData={getRedoPreview()}
@@ -132,7 +132,7 @@ export default function QueuePage() {
         </OperationInfo>
       </OperationBar>
       <ContentTier structureKey="queue" />
-      <Visualizer data={data} renderFn={renderQueue as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.queueLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: size }]} />} />
+      <Visualizer data={data} renderFn={renderQueue as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.queueLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: size }]} />} />
       {data.length === 0 && (
         <EmptyState icon="⇒" titleKey="emptyState.emptyQueue" descriptionKey="emptyState.emptyQueueDesc" onFill={reset} />
       )}

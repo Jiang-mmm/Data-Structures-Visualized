@@ -17,7 +17,7 @@ describe('useLearningProgress', () => {
   it('应该返回初始空进度', () => {
     const { result } = renderHook(() => useLearningProgress())
     const { total, completed, percentage } = result.current.getProgress()
-    expect(total).toBe(10)
+    expect(total).toBe(11)
     expect(completed).toBe(0)
     expect(percentage).toBe(0)
   })
@@ -44,7 +44,7 @@ describe('useLearningProgress', () => {
     act(() => result.current.markCompleted('array'))
     const { completed, percentage } = result.current.getProgress()
     expect(completed).toBe(1)
-    expect(percentage).toBe(10)
+    expect(percentage).toBe(9)
   })
 
   it('array无前置条件应该默认解锁', () => {
@@ -169,7 +169,7 @@ describe('useLearningProgress', () => {
     act(() => r1.current.markCompleted('stack'))
 
     expect(r2.current.getProgress().completed).toBe(2)
-    expect(r2.current.getProgress().percentage).toBe(20)
+    expect(r2.current.getProgress().percentage).toBe(18)
   })
 
   it('resetProgress应该跨实例同步', () => {
@@ -273,7 +273,7 @@ describe('useLearningProgress', () => {
     expect(refreshed.current.isCompleted('stack')).toBe(true)
     expect(refreshed.current.isVisited('queue')).toBe(true)
     expect(refreshed.current.getProgress().completed).toBe(2)
-    expect(refreshed.current.getProgress().percentage).toBe(20)
+    expect(refreshed.current.getProgress().percentage).toBe(18)
   })
 
   it('页面刷新后解锁状态应该正确恢复', () => {
@@ -294,7 +294,7 @@ describe('useLearningProgress', () => {
 
   it('totalModules 应该返回学习路径总模块数', () => {
     const { result } = renderHook(() => useLearningProgress())
-    expect(result.current.totalModules).toBe(10)
+    expect(result.current.totalModules).toBe(11)
   })
 
   it('初始状态 completedModules 应该为 0', () => {
@@ -309,7 +309,7 @@ describe('useLearningProgress', () => {
 
   it('初始状态 notStartedModules 应该等于总模块数', () => {
     const { result } = renderHook(() => useLearningProgress())
-    expect(result.current.notStartedModules).toBe(10)
+    expect(result.current.notStartedModules).toBe(11)
   })
 
   it('初始状态 overallCompletionRate 应该为 0', () => {
@@ -322,7 +322,7 @@ describe('useLearningProgress', () => {
     act(() => result.current.markVisited('array'))
     expect(result.current.inProgressModules).toBe(1)
     expect(result.current.completedModules).toBe(0)
-    expect(result.current.notStartedModules).toBe(9)
+    expect(result.current.notStartedModules).toBe(10)
   })
 
   it('markCompleted 后 completedModules 应该增加且 inProgressModules 不变', () => {
@@ -331,15 +331,15 @@ describe('useLearningProgress', () => {
     act(() => result.current.markCompleted('array'))
     expect(result.current.completedModules).toBe(1)
     expect(result.current.inProgressModules).toBe(1)
-    expect(result.current.notStartedModules).toBe(8)
+    expect(result.current.notStartedModules).toBe(9)
   })
 
   it('overallCompletionRate 应该正确计算百分比', () => {
     const { result } = renderHook(() => useLearningProgress())
     act(() => result.current.markCompleted('array'))
-    expect(result.current.overallCompletionRate).toBe(10)
+    expect(result.current.overallCompletionRate).toBe(9)
     act(() => result.current.markCompleted('stack'))
-    expect(result.current.overallCompletionRate).toBe(20)
+    expect(result.current.overallCompletionRate).toBe(18)
   })
 
   it('已完成模块同时计入 visited 时不应重复计算 inProgressModules', () => {
@@ -348,7 +348,7 @@ describe('useLearningProgress', () => {
     act(() => result.current.markCompleted('array'))
     expect(result.current.completedModules).toBe(1)
     expect(result.current.inProgressModules).toBe(0)
-    expect(result.current.notStartedModules).toBe(9)
+    expect(result.current.notStartedModules).toBe(10)
   })
 
   it('resetProgress 后统计应该归零', () => {
@@ -358,7 +358,7 @@ describe('useLearningProgress', () => {
     act(() => result.current.resetProgress())
     expect(result.current.completedModules).toBe(0)
     expect(result.current.inProgressModules).toBe(0)
-    expect(result.current.notStartedModules).toBe(10)
+    expect(result.current.notStartedModules).toBe(11)
     expect(result.current.overallCompletionRate).toBe(0)
   })
 
@@ -370,8 +370,8 @@ describe('useLearningProgress', () => {
     act(() => r1.current.markVisited('stack'))
     expect(r2.current.completedModules).toBe(1)
     expect(r2.current.inProgressModules).toBe(1)
-    expect(r2.current.notStartedModules).toBe(8)
-    expect(r2.current.overallCompletionRate).toBe(10)
+    expect(r2.current.notStartedModules).toBe(9)
+    expect(r2.current.overallCompletionRate).toBe(9)
   })
 
   // ============================================================
@@ -401,6 +401,24 @@ describe('useLearningProgress', () => {
     const { result } = renderHook(() => useLearningProgress())
     act(() => result.current.setGoal(5, '2026-12-31'))
     expect(result.current.syncStatus).toBe('synced')
+  })
+
+  it('setGoal 应该返回 true 当保存成功', () => {
+    const { result } = renderHook(() => useLearningProgress())
+    let ok = false
+    act(() => { ok = result.current.setGoal(5, '2026-12-31') })
+    expect(ok).toBe(true)
+  })
+
+  it('setGoal 应该返回 false 当保存失败', () => {
+    const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('storage full')
+    })
+    const { result } = renderHook(() => useLearningProgress())
+    let ok = true
+    act(() => { ok = result.current.setGoal(5, '2026-12-31') })
+    expect(ok).toBe(false)
+    setItem.mockRestore()
   })
 
   it('goalProgress 应该根据已完成模块数计算', () => {

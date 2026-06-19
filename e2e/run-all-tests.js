@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { readFileSync, existsSync } from 'fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -22,20 +23,53 @@ const comprehensiveTestFiles = [
 function runTest(file, browser) {
   return new Promise((resolve) => {
     const filePath = path.join(__dirname, file);
+    // test-comprehensive.js runs many pages/animations and needs more time.
+    const timeout = file === 'test-comprehensive.js' ? 600000 : 300000;
 
     const child = exec(`node "${filePath}"`, {
       encoding: 'utf-8',
-      timeout: 300000,
+      timeout,
       env: { ...process.env, BROWSER: browser },
     }, (error, stdout, stderr) => {
       const output = stdout || '';
       const errOutput = stderr || '';
 
-      const passedMatch = output.match(/通过:\s*(\d+)/);
-      const failedMatch = output.match(/失败:\s*(\d+)/);
+      let passed = 0;
+      let failed = 0;
 
-      const passed = passedMatch ? parseInt(passedMatch[1], 10) : 0;
-      const failed = failedMatch ? parseInt(failedMatch[1], 10) : 0;
+      // Prefer a JSON result file written by the test (avoids stdout truncation
+      // issues). Falls back to parsing stdout summary markers.
+      const jsonResultFile = path.join(__dirname, `test-comprehensive-result-${browser}.json`);
+      if (file === 'test-comprehensive.js' && existsSync(jsonResultFile)) {
+        try {
+          const json = JSON.parse(readFileSync(jsonResultFile, 'utf-8'));
+          passed = json.totalPassed || 0;
+          failed = json.totalFailed || 0;
+        } catch {
+          // Fall through to stdout parsing.
+        }
+      }
+
+      if (passed === 0 && failed === 0) {
+        // Prefer an explicit summary line; otherwise use the last 通过:/失败:
+        // counts so per-section subtotals in test-comprehensive.js are not mistaken
+        // for the final totals.
+        const summaryMatch = output.match(/汇总:\s*通过=(\d+),\s*失败=(\d+)/);
+        const passedMatches = [...output.matchAll(/通过:\s*(\d+)/g)];
+        const failedMatches = [...output.matchAll(/失败:\s*(\d+)/g)];
+
+        if (summaryMatch) {
+          passed = parseInt(summaryMatch[1], 10);
+          failed = parseInt(summaryMatch[2], 10);
+        } else {
+          if (passedMatches.length > 0) {
+            passed = parseInt(passedMatches[passedMatches.length - 1][1], 10);
+          }
+          if (failedMatches.length > 0) {
+            failed = parseInt(failedMatches[failedMatches.length - 1][1], 10);
+          }
+        }
+      }
 
       resolve({
         file,

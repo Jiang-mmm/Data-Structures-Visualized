@@ -50,9 +50,9 @@ export default memo(function ShareButton({ data, dataType, disabled = false }: S
 
   return (
     <div className="relative inline-block">
-      <OperationButton variant="outline" onClick={handleShare} disabled={disabled} title={t('share.generateLink')} aria-label={t('share.generateLink')}>
+      <OperationButton variant="secondary" onClick={handleShare} disabled={disabled} title={t('share.generateLink')} aria-label={t('share.generateLink')}>
         <span className="flex items-center gap-1.5">
-          <span className="text-sm">⛓</span>
+          <span className="text-sm">↗</span>
           <span className="hidden sm:inline">{t('share.label')}</span>
         </span>
       </OperationButton>

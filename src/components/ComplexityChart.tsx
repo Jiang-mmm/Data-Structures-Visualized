@@ -139,13 +139,13 @@ function ComplexityChart({
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-ink dark:bg-dark-ink text-paper dark:text-dark-paper">
-                    <th className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider border-r border-paper/20 dark:border-dark-paper/20">
+                    <th className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider border-r border-border-strong dark:border-dark-border-strong">
                       {t('complexityChart.algorithm')}
                     </th>
-                    <th className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider border-r border-paper/20 dark:border-dark-paper/20">
+                    <th className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider border-r border-border-strong dark:border-dark-border-strong">
                       {t('complexityChart.timeComplexity')}
                     </th>
-                    <th className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider border-r border-paper/20 dark:border-dark-paper/20">
+                    <th className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider border-r border-border-strong dark:border-dark-border-strong">
                       {t('complexityChart.spaceComplexity')}
                     </th>
                     {hasDescription && (
@@ -161,8 +161,8 @@ function ComplexityChart({
                       key={i}
                       className={
                         i % 2 === 0
-                          ? 'bg-white dark:bg-slate border-t border-ink/15 dark:border-dark-border/30'
-                          : 'bg-paper-warm dark:bg-slate-light border-t border-ink/15 dark:border-dark-border/30'
+                          ? 'bg-surface dark:bg-dark-surface border-t border-ink/15 dark:border-dark-border/30'
+                          : 'bg-muted dark:bg-dark-muted border-t border-ink/15 dark:border-dark-border/30'
                       }
                     >
                       <td className="px-2.5 py-1.5 border-r border-ink/10 dark:border-dark-border/20">

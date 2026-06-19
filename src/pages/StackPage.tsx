@@ -84,7 +84,7 @@ export default function StackPage() {
   }, [isAnimating, data, dimensions, peek, setIsAnimating, getAnimationContext, svgRef])
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('stack.title')} subtitle={t('stack.subtitle')}>
         <ExportImport dataType="stack" data={data} disabled={isAnimating} onImport={({ data: imported }: { data: unknown }) => {
           const result = validateImportData(imported)
@@ -95,19 +95,19 @@ export default function StackPage() {
           }
         }} />
         <ShareButton data={data} dataType="stack" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+        <OperationButton variant="secondary" onClick={reset}>{t('common.reset')}</OperationButton>
       </PageHeader>
       <OperationBar>
         <SpeedControl />
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
-        <OperationButton variant="primary" onClick={handlePush} disabled={isAnimating}>{'+ ' + t('stack.push')}</OperationButton>
-        <OperationButton variant="danger" onClick={handlePop} disabled={isAnimating || data.length === 0}>{'- ' + t('stack.pop')}</OperationButton>
-        <OperationButton variant="outline" onClick={handlePeek} popAnimation>{t('stack.peek')}</OperationButton>
-        <OperationButton variant="outline" onClick={() => { if (window.confirm(t('common.confirmClear'))) clear() }} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
-        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        <OperationButton variant="primary" onClick={handlePush} disabled={isAnimating} isBusy={isAnimating}>{'+ ' + t('stack.push')}</OperationButton>
+        <OperationButton variant="danger" onClick={handlePop} disabled={isAnimating || data.length === 0} isBusy={isAnimating}>{'- ' + t('stack.pop')}</OperationButton>
+        <OperationButton variant="secondary" onClick={handlePeek} disabled={isAnimating || data.length === 0} isBusy={isAnimating} popAnimation>{t('stack.peek')}</OperationButton>
+        <OperationButton variant="secondary" onClick={() => { if (window.confirm(t('common.confirmClear'))) clear() }} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
+        {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={undo}
           disabled={isAnimating || !canUndo()}
           previewData={getUndoPreview()}
@@ -116,7 +116,7 @@ export default function StackPage() {
           {t('common.undo')}
         </UndoPreviewButton>
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={redo}
           disabled={isAnimating || !canRedo()}
           previewData={getRedoPreview()}
@@ -132,9 +132,9 @@ export default function StackPage() {
         </OperationInfo>
       </OperationBar>
       <ContentTier structureKey="stack" />
-      <Visualizer data={data} renderFn={renderStack as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.stackLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: size }]} />} />
+      <Visualizer data={data} renderFn={renderStack as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.stackLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: size }]} />} />
       {data.length === 0 && (
-        <EmptyState icon="☰" titleKey="emptyState.emptyStack" descriptionKey="emptyState.emptyStackDesc" onFill={reset} />
+        <EmptyState icon="▥" titleKey="emptyState.emptyStack" descriptionKey="emptyState.emptyStackDesc" onFill={reset} />
       )}
       <LearningModeToggle
         showLearning={showLearning}

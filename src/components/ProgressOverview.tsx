@@ -1,6 +1,7 @@
 import { memo, useState, useCallback } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { useLearningProgress } from '../hooks/useLearningProgress'
+import { showToast } from '../components/toastStore'
 
 function ProgressOverview() {
   const { t } = useGlobalSettings()
@@ -19,11 +20,22 @@ function ProgressOverview() {
   const [targetSteps, setTargetSteps] = useState<string>(goal?.targetSteps.toString() || '')
   const [targetDate, setTargetDate] = useState<string>(goal?.targetDate || '')
 
+  const parsedSteps = parseInt(targetSteps, 10)
+  const isValidSteps = targetSteps.trim() !== '' && Number.isFinite(parsedSteps) && parsedSteps > 0 && parsedSteps <= totalModules
+  const validationMessage = isValidSteps
+    ? ''
+    : t('learningPath.targetStepsHint').replace('{max}', String(totalModules))
+
   const handleSetGoal = useCallback(() => {
     const steps = parseInt(targetSteps, 10)
-    if (!Number.isFinite(steps) || steps <= 0) return
-    setGoal(steps, targetDate)
-  }, [targetSteps, targetDate, setGoal])
+    if (targetSteps.trim() === '' || !Number.isFinite(steps) || steps <= 0 || steps > totalModules) return
+    const ok = setGoal(steps, targetDate)
+    if (ok) {
+      showToast({ type: 'success', message: t('learningPath.goalSetSuccess') })
+    } else {
+      showToast({ type: 'error', message: t('learningPath.goalSetFailed') })
+    }
+  }, [targetSteps, targetDate, totalModules, setGoal, t])
 
   const handleClearGoal = useCallback(() => {
     clearGoal()
@@ -37,10 +49,10 @@ function ProgressOverview() {
 
   return (
     <section className="mb-8 animate-slide-up" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
-      <div className="border-2 border-ink dark:border-dark-border bg-white dark:bg-slate p-5 md:p-6">
+      <div className="border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface p-5 md:p-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-8 h-8 bg-accent-emerald flex items-center justify-center text-paper text-sm font-bold shadow-button dark:shadow-button-dark">
+          <div className="w-8 h-8 bg-accent-blue flex items-center justify-center text-paper text-sm font-bold shadow-button dark:shadow-button-dark">
             ○
           </div>
           <h2 className="text-lg font-bold text-ink dark:text-dark-ink">{t('learningPath.overviewTitle')}</h2>
@@ -72,12 +84,13 @@ function ProgressOverview() {
                   cy="60"
                   r={radius}
                   fill="none"
-                  stroke="#059669"
+                  stroke="currentColor"
                   strokeWidth="10"
                   strokeDasharray={circumference}
                   strokeDashoffset={offset}
                   strokeLinecap="round"
                   transform="rotate(-90 60 60)"
+                  className="text-accent-blue"
                   style={{ transition: 'stroke-dashoffset 0.5s ease' }}
                 />
               </svg>
@@ -91,8 +104,8 @@ function ProgressOverview() {
 
             {/* Stats cards */}
             <div className="grid grid-cols-3 gap-2 flex-1 w-full">
-              <div className="border-2 border-accent-emerald/40 bg-accent-emerald/5 dark:bg-accent-emerald/10 p-2 text-center">
-                <div className="text-xl font-black text-accent-emerald">{completedModules}</div>
+              <div className="border-2 border-accent-blue/40 bg-accent-blue/5 dark:bg-accent-blue/10 p-2 text-center">
+                <div className="text-xl font-black text-accent-blue">{completedModules}</div>
                 <div className="text-[10px] font-mono text-ink-light dark:text-dark-ink-light">
                   {t('learningPath.completedModules')}
                 </div>
@@ -119,7 +132,7 @@ function ProgressOverview() {
               {goal && (
                 <button
                   onClick={handleClearGoal}
-                  className="text-[10px] font-mono text-ink-light/50 dark:text-dark-ink-light/50 hover:text-accent-rose transition-colors"
+                  className="text-[10px] font-mono text-ink-light/50 dark:text-dark-ink-light/50 hover:text-accent-amber transition-colors"
                   title={t('learningPath.clearGoal')}
                   aria-label={t('learningPath.clearGoal')}
                 >
@@ -140,7 +153,7 @@ function ProgressOverview() {
                 </div>
                 <div className="w-full h-2 bg-paper dark:bg-dark-paper border border-ink/10 dark:border-dark-border mb-2">
                   <div
-                    className="h-full bg-accent-violet transition-all duration-500"
+                    className="h-full bg-accent-blue transition-all duration-500"
                     style={{ width: `${goalProgress}%` }}
                   />
                 </div>
@@ -160,24 +173,34 @@ function ProgressOverview() {
                     max={totalModules}
                     value={targetSteps}
                     onChange={(e) => setTargetSteps(e.target.value)}
-                    className="w-full px-2 py-1 border-2 border-ink/20 dark:border-dark-border bg-paper dark:bg-dark-paper text-sm text-ink dark:text-dark-ink focus:outline-none focus:border-accent-violet"
+                    className="w-full px-2 py-1 border-2 border-ink/20 dark:border-dark-border bg-paper dark:bg-dark-paper text-sm text-ink dark:text-dark-ink focus:outline-none focus:border-accent-blue"
                     placeholder={`${totalModules}`}
+                    aria-describedby={!isValidSteps ? 'target-steps-hint' : undefined}
                   />
+                  {!isValidSteps && (
+                    <p id="target-steps-hint" className="mt-1 text-[10px] font-mono text-accent-amber">
+                      {validationMessage}
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-[10px] font-mono text-ink-light dark:text-dark-ink-light mb-1">
+                  <label htmlFor="target-date" className="block text-[10px] font-mono text-ink-light dark:text-dark-ink-light mb-1">
                     {t('learningPath.targetDate')}
                   </label>
                   <input
+                    id="target-date"
                     type="date"
                     value={targetDate}
                     onChange={(e) => setTargetDate(e.target.value)}
-                    className="w-full px-2 py-1 border-2 border-ink/20 dark:border-dark-border bg-paper dark:bg-dark-paper text-sm text-ink dark:text-dark-ink focus:outline-none focus:border-accent-violet"
+                    className="w-full px-2 py-1 border-2 border-ink/20 dark:border-dark-border bg-paper dark:bg-dark-paper text-sm text-ink dark:text-dark-ink focus:outline-none focus:border-accent-blue"
                   />
                 </div>
                 <button
                   onClick={handleSetGoal}
-                  className="w-full py-1.5 border-2 border-ink dark:border-dark-border bg-accent-violet text-paper text-xs font-bold shadow-button dark:shadow-button-dark hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover transition-all"
+                  disabled={!isValidSteps}
+                  title={validationMessage || undefined}
+                  aria-describedby={!isValidSteps ? 'target-steps-hint' : undefined}
+                  className="w-full py-1.5 border-2 border-ink dark:border-dark-border bg-accent-blue text-paper text-xs font-bold shadow-button dark:shadow-button-dark hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-button dark:disabled:hover:shadow-button-dark"
                 >
                   {t('learningPath.setGoal')}
                 </button>

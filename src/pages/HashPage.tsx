@@ -108,7 +108,7 @@ export default function HashPage() {
   }, [isAnimating, keyValue, data, remove, setIsAnimating, getAnimationContext, svgRef, hashFn])
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('hash.title')} subtitle={t('hash.subtitle')}>
         <ExportImport dataType="hash" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           if (Array.isArray(imported) && imported.length > 0 && imported.length <= 200 && imported.every(item =>
@@ -122,7 +122,7 @@ export default function HashPage() {
           }
         }} />
         <ShareButton data={data} dataType="hash" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+        <OperationButton variant="secondary" onClick={reset}>{t('common.reset')}</OperationButton>
       </PageHeader>
 
       <OperationBar>
@@ -130,12 +130,12 @@ export default function HashPage() {
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('hash.keyPlaceholder')} value={keyValue} onChange={setKeyValue} />
         <OperationInput type="text" placeholder={t('hash.valuePlaceholder')} value={valueInput} onChange={setValueInput} />
-        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('hash.insert')}</OperationButton>
-        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating}>{t('hash.remove')}</OperationButton>
-        <OperationButton variant="amber" onClick={handleSearch} disabled={isAnimating} popAnimation>{t('hash.search')}</OperationButton>
-        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating} isBusy={isAnimating}>{t('hash.insert')}</OperationButton>
+        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating} isBusy={isAnimating}>{t('hash.remove')}</OperationButton>
+        <OperationButton variant="warning" onClick={handleSearch} disabled={isAnimating} isBusy={isAnimating} popAnimation>{t('hash.search')}</OperationButton>
+        {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={undo}
           disabled={isAnimating || !canUndo()}
           previewData={getUndoPreview()}
@@ -144,7 +144,7 @@ export default function HashPage() {
           {t('common.undo')}
         </UndoPreviewButton>
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={redo}
           disabled={isAnimating || !canRedo()}
           previewData={getRedoPreview()}
@@ -167,6 +167,7 @@ export default function HashPage() {
         svgRef={svgRef}
         dimensions={dimensions}
         containerRef={containerRef}
+        isAnimating={isAnimating}
         ariaLabel={t("visualizer.hashLabel")}
       />
       {data.length === 0 && (

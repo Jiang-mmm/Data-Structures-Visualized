@@ -4,7 +4,7 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 interface UndoPreviewButtonProps {
   onClick: () => void
   disabled?: boolean
-  variant?: 'primary' | 'success' | 'danger' | 'outline'
+  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'outline'
   previewData?: unknown
   previewLabel?: string
   children: ReactNode
@@ -56,9 +56,10 @@ export default memo(function UndoPreviewButton({
 
   const variants = {
     primary: 'bg-accent-blue border-accent-blue text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    secondary: 'bg-surface border-border text-ink hover:bg-muted hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover dark:bg-dark-surface dark:border-dark-border dark:text-dark-ink dark:hover:bg-dark-muted',
     success: 'bg-accent-emerald border-accent-emerald text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
     danger: 'bg-accent-rose border-accent-rose text-paper hover:brightness-90 hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
-    outline: 'bg-white dark:bg-slate border-ink dark:border-dark-border text-ink dark:text-dark-ink hover:bg-paper-warm dark:hover:bg-slate-light hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
+    outline: 'bg-surface dark:bg-dark-surface border-ink dark:border-dark-border text-ink dark:text-dark-ink hover:bg-muted dark:hover:bg-dark-muted hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover',
   }
 
   return (

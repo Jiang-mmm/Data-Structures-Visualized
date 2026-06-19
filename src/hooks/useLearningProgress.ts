@@ -166,7 +166,7 @@ export function useLearningProgress() {
     notifySync()
   }, [])
 
-  const setGoal = useCallback((targetSteps: number, targetDate: string) => {
+  const setGoal = useCallback((targetSteps: number, targetDate: string): boolean => {
     const next: LearningGoal = {
       targetSteps,
       targetDate,
@@ -178,6 +178,7 @@ export function useLearningProgress() {
     setGoalState(next)
     setSyncStatus(ok ? 'synced' : 'failed')
     notifySync()
+    return ok
   }, [])
 
   const clearGoal = useCallback(() => {

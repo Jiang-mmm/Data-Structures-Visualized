@@ -104,6 +104,20 @@ async function runTest() {
     await closeModalIfOpen(page);
   }
 
+  // Helper: poll localStorage until predicate is satisfied
+  async function pollLocalStorage(key, predicate, timeout = 3000, interval = 200) {
+    const deadline = Date.now() + timeout;
+    while (Date.now() < deadline) {
+      const value = await page.evaluate((k) => {
+        const d = localStorage.getItem(k);
+        return d ? JSON.parse(d) : null;
+      }, key);
+      if (predicate(value)) return value;
+      await sleep(interval);
+    }
+    return null;
+  }
+
   try {
     // =====================================================================
     // TEST 1: LocalStorage Persistence
@@ -191,13 +205,15 @@ async function runTest() {
     await sleep(300);
     await closeModalIfOpen(page);
     await clickButtonIfEnabled(page, /头插/);
-    await sleep(800);
     await closeModalIfOpen(page);
 
-    const llStoredBefore = await page.evaluate(() => {
-      const d = localStorage.getItem('ds-visualizer-data-linkedlist');
-      return d ? JSON.parse(d) : null;
-    });
+    // Poll localStorage instead of a fixed sleep because the write is debounced.
+    const llStoredBefore = await pollLocalStorage(
+      'ds-visualizer-data-linkedlist',
+      (data) => Array.isArray(data) && data[0] === 77,
+      3000,
+      200
+    );
     await assert(Array.isArray(llStoredBefore) && llStoredBefore[0] === 77, `LinkedList: localStorage 头部为77`, 'LinkedList: localStorage 头部数据异常');
 
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 10000 });

@@ -42,10 +42,10 @@ export default memo(function ExportImport({ dataType, data, onImport, disabled }
 
   return (
     <div className="flex items-center gap-1.5">
-      <OperationButton variant="outline" onClick={handleExport} disabled={disabled} title={t('exportImport.exportTooltip')} aria-label={t('exportImport.export')}>
+      <OperationButton variant="secondary" onClick={handleExport} disabled={disabled} title={t('exportImport.exportTooltip')} aria-label={t('exportImport.export')}>
         ↓ {t('exportImport.export')}
       </OperationButton>
-      <OperationButton variant="outline" onClick={handleImportClick} disabled={disabled} title={t('exportImport.importTooltip')} aria-label={t('exportImport.import')}>
+      <OperationButton variant="secondary" onClick={handleImportClick} disabled={disabled} title={t('exportImport.importTooltip')} aria-label={t('exportImport.import')}>
         ↑ {t('exportImport.import')}
       </OperationButton>
       <input

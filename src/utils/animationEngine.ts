@@ -25,6 +25,25 @@ let fpsLastTime = performance.now()
 let fpsMonitoring = false
 let fpsLastFrameTime = performance.now()
 
+let fpsDegraded = false
+let fpsDegradedSince: number | null = null
+const LOW_FPS_THRESHOLD = 20
+const LOW_FPS_DURATION = 3000
+
+function updateFPSDegradation(now: number, fps: number) {
+  if (fps < LOW_FPS_THRESHOLD) {
+    if (fpsDegradedSince === null) {
+      fpsDegradedSince = now
+    }
+    if (!fpsDegraded && now - fpsDegradedSince >= LOW_FPS_DURATION) {
+      fpsDegraded = true
+      perfLogger.log('fps', '[FPS] Auto-degraded after 3s low FPS', { fps })
+    }
+  } else if (!fpsDegraded) {
+    fpsDegradedSince = null
+  }
+}
+
 function measureFPS() {
   fpsFrameCount++
   const now = performance.now()
@@ -33,6 +52,7 @@ function measureFPS() {
 
   if (now - fpsLastTime >= 1000) {
     currentFPS = fpsFrameCount
+    updateFPSDegradation(now, currentFPS)
     perfLogger.recordFPS(currentFPS, frameTime)
     perfLogger.log('fps', `[FPS] ${currentFPS} FPS | frame: ${frameTime.toFixed(2)}ms`, {
       fps: currentFPS,
@@ -58,10 +78,20 @@ export function stopFPSMonitoring() {
   fpsMonitoring = false
   fpsFrameCount = 0
   currentFPS = 60
+  resetFPSDegradation()
 }
 
 export function getCurrentFPS() {
   return currentFPS
+}
+
+export function isFPSDegraded() {
+  return fpsDegraded
+}
+
+export function resetFPSDegradation() {
+  fpsDegraded = false
+  fpsDegradedSince = null
 }
 
 /**
@@ -197,6 +227,7 @@ export const EASING: Record<string, (t: number) => number> = {
   easeOutQuad: easeQuadOut,
   easeOutCubic: easeCubicOut,
   easeInCubic: easeCubicIn,
+  easeInOutCubic: easeCubicInOut,
   easeInBack: easeBackIn,
   easeOutBack: easeBackOut,
   easeOutElastic: easeElasticOut.amplitude(1).period(0.3),
@@ -239,7 +270,7 @@ export function createAnimation(): Animation {
 }
 
 export function duration(baseMs: number, dataLength = 0) {
-  if (skipAnimationFlag) return 0
+  if (skipAnimationFlag || isFPSDegraded()) return 0
   const perfFactor = getPerformanceFactor(dataLength)
   const fpsFactor = currentFPS < 15 ? 0 : currentFPS < 30 ? 0.5 : 1
   return (baseMs * perfFactor * fpsFactor) / speedMultiplier

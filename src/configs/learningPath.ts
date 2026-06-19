@@ -58,6 +58,15 @@ export const LEARNING_PATH: LearningPathNode[] = [
     difficulty: 2,
   },
   {
+    id: 'avlTree',
+    nameKey: 'sidebar.avlTree',
+    descriptionKey: 'learningPath.desc.avlTree',
+    path: '/avl-tree',
+    category: 'tree',
+    prerequisites: ['tree'],
+    difficulty: 3,
+  },
+  {
     id: 'heap',
     nameKey: 'sidebar.heap',
     descriptionKey: 'learningPath.desc.heap',

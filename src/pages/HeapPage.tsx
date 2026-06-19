@@ -50,6 +50,7 @@ export default function HeapPage() {
     const error = getValidationError(inputValue)
     if (error) { showToast({ type: 'error', message: error }); return }
     const value = parseInt(inputValue, 10)
+    setInputValue('')
 
     setIsAnimating(true)
     const anim = getAnimationContext()
@@ -66,7 +67,6 @@ export default function HeapPage() {
     } finally {
       setIsAnimating(false)
     }
-    setInputValue('')
   }, [isAnimating, inputValue, data, insert, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleExtract = useCallback(async () => {
@@ -98,7 +98,7 @@ export default function HeapPage() {
   }, [isAnimating, data.length, peek, setIsAnimating, getAnimationContext, svgRef])
 
   return (
-    <div className="flex flex-col h-screen overflow-y-auto bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('heap.title')} subtitle={t('heap.subtitle')}>
         <ExportImport dataType="heap" data={data} disabled={isAnimating} onImport={({ data: imported }) => {
           const result = validateImportData(imported)
@@ -109,19 +109,19 @@ export default function HeapPage() {
           }
         }} />
         <ShareButton data={data} dataType="heap" disabled={isAnimating} />
-        <OperationButton variant="outline" onClick={reset}>{t('common.reset')}</OperationButton>
+        <OperationButton variant="secondary" onClick={reset}>{t('common.reset')}</OperationButton>
       </PageHeader>
 
       <OperationBar>
         <SpeedControl />
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('heap.inputPlaceholder')} value={inputValue} onChange={setInputValue} />
-        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating}>{t('heap.insert')}</OperationButton>
-        <OperationButton variant="danger" onClick={handleExtract} disabled={isAnimating || data.length === 0}>{t('heap.extractMax')}</OperationButton>
-        <OperationButton variant="outline" onClick={handlePeek} disabled={isAnimating || data.length === 0} popAnimation>{t('heap.peek')}</OperationButton>
-        {isAnimating && <OperationButton variant="outline" onClick={handleStop}>{t('common.stop')}</OperationButton>}
+        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating} isBusy={isAnimating}>{t('heap.insert')}</OperationButton>
+        <OperationButton variant="danger" onClick={handleExtract} disabled={isAnimating || data.length === 0} isBusy={isAnimating}>{t('heap.extractMax')}</OperationButton>
+        <OperationButton variant="secondary" onClick={handlePeek} disabled={isAnimating || data.length === 0} isBusy={isAnimating} popAnimation>{t('heap.peek')}</OperationButton>
+        {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={undo}
           disabled={isAnimating || !canUndo()}
           previewData={getUndoPreview()}
@@ -130,7 +130,7 @@ export default function HeapPage() {
           {t('common.undo')}
         </UndoPreviewButton>
         <UndoPreviewButton
-          variant="outline"
+          variant="secondary"
           onClick={redo}
           disabled={isAnimating || !canRedo()}
           previewData={getRedoPreview()}
@@ -146,7 +146,7 @@ export default function HeapPage() {
         </OperationInfo>
       </OperationBar>
 
-      <Visualizer data={data} renderFn={renderHeap as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} ariaLabel={t("visualizer.heapLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: heapSize }]} />} />
+      <Visualizer data={data} renderFn={renderHeap as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.heapLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: heapSize }]} />} />
       {data.length === 0 && (
         <EmptyState icon="▲" titleKey="emptyState.emptyHeap" descriptionKey="emptyState.emptyHeapDesc" onFill={reset} />
       )}
