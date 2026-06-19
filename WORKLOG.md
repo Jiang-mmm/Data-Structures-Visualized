@@ -2,6 +2,88 @@
 
 ---
 
+## 2026-06-19 | v10/v11 最终验证、文档同步与 GitHub 部署
+
+### 执行概要
+
+完成 v10/v11 迭代的最终收尾：修复本地打开（file://）兼容性问题，统一全站语义化颜色 token，修复 Sidebar 激活态 WCAG 2 AA 对比度，同步全部项目文档与版本号，推送 GitHub 并触发自动部署。
+
+### 完成内容
+
+#### 本地打开兼容修复 [P0]
+- **修改原因：** 用户要求处理本地打开 `index.html` 显示异常；`base: '/Data-Structures-Visualized/'` 在 file:// 协议下资源路径失效，BrowserRouter 在 file:// 下不工作
+- **修改内容：**
+  - `src/App.tsx`：协议检测，file:// 使用 `HashRouter`，http(s):// 使用 `BrowserRouter`（basename `/Data-Structures-Visualized/`）
+  - `vite.config.js`：`base` 改为生产模式 `./`、开发模式 `/Data-Structures-Visualized/`，使 dist 资源路径相对化
+- **风险说明：** 影响资源加载与路由；已验证构建产物 `./assets/...` 相对路径正确
+
+#### 全站配色统一 [P1]
+- **修改原因：** 多处组件仍使用 `bg-white dark:bg-slate`、`bg-paper-warm dark:bg-slate-light` 等硬编码颜色，与主题 token 不一致
+- **修改内容：**
+  - 批量替换 20+ 组件/页面中的硬编码颜色为语义化 token：`bg-surface`/`bg-dark-surface`、`bg-muted`/`bg-dark-muted`、`bg-paper`/`bg-dark-paper`
+  - `src/components/Card.tsx`：渐变色改为主题感知 `from-accent-blue/10` 等
+  - `src/pages/Home.tsx`：13 张首页卡片按线性（blue）/ 树（amber）/ 图与哈希（rose）三类分组配色
+  - `src/components/Sidebar.tsx` / `Layout.tsx` / `ProgressOverview.tsx` 等同步替换为语义化 token
+- **风险说明：** 纯 UI 颜色调整；同步更新 `Card.test.tsx` 断言
+
+#### A11y 对比度修复 [P1]
+- **修改原因：** E2E a11y 扫描报 `Sidebar` 激活项 `.bg-accent-blue/12 > span` 颜色对比度不足
+- **修改内容：**
+  - `src/components/Sidebar.tsx`：`NAV_ITEM_ACTIVE` 由 `text-accent-blue` 改为 `text-ink dark:text-dark-ink`，背景保持 `bg-accent-blue/10 dark:bg-accent-blue/20`
+- **风险说明：** 仅视觉调整，不影响交互
+
+#### 文档与版本号同步 [P1]
+- **修改原因：** 用户要求确认所有文档同步更新；TODO.md 仍停留在 v9.0，README/ARCHITECTURE/CODE_WIKI 未反映 v11 内容
+- **修改内容：**
+  - `package.json`：`version` 8.0.0 → 11.0.0
+  - `PROJECT_SUMMARY.md`：更新日期、测试数（3042）、页面数（14）、Hooks（12）、Visualizers（11）、AVL 树
+  - `README.md`：版本、日期、AVL 树、测试数、页面数、主题 token 等
+  - `ARCHITECTURE.md`：版本 v11.0，增加 AvlTreePage、useAvlTreeState、avlTreeVisualizer
+  - `CODE_WIKI.md`：版本 v11.0，增加 AVL 树功能矩阵
+  - `TODO.md`：补充 v10.0/v11.0 已完成项，更新待办与技术债务状态
+  - `CHANGELOG.md`：补充本次最终交付条目与质量指标
+- **风险说明：** 无运行时影响
+
+#### GitHub 部署 [P0]
+- **修改原因：** 用户要求上传 GitHub 并部署
+- **修改内容：**
+  - 提交 201 files（7755 insertions, 1150 deletions）
+  - 推送至 `origin/main`，触发 GitHub Actions CI/Deploy 工作流
+- **风险说明：** 部署流程依赖 GitHub Pages 环境；需线上验证
+
+### 验证方式
+
+| 验证项 | 命令 | 结果 |
+|--------|------|------|
+| 单元测试 | `npm run test:run` | ✅ 188 个测试文件，3042 个测试全部通过 |
+| ESLint | `npm run lint` | ✅ 0 错误 / 0 警告 |
+| TypeScript | `npm run typecheck` | ✅ 0 错误 |
+| 生产构建 | `npm run build` | ✅ 构建成功，`check-bundle.js` 预算检查通过 |
+| E2E 功能 | `node e2e/run-all-tests.js` | ✅ 308/308 功能用例通过 |
+| E2E A11y | `node e2e/test-a11y.js` | ✅ 12/12 页面 0 violations |
+| 本地打开 | 直接打开 `dist/index.html` | ✅ 资源路径 `./assets/...` 相对化，HashRouter 生效 |
+
+### 修改文件清单
+
+| 文件 | 类型 | 修改内容 |
+|------|------|---------|
+| `src/App.tsx` | 修改 | 协议检测，双模式路由 |
+| `vite.config.js` | 修改 | 条件 base：生产 `./` / 开发 `/Data-Structures-Visualized/` |
+| `src/components/Sidebar.tsx` | 修改 | 激活态颜色对比度修复；容器/激活态 token 替换 |
+| `src/components/Card.tsx` | 修改 | 渐变色主题感知 |
+| `src/pages/Home.tsx` | 修改 | 三色分组配色 |
+| `src/components/OperationBar.tsx` 等 20+ 文件 | 修改 | 硬编码颜色替换为语义化 token |
+| `src/__tests__/components/Card.test.tsx` | 修改 | 更新 gradient 断言 |
+| `package.json` | 修改 | 版本 11.0.0 |
+| `PROJECT_SUMMARY.md` | 修改 | v11 统计与状态更新 |
+| `README.md` | 修改 | v11 功能与指标更新 |
+| `ARCHITECTURE.md` | 修改 | v11 架构层更新 |
+| `CODE_WIKI.md` | 修改 | v11 功能矩阵更新 |
+| `TODO.md` | 修改 | v10/v11 已完成项与待办状态 |
+| `CHANGELOG.md` | 修改 | 最终交付条目与质量指标 |
+
+---
+
 ## 2026-06-18 | v11.0 全面视觉统一与交互优化
 
 ### 执行概要
@@ -80,7 +162,7 @@
 
 | 验证项 | 命令 | 结果 |
 |--------|------|------|
-| 单元测试 | `npm run test:run` | ✅ 187 个测试文件，2996 个测试全部通过 |
+| 单元测试 | `npm run test:run` | ✅ 188 个测试文件，3042 个测试全部通过 |
 | ESLint | `npm run lint` | ✅ 0 错误 / 0 警告 |
 | 生产构建 | `npm run build` | ✅ 构建成功，`check-bundle.js` 预算检查通过 |
 | TypeScript | `npm run typecheck` | ✅ 0 错误 |

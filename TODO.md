@@ -1,9 +1,57 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** v9.0.0
-> **更新日期:** 2026-06-18
-> **状态:** v9.0 全面迭代优化已完成，后续功能扩展待开始
-> **详细迭代计划:** docs/iteration-plan-v8.md（历史），v9.0 迭代记录见 WORKLOG.md
+> **版本:** v11.0.1
+> **更新日期:** 2026-06-19
+> **状态:** v10/v11 视觉统一、交互优化、AVL 树新增、本地打开兼容修复已完成；后续功能扩展待开始
+> **详细迭代计划:** docs/iteration-plan-v10.md（最新），v10/v11 迭代记录见 WORKLOG.md
+
+---
+
+## 已完成（v11.0.1 - 最终验证、文档同步与 GitHub 部署）
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| v11-FINAL-1 | 本地打开兼容修复 | P0 | ✅ | file:// 使用 HashRouter，生产 base 改为 `./` |
+| v11-FINAL-2 | 全站语义化颜色统一 | P1 | ✅ | 20+ 文件硬编码颜色替换为 token |
+| v11-FINAL-3 | 首页三色分组配色 | P1 | ✅ | 线性/树/图与哈希按 blue/amber/rose 分组 |
+| v11-FINAL-4 | A11y 对比度修复 | P1 | ✅ | Sidebar 激活态文字改为 text-ink，12/12 页面 0 violations |
+| v11-FINAL-5 | 文档与版本号同步 | P1 | ✅ | PROJECT_SUMMARY/README/ARCHITECTURE/CODE_WIKI/TODO/CHANGELOG/package.json 同步到 v11.0.1 |
+| v11-FINAL-6 | GitHub 部署 | P0 | ✅ | 提交并推送 origin/main，触发 CI/Deploy 工作流 |
+
+### 质量验证
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| v11-FINAL-Q1 | 单元测试 | P0 | ✅ | 3042 tests passed（188 文件） |
+| v11-FINAL-Q2 | ESLint | P0 | ✅ | 0 错误 / 0 警告 |
+| v11-FINAL-Q3 | TypeScript strict | P0 | ✅ | 0 错误 |
+| v11-FINAL-Q4 | 生产构建 | P0 | ✅ | 成功，bundle 预算通过 |
+| v11-FINAL-Q5 | E2E 功能 | P0 | ✅ | 308/308 passed |
+| v11-FINAL-Q6 | E2E A11y | P0 | ✅ | 12/12 页面 0 violations |
+
+---
+
+## 已完成（v11.0 - 全面视觉统一与交互优化）
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| v11-P1 | 全局色彩系统统一 | P1 | ✅ | Button info 变体改为 accent-blue，收敛页面级强调色为 blue/amber |
+| v11-P2 | 排序界面序号标识 | P1 | ✅ | sortVisualizer 柱状图底部新增数组下标序号 |
+| v11-P3 | 字典树动画重设计 | P1 | ✅ | trieVisualizer 新增光晕、路径高亮、leaf 完成态动画 |
+| v11-P4 | 组件与交互细节修复 | P1 | ✅ | Card 渐变修复、animationEngine 补全 easeInOutCubic |
+| v11-P5 | 全面视觉与交互体验 | P1 | ✅ | 统一页面排版、按钮 busy/disabled 状态、动画缓动优化 |
+| v11-P6 | 类型修复与最终验证 | P1 | ✅ | 新增 Button outline / UndoPreviewButton secondary 变体；2996→3042 测试 |
+
+---
+
+## 已完成（v10.0 - UI 打磨与可视化定位修复）
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| v10-P0 | 可视化定位修复 | P0 | ✅ | arrayVisualizer/trieVisualizer 移除 getViewBoxSize，Visualizer 新增 isAnimating prop |
+| v10-P1 | 首页与组件 UI 优化 | P1 | ✅ | Home 收敛配色为 2 色，Card 新增 gradient，LearningRecommendations 替换灯泡 emoji，ProgressOverview 目标设定反馈 |
+| v10-P2 | 主题渐变色 Token | P2 | ✅ | themeColors 增加 gradientStart/gradientEnd，Home Logo/Hero 使用主题渐变 |
+| v10-P3 | 最终验证与文档同步 | P1 | ✅ | 2978 tests / lint 0 / build 成功，PROJECT_SUMMARY/WORKLOG/CHANGELOG 更新 |
 
 ---
 
@@ -116,7 +164,7 @@
 
 | # | 任务 | 优先级 | 状态 | 说明 |
 |---|------|--------|------|------|
-| E1 | PWA 离线验证 | P2 | ⬜ | 验证 13 个页面离线可访问 |
+| E1 | PWA 离线验证 | P2 | ⬜ | 验证 14 个页面离线可访问 |
 | E2 | 大数据量可视化优化 | P2 | ⬜ | treeVisualizer >30 跳动画、graphVisualizer >20 跳动画、heapVisualizer >30 跳动画；注意与 U1 协同 |
 | E3 | 移动端手势增强 | P3 | ⬜ | 左右滑动切换页面、操作栏底部固定；注意与 U2 协同 |
 | E4 | 键盘快捷键搜索 | P3 | ⬜ | KeyboardHelp 支持模糊匹配 |
@@ -126,10 +174,10 @@
 
 | # | 任务 | 优先级 | 状态 | 说明 |
 |---|------|--------|------|------|
-| F1 | README.md 更新 | P3 | ⬜ | 功能列表、测试数据、截图、快速开始章节 |
+| F1 | README.md 更新 | P3 | ✅ | 功能列表、测试数据、快速开始章节已同步到 v11.0.1 |
 | F2 | CHANGELOG.md 完善 | P3 | ⬜ | 补充 v4.0-v8.0 变更历史 |
-| F3 | 版本号同步 | P3 | ⬜ | package.json 与 Sidebar 版本号一致 |
-| F5 | GitHub Pages 部署验证 | P3 | ⬜ | 验证 deploy workflow 自动触发 |
+| F3 | 版本号同步 | P3 | ✅ | package.json 已更新到 11.0.0 |
+| F5 | GitHub Pages 部署验证 | P3 | ✅ | 已推送 origin/main，CI/Deploy 工作流自动触发 |
 
 ---
 
@@ -158,8 +206,9 @@
 | 内容分层缺失 | P1 | ✅ 已解决 | 不同阶段用户学习路径不清 | v9.0 Phase 4 通过 ContentTier 组件修复 |
 | E2E 自定义 runner | P2 | ⏳ 待处理 | 缺少重试/并行/报告 | 未使用 Playwright Test 框架 |
 | doublyLinkedList 页面缺失 | P2 | ⏳ 待处理 | 学习模式缺口 | 配置存在但无对应页面 |
-| 大数据量性能 | P2 | ⏳ 待处理 | 100+ 节点帧率下降 | tree/graph/heap 需跳动画阈值 |
-| 文档缺口 | P3 | ⏳ 待处理 | onboarding 体验 | 缺少贡献指南、API 文档 |
+| 大数据量性能 | P2 | ✅ 已解决 | 100+ 节点帧率下降 | v10 U1 通过 performanceConfig + 跳动画 + transform/opacity 优化解决 |
+| 本地打开异常 | P0 | ✅ 已解决 | file:// 下资源路径与路由失效 | v11.0.1 通过 HashRouter + 相对 base 路径修复 |
+| 文档缺口 | P3 | ⏳ 部分解决 | onboarding 体验 | README/ARCHITECTURE/CODE_WIKI/TODO 已同步；仍缺 CONTRIBUTING.md、API 文档 |
 
 ---
 
@@ -175,6 +224,9 @@
 | v8.0: 严格化 + 加固 | v8.0.0 | TypeScript strict、E2E Firefox 支持、CI/CD 完善、2548 单元测试 |
 | v8.1: 动画挂起修复 | v8.1.0 | transitionEnd 超时保护、Visualizer 重渲染修复、链式过渡重构、2580 单元测试 |
 | v9.0: 全面迭代优化 | v9.0.0 | 动画与交互修复、学习路径系统优化、可视化界面优化、功能内容拓展、2866 单元测试 |
+| v10.0: UI 打磨与可视化定位修复 | v10.0.0 | 数组/字典树可视化居中修复、首页配色统一、Card 渐变、主题渐变 token、2978 单元测试 |
+| v11.0: 全面视觉统一与交互优化 | v11.0.0 | 全局色彩统一、排序序号、字典树动画重设计、Button/Undo 变体修复、2996→3042 单元测试 |
+| v11.0.1: 最终验证与部署 | v11.0.1 | 本地打开兼容、全站配色统一、a11y 对比度修复、文档同步、GitHub 部署 |
 
 > 详细变更历史见 CHANGELOG.md，工作日志见 WORKLOG.md。
 

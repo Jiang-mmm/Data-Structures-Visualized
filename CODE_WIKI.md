@@ -1,7 +1,7 @@
 # 数据结构学习助手 — Code Wiki
 
-> **版本:** v7.0（全面重构版）
-> **日期:** 2026-06-17
+> **版本:** v11.0.1
+> **日期:** 2026-06-19
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **部署:** GitHub Pages（base path `/Data-Structures-Visualized/`）
 
@@ -39,7 +39,8 @@
 | **队列 Queue** | Enqueue、Dequeue、Front、Clear | 水平排列，队首/队尾标记 |
 | **链表 LinkedList** | 头插、尾插、按位置插入、删除、查找、反转、环检测 | 圆形节点 + 带箭头连线 |
 | **二叉树 BinaryTree** | 插入、前序/中序/后序/层序遍历、查找、删除 | 树状布局，节点生长动画 |
-| **图 Graph** | 添加/删除节点和边、BFS、DFS、Dijkstra、邻接矩阵/表 | 力导向布局、邻接矩阵/邻接表视图 |
+| **AVL 树 AVLTree** | 插入、删除、查找、自平衡旋转可视化 | 树状布局，旋转动画与平衡因子展示 |
+| **图 Graph** | 添加/删除节点和边、BFS、DFS、Dijkstra、邻接矩阵/邻接表 | 力导向布局、邻接矩阵/邻接表视图 |
 | **排序 Sorting** | 冒泡、选择、插入、快速、归并、堆、基数、桶排序 | 柱状图高度表示值，比较/交换动画 |
 | **哈希表 Hash Table** | 插入、删除、查找（取模哈希 + 链地址法） | 桶数组 + 链表冲突节点 |
 | **堆 Heap** | Insert、ExtractMax、Peek | 完全二叉树层级布局 + 违规检测 |
@@ -181,8 +182,8 @@ App.tsx
 src/
 ├── __tests__/                 # 单元测试（86 个文件）
 │   ├── __snapshots__/
-│   ├── pages/                 # 13 个页面测试 + testUtils.tsx
-│   ├── visualizers/           # 10 个可视化测试 + d3MockHelper.ts
+│   ├── pages/                 # 14 个页面测试 + testUtils.tsx
+│   ├── visualizers/           # 11 个可视化测试 + d3MockHelper.ts
 │   └── *.test.ts(x)           # 组件/hooks/utils 测试
 ├── algorithms/
 │   ├── graph/                 # 图算法（bfs/dfs/dijkstra/topoSort）
@@ -194,10 +195,10 @@ src/
 │   └── learningPath.ts        # 学习路径配置
 ├── hooks/                     # 22 个自定义 hooks
 ├── i18n/                      # 国际化（locales.ts + useI18n.ts）
-├── pages/                     # 13 个页面组件
+├── pages/                     # 14 个页面组件
 ├── types/                     # 类型声明（hooks.d.ts + learning.d.ts）
 ├── utils/                     # 11 个工具模块
-├── visualizers/               # 10 个可视化器
+├── visualizers/               # 11 个可视化器
 ├── App.tsx                    # 根组件
 ├── index.css                  # 全局样式 + Tailwind @theme
 ├── main.tsx                   # 入口
@@ -284,7 +285,7 @@ src/
 - `useSharedData`：URL 分享数据加载
 - `usePageTracker`：页面访问追踪
 
-### 3.5 Visualizers 层职责（10 个可视化器）
+### 3.5 Visualizers 层职责（11 个可视化器）
 
 全部为纯函数模块（非组件），统一遵循以下模式：
 - 从 `../utils/d3Imports` 导入 D3（**禁止直接 import 'd3'**）
@@ -531,7 +532,7 @@ push([9])             // 截断 redo 分支, history = [..., [9]]
 
 #### 4.4.1 职责
 
-通用状态管理 hook，封装了 useHistory + localStorage 持久化 + 日志 + 动画锁 + toast 提示。是所有 11 个数据结构 hook 的基座。
+通用状态管理 hook，封装了 useHistory + localStorage 持久化 + 日志 + 动画锁 + toast 提示。是所有 12 个数据结构 hook 的基座。
 
 #### 4.4.2 API 表格
 
@@ -973,7 +974,7 @@ npm run test:coverage                    # Vitest + v8 coverage
 # E2E 测试（需先启动 dev server）
 node e2e/run-all-tests.js                # 全量 E2E（chromium + firefox）
 BROWSER=firefox node e2e/test-home.js    # 单文件 + 指定浏览器
-node e2e/test-comprehensive.js           # 11 个数据结构综合测试
+node e2e/test-comprehensive.js           # 12 个数据结构综合测试
 node e2e/test-interactions.js            # 跨模块交互
 node e2e/test-persistence.js             # 持久化测试
 ```
@@ -1091,7 +1092,7 @@ manualChunks(id) {
 
 #### 7.5.3 其他优化
 
-- **代码分割**：App.tsx 用 `React.lazy` 懒加载 13 个页面
+- **代码分割**：App.tsx 用 `React.lazy` 懒加载 14 个页面
 - **D3 预构建**：`optimizeDeps.include` 减少 dev 启动时间
 - **PWA 缓存**：静态资源 + 字体 CacheFirst
 
@@ -1125,8 +1126,8 @@ manualChunks(id) {
 
 | 类别 | 数量 | 说明 |
 |------|------|------|
-| 页面测试（`pages/`） | 13 个 + testUtils.tsx | 覆盖全部 13 个页面 |
-| 可视化器测试（`visualizers/`） | 10 个 + d3MockHelper.ts | 覆盖 10 个 visualizer |
+| 页面测试（`pages/`） | 14 个 + testUtils.tsx | 覆盖全部 14 个页面 |
+| 可视化器测试（`visualizers/`） | 11 个 + d3MockHelper.ts | 覆盖 11 个 visualizer |
 | Hooks 测试 | 19 个 | 覆盖核心 hook |
 | 组件测试 | 19 个 | Layout/Sidebar/Toast/OperationBar 等 |
 | 工具/算法测试 | 13 个 | animationEngine/sorting/graph/validate 等 |

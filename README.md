@@ -1,7 +1,7 @@
 # 数据结构学习助手
 
-> **版本:** v8.0
-> **更新日期:** 2026-06-17
+> **版本:** v11.0.1
+> **更新日期:** 2026-06-19
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 
@@ -16,6 +16,7 @@
 | **队列 Queue** | Enqueue、Dequeue、Front、Clear |
 | **链表 LinkedList** | 头插、尾插、按位置插入、删除、查找、反转、环检测 |
 | **二叉树 BinaryTree** | 插入、前序/中序/后序/层序遍历、查找、删除节点 |
+| **AVL 树 AVLTree** | 插入、删除、查找、自平衡旋转可视化 |
 | **图 Graph** | 添加/删除节点和边、BFS、DFS、Dijkstra、邻接矩阵/表视图 |
 | **排序 Sorting** | 冒泡、选择、插入、快速、归并、堆、基数、桶排序（8 种算法） |
 | **哈希表 Hash Table** | 插入、删除、查找（取模哈希 + 链地址法） |
@@ -34,7 +35,7 @@
 - **键盘快捷键** — Ctrl+Z 撤销、Ctrl+Shift+Z 重做、R 重置、? 帮助、左右箭头导航 Timeline
 - **输入验证** — 数值范围 1~99，索引边界检查，非法输入 Toast 提示
 - **导入/导出** — 数据持久化，支持 JSON/CSV 格式导入导出，含版本校验
-- **数据持久化** — 11 种数据结构自动保存/恢复，页面刷新后数据不丢失（localStorage）
+- **数据持久化** — 12 种数据结构自动保存/恢复，页面刷新后数据不丢失（localStorage）
 - **分享功能** — Base64 编码数据到 URL，一键复制分享链接
 - **国际化（i18n）** — 中英文切换，轻量级翻译系统，无第三方依赖
 - **算法对比模式** — 8 种排序算法并行对比，实时进度追踪
@@ -50,11 +51,11 @@
 - **响应式布局** — 适配不同屏幕尺寸，侧边栏可折叠，移动端触控优化
 - **性能监控面板** — FPS/内存实时显示，帧率自适应动画降级
 - **网络离线检测** — 离线状态实时提示
-- **单元测试覆盖** — 2548 tests（174 个测试文件），核心逻辑覆盖率 > 80%
-- **E2E 测试覆盖** — 9 文件 282 用例，Chromium + Firefox 双浏览器，Playwright 自动化
+- **单元测试覆盖** — 3042 tests（188 个测试文件），核心逻辑覆盖率 > 80%
+- **E2E 测试覆盖** — 12 文件 317 用例，Chromium + Firefox 双浏览器，Playwright 自动化
 - **无障碍（a11y）** — axe-core WCAG 2 AA 零 violations，全局焦点可见性
 - **错误边界恢复** — ErrorBoundary 异常 UI + safeAnimate 统一错误恢复
-- **路由懒加载** — React.lazy + Suspense，主 bundle 321 KB，23 个独立 chunk
+- **路由懒加载** — React.lazy + Suspense，主 bundle ~56 KB（gzip），25+ 个独立 chunk
 - **TypeScript 严格模式** — 100% TypeScript 覆盖，strict 模式（noImplicitAny + strictNullChecks + noUnused）
 - **CI/CD** — GitHub Actions 自动 lint + typecheck + build + coverage + E2E，Playwright 浏览器缓存
 

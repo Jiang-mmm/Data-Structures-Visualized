@@ -1,7 +1,7 @@
 # 数据结构学习助手 — Architecture 文档
 
-> **版本:** v9.0
-> **更新日期:** 2026-06-18
+> **版本:** v11.0.1
+> **更新日期:** 2026-06-19
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 
 ---
@@ -21,7 +21,7 @@
 ├─────────────────────────────────────────────────────────────────┤
 │                        页面层 (Pages)                             │
 │  ArrayPage | StackPage | QueuePage | LinkedListPage | TreePage   │
-│  GraphPage | SortPage | HashPage | HeapPage | TriePage           │
+│  AvlTreePage | GraphPage | SortPage | HashPage | HeapPage | TriePage │
 │  SortComparePage | GraphAlgorithmPage | Home | LearningPath      │
 ├─────────────────────────────────────────────────────────────────┤
 │                      公共组件层 (Components)                       │
@@ -35,7 +35,7 @@
 ├─────────────────────────────────────────────────────────────────┤
 │                       状态管理层 (Hooks)                          │
 │  useArrayState | useStackState | useQueueState                   │
-│  useLinkedListState | useTreeState | useGraphState               │
+│  useLinkedListState | useTreeState | useAvlTreeState | useGraphState │
 │  useSortState | useHashState | useHeapState | useTrieState       │
 │  useHistory | useVisualizer | useKeyboard | useCommonKeyboard    │
 │  useTheme | useI18n | useGlobalSettings | useLearningMode        │
@@ -43,9 +43,9 @@
 ├─────────────────────────────────────────────────────────────────┤
 │                     可视化引擎层 (Visualizers)                     │
 │  arrayVisualizer | stackVisualizer | queueVisualizer             │
-│  linkedListVisualizer | treeVisualizer | graphVisualizer         │
-│  sortVisualizer | hashVisualizer | heapVisualizer                │
-│  trieVisualizer                                                  │
+│  linkedListVisualizer | treeVisualizer | avlTreeVisualizer        │
+│  graphVisualizer | sortVisualizer | hashVisualizer               │
+│  heapVisualizer | trieVisualizer                                 │
 ├─────────────────────────────────────────────────────────────────┤
 │                      算法层 (Algorithms)                          │
 │  sorting: bubble | selection | insertion | quick | merge         │

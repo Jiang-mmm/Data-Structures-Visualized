@@ -4,6 +4,41 @@
 
 ---
 
+## [v11.0.1] - 2026-06-19
+
+### 修复
+- **本地打开显示异常:** `src/App.tsx` 增加协议检测，file:// 下使用 `HashRouter`，http(s):// 下使用 `BrowserRouter`（basename `/Data-Structures-Visualized/`）；`vite.config.js` 生产模式 `base` 改为 `./`，使 dist 资源路径相对化
+- **A11y 对比度不足:** `src/components/Sidebar.tsx` 激活态文字由 `text-accent-blue` 改为 `text-ink dark:text-dark-ink`，确保 WCAG 2 AA 对比度通过
+- **文档与版本号断层:** `TODO.md` 停留在 v9.0、`README.md`/`ARCHITECTURE.md`/`CODE_WIKI.md` 未反映 v11 内容，已全面同步
+
+### 优化
+- **全站语义化颜色统一:** 批量替换 20+ 组件/页面中的 `bg-white dark:bg-slate`、`bg-paper-warm dark:bg-slate-light` 等硬编码颜色为 `bg-surface`/`bg-dark-surface`、`bg-muted`/`bg-dark-muted`、`bg-paper`/`bg-dark-paper` 等语义化 token
+- **首页配色层次:** `src/pages/Home.tsx` 13 张卡片按线性结构（blue）/ 树结构（amber）/ 图与哈希（rose）三类分组，提升视觉层次与主题一致性
+- **Card 渐变主题感知:** `src/components/Card.tsx` 渐变色从硬编码 blue/amber/rose 改为 `from-accent-blue/10`、`from-accent-amber/10`、`from-accent-rose/10`，随主题动态变化
+
+### 文档
+- 更新 `PROJECT_SUMMARY.md`：v11 日期、3042 单元测试、14 页面、12 Hooks、11 Visualizers、AVL 树
+- 更新 `README.md`：版本 v11.0、日期、AVL 树、3042 测试、14 页面
+- 更新 `ARCHITECTURE.md`：版本 v11.0，增加 AvlTreePage / useAvlTreeState / avlTreeVisualizer
+- 更新 `CODE_WIKI.md`：版本 v11.0，增加 AVL 树功能矩阵
+- 更新 `TODO.md`：补充 v10.0/v11.0 已完成项，调整待办与技术债务状态
+- 更新 `WORKLOG.md`：记录 v10/v11 最终验证与部署
+- `package.json`：`version` 8.0.0 → 11.0.0
+
+### 质量指标
+
+| 指标 | 结果 |
+|------|------|
+| 单元测试 | 3042 tests passed（188 文件） |
+| ESLint | 0 错误 / 0 警告 |
+| TypeScript strict | 0 错误 |
+| Build | 成功 |
+| Bundle 预算 | 符合（index < 110KB, vendor-react < 250KB, vendor-d3 < 60KB） |
+| E2E 功能 | 308/308 passed |
+| E2E A11y | 12/12 页面 0 violations |
+
+---
+
 ## [v11.0.0] - 2026-06-18
 
 ### 修复

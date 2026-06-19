@@ -26,9 +26,9 @@ E2E tests: `node e2e/run-all-tests.js` (requires dev server running at `http://l
 
 Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components → Hooks → Visualizers → Algorithms/Utils**.
 
-**Routing:** React Router v7 with `BrowserRouter` (basename `/Data-Structures-Visualized`). All 13 pages are `React.lazy` code-split via `Suspense`.
+**Routing:** React Router v7 with protocol-aware router: `BrowserRouter` for http(s):// (basename `/Data-Structures-Visualized`) and `HashRouter` for file://. All 14 pages are `React.lazy` code-split via `Suspense`.
 
-**State management:** No Redux/Zustand. Each data structure has its own `use*State` hook (11 total) built on `useState` + `useCallback`. All hooks internally use `useHistory` — a `useRef`-based undo/redo stack (max 20 steps). History is stored in refs, not state, to avoid unnecessary re-renders.
+**State management:** No Redux/Zustand. Each data structure has its own `use*State` hook (12 total) built on `useState` + `useCallback`. All hooks internally use `useHistory` — a `useRef`-based undo/redo stack (max 20 steps). History is stored in refs, not state, to avoid unnecessary re-renders.
 
 **Visualization pattern:** D3.js drives SVG with a **full-clear + full-render** strategy (not D3 enter/update/exit). Every data change calls `container.selectAll('*').remove()` then re-creates all elements. SVGs use `viewBox` (not width/height attributes) with `className="w-full h-full"` to avoid dual-coordinate-system issues.
 
@@ -36,7 +36,7 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 
 **Styling:** Tailwind CSS v4 via `@tailwindcss/vite`. Neo-Brutalist design (hard borders, hard shadows, high contrast). Custom CSS utilities in `index.css` (`neo-border`, `dot-grid`, `grain`). Supports light/dark/system themes and 4 color themes.
 
-**Data persistence:** All 11 data structures auto-save/restore via localStorage.
+**Data persistence:** All 12 data structures auto-save/restore via localStorage.
 
 **i18n:** Custom lightweight implementation (Chinese + English) — `src/i18n/locales.ts` + `src/i18n/useI18n.ts`. No external i18n library.
 
