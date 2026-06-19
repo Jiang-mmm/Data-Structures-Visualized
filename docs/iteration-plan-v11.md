@@ -482,8 +482,18 @@
 - 链表学习配置从 4 步扩展到 8 步（新增 insert-at、search、reverse、detect-cycle）
 - 双向链表学习配置从 4 步扩展到 8 步（同上，代码示例适配双向指针）
 
-**已覆盖结构：** array、linkedlist、doublyLinkedList
-**待扩展结构：** tree、trie、hash、heap、stack、queue、graph（后续迭代）
+### Phase 5.5: 代码展示机制全结构覆盖（已完成）
+**扩展到剩余 7 个结构：**
+- Hook 层：stack/queue/tree/hash/heap/trie/graph 共 56 处 addLog 补 codeStepId
+- 配置层扩展：
+  - stack +clear（5 步）
+  - queue +clear（5 步）
+  - tree 拆分 traversal 为 preorder/inorder/postorder/levelorder 4 步 + 新增 delete（9 步）
+  - hash +remove（5 步）
+  - trie +remove（5 步）
+  - graph 拆分 traversal 为 bfs/dfs/dijkstra 3 步 + 新增 delete-node/delete-edge（8 步）
+- 页面层：7 个页面接 handleJumpToStep 回调
+- **全结构覆盖完成**：用户操作任意数据结构都能"查看代码"
 
 ### Phase 6: 全量验证（已通过）
 - 单元测试：3075/3075 通过
