@@ -1,12 +1,20 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
-interface LogPanelProps {
-  logs: Array<{ time: string; type: string; message: string }>
-  maxHeight?: number
+interface LogEntryLike {
+  time: string
+  type: string
+  message: string
+  codeStepId?: string
 }
 
-export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) {
+interface LogPanelProps {
+  logs: LogEntryLike[]
+  maxHeight?: number
+  onJumpToStep?: (stepId: string) => void
+}
+
+export default function LogPanel({ logs = [], maxHeight = 208, onJumpToStep }: LogPanelProps) {
   const [filter, setFilter] = useState<string>('all')
   const [autoScroll, setAutoScroll] = useState<boolean>(true)
   const [collapsed, setCollapsed] = useState<boolean>(true)
@@ -137,6 +145,15 @@ export default function LogPanel({ logs = [], maxHeight = 208 }: LogPanelProps) 
                   <span className="text-paper/90 break-all text-xs leading-relaxed flex-1 min-w-0">
                     {log.message}
                   </span>
+                  {log.codeStepId && onJumpToStep && (
+                    <button
+                      onClick={() => onJumpToStep(log.codeStepId!)}
+                      className="shrink-0 ml-1 px-2 py-0.5 text-[10px] font-bold font-mono border border-accent-amber/40 text-accent-amber bg-accent-amber/10 hover:bg-accent-amber/20 hover:border-accent-amber/60 transition-colors rounded-sm whitespace-nowrap"
+                      aria-label={t('logPanel.viewCode')}
+                    >
+                      {t('logPanel.viewCode')}
+                    </button>
+                  )}
                 </div>
               )
             })

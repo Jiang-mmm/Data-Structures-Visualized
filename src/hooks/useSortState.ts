@@ -5,7 +5,7 @@ import { yieldToMain } from '../utils/timeslicing'
 import { getSortAlgorithm, type SortAnimationFns, type Animation } from '../algorithms/sorting'
 import { tStatic } from '../i18n/useI18n'
 
-const INITIAL_DATA: number[] = [38, 27, 43, 3, 9, 82, 10, 55, 21, 67, 15, 94, 50, 71, 33]
+const INITIAL_DATA: number[] = [38, 27, 43, 9, 82, 10, 55, 21]
 const YIELD_INTERVAL = 5
 
 export interface SortStats {
@@ -37,7 +37,7 @@ export function useSortState() {
   }, [])
 
   const randomize = useCallback((): void => {
-    const newData = Array.from({ length: 15 }, () => Math.floor(Math.random() * 95) + 5)
+    const newData = Array.from({ length: 8 }, () => Math.floor(Math.random() * 95) + 5)
     push(newData)
     setStats({ algorithm: '', comparisons: 0, swaps: 0, steps: 0 })
     setProgress(0)

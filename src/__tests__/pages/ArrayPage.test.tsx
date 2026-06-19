@@ -29,6 +29,8 @@ function createMockArrayState(overrides = {}) {
     insert: vi.fn(),
     remove: vi.fn(),
     search: vi.fn().mockReturnValue(1),
+    searchAll: vi.fn().mockReturnValue([1]),
+    binarySearch: vi.fn().mockReturnValue(1),
     randomize: vi.fn(),
     loadData: vi.fn(),
     ...overrides,

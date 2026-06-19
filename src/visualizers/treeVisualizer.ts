@@ -70,7 +70,9 @@ function drawEdge(
   x1: number, y1: number, x2: number, y2: number,
   C: ReturnType<typeof getColors>,
   style: EdgeStyle = 'straight',
-  insertBefore?: string
+  insertBefore?: string,
+  fromIndex?: number,
+  toIndex?: number
 ): ReturnType<typeof select> {
   if (style === 'curved' || style === 'orthogonal') {
     const pathD = style === 'curved' ? curvedPath(x1, y1, x2, y2) : orthogonalPath(x1, y1, x2, y2)
@@ -85,6 +87,8 @@ function drawEdge(
       .attr('stroke-width', 2)
       .attr('data-x1', x1).attr('data-y1', y1)
       .attr('data-x2', x2).attr('data-y2', y2)
+      .attr('data-from', fromIndex ?? '')
+      .attr('data-to', toIndex ?? '')
   }
   const lineEl = insertBefore
     ? container.insert('line', insertBefore)
@@ -95,6 +99,8 @@ function drawEdge(
     .attr('x2', x2).attr('y2', y2)
     .attr('stroke', C.edgeDefault)
     .attr('stroke-width', 2)
+    .attr('data-from', fromIndex ?? '')
+    .attr('data-to', toIndex ?? '')
 }
 
 function getTreeLayout(data: number[]): TreeNodeData[] {
@@ -205,7 +211,7 @@ function updateLines(container: ReturnType<typeof select>) {
 
     const x1 = px, y1 = py + NODE_RADIUS
     const x2 = cx, y2 = cy - NODE_RADIUS
-    drawEdge(container, x1, y1, x2, y2, C, currentEdgeStyle, 'g.tree-node')
+    drawEdge(container, x1, y1, x2, y2, C, currentEdgeStyle, 'g.tree-node', parentIndex, child.dataIndex)
   })
 }
 
@@ -280,16 +286,20 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
                 .attr('class', 'tree-edge')
                 .attr('d', edgeStyle === 'curved' ? curvedPath(x1, y1, x2, y2) : orthogonalPath(x1, y1, x2, y2))
                 .attr('fill', 'none')
+                .attr('data-from', p.dataIndex)
+                .attr('data-to', node.dataIndex)
             : container.append('line')
                 .attr('class', 'tree-edge')
                 .attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2)
+                .attr('data-from', p.dataIndex)
+                .attr('data-to', node.dataIndex)
           violationEdge
             .attr('stroke', C.nodeError)
             .attr('stroke-width', 3)
             .attr('stroke-dasharray', '5,3')
             .style('animation', 'heap-violation-pulse 1.2s ease-in-out infinite')
         } else {
-          drawEdge(container, x1, y1, x2, y2, C, edgeStyle)
+          drawEdge(container, x1, y1, x2, y2, C, edgeStyle, undefined, p.dataIndex, node.dataIndex)
         }
       }
     })
@@ -430,6 +440,8 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
         .attr('fill', 'none')
         .attr('stroke', C.edgeDefault)
         .attr('stroke-width', 2)
+        .attr('data-from', newNode.parentIndex)
+        .attr('data-to', newNode.dataIndex)
 
       await transitionEnd(
         pathEl.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
@@ -441,6 +453,8 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
         .attr('x1', x1).attr('y1', y1)
         .attr('x2', x1).attr('y2', y1)
         .attr('stroke', C.edgeDefault).attr('stroke-width', 2)
+        .attr('data-from', newNode.parentIndex)
+        .attr('data-to', newNode.dataIndex)
 
       await transitionEnd(
         lineEl.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
@@ -463,7 +477,7 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
 
   // Phase 1: Enter with smooth cubic movement + overshoot scale
   await transitionEnd(
-    newGroup.transition().duration(duration(BASE_DURATION)).ease(EASING.easeOutCubic)
+    newGroup.transition().duration(duration(BASE_DURATION, data.length)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${x}, ${y}) scale(1.15)`)
       .attr('opacity', 1)
   )
@@ -472,11 +486,11 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
 
   // Phase 2: Settle to normal size with color transition
   await transitionEnd(
-    newGroup.transition().duration(duration(200)).ease(EASING.easeOutCubic)
+    newGroup.transition().duration(duration(200, data.length)).ease(EASING.easeOutCubic)
       .attr('transform', `translate(${x}, ${y}) scale(1)`)
   )
   await transitionEnd(
-    newGroup.select('circle').transition().duration(duration(200)).ease(EASING.easeOutCubic)
+    newGroup.select('circle').transition().duration(duration(200, data.length)).ease(EASING.easeOutCubic)
       .attr('fill', C.nodeDefault).attr('stroke', C.nodeDefaultStroke)
   )
 }
@@ -486,6 +500,7 @@ export async function animateTraversal(svg: SVGSVGElement, order: number[], data
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
+  const dataLength = data?.length || 0
 
   resetNodeAndEdgeColors(container, C, data)
 
@@ -498,31 +513,26 @@ export async function animateTraversal(svg: SVGSVGElement, order: number[], data
     })
     if (nodeGroup.empty()) continue
 
-    // Phase 1: Overshoot grow with easeOutBack
-    await transitionEnd(
-      nodeGroup.select('circle')
-        .transition().duration(duration(350)).ease(EASING.easeOutBack)
-        .attr('r', NODE_RADIUS + 8)
-        .attr('fill', C.nodeActive).attr('stroke', C.nodeActiveStroke)
-    )
-    // Phase 2: Settle back with easeOutCubic
-    await transitionEnd(
-      nodeGroup.select('circle')
-        .transition().duration(duration(300)).ease(EASING.easeOutCubic)
-        .attr('r', NODE_RADIUS + 2)
-        .attr('fill', C.nodeVisited).attr('stroke', C.nodeVisitedStroke)
-    )
+    // 链式过渡：grow → settle，单次 await（与 graphVisualizer 一致，消除微任务间隙）
+    const t = nodeGroup.select('circle')
+      .transition().duration(duration(350, dataLength)).ease(EASING.easeOutBack)
+      .attr('r', NODE_RADIUS + 8)
+      .attr('fill', C.nodeActive).attr('stroke', C.nodeActiveStroke)
+      .transition().duration(duration(300, dataLength)).ease(EASING.easeOutCubic)
+      .attr('r', NODE_RADIUS + 2)
+      .attr('fill', C.nodeVisited).attr('stroke', C.nodeVisitedStroke)
+    await transitionEnd(t)
 
     if (anim?.isAborted?.()) return
 
-    addRippleEffect(container, dataIndex, C)
-    highlightEntryEdge(container, dataIndex, C)
+    addRippleEffect(container, dataIndex, C, dataLength)
+    highlightEntryEdge(container, dataIndex, C, dataLength)
 
-    addVisitOrderLabel(nodeGroup, stepIdx + 1, C)
+    addVisitOrderLabel(nodeGroup, stepIdx + 1, C, dataLength)
   }
 }
 
-function highlightEntryEdge(container: any, childDataIndex: number, C: ReturnType<typeof getColors>) {
+function highlightEntryEdge(container: any, childDataIndex: number, C: ReturnType<typeof getColors>, dataLength = 0) {
   const nodeGroups = container.selectAll('g.tree-node')
   const childGroup = nodeGroups.filter(function(d: TreeNodeData) {
     return d.dataIndex === childDataIndex
@@ -532,32 +542,15 @@ function highlightEntryEdge(container: any, childDataIndex: number, C: ReturnTyp
   const childData = childGroup.datum() as TreeNodeData
   if (!childData || childData.parentIndex < 0) return
 
-  const parentGroup = nodeGroups.filter(function(d: TreeNodeData) {
-    return d.dataIndex === childData.parentIndex
-  })
-  if (parentGroup.empty()) return
+  // O(1) class/attribute 选择器匹配边（替代原 O(edges) 正则匹配）
+  const edge = container.select(`.tree-edge[data-from="${childData.parentIndex}"][data-to="${childDataIndex}"]`)
+  if (edge.empty()) return
 
-  container.selectAll('.tree-edge').filter(function() {
-// @ts-ignore
-    const el = select(this)
-    const childTransform = childGroup.attr('transform')
-    const parentTransform = parentGroup.attr('transform')
-    if (!childTransform || !parentTransform) return false
-    const cx = childData.x || 0
-    const cy = childData.y || 0
-    const px = parseFloat(parentTransform.match(/translate\(([^,]+)/)?.[1] || '0')
-    const py = parseFloat(parentTransform.match(/, ([^)]+)/)?.[1] || '0')
-    const ex1 = parseFloat(el.attr('x1') || el.attr('data-x1') || '-999')
-    const ey1 = parseFloat(el.attr('y1') || el.attr('data-y1') || '-999')
-    const ex2 = parseFloat(el.attr('x2') || el.attr('data-x2') || '-999')
-    const ey2 = parseFloat(el.attr('y2') || el.attr('data-y2') || '-999')
-    return Math.abs(ex1 - px) < 2 && Math.abs(ey1 - (py + NODE_RADIUS)) < 2 &&
-           Math.abs(ex2 - cx) < 2 && Math.abs(ey2 - (cy - NODE_RADIUS)) < 2
-  }).transition().duration(duration(400)).ease(EASING.easeOutBack)
+  edge.transition().duration(duration(400, dataLength)).ease(EASING.easeOutBack)
     .attr('stroke', C.nodeVisitedStroke).attr('stroke-width', 2.5)
 }
 
-function addRippleEffect(container: ReturnType<typeof select>, dataIndex: number, C: ReturnType<typeof getColors>) {
+function addRippleEffect(container: ReturnType<typeof select>, dataIndex: number, C: ReturnType<typeof getColors>, dataLength = 0) {
   const nodeGroup = container.selectAll('g.tree-node').filter(function(d: TreeNodeData) {
     return d.dataIndex === dataIndex
   })
@@ -575,14 +568,14 @@ function addRippleEffect(container: ReturnType<typeof select>, dataIndex: number
     .attr('stroke-width', 2.5)
     .attr('opacity', 0.7)
 
-  ripple.transition().duration(duration(600)).ease(EASING.easeOutCubic)
+  ripple.transition().duration(duration(600, dataLength)).ease(EASING.easeOutCubic)
     .attr('r', NODE_RADIUS * 3)
     .attr('stroke-width', 0.5)
     .attr('opacity', 0)
     .remove()
 }
 
-function addVisitOrderLabel(nodeGroup: any, order: number | string, C: ReturnType<typeof getColors>) {
+function addVisitOrderLabel(nodeGroup: any, order: number | string, C: ReturnType<typeof getColors>, dataLength = 0) {
   nodeGroup.selectAll('text.visit-order').remove()
 
   const textEl = nodeGroup.append('text')
@@ -597,7 +590,7 @@ function addVisitOrderLabel(nodeGroup: any, order: number | string, C: ReturnTyp
     .attr('opacity', 0)
     .text(order)
 
-  transitionEnd(textEl.transition().duration(duration(250)).ease(EASING.easeOutBack)
+  transitionEnd(textEl.transition().duration(duration(250, dataLength)).ease(EASING.easeOutBack)
     .attr('opacity', 1))
 }
 
@@ -606,6 +599,7 @@ export async function animateLevelOrder(svg: SVGSVGElement, order: number[], dat
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
+  const dataLength = data?.length || 0
   resetNodeAndEdgeColors(container, C, data)
 
   for (let stepIdx = 0; stepIdx < order.length; stepIdx++) {
@@ -617,26 +611,21 @@ export async function animateLevelOrder(svg: SVGSVGElement, order: number[], dat
     })
     if (nodeGroup.empty()) continue
 
-    // Phase 1: Overshoot grow with easeOutBack
-    await transitionEnd(
-      nodeGroup.select('circle')
-        .transition().duration(duration(300)).ease(EASING.easeOutBack)
-        .attr('fill', C.nodeActive).attr('stroke', C.nodeActiveStroke)
-        .attr('r', NODE_RADIUS + 8)
-    )
-    // Phase 2: Settle back with easeOutCubic
-    await transitionEnd(
-      nodeGroup.select('circle')
-        .transition().duration(duration(300)).ease(EASING.easeOutCubic)
-        .attr('fill', C.nodeVisited).attr('stroke', C.nodeVisitedStroke)
-        .attr('r', NODE_RADIUS)
-    )
+    // 链式过渡：grow → settle，单次 await
+    const t = nodeGroup.select('circle')
+      .transition().duration(duration(300, dataLength)).ease(EASING.easeOutBack)
+      .attr('fill', C.nodeActive).attr('stroke', C.nodeActiveStroke)
+      .attr('r', NODE_RADIUS + 8)
+      .transition().duration(duration(300, dataLength)).ease(EASING.easeOutCubic)
+      .attr('fill', C.nodeVisited).attr('stroke', C.nodeVisitedStroke)
+      .attr('r', NODE_RADIUS)
+    await transitionEnd(t)
 
     if (anim?.isAborted?.()) return
 
-    addRippleEffect(container, dataIndex, C)
-    highlightEntryEdge(container, dataIndex, C)
-    addVisitOrderLabel(nodeGroup, stepIdx + 1, C)
+    addRippleEffect(container, dataIndex, C, dataLength)
+    highlightEntryEdge(container, dataIndex, C, dataLength)
+    addVisitOrderLabel(nodeGroup, stepIdx + 1, C, dataLength)
   }
 }
 
@@ -645,6 +634,7 @@ export async function animateSearch(svg: SVGSVGElement, path: number[], found: n
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
+  const dataLength = data?.length || 0
   resetNodeAndEdgeColors(container, C, data)
 
   for (let stepIdx = 0; stepIdx < path.length; stepIdx++) {
@@ -659,31 +649,26 @@ export async function animateSearch(svg: SVGSVGElement, path: number[], found: n
     const isFound = stepIdx === path.length - 1 && found !== -1
     const growRadius = isFound ? NODE_RADIUS + 10 : NODE_RADIUS + 8
 
-    // Phase 1: Overshoot grow (bigger pulse for found node)
-    await transitionEnd(
-      nodeGroup.select('circle')
-        .transition().duration(duration(350)).ease(isFound ? EASING.easeOutElastic : EASING.easeOutBack)
-        .attr('r', growRadius)
-        .attr('fill', isFound ? C.nodeVisited : C.nodeActive)
-        .attr('stroke', isFound ? C.nodeVisitedStroke : C.nodeActiveStroke)
-    )
-    // Phase 2: Settle back
-    await transitionEnd(
-      nodeGroup.select('circle')
-        .transition().duration(duration(300)).ease(EASING.easeOutCubic)
-        .attr('r', isFound ? NODE_RADIUS + 2 : NODE_RADIUS)
-        .attr('fill', isFound ? C.nodeVisited : C.textSecondary)
-        .attr('stroke', isFound ? C.nodeVisitedStroke : C.textSecondary)
-    )
+    // 链式过渡：grow → settle，单次 await
+    const t = nodeGroup.select('circle')
+      .transition().duration(duration(350, dataLength)).ease(isFound ? EASING.easeOutElastic : EASING.easeOutBack)
+      .attr('r', growRadius)
+      .attr('fill', isFound ? C.nodeVisited : C.nodeActive)
+      .attr('stroke', isFound ? C.nodeVisitedStroke : C.nodeActiveStroke)
+      .transition().duration(duration(300, dataLength)).ease(EASING.easeOutCubic)
+      .attr('r', isFound ? NODE_RADIUS + 2 : NODE_RADIUS)
+      .attr('fill', isFound ? C.nodeVisited : C.textSecondary)
+      .attr('stroke', isFound ? C.nodeVisitedStroke : C.textSecondary)
+    await transitionEnd(t)
 
     if (anim?.isAborted?.()) return
 
-    highlightEntryEdge(container, dataIndex, C)
+    highlightEntryEdge(container, dataIndex, C, dataLength)
 
     if (isFound) {
-      addVisitOrderLabel(nodeGroup, '✓', C)
+      addVisitOrderLabel(nodeGroup, '✓', C, dataLength)
     } else if (stepIdx < path.length - 1 || found === -1) {
-      addVisitOrderLabel(nodeGroup, stepIdx + 1, C)
+      addVisitOrderLabel(nodeGroup, stepIdx + 1, C, dataLength)
     }
   }
 
@@ -697,6 +682,7 @@ export async function animateDeleteNode(svg: SVGSVGElement, value: number, data:
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
+  const dataLength = data?.length || 0
   resetNodeAndEdgeColors(container, C, data)
 
   const targetIndex = data.indexOf(value)
@@ -711,7 +697,7 @@ export async function animateDeleteNode(svg: SVGSVGElement, value: number, data:
   // Phase 1: Highlight error with overshoot grow
   await transitionEnd(
     nodeGroup.select('circle')
-      .transition().duration(duration(250)).ease(EASING.easeOutBack)
+      .transition().duration(duration(250, dataLength)).ease(EASING.easeOutBack)
       .attr('fill', C.nodeError).attr('stroke', C.nodeErrorStroke)
       .attr('r', NODE_RADIUS + 8)
   )
@@ -720,7 +706,7 @@ export async function animateDeleteNode(svg: SVGSVGElement, value: number, data:
 
   // Phase 2: Shrink and fade out
   await transitionEnd(
-    nodeGroup.transition().duration(duration(300)).ease(EASING.easeInCubic)
+    nodeGroup.transition().duration(duration(300, dataLength)).ease(EASING.easeInCubic)
 // @ts-ignore
       .attr('transform', function(this: any) {
         const current = select(this).attr('transform')

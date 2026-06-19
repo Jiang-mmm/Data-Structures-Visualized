@@ -7,7 +7,7 @@ import ShareButton from '../components/ShareButton'
 import Visualizer from '../components/Visualizer'
 import LogPanel from '../components/LogPanel'
 import EmptyState from '../components/EmptyState'
-import { renderArray, animateInsert, animateDelete, animateSearch } from '../visualizers/arrayVisualizer'
+import { renderArray, animateInsert, animateDelete, animateSearch, animateSearchAll, animateBinarySearch } from '../visualizers/arrayVisualizer'
 import { useArrayState } from '../hooks/useArrayState'
 import { useVisualizer } from '../hooks/useVisualizer'
 import { useKeyboard } from '../hooks/useKeyboard'
@@ -27,7 +27,7 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function ArrayPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, insert, remove, search, randomize, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useArrayState()
+  const { data, logs, isAnimating, setIsAnimating, insert, remove, search, searchAll, binarySearch, randomize, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useArrayState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const [inputIndex, setInputIndex] = useState<string>('')
@@ -69,6 +69,14 @@ export default function ArrayPage() {
     abortAnimation()
     setIsAnimating(false)
   }, [abortAnimation, setIsAnimating])
+
+  const handleJumpToStep = useCallback((stepId: string): void => {
+    const idx = learningMode.steps.findIndex(s => s.id === stepId)
+    if (idx >= 0) {
+      setShowLearning(true)
+      learningMode.goToStep(idx)
+    }
+  }, [learningMode.steps, learningMode.goToStep])
 
   const handleInsert = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -129,6 +137,47 @@ export default function ArrayPage() {
     setInputValue('')
   }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, search, svgRef, data, dimensions, setInputValue])
 
+  const handleSearchAll = useCallback(async (): Promise<void> => {
+    if (isAnimating) return
+    if (!validateInputs()) return
+    const value = parseInt(inputValue, 10)
+
+    setIsAnimating(true)
+    const anim = getAnimationContext()
+    try {
+      const indices = searchAll(value)
+      if (svgRef.current) await animateSearchAll(svgRef.current, indices, data, dimensions, anim)
+    } catch (e) {
+      handleAnimationError(e, t('common.search'))
+    } finally {
+      setIsAnimating(false)
+    }
+    setInputValue('')
+  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, searchAll, svgRef, data, dimensions, setInputValue])
+
+  const handleBinarySearch = useCallback(async (): Promise<void> => {
+    if (isAnimating) return
+    if (!validateInputs()) return
+    const value = parseInt(inputValue, 10)
+
+    setIsAnimating(true)
+    const anim = getAnimationContext()
+    try {
+      const idx = binarySearch(value)
+      // 数组未排序时 hook 返回 -1 并已提示，不运行动画
+      if (idx === -1) {
+        const isSorted = data.every((v, i) => i === 0 || data[i - 1] <= v)
+        if (!isSorted) return
+      }
+      if (svgRef.current) await animateBinarySearch(svgRef.current, value, data, dimensions, anim)
+    } catch (e) {
+      handleAnimationError(e, t('common.search'))
+    } finally {
+      setIsAnimating(false)
+    }
+    setInputValue('')
+  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, binarySearch, svgRef, data, dimensions, setInputValue])
+
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader title={t('array.title')} subtitle={t('array.subtitle')}>
@@ -152,6 +201,8 @@ export default function ArrayPage() {
         <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating} isBusy={isAnimating}>{t('array.insert')}</OperationButton>
         <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating} isBusy={isAnimating}>{t('common.delete')}</OperationButton>
         <OperationButton variant="warning" onClick={handleSearch} disabled={isAnimating} isBusy={isAnimating} popAnimation>{t('common.search')}</OperationButton>
+        <OperationButton variant="warning" onClick={handleSearchAll} disabled={isAnimating} isBusy={isAnimating}>{t('array.searchAll')}</OperationButton>
+        <OperationButton variant="warning" onClick={handleBinarySearch} disabled={isAnimating} isBusy={isAnimating}>{t('array.binarySearch')}</OperationButton>
         {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
         <UndoPreviewButton
           variant="secondary"
@@ -191,7 +242,7 @@ export default function ArrayPage() {
         learningMode={learningMode}
         isAnimating={isAnimating}
       />
-      <LogPanel logs={logs} />
+      <LogPanel logs={logs} onJumpToStep={handleJumpToStep} />
     </div>
   )
 }

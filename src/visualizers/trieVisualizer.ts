@@ -1,5 +1,5 @@
 import { select } from '../utils/d3Imports'
-import { getColors, detectDarkMode, gradUrl } from '../utils/themeColors'
+import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { duration, EASING, transitionEnd, type Animation } from '../utils/animationEngine'
 import { calculateCenterStart } from '../utils/visualizerLayout'
 import type { TrieFlattened } from '../hooks/useTrieState'
@@ -26,23 +26,19 @@ interface TrieEdge {
   char: string
 }
 
-const NODE_RADIUS = 26
-const ROOT_RADIUS = 30
+// 与 graph 模块对齐的节点尺寸（graph NODE_RADIUS=20，trie 略大以保证可读性）
+const NODE_RADIUS = 22
+const ROOT_RADIUS = 26
+// end-of-word 节点使用胶囊形（pill）
+const PILL_WIDTH = 48
+const PILL_HEIGHT = 36
+const PILL_RX = 18
 const LEVEL_HEIGHT = 90
 const MIN_NODE_SPACING = 72
 const TOP_MARGIN = 40
 const BOTTOM_MARGIN = 40
 const FALLBACK_W = 800
 const FALLBACK_H = 400
-
-function lightenHex(hex: string, amount: number): string {
-  const m = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i)
-  if (!m) return hex
-  const r = Math.min(255, parseInt(m[1], 16) + amount)
-  const g = Math.min(255, parseInt(m[2], 16) + amount)
-  const b = Math.min(255, parseInt(m[3], 16) + amount)
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
-}
 
 interface LayoutNode {
   id: string
@@ -175,80 +171,14 @@ function layout(data: TrieFlattened, width: number, height: number): { positions
   return { positions, edges }
 }
 
-function createGradientDefs(svg: SVGSVGElement, C: ReturnType<typeof getColors>): void {
-  const ns = 'http://www.w3.org/2000/svg'
-  let defs = svg.querySelector('defs')
-  if (!defs) {
-    defs = document.createElementNS(ns, 'defs')
-    svg.appendChild(defs)
-  }
-
-  const gradients: Record<string, string> = {
-    'grad-node-root': C.nodeRoot,
-    'grad-node-default': C.nodeDefault,
-    'grad-node-leaf': C.nodeLeaf,
-    'grad-node-active': C.nodeActive,
-    'grad-node-error': C.nodeError,
-  }
-
-  for (const [id, color] of Object.entries(gradients)) {
-    let grad = defs.querySelector(`#${id}`) as SVGRadialGradientElement | null
-    if (!grad) {
-      grad = document.createElementNS(ns, 'radialGradient')
-      grad.setAttribute('id', id)
-      grad.setAttribute('cx', '35%')
-      grad.setAttribute('cy', '30%')
-      grad.setAttribute('r', '75%')
-      defs.appendChild(grad)
-    }
-    while (grad.firstChild) grad.removeChild(grad.firstChild)
-    const stop1 = document.createElementNS(ns, 'stop')
-    stop1.setAttribute('offset', '0%')
-    stop1.setAttribute('stop-color', lightenHex(color, 40))
-    grad.appendChild(stop1)
-    const stop2 = document.createElementNS(ns, 'stop')
-    stop2.setAttribute('offset', '100%')
-    stop2.setAttribute('stop-color', color)
-    grad.appendChild(stop2)
-  }
-
-  if (!defs.querySelector('#trie-node-shadow')) {
-    const filter = document.createElementNS(ns, 'filter')
-    filter.setAttribute('id', 'trie-node-shadow')
-    filter.setAttribute('x', '-50%')
-    filter.setAttribute('y', '-50%')
-    filter.setAttribute('width', '200%')
-    filter.setAttribute('height', '200%')
-    const feShadow = document.createElementNS(ns, 'feDropShadow')
-    feShadow.setAttribute('dx', '0')
-    feShadow.setAttribute('dy', '2')
-    feShadow.setAttribute('stdDeviation', '3')
-    feShadow.setAttribute('flood-opacity', '0.18')
-    filter.appendChild(feShadow)
-    defs.appendChild(filter)
-  }
-
-  if (!defs.querySelector('#trie-node-glow')) {
-    const glowFilter = document.createElementNS(ns, 'filter')
-    glowFilter.setAttribute('id', 'trie-node-glow')
-    glowFilter.setAttribute('x', '-100%')
-    glowFilter.setAttribute('y', '-100%')
-    glowFilter.setAttribute('width', '300%')
-    glowFilter.setAttribute('height', '300%')
-    const feGaussianBlur = document.createElementNS(ns, 'feGaussianBlur')
-    feGaussianBlur.setAttribute('stdDeviation', '5')
-    feGaussianBlur.setAttribute('result', 'blur')
-    glowFilter.appendChild(feGaussianBlur)
-    const feMerge = document.createElementNS(ns, 'feMerge')
-    const feMergeNodeBlur = document.createElementNS(ns, 'feMergeNode')
-    feMergeNodeBlur.setAttribute('in', 'blur')
-    const feMergeNodeSource = document.createElementNS(ns, 'feMergeNode')
-    feMergeNodeSource.setAttribute('in', 'SourceGraphic')
-    feMerge.appendChild(feMergeNodeBlur)
-    feMerge.appendChild(feMergeNodeSource)
-    glowFilter.appendChild(feMerge)
-    defs.appendChild(glowFilter)
-  }
+/**
+ * 返回节点在垂直方向的视觉半径，用于计算边的起止偏移。
+ * 圆形节点使用实际半径；胶囊节点使用高度的一半。
+ */
+function nodeVerticalOffset(pos: TriePosition): number {
+  if (pos.isRoot) return ROOT_RADIUS
+  if (pos.isEndOfWord) return PILL_HEIGHT / 2
+  return NODE_RADIUS
 }
 
 export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: TrieVisualizerOptions = {}) {
@@ -258,7 +188,8 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
   const container = select(svg)
   container.selectAll('*').interrupt().remove()
 
-  createGradientDefs(svg, C)
+  // 使用全局扁平渐变定义（与 graph 模块统一），不再创建 3D 球面渐变
+  ensureGradientDefs(svg, isDark)
 
   const width = options.width ?? FALLBACK_W
   const height = options.height ?? FALLBACK_H
@@ -279,32 +210,31 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
     posMap[pos.id] = pos
   }
 
+  // ---- 边：直线（与 graph 模块风格一致）----
   for (const edge of edges) {
     const fromPos = posMap[edge.from]
     const toPos = posMap[edge.to]
     if (!fromPos || !toPos) continue
 
-    const fromR = fromPos.isRoot ? ROOT_RADIUS : NODE_RADIUS
-    const toR = toPos.isRoot ? ROOT_RADIUS : NODE_RADIUS
+    const fromOffset = nodeVerticalOffset(fromPos)
+    const toOffset = nodeVerticalOffset(toPos)
     const x1 = fromPos.x
-    const y1 = fromPos.y + fromR
+    const y1 = fromPos.y + fromOffset
     const x2 = toPos.x
-    const y2 = toPos.y - toR
-    const midY = (y1 + y2) / 2
+    const y2 = toPos.y - toOffset
 
-    container.append('path')
+    container.append('line')
       .attr('class', `trie-edge from-${edge.from}-to-${edge.to}`)
-      .attr('d', `M${x1},${y1} C${x1},${midY} ${x2},${midY} ${x2},${y2}`)
-      .attr('fill', 'none')
+      .attr('x1', x1).attr('y1', y1)
+      .attr('x2', x2).attr('y2', y2)
       .attr('stroke', C.edgeDefault)
       .attr('stroke-width', 2)
       .attr('stroke-linecap', 'round')
       .attr('opacity', 0.65)
 
-    const t = 0.4
-    const omt = 1 - t
-    const labelX = omt * omt * omt * x1 + 3 * omt * omt * t * x1 + 3 * omt * t * t * x2 + t * t * t * x2
-    const labelY = omt * omt * omt * y1 + 3 * omt * omt * t * midY + 3 * omt * t * t * midY + t * t * t * y2
+    // 边标签放在直线中点
+    const labelX = (x1 + x2) / 2
+    const labelY = (y1 + y2) / 2
 
     container.append('circle')
       .attr('class', `trie-edge-label from-${edge.from}-to-${edge.to}`)
@@ -321,11 +251,12 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
       .text(edge.char)
   }
 
+  // ---- 节点 ----
   for (const pos of positions) {
     const isRoot = pos.isRoot
-    const radius = isRoot ? ROOT_RADIUS : NODE_RADIUS
-    const fill = isRoot ? gradUrl('node-root') : (pos.isEndOfWord ? gradUrl('node-leaf') : gradUrl('node-default'))
-    const stroke = isRoot ? C.nodeRootStroke : (pos.isEndOfWord ? C.nodeLeafStroke : C.nodeDefaultStroke)
+    const isEndOfWord = pos.isEndOfWord && !isRoot
+    const fill = isRoot ? gradUrl('node-root') : (isEndOfWord ? gradUrl('node-leaf') : gradUrl('node-default'))
+    const stroke = isRoot ? C.nodeRootStroke : (isEndOfWord ? C.nodeLeafStroke : C.nodeDefaultStroke)
     const strokeWidth = isRoot ? 3 : 2.5
 
     const nodeGroup = container.append('g')
@@ -357,33 +288,31 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
         }
       })
 
-    if (pos.isEndOfWord && !isRoot) {
+    // 主形状：end-of-word 使用胶囊形（rect + rx），其余使用圆形
+    // 统一使用 class="trie-node-circle" 以便动画函数选择
+    if (isEndOfWord) {
+      nodeGroup.append('rect')
+        .attr('class', 'trie-node-circle')
+        .attr('x', -PILL_WIDTH / 2)
+        .attr('y', -PILL_HEIGHT / 2)
+        .attr('width', PILL_WIDTH)
+        .attr('height', PILL_HEIGHT)
+        .attr('rx', PILL_RX)
+        .attr('ry', PILL_RX)
+        .attr('fill', fill)
+        .attr('stroke', stroke)
+        .attr('stroke-width', strokeWidth)
+    } else {
+      const radius = isRoot ? ROOT_RADIUS : NODE_RADIUS
       nodeGroup.append('circle')
-        .attr('class', 'trie-node-end-ring')
-        .attr('r', radius + 5)
-        .attr('fill', 'none')
-        .attr('stroke', C.nodeLeafStroke)
-        .attr('stroke-width', 2)
-        .attr('opacity', 0.4)
-        .attr('stroke-dasharray', '3,2')
+        .attr('class', 'trie-node-circle')
+        .attr('r', radius)
+        .attr('fill', fill)
+        .attr('stroke', stroke)
+        .attr('stroke-width', strokeWidth)
     }
 
-    nodeGroup.append('circle')
-      .attr('class', 'trie-node-glow')
-      .attr('r', radius)
-      .attr('fill', C.nodeActive)
-      .attr('opacity', 0)
-      .attr('filter', 'url(#trie-node-glow)')
-      .attr('pointer-events', 'none')
-
-    nodeGroup.append('circle')
-      .attr('class', 'trie-node-circle')
-      .attr('r', radius)
-      .attr('fill', fill)
-      .attr('stroke', stroke)
-      .attr('stroke-width', strokeWidth)
-      .attr('filter', 'url(#trie-node-shadow)')
-
+    // 节点内文字
     if (isRoot) {
       nodeGroup.append('text')
         .attr('dy', '0.35em').attr('text-anchor', 'middle')
@@ -398,16 +327,19 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
         .text(lastChar)
     }
 
-    if (pos.isEndOfWord) {
+    // end-of-word 对勾标记
+    if (isEndOfWord) {
       nodeGroup.append('text')
         .attr('class', 'trie-node-checkmark')
-        .attr('dy', radius + 16).attr('text-anchor', 'middle')
+        .attr('dy', PILL_HEIGHT / 2 + 16).attr('text-anchor', 'middle')
         .attr('fill', C.nodeLeaf).attr('font-size', '14px').attr('font-weight', 'bold')
         .text('✓')
     }
 
+    // 上方前缀标签
+    const labelOffset = isEndOfWord ? PILL_HEIGHT / 2 + 10 : (isRoot ? ROOT_RADIUS : NODE_RADIUS) + 10
     nodeGroup.append('text')
-      .attr('dy', -radius - 10).attr('text-anchor', 'middle')
+      .attr('dy', -labelOffset).attr('text-anchor', 'middle')
       .attr('fill', C.textLight).attr('font-size', '10px')
       .attr('font-family', 'var(--font-display)')
       .text(isRoot ? tStatic('trie.rootLabel') : pos.prefix)
@@ -456,61 +388,45 @@ interface PulseOptions {
   finalFill?: string
 }
 
+/**
+ * 节点脉冲动画：通过 fill 变化 + stroke-width 增强实现视觉反馈。
+ * 兼容圆形（circle）与胶囊形（rect）节点——不再依赖 r 属性。
+ */
 async function pulseNodeGlow(node: ReturnType<typeof select>, anim?: Animation, opts: PulseOptions = {}) {
   if (anim?.isAborted?.()) return
-  const circle = node.select('.trie-node-circle')
-  const glow = node.select('.trie-node-glow')
-  if (circle.empty()) return
+  const shape = node.select('.trie-node-circle')
+  if (shape.empty()) return
 
-  const baseR = parseFloat(circle.attr('r')) || NODE_RADIUS
-  const baseFill = opts.finalFill || circle.attr('fill') || gradUrl('node-default')
+  const baseFill = opts.finalFill || shape.attr('fill') || gradUrl('node-default')
+  const baseStrokeWidth = parseFloat(shape.attr('stroke-width')) || 2.5
   const activeFill = opts.error ? gradUrl('node-error') : gradUrl('node-active')
 
-  if (!glow.empty()) {
-    glow.transition().duration(duration(220)).ease(EASING.easeOutCubic)
-      .attr('r', baseR + 14)
-      .attr('opacity', opts.error ? 0.4 : 0.5)
-  }
-
   await transitionEnd(
-    circle.transition().duration(duration(220)).ease(EASING.easeOutBack)
-      .attr('r', baseR + 6)
+    shape.transition().duration(duration(220)).ease(EASING.easeOutBack)
       .attr('fill', activeFill)
+      .attr('stroke-width', baseStrokeWidth + 1.5)
   )
 
   if (anim?.isAborted?.()) return
 
-  if (!glow.empty()) {
-    glow.transition().duration(duration(180)).ease(EASING.easeInCubic)
-      .attr('r', baseR)
-      .attr('opacity', 0)
-  }
-
   await transitionEnd(
-    circle.transition().duration(duration(180)).ease(EASING.easeOutCubic)
-      .attr('r', baseR)
+    shape.transition().duration(duration(180)).ease(EASING.easeOutCubic)
       .attr('fill', baseFill)
+      .attr('stroke-width', baseStrokeWidth)
   )
 }
 
+/**
+ * 完成 end-of-word 节点动画：填充色变为 leaf 色 + 对勾淡入。
+ */
 async function completeLeafNode(node: ReturnType<typeof select>, anim?: Animation) {
   if (anim?.isAborted?.()) return
-  const circle = node.select('.trie-node-circle')
-  const glow = node.select('.trie-node-glow')
+  const shape = node.select('.trie-node-circle')
   const checkmark = node.select('.trie-node-checkmark')
-  if (circle.empty()) return
-
-  const baseR = parseFloat(circle.attr('r')) || NODE_RADIUS
-
-  if (!glow.empty()) {
-    glow.transition().duration(duration(300)).ease(EASING.easeOutCubic)
-      .attr('r', baseR + 18)
-      .attr('opacity', 0.6)
-  }
+  if (shape.empty()) return
 
   await transitionEnd(
-    circle.transition().duration(duration(350)).ease(EASING.easeOutElastic)
-      .attr('r', baseR)
+    shape.transition().duration(duration(350)).ease(EASING.easeOutElastic)
       .attr('fill', gradUrl('node-leaf'))
   )
 
@@ -523,22 +439,16 @@ async function completeLeafNode(node: ReturnType<typeof select>, anim?: Animatio
         .attr('opacity', 1)
     )
   }
-
-  if (!glow.empty()) {
-    glow.transition().duration(duration(250)).ease(EASING.easeInCubic)
-      .attr('r', baseR)
-      .attr('opacity', 0)
-  }
 }
 
 async function shakeNode(node: ReturnType<typeof select>, anim?: Animation) {
   if (anim?.isAborted?.()) return
   const { x, y } = getNodeBaseTransform(node)
-  const circle = node.select('.trie-node-circle')
-  if (circle.empty()) return
-  const baseFill = circle.attr('fill') || gradUrl('node-default')
+  const shape = node.select('.trie-node-circle')
+  if (shape.empty()) return
+  const baseFill = shape.attr('fill') || gradUrl('node-default')
 
-  circle.transition().duration(duration(150)).ease(EASING.easeOutCubic)
+  shape.transition().duration(duration(150)).ease(EASING.easeOutCubic)
     .attr('fill', gradUrl('node-error'))
 
   for (let i = 0; i < 5; i++) {
@@ -556,20 +466,8 @@ async function shakeNode(node: ReturnType<typeof select>, anim?: Animation) {
   )
 
   await transitionEnd(
-    circle.transition().duration(duration(250)).ease(EASING.easeInCubic)
+    shape.transition().duration(duration(250)).ease(EASING.easeInCubic)
       .attr('fill', baseFill)
-  )
-}
-
-async function shrinkEndOfWordRing(node: ReturnType<typeof select>, anim?: Animation) {
-  if (anim?.isAborted?.()) return
-  const ring = node.select('.trie-node-end-ring')
-  if (ring.empty()) return
-  const baseR = parseFloat(ring.attr('r')) || NODE_RADIUS + 5
-  await transitionEnd(
-    ring.transition().duration(duration(250)).ease(EASING.easeInCubic)
-      .attr('r', baseR - 8)
-      .attr('opacity', 0)
   )
 }
 
@@ -681,14 +579,9 @@ export async function animateDeleteTrie(svg: SVGSVGElement, word?: string, anim?
     const nodeId = pathIds[i]
     const node = container.select(`.node-${nodeId}`)
     if (node.empty()) continue
-    const isLeaf = i === pathIds.length - 1
 
     if (i > 0) {
       dimPathEdge(container, pathIds[i - 1], nodeId, C)
-    }
-
-    if (isLeaf) {
-      await shrinkEndOfWordRing(node, anim)
     }
 
     await pulseNodeGlow(node, anim)

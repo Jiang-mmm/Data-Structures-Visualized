@@ -15,7 +15,7 @@ describe('useSortState', () => {
   describe('初始化状态', () => {
     it('应该使用默认初始数据', () => {
       const { result } = renderHook(() => useSortState())
-      expect(result.current.data).toEqual([38, 27, 43, 3, 9, 82, 10, 55, 21, 67, 15, 94, 50, 71, 33])
+      expect(result.current.data).toEqual([38, 27, 43, 9, 82, 10, 55, 21])
     })
 
     it('stats 应该初始化为空状态', () => {
@@ -35,10 +35,10 @@ describe('useSortState', () => {
   })
 
   describe('randomize 操作', () => {
-    it('应该生成长度为 15 的随机数组', () => {
+    it('应该生成长度为 8 的随机数组', () => {
       const { result } = renderHook(() => useSortState())
       act(() => { result.current.randomize() })
-      expect(result.current.data.length).toBe(15)
+      expect(result.current.data.length).toBe(8)
     })
 
     it('应该重置 stats', () => {
@@ -73,7 +73,7 @@ describe('useSortState', () => {
       const { result } = renderHook(() => useSortState())
       act(() => { result.current.randomize() })
       act(() => { result.current.reset() })
-      expect(result.current.data).toEqual([38, 27, 43, 3, 9, 82, 10, 55, 21, 67, 15, 94, 50, 71, 33])
+      expect(result.current.data).toEqual([38, 27, 43, 9, 82, 10, 55, 21])
     })
 
     it('应该重置 stats', () => {

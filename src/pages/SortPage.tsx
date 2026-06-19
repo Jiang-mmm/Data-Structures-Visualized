@@ -112,7 +112,7 @@ export default function SortPage() {
           ))}
         <OperationGroup label={t('common.more')}>
           {algorithms
-            .filter(([key]) => ['selection', 'insertion', 'counting', 'shell'].includes(key))
+            .filter(([key]) => ['selection', 'insertion', 'counting', 'shell', 'radix', 'bucket', 'comb', 'tim'].includes(key))
             .map(([key, algo]) => (
               <OperationButton
                 key={key}
@@ -204,7 +204,7 @@ export default function SortPage() {
       >
         <div className="flex items-center gap-2 mb-2">
           <span className="text-sm font-semibold text-ink dark:text-dark-ink">{t('sort.selectAlgorithm')}:</span>
-          {algorithms.filter(([key]) => ['bubble', 'quick', 'merge', 'heap'].includes(key)).map(([key, algo]) => (
+          {algorithms.map(([key, algo]) => (
             <button
               key={key}
               onClick={() => {

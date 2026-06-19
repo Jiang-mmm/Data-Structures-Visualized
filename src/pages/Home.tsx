@@ -7,9 +7,9 @@ import LearningRecommendations from '../components/LearningRecommendations'
 import Card, { type CardAccent } from '../components/Card'
 
 const ACCENT_COLORS = [
-  { accent: 'blue' as CardAccent, badge: 'bg-accent-blue/10 text-accent-blue', iconBg: 'bg-accent-blue/10' },
-  { accent: 'amber' as CardAccent, badge: 'bg-accent-amber/10 text-accent-amber', iconBg: 'bg-accent-amber/10' },
-  { accent: 'red' as CardAccent, badge: 'bg-accent-rose/10 text-accent-rose', iconBg: 'bg-accent-rose/10' },
+  { accent: 'blue' as CardAccent, badge: 'bg-card-group-linear/10 text-card-group-linear', iconBg: 'bg-card-group-linear/10', hoverText: 'group-hover:text-card-group-linear' },
+  { accent: 'amber' as CardAccent, badge: 'bg-card-group-tree/10 text-card-group-tree', iconBg: 'bg-card-group-tree/10', hoverText: 'group-hover:text-card-group-tree' },
+  { accent: 'red' as CardAccent, badge: 'bg-card-group-graph/10 text-card-group-graph', iconBg: 'bg-card-group-graph/10', hoverText: 'group-hover:text-card-group-graph' },
 ]
 
 export default function Home() {
@@ -119,7 +119,7 @@ export default function Home() {
                     </span>
                   </div>
 
-                  <h2 className="text-xl font-bold mb-2 text-ink dark:text-dark-ink group-hover:text-accent-blue transition-colors duration-200">
+                  <h2 className={`text-xl font-bold mb-2 text-ink dark:text-dark-ink ${color.hoverText} transition-colors duration-200`}>
                     {item.name}
                   </h2>
                   <p className="text-sm text-ink-light dark:text-dark-ink-light mb-5 leading-relaxed line-clamp-2">
@@ -144,7 +144,7 @@ export default function Home() {
 
                   <div className="mt-5 pt-4 border-t border-border/50 dark:border-dark-border/50 flex items-center justify-between">
                     <span className="text-xs font-mono text-ink-light/60 dark:text-dark-ink-light/60">{t('home.enterModule')}</span>
-                    <span className="text-lg group-hover:translate-x-2 transition-transform duration-300 text-ink/40 dark:text-dark-ink/40 group-hover:text-accent-blue">→</span>
+                    <span className={`text-lg group-hover:translate-x-2 transition-transform duration-300 text-ink/40 dark:text-dark-ink/40 ${color.hoverText}`}>→</span>
                   </div>
                 </Card>
               </Link>

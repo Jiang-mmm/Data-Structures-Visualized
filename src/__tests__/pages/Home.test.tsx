@@ -54,14 +54,15 @@ describe('Home', () => {
     expect(container).toBeInTheDocument()
   })
 
-  it('uses only two accent colors on data structure cards', () => {
+  it('uses theme-aware card group tokens on data structure cards', () => {
     renderWithRouter(<Home />)
 
     const grid = screen.getByTestId('ds-cards-grid')
     const html = grid.innerHTML
 
-    expect(html).toContain('accent-blue')
-    expect(html).toContain('accent-amber')
+    expect(html).toContain('card-group-linear')
+    expect(html).toContain('card-group-tree')
+    expect(html).toContain('card-group-graph')
     expect(html).not.toContain('accent-violet')
     expect(html).not.toContain('accent-emerald')
     expect(html).not.toContain('accent-teal')

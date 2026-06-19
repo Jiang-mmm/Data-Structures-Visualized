@@ -5,7 +5,7 @@
  * 数据来源：useAvlTreeState.getFlattened() 返回的 AvlFlattened
  * 布局算法：基于子树宽度的递归布局（参考 trieVisualizer）
  *
- * 节点显示：值 + 平衡因子（BF）
+ * 节点显示：仅显示节点值；hover 时通过 SVG <title> 展示高度与平衡因子
  * 颜色编码：
  * - 根节点：nodeRoot（橙色）
  * - 叶子节点：nodeLeaf（绿色）
@@ -15,11 +15,11 @@
 
 import { select } from '../utils/d3Imports'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
-import { measureRender, type Animation } from '../utils/animationEngine'
+import { duration, EASING, transitionEnd, wait, measureRender, type Animation } from '../utils/animationEngine'
 import { getViewBoxSize, calculateCenterStart } from '../utils/visualizerLayout'
 import { getLargeDataThreshold } from '../utils/performanceConfig'
 import { tStatic } from '../i18n/useI18n'
-import type { AvlFlattened } from '../types/hooks'
+import type { AvlFlattened, AvlFlattenedNode } from '../types/hooks'
 
 export interface AvlTreeVisualizerOptions {
   isDark?: boolean
@@ -35,7 +35,7 @@ export interface AvlHighlightState {
   foundNodeId?: string | null
 }
 
-const NODE_RADIUS = 24
+const NODE_RADIUS = 22
 const LEVEL_HEIGHT = 80
 const MIN_NODE_SPACING = 70
 const TOP_MARGIN = 40
@@ -326,23 +326,148 @@ export function renderAvlTree(
         .attr('class', 'avl-node-value')
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'central')
-        .attr('y', -4)
+        .attr('dy', '0.35em')
         .attr('fill', C.textWhite)
         .attr('font-size', '14px')
         .attr('font-weight', '600')
         .text(String(pos.value))
 
-      // 平衡因子文本（BF）
-      nodeG.append('text')
-        .attr('class', 'avl-node-bf')
-        .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'central')
-        .attr('y', 10)
-        .attr('fill', C.textLight)
-        .attr('font-size', '9px')
-        .text(`BF:${pos.balanceFactor}`)
+      // hover 提示：值 / 高度 / 平衡因子
+      nodeG.append('title')
+        .text(tStatic('avlTree.nodeTitle')
+          .replace('{value}', String(pos.value))
+          .replace('{height}', String(pos.height))
+          .replace('{balanceFactor}', String(pos.balanceFactor)))
     }
   })
+}
+
+/** 通过 data-id 选中节点组 */
+function getNodeGroupById(container: ReturnType<typeof select>, id: string): ReturnType<typeof select> {
+  return container.selectAll('g.avl-node').filter(function (this: SVGGElement) {
+    return select(this).attr('data-id') === id
+  })
+}
+
+/** 解析节点组当前的 translate 坐标 */
+function getNodeCenter(nodeGroup: ReturnType<typeof select>): { x: number; y: number } | null {
+  const transform = nodeGroup.attr('transform')
+  const match = transform && transform.match(/translate\(([^,]+),\s*([^)]+)\)/)
+  if (!match) return null
+  const x = parseFloat(match[1])
+  const y = parseFloat(match[2])
+  if (isNaN(x) || isNaN(y)) return null
+  return { x, y }
+}
+
+/** 重置节点与边的颜色，并清除序号标签 */
+function resetNodeAndEdgeColors(container: ReturnType<typeof select>, C: ReturnType<typeof getColors>) {
+  container.selectAll('g.avl-node').select('circle')
+    .interrupt()
+    .attr('fill', gradUrl('node-default'))
+    .attr('stroke', C.nodeDefaultStroke)
+    .attr('stroke-width', 2)
+    .attr('r', NODE_RADIUS)
+
+  container.selectAll('text.visit-order').remove()
+
+  container.selectAll('.avl-edge')
+    .interrupt()
+    .attr('stroke', C.edgeDefault)
+    .attr('stroke-width', 2)
+}
+
+/** 节点缩放脉冲：先 easeOutBack 放大，再 settle 到最终颜色/半径（链式过渡，单次 await） */
+async function pulseNode(
+  nodeGroup: ReturnType<typeof select>,
+  C: ReturnType<typeof getColors>,
+  isFound = false,
+  isSecondary = false,
+  dataLength = 0
+) {
+  const circle = nodeGroup.select('circle')
+  const growRadius = isFound ? NODE_RADIUS + 10 : NODE_RADIUS + 8
+  const activeFill = isFound ? C.nodeVisited : C.nodeActive
+  const activeStroke = isFound ? C.nodeVisitedStroke : C.nodeActiveStroke
+
+  const finalRadius = isFound || !isSecondary ? NODE_RADIUS + 2 : NODE_RADIUS
+  const finalFill = isSecondary ? C.textSecondary : C.nodeVisited
+  const finalStroke = isSecondary ? C.textSecondary : C.nodeVisitedStroke
+
+  // 链式过渡：grow → settle，单次 await（与 graphVisualizer 一致，消除微任务间隙）
+  const t = circle.transition().duration(duration(350, dataLength)).ease(isFound ? EASING.easeOutElastic : EASING.easeOutBack)
+    .attr('r', growRadius)
+    .attr('fill', activeFill)
+    .attr('stroke', activeStroke)
+    .transition().duration(duration(300, dataLength)).ease(EASING.easeOutCubic)
+    .attr('r', finalRadius)
+    .attr('fill', finalFill)
+    .attr('stroke', finalStroke)
+  await transitionEnd(t)
+}
+
+/** 从节点向外扩散的波纹 */
+function addRippleEffect(container: ReturnType<typeof select>, nodeId: string, C: ReturnType<typeof getColors>, dataLength = 0) {
+  const nodeGroup = getNodeGroupById(container, nodeId)
+  if (nodeGroup.empty()) return
+  const center = getNodeCenter(nodeGroup)
+  if (!center) return
+
+  const ripple = container.insert('circle', 'g.avl-node')
+    .attr('cx', center.x)
+    .attr('cy', center.y)
+    .attr('r', NODE_RADIUS)
+    .attr('fill', 'none')
+    .attr('stroke', C.nodeActive)
+    .attr('stroke-width', 2.5)
+    .attr('opacity', 0.7)
+
+  ripple.transition().duration(duration(600, dataLength)).ease(EASING.easeOutCubic)
+    .attr('r', NODE_RADIUS * 3)
+    .attr('stroke-width', 0.5)
+    .attr('opacity', 0)
+    .remove()
+}
+
+/** 高亮从父节点指向当前节点的入边 */
+function highlightEntryEdge(
+  container: ReturnType<typeof select>,
+  nodeId: string,
+  parentId: string | null,
+  C: ReturnType<typeof getColors>,
+  dataLength = 0
+) {
+  if (!parentId) return
+  const edge = container.select(`.avl-edge.from-${parentId}-to-${nodeId}`)
+  if (edge.empty()) return
+  edge.transition().duration(duration(400, dataLength)).ease(EASING.easeOutBack)
+    .attr('stroke', C.nodeVisitedStroke)
+    .attr('stroke-width', 2.5)
+}
+
+/** 在节点右上角显示遍历/搜索序号或 ✓ */
+function addVisitOrderLabel(
+  nodeGroup: ReturnType<typeof select>,
+  order: number | string,
+  C: ReturnType<typeof getColors>,
+  dataLength = 0
+) {
+  nodeGroup.selectAll('text.visit-order').remove()
+
+  const textEl = nodeGroup.append('text')
+    .attr('class', 'visit-order')
+    .attr('x', NODE_RADIUS + 12)
+    .attr('y', -NODE_RADIUS - 4)
+    .attr('text-anchor', 'middle')
+    .attr('fill', C.nodeVisited)
+    .attr('font-size', '11px')
+    .attr('font-weight', '800')
+    .attr('font-family', 'var(--font-mono)')
+    .attr('opacity', 0)
+    .text(order)
+
+  transitionEnd(textEl.transition().duration(duration(250, dataLength)).ease(EASING.easeOutBack)
+    .attr('opacity', 1))
 }
 
 /**
@@ -362,22 +487,38 @@ export async function animateInsertPath(
   const threshold = getLargeDataThreshold('tree')
   if (data.nodes.length >= threshold) return
 
-  // 按值查找节点 id
+  // DOM 已由 Visualizer 组件渲染，无需重渲染；仅重置颜色即可
+  const isDark = detectDarkMode()
+  const C = getColors(isDark)
+  const container = select(svg)
+  resetNodeAndEdgeColors(container, C)
+
   const valueToId = new Map<string, string>()
+  const nodeMap = new Map<string, AvlFlattenedNode>()
   for (const n of data.nodes) {
     valueToId.set(String(n.value), n.id)
+    nodeMap.set(n.id, n)
   }
 
-  const visited = new Set<string>()
-  for (const value of pathValues) {
+  for (let i = 0; i < pathValues.length; i++) {
     if (anim?.isAborted?.()) return
+    const value = pathValues[i]
     const id = valueToId.get(String(value))
-    if (id) {
-      visited.add(id)
-      renderAvlTree(svg, data, {}, { visitedNodeIds: visited })
-      await new Promise(resolve => setTimeout(resolve, 300))
-    }
+    if (!id) continue
+
+    const nodeGroup = getNodeGroupById(container, id)
+    if (nodeGroup.empty()) continue
+
+    await pulseNode(nodeGroup, C, false, false, data.nodes.length)
+    if (anim?.isAborted?.()) return
+
+    addRippleEffect(container, id, C, data.nodes.length)
+    highlightEntryEdge(container, id, nodeMap.get(id)?.parent || null, C, data.nodes.length)
+    addVisitOrderLabel(nodeGroup, i + 1, C, data.nodes.length)
   }
+
+  // 等待最后一个节点的波纹/边高亮/序号标签动画完成，避免页面立即重绘将其截断
+  await wait(700, anim)
 }
 
 /**
@@ -399,27 +540,45 @@ export async function animateSearchPath(
   const threshold = getLargeDataThreshold('tree')
   if (data.nodes.length >= threshold) return
 
+  // DOM 已由 Visualizer 组件渲染，无需重渲染；仅重置颜色即可
+  const isDark = detectDarkMode()
+  const C = getColors(isDark)
+  const container = select(svg)
+  resetNodeAndEdgeColors(container, C)
+
   const valueToId = new Map<string, string>()
+  const nodeMap = new Map<string, AvlFlattenedNode>()
   for (const n of data.nodes) {
     valueToId.set(String(n.value), n.id)
+    nodeMap.set(n.id, n)
   }
 
-  const path = new Set<string>()
   for (let i = 0; i < pathValues.length; i++) {
     if (anim?.isAborted?.()) return
     const value = pathValues[i]
     const id = valueToId.get(String(value))
-    if (id) {
-      path.add(id)
-      const isLast = i === pathValues.length - 1
-      const isFound = isLast && foundValue !== null
-      renderAvlTree(svg, data, {}, {
-        pathNodeIds: path,
-        foundNodeId: isFound ? id : null,
-      })
-      await new Promise(resolve => setTimeout(resolve, 300))
+    if (!id) continue
+
+    const nodeGroup = getNodeGroupById(container, id)
+    if (nodeGroup.empty()) continue
+
+    const isLast = i === pathValues.length - 1
+    const isFound = isLast && foundValue !== null
+
+    await pulseNode(nodeGroup, C, isFound, !isFound, data.nodes.length)
+    if (anim?.isAborted?.()) return
+
+    highlightEntryEdge(container, id, nodeMap.get(id)?.parent || null, C, data.nodes.length)
+
+    if (isFound) {
+      addVisitOrderLabel(nodeGroup, '✓', C, data.nodes.length)
+    } else {
+      addVisitOrderLabel(nodeGroup, i + 1, C, data.nodes.length)
     }
   }
+
+  // 等待最后一个节点的边高亮/序号标签动画完成，避免页面立即重绘将其截断
+  await wait(700, anim)
 }
 
 /**
@@ -439,19 +598,36 @@ export async function animateTraversal(
   const threshold = getLargeDataThreshold('tree')
   if (data.nodes.length >= threshold) return
 
+  // DOM 已由 Visualizer 组件渲染，无需重渲染；仅重置颜色即可
+  const isDark = detectDarkMode()
+  const C = getColors(isDark)
+  const container = select(svg)
+  resetNodeAndEdgeColors(container, C)
+
   const valueToId = new Map<string, string>()
+  const nodeMap = new Map<string, AvlFlattenedNode>()
   for (const n of data.nodes) {
     valueToId.set(String(n.value), n.id)
+    nodeMap.set(n.id, n)
   }
 
-  const visited = new Set<string>()
-  for (const value of traversalValues) {
+  for (let i = 0; i < traversalValues.length; i++) {
     if (anim?.isAborted?.()) return
+    const value = traversalValues[i]
     const id = valueToId.get(String(value))
-    if (id) {
-      visited.add(id)
-      renderAvlTree(svg, data, {}, { visitedNodeIds: visited })
-      await new Promise(resolve => setTimeout(resolve, 300))
-    }
+    if (!id) continue
+
+    const nodeGroup = getNodeGroupById(container, id)
+    if (nodeGroup.empty()) continue
+
+    await pulseNode(nodeGroup, C, false, false, data.nodes.length)
+    if (anim?.isAborted?.()) return
+
+    addRippleEffect(container, id, C, data.nodes.length)
+    highlightEntryEdge(container, id, nodeMap.get(id)?.parent || null, C, data.nodes.length)
+    addVisitOrderLabel(nodeGroup, i + 1, C, data.nodes.length)
   }
+
+  // 等待最后一个节点的波纹/边高亮/序号标签动画完成，避免页面立即重绘将其截断
+  await wait(700, anim)
 }

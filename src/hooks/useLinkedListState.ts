@@ -21,7 +21,7 @@ export function useLinkedListState() {
     }
     const newData = [safeValue, ...data]
     push(newData)
-    addLog('oper', tStatic('hooks.llLogInsertHead').replace('{value}', String(safeValue)).replace('{head}', String(safeValue)).replace('{length}', String(newData.length)))
+    addLog('oper', tStatic('hooks.llLogInsertHead').replace('{value}', String(safeValue)).replace('{head}', String(safeValue)).replace('{length}', String(newData.length)), 'insert-head')
     addLog('code', `node.next = head; head = node;`)
     showToast({ type: 'success', message: tStatic('hooks.llInsertHeadSuccess').replace('{value}', String(safeValue)) })
   }, [data, push, addLog])
@@ -34,7 +34,7 @@ export function useLinkedListState() {
     }
     const newData = [...data, safeValue]
     push(newData)
-    addLog('oper', tStatic('hooks.llLogInsertTail').replace('{value}', String(safeValue)).replace('{tail}', String(safeValue)).replace('{length}', String(newData.length)))
+    addLog('oper', tStatic('hooks.llLogInsertTail').replace('{value}', String(safeValue)).replace('{tail}', String(safeValue)).replace('{length}', String(newData.length)), 'insert-tail')
     addLog('code', `tail.next = node; tail = node;`)
     showToast({ type: 'success', message: tStatic('hooks.llInsertTailSuccess').replace('{value}', String(safeValue)) })
   }, [data, push, addLog])
@@ -49,7 +49,7 @@ export function useLinkedListState() {
     const value = data[index]
     const newData = data.filter((_, i) => i !== index)
     push(newData)
-    addLog('oper', tStatic('hooks.llLogDelete').replace('{index}', String(index)).replace('{value}', String(value)).replace('{length}', String(newData.length)))
+    addLog('oper', tStatic('hooks.llLogDelete').replace('{index}', String(index)).replace('{value}', String(value)).replace('{length}', String(newData.length)), 'delete')
     addLog('code', `prev.next = node.next;`)
     showToast({ type: 'success', message: tStatic('hooks.llDeleteSuccess').replace('{index}', String(index)).replace('{value}', String(value)) })
     return value
@@ -58,10 +58,10 @@ export function useLinkedListState() {
   const search = useCallback((value: number): number => {
     const index = data.indexOf(value)
     if (index !== -1) {
-      addLog('oper', tStatic('hooks.llLogSearchFound').replace('{value}', String(value)).replace('{index}', String(index)))
+      addLog('oper', tStatic('hooks.llLogSearchFound').replace('{value}', String(value)).replace('{index}', String(index)), 'search')
       showToast({ type: 'success', message: tStatic('hooks.llSearchFound').replace('{value}', String(value)).replace('{index}', String(index)) })
     } else {
-      addLog('oper', tStatic('hooks.llLogSearchNotFound').replace('{value}', String(value)))
+      addLog('oper', tStatic('hooks.llLogSearchNotFound').replace('{value}', String(value)), 'search')
       showToast({ type: 'warning', message: tStatic('hooks.llSearchNotFound').replace('{value}', String(value)) })
     }
     return index
@@ -81,7 +81,7 @@ export function useLinkedListState() {
     const newData = [...data]
     newData.splice(index, 0, safeValue)
     push(newData)
-    addLog('oper', tStatic('hooks.llLogInsertAt').replace('{index}', String(index)).replace('{value}', String(safeValue)).replace('{length}', String(newData.length)))
+    addLog('oper', tStatic('hooks.llLogInsertAt').replace('{index}', String(index)).replace('{value}', String(safeValue)).replace('{length}', String(newData.length)), 'insert-at')
     addLog('code', `node.next = current.next; current.next = node;`)
     showToast({ type: 'success', message: tStatic('hooks.llInsertAtSuccess').replace('{index}', String(index)).replace('{value}', String(safeValue)) })
     return true
@@ -94,7 +94,7 @@ export function useLinkedListState() {
     }
     const reversed = [...data].reverse()
     push(reversed)
-    addLog('oper', tStatic('hooks.llLogReverseDone').replace('{data}', reversed.join(', ')))
+    addLog('oper', tStatic('hooks.llLogReverseDone').replace('{data}', reversed.join(', ')), 'reverse')
     addLog('code', `prev = null; while(curr) { next = curr.next; curr.next = prev; prev = curr; curr = next; }`)
     showToast({ type: 'success', message: tStatic('hooks.llReversed') })
     return reversed
@@ -127,10 +127,10 @@ export function useLinkedListState() {
     }
 
     if (hasCycle) {
-      addLog('oper', tStatic('hooks.llLogCycleDetected'))
+      addLog('oper', tStatic('hooks.llLogCycleDetected'), 'detect-cycle')
       showToast({ type: 'warning', message: tStatic('hooks.llCycleDetected') })
     } else {
-      addLog('oper', tStatic('hooks.llLogNoCycle'))
+      addLog('oper', tStatic('hooks.llLogNoCycle'), 'detect-cycle')
       showToast({ type: 'info', message: tStatic('hooks.llNoCycle') })
     }
 

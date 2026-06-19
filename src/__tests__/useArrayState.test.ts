@@ -146,4 +146,97 @@ describe('useArrayState', () => {
       expect(index).toBe(-1)
     })
   })
+
+  describe('searchAll', () => {
+    it('应该返回所有匹配项的索引', () => {
+      const { result } = renderHook(() => useArrayState())
+      act(() => { result.current.loadData([5, 3, 5, 8, 5, 1]) })
+      const indices = result.current.searchAll(5)
+      expect(indices).toEqual([0, 2, 4])
+    })
+
+    it('无匹配时应该返回空数组', () => {
+      const { result } = renderHook(() => useArrayState())
+      const indices = result.current.searchAll(999)
+      expect(indices).toEqual([])
+    })
+
+    it('空数组应该返回空数组', () => {
+      const { result } = renderHook(() => useArrayState())
+      act(() => { result.current.loadData([]) })
+      const indices = result.current.searchAll(1)
+      expect(indices).toEqual([])
+    })
+
+    it('单匹配应该返回单元素数组', () => {
+      const { result } = renderHook(() => useArrayState())
+      const indices = result.current.searchAll(12)
+      expect(indices).toEqual([2])
+    })
+  })
+
+  describe('binarySearch', () => {
+    it('有序数组中查找存在的值应该返回正确索引', () => {
+      const { result } = renderHook(() => useArrayState())
+      act(() => { result.current.loadData([1, 3, 5, 7, 9, 11, 13]) })
+      const index = result.current.binarySearch(7)
+      expect(index).toBe(3)
+    })
+
+    it('有序数组中查找不存在的值应该返回 -1', () => {
+      const { result } = renderHook(() => useArrayState())
+      act(() => { result.current.loadData([1, 3, 5, 7, 9]) })
+      const index = result.current.binarySearch(6)
+      expect(index).toBe(-1)
+    })
+
+    it('无序数组应该返回 -1（前置条件失败）', () => {
+      const { result } = renderHook(() => useArrayState())
+      // 默认数据 [8, 3, 12, 5, 9] 无序
+      const index = result.current.binarySearch(8)
+      expect(index).toBe(-1)
+    })
+
+    it('空数组应该返回 -1', () => {
+      const { result } = renderHook(() => useArrayState())
+      act(() => { result.current.loadData([]) })
+      const index = result.current.binarySearch(1)
+      expect(index).toBe(-1)
+    })
+
+    it('单元素有序数组查找命中应该返回 0', () => {
+      const { result } = renderHook(() => useArrayState())
+      act(() => { result.current.loadData([42]) })
+      const index = result.current.binarySearch(42)
+      expect(index).toBe(0)
+    })
+
+    it('单元素有序数组查找未命中应该返回 -1', () => {
+      const { result } = renderHook(() => useArrayState())
+      act(() => { result.current.loadData([42]) })
+      const index = result.current.binarySearch(7)
+      expect(index).toBe(-1)
+    })
+
+    it('查找首元素应该返回 0', () => {
+      const { result } = renderHook(() => useArrayState())
+      act(() => { result.current.loadData([2, 4, 6, 8, 10]) })
+      const index = result.current.binarySearch(2)
+      expect(index).toBe(0)
+    })
+
+    it('查找末元素应该返回最后一个索引', () => {
+      const { result } = renderHook(() => useArrayState())
+      act(() => { result.current.loadData([2, 4, 6, 8, 10]) })
+      const index = result.current.binarySearch(10)
+      expect(index).toBe(4)
+    })
+
+    it('允许重复值的有序数组应返回其中一个匹配索引', () => {
+      const { result } = renderHook(() => useArrayState())
+      act(() => { result.current.loadData([1, 3, 3, 3, 5]) })
+      const index = result.current.binarySearch(3)
+      expect([1, 2, 3]).toContain(index)
+    })
+  })
 })

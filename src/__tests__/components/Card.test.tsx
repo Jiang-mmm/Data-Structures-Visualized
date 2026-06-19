@@ -30,18 +30,18 @@ describe('Card', () => {
     const { container } = render(<Card variant="accent" accent="blue">强调</Card>)
     const card = container.firstChild as HTMLElement
     expect(card.className).toContain('border-t-4')
-    expect(card.className).toContain('border-t-accent-blue')
+    expect(card.className).toContain('!border-t-card-group-linear')
   })
 
   it('支持不同 accent 颜色映射', () => {
     const { container: c1 } = render(<Card variant="accent" accent="blue">蓝</Card>)
-    expect((c1.firstChild as HTMLElement).className).toContain('border-t-accent-blue')
+    expect((c1.firstChild as HTMLElement).className).toContain('!border-t-card-group-linear')
 
     const { container: c2 } = render(<Card variant="accent" accent="red">红</Card>)
-    expect((c2.firstChild as HTMLElement).className).toContain('border-t-accent-rose')
+    expect((c2.firstChild as HTMLElement).className).toContain('!border-t-card-group-graph')
 
     const { container: c3 } = render(<Card variant="accent" accent="amber">琥珀</Card>)
-    expect((c3.firstChild as HTMLElement).className).toContain('border-t-accent-amber')
+    expect((c3.firstChild as HTMLElement).className).toContain('!border-t-card-group-tree')
   })
 
   it('muted 变体使用 muted 背景与 subtle 边框', () => {
@@ -110,20 +110,20 @@ describe('Card', () => {
     const { container } = render(<Card gradient accent="blue">渐变</Card>)
     const card = container.firstChild as HTMLElement
     expect(card.className).toContain('bg-gradient-to-br')
-    expect(card.className).toContain('from-accent-blue/10')
-    expect(card.className).toContain('to-accent-blue/5')
-    expect(card.className).toContain('dark:from-accent-blue/20')
-    expect(card.className).toContain('dark:to-accent-blue/10')
+    expect(card.className).toContain('from-card-group-linear/10')
+    expect(card.className).toContain('to-card-group-linear/5')
+    expect(card.className).toContain('dark:from-card-group-linear/20')
+    expect(card.className).toContain('dark:to-card-group-linear/10')
   })
 
   it('gradient 颜色映射与 accent 视觉色系一致', () => {
     const { container: blue } = render(<Card gradient accent="blue">蓝</Card>)
-    expect((blue.firstChild as HTMLElement).className).toContain('from-accent-blue/10')
+    expect((blue.firstChild as HTMLElement).className).toContain('from-card-group-linear/10')
 
     const { container: red } = render(<Card gradient accent="red">红</Card>)
-    expect((red.firstChild as HTMLElement).className).toContain('from-accent-rose/10')
+    expect((red.firstChild as HTMLElement).className).toContain('from-card-group-graph/10')
 
     const { container: amber } = render(<Card gradient accent="amber">琥珀</Card>)
-    expect((amber.firstChild as HTMLElement).className).toContain('from-accent-amber/10')
+    expect((amber.firstChild as HTMLElement).className).toContain('from-card-group-tree/10')
   })
 })

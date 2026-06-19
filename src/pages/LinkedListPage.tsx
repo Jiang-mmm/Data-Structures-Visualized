@@ -63,6 +63,14 @@ export default function LinkedListPage() {
     showToast({ type: 'warning', message: t('errors.stopped') })
   }, [abortAnimation, setIsAnimating])
 
+  const handleJumpToStep = useCallback((stepId: string): void => {
+    const idx = learningMode.steps.findIndex(s => s.id === stepId)
+    if (idx >= 0) {
+      setShowLearning(true)
+      learningMode.goToStep(idx)
+    }
+  }, [learningMode.steps, learningMode.goToStep])
+
   const handleInsertHead = useCallback(async (): Promise<void> => {
     if (isAnimating) return
     const value = validateValueInput()
@@ -257,7 +265,7 @@ export default function LinkedListPage() {
         learningMode={learningMode}
         isAnimating={isAnimating}
       />
-      <LogPanel logs={logs} />
+      <LogPanel logs={logs} onJumpToStep={handleJumpToStep} />
     </div>
   )
 }

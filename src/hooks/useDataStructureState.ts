@@ -70,6 +70,7 @@ export interface LogEntry {
   time: string
   type: string
   message: string
+  codeStepId?: string
 }
 
 export interface DataStructureStateOptions {
@@ -144,10 +145,10 @@ export function useDataStructureState<T>(initialData: T, options: DataStructureS
     }
   }, [])
 
-  const addLog = useCallback((type: string, message: string) => {
+  const addLog = useCallback((type: string, message: string, codeStepId?: string) => {
     const time = new Date().toLocaleTimeString(undefined, { hour12: false })
     setLogs(prev => {
-      const newLogs = [...prev, { time, type, message }]
+      const newLogs = [...prev, { time, type, message, codeStepId }]
       return newLogs.length > MAX_LOGS ? newLogs.slice(-MAX_LOGS) : newLogs
     })
   }, [])

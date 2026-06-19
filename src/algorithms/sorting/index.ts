@@ -746,3 +746,65 @@ registerSortAlgorithm('tim', {
     return { comparisons, swaps, steps: stepCount }
   },
 })
+
+registerSortAlgorithm('counting', {
+  name: '计数排序',
+  nameKey: 'sort.counting',
+  timeComplexity: 'O(n+k)',
+  spaceComplexity: 'O(n+k)',
+  icon: '⊞',
+  color: 'bg-accent-cyan',
+  variant: 'teal',
+  execute: async (arr, { animateCompare, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
+    const n = arr.length
+    let comparisons = 0, swaps = 0, stepCount = 0
+
+    if (n === 0) {
+      return { comparisons, swaps, steps: stepCount }
+    }
+
+    const max = Math.max(...arr)
+    const min = Math.min(...arr)
+    const range = max - min + 1
+    const total = n + range
+
+    // 1. 统计每个值出现次数
+    const count = new Array(range).fill(0)
+    for (let i = 0; i < n; i++) {
+      if (anim?.isAborted?.()) return { comparisons, swaps, steps: stepCount, aborted: true }
+      count[arr[i] - min]++
+    }
+
+    // 2. 累加计数，转换为位置索引
+    for (let i = 1; i < range; i++) {
+      count[i] += count[i - 1]
+    }
+
+    // 3. 按逆序将元素放入输出数组（保证稳定性）
+    const output = new Array(n).fill(0)
+    for (let i = n - 1; i >= 0; i--) {
+      if (anim?.isAborted?.()) return { comparisons, swaps, steps: stepCount, aborted: true }
+      const idx = arr[i] - min
+      output[count[idx] - 1] = arr[i]
+      count[idx]--
+    }
+
+    // 4. 将排序结果复制回原数组，逐步可视化
+    for (let i = 0; i < n; i++) {
+      if (anim?.isAborted?.()) return { comparisons, swaps, steps: stepCount, aborted: true }
+      callbacks.onStep?.()
+      await animateCompare(svgRef.current, i, i, arr, dimensions, anim)
+      comparisons++
+      stepCount++
+      callbacks.onCompare?.(comparisons, Math.round((comparisons / total) * 100))
+
+      arr[i] = output[i]
+      swaps++
+      callbacks.onSwap?.(swaps, stepCount)
+      if (svgRef.current) renderSortBars(svgRef.current, arr, dimensions)
+    }
+
+    await animateSorted(svgRef.current, arr, dimensions, anim)
+    return { comparisons, swaps, steps: stepCount }
+  },
+})

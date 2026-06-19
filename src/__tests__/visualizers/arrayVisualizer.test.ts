@@ -83,7 +83,7 @@ vi.mock('../../utils/animationEngine', () => ({
 }))
 vi.mock('../../i18n/useI18n', () => ({ tStatic: (key: string) => key }))
 
-const { renderArray, animateInsert, animateDelete, animateSearch } = await import('../../visualizers/arrayVisualizer')
+const { renderArray, animateInsert, animateDelete, animateSearch, animateSearchAll, animateBinarySearch } = await import('../../visualizers/arrayVisualizer')
 
 function getAllAttrCalls() {
   return mockInstances.flatMap(i => i.calls.filter(c => c.method === 'attr'))
@@ -264,6 +264,74 @@ describe('arrayVisualizer', () => {
       renderArray(svg, [1, 2, 3, 4, 5], { width: 800, height: 400 })
       mockInstances.length = 0
       await animateSearch(svg, 2, [1, 2, 3, 4, 5], { width: 800, height: 400 })
+      const attrCalls = getAllAttrCalls()
+      const geometryAttrs = attrCalls.filter(c => ['width', 'height', 'x', 'y'].includes(c.args[0] as string))
+      expect(geometryAttrs).toEqual([])
+      const transformCalls = attrCalls.filter(c => c.args[0] === 'transform')
+      expect(transformCalls.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('animateSearchAll', () => {
+    it('应该能够执行查找全部动画（有匹配）', async () => {
+      await expect(animateSearchAll(svg, [0, 2], [5, 3, 5, 8, 5], { width: 800, height: 400 })).resolves.toBeUndefined()
+    })
+
+    it('应该能够执行查找全部动画（无匹配）', async () => {
+      await expect(animateSearchAll(svg, [], [1, 2, 3, 4, 5], { width: 800, height: 400 })).resolves.toBeUndefined()
+    })
+
+    it('应该能够执行查找全部动画（全部匹配）', async () => {
+      await expect(animateSearchAll(svg, [0, 1, 2], [7, 7, 7], { width: 800, height: 400 })).resolves.toBeUndefined()
+    })
+
+    it('应在大于阈值时跳过动画', async () => {
+      const largeData = Array.from({ length: 51 }, (_, i) => i + 1)
+      await expect(animateSearchAll(svg, [0], largeData, { width: 800, height: 400 })).resolves.toBeUndefined()
+    })
+
+    it('应使用 transform 进行缩放高亮，避免 width/height/x/y 过渡', async () => {
+      renderArray(svg, [5, 3, 5, 8, 5], { width: 800, height: 400 })
+      mockInstances.length = 0
+      await animateSearchAll(svg, [0, 2, 4], [5, 3, 5, 8, 5], { width: 800, height: 400 })
+      const attrCalls = getAllAttrCalls()
+      const geometryAttrs = attrCalls.filter(c => ['width', 'height', 'x', 'y'].includes(c.args[0] as string))
+      expect(geometryAttrs).toEqual([])
+      const transformCalls = attrCalls.filter(c => c.args[0] === 'transform')
+      expect(transformCalls.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('animateBinarySearch', () => {
+    it('应该能够执行二分查找动画（找到）', async () => {
+      renderArray(svg, [1, 3, 5, 7, 9], { width: 800, height: 400 })
+      await expect(animateBinarySearch(svg, 7, [1, 3, 5, 7, 9], { width: 800, height: 400 })).resolves.toBeUndefined()
+    })
+
+    it('应该能够执行二分查找动画（未找到）', async () => {
+      renderArray(svg, [1, 3, 5, 7, 9], { width: 800, height: 400 })
+      await expect(animateBinarySearch(svg, 6, [1, 3, 5, 7, 9], { width: 800, height: 400 })).resolves.toBeUndefined()
+    })
+
+    it('应该能够执行单元素二分查找动画', async () => {
+      renderArray(svg, [42], { width: 800, height: 400 })
+      await expect(animateBinarySearch(svg, 42, [42], { width: 800, height: 400 })).resolves.toBeUndefined()
+    })
+
+    it('应在大于阈值时跳过动画', async () => {
+      const largeData = Array.from({ length: 51 }, (_, i) => i + 1)
+      renderArray(svg, largeData, { width: 800, height: 400 })
+      await expect(animateBinarySearch(svg, 25, largeData, { width: 800, height: 400 })).resolves.toBeUndefined()
+    })
+
+    it('空数组应该直接返回', async () => {
+      await expect(animateBinarySearch(svg, 1, [], { width: 800, height: 400 })).resolves.toBeUndefined()
+    })
+
+    it('应使用 transform 进行缩放高亮，避免 width/height/x/y 过渡', async () => {
+      renderArray(svg, [1, 3, 5, 7, 9], { width: 800, height: 400 })
+      mockInstances.length = 0
+      await animateBinarySearch(svg, 5, [1, 3, 5, 7, 9], { width: 800, height: 400 })
       const attrCalls = getAllAttrCalls()
       const geometryAttrs = attrCalls.filter(c => ['width', 'height', 'x', 'y'].includes(c.args[0] as string))
       expect(geometryAttrs).toEqual([])

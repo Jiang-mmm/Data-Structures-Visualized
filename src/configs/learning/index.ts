@@ -17,6 +17,7 @@ import { bucketConfig } from './bucket.config'
 import { shellConfig } from './shell.config'
 import { combConfig } from './comb.config'
 import { timConfig } from './tim.config'
+import { countingConfig } from './counting.config'
 import { linkedlistConfig } from './linkedlist.config'
 import { doublyLinkedListConfig } from './doublyLinkedList.config'
 import { treeConfig } from './tree.config'
@@ -52,6 +53,7 @@ export const learningConfigs = {
   shell: shellConfig,
   comb: combConfig,
   tim: timConfig,
+  counting: countingConfig,
   linkedlist: linkedlistConfig,
   doublyLinkedList: doublyLinkedListConfig,
   tree: treeConfig,

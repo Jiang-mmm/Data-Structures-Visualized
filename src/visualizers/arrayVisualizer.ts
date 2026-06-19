@@ -406,3 +406,265 @@ export async function animateSearch(svg: SVGSVGElement, index: number, data: num
     }
   }
 }
+
+/**
+ * 查找全部动画 — 扫描所有元素，高亮全部匹配项
+ * 非匹配项：琥珀色脉冲后恢复；匹配项：绿色脉冲并保持高亮
+ */
+export async function animateSearchAll(svg: SVGSVGElement, indices: number[], data: number[], options: ArrayVisualizerOptions, anim?: Animation) {
+  if (data.length > getLargeDataThreshold('array')) return
+  if (anim?.isAborted?.()) return
+
+  const container = select(svg)
+  const { isDark = detectDarkMode() } = options
+  const C = getColors(isDark)
+  const groups = container.selectAll('g.array-item')
+  const matchSet = new Set(indices)
+  const foundPulseSX = (RECT_WIDTH + 8) / RECT_WIDTH
+  const foundPulseSY = (RECT_HEIGHT + 6) / RECT_HEIGHT
+  const checkPulseSX = (RECT_WIDTH + 4) / RECT_WIDTH
+  const checkPulseSY = (RECT_HEIGHT + 3) / RECT_HEIGHT
+
+  for (let i = 0; i < data.length; i++) {
+    if (anim?.isAborted?.()) return
+
+    const node = groups.nodes()[i]
+    if (!node) continue
+    const sel = select(node as SVGGElement)
+    const isMatch = matchSet.has(i)
+
+    if (isMatch) {
+      // 匹配项：绿色脉冲并保持高亮
+      await transitionEnd(
+        sel.select('rect')
+          .interrupt()
+          .transition().duration(duration(280)).ease(EASING.easeOutBack)
+          .attr('fill', C.nodeLeaf).attr('stroke', C.nodeLeafStroke)
+          .attr('transform', cellTransform(0, 0, foundPulseSX, foundPulseSY))
+      )
+      if (anim?.isAborted?.()) return
+      await transitionEnd(
+        sel.select('rect')
+          .interrupt()
+          .transition().duration(duration(300)).ease(EASING.easeOutElastic)
+          .attr('transform', cellTransform(0, 0, 1, 1))
+      )
+    } else {
+      // 非匹配项：琥珀色脉冲后恢复
+      await transitionEnd(
+        sel.select('rect')
+          .interrupt()
+          .transition().duration(duration(200)).ease(EASING.easeOutBack)
+          .attr('fill', C.nodeActive).attr('stroke', C.nodeActiveStroke)
+          .attr('transform', cellTransform(0, 0, checkPulseSX, checkPulseSY))
+      )
+      await wait(60, anim)
+      if (anim?.isAborted?.()) return
+      await transitionEnd(
+        sel.select('rect')
+          .interrupt()
+          .transition().duration(duration(160)).ease(EASING.easeOutCubic)
+          .attr('fill', C.nodeDefault).attr('stroke', C.nodeDefaultStroke)
+          .attr('transform', cellTransform(0, 0, 1, 1))
+      )
+    }
+  }
+
+  // 全部未找到：最后一个变红提示
+  if (indices.length === 0 && data.length > 0) {
+    if (anim?.isAborted?.()) return
+    const lastNode = groups.nodes()[data.length - 1]
+    if (lastNode) {
+      await transitionEnd(
+        select(lastNode as SVGGElement).select('rect')
+          .interrupt()
+          .transition().duration(duration(300)).ease(EASING.easeOutCubic)
+          .attr('fill', C.nodeError).attr('stroke', C.nodeErrorStroke)
+      )
+    }
+  }
+
+  await wait(500, anim)
+}
+
+/**
+ * 读取 g.array-item 的 translate x 坐标
+ */
+function readItemX(node: SVGElement): number {
+  const t = node.getAttribute('transform') || ''
+  const m = t.match(/translate\(([^,]+)/)
+  return m ? parseFloat(m[1]) : 0
+}
+
+/**
+ * 二分查找动画 — 展示 lo/mid/hi 指针与范围收缩过程
+ * 前提：data 必须升序有序（由 hook 层校验）
+ */
+export async function animateBinarySearch(svg: SVGSVGElement, value: number, data: number[], options: ArrayVisualizerOptions, anim?: Animation) {
+  if (data.length > getLargeDataThreshold('array')) return
+  if (anim?.isAborted?.()) return
+  if (data.length === 0) return
+
+  const container = select(svg)
+  const { isDark = detectDarkMode(), width, height } = options
+  const C = getColors(isDark)
+  const groups = container.selectAll('g.array-item')
+  const nodes = groups.nodes() as SVGElement[]
+
+  // 指针标签层（lo / mid / hi）
+  const labelLayer = container.append('g').attr('class', 'binary-search-labels')
+  // 范围指示线（lo~hi 下方）
+  const rangeLayer = container.append('g').attr('class', 'binary-search-range')
+
+  const { startY } = layout(data.length, width, height)
+  const labelY = startY - 14
+  const rangeY = startY + RECT_HEIGHT + 38
+
+  const foundPulseSX = (RECT_WIDTH + 10) / RECT_WIDTH
+  const foundPulseSY = (RECT_HEIGHT + 8) / RECT_HEIGHT
+  const checkPulseSX = (RECT_WIDTH + 6) / RECT_WIDTH
+  const checkPulseSY = (RECT_HEIGHT + 4) / RECT_HEIGHT
+
+  function updateLabels(lo: number, mid: number, hi: number) {
+    labelLayer.selectAll('*').remove()
+    rangeLayer.selectAll('*').remove()
+    const labels: Array<{ i: number; text: string; color: string }> = []
+    if (lo >= 0 && lo < nodes.length) labels.push({ i: lo, text: 'lo', color: C.nodeRoot })
+    if (mid >= 0 && mid < nodes.length) labels.push({ i: mid, text: 'mid', color: C.nodeActive })
+    if (hi >= 0 && hi < nodes.length) labels.push({ i: hi, text: 'hi', color: C.nodeError })
+    labels.forEach(({ i, text, color }) => {
+      const x = readItemX(nodes[i]) + RECT_WIDTH / 2
+      labelLayer.append('text')
+        .attr('transform', `translate(${x}, ${labelY})`)
+        .attr('text-anchor', 'middle')
+        .attr('fill', color)
+        .attr('font-size', '12px')
+        .attr('font-weight', 'bold')
+        .attr('font-family', 'var(--font-mono)')
+        .text(text)
+    })
+    // 范围指示线
+    if (lo <= hi && lo < nodes.length && hi < nodes.length) {
+      const xLo = readItemX(nodes[lo])
+      const xHi = readItemX(nodes[hi]) + RECT_WIDTH
+      rangeLayer.append('line')
+        .attr('x1', xLo).attr('y1', rangeY)
+        .attr('x2', xHi).attr('y2', rangeY)
+        .attr('stroke', C.nodeActive).attr('stroke-width', 2)
+        .attr('opacity', 0.7)
+      rangeLayer.append('line')
+        .attr('x1', xLo).attr('y1', rangeY - 6)
+        .attr('x2', xLo).attr('y2', rangeY + 6)
+        .attr('stroke', C.nodeActive).attr('stroke-width', 2)
+      rangeLayer.append('line')
+        .attr('x1', xHi).attr('y1', rangeY - 6)
+        .attr('x2', xHi).attr('y2', rangeY + 6)
+        .attr('stroke', C.nodeActive).attr('stroke-width', 2)
+    }
+  }
+
+  function dimOutside(lo: number, hi: number) {
+    nodes.forEach((node, i) => {
+      const sel = select(node)
+      if (i < lo || i > hi) {
+        sel.transition().duration(duration(180)).attr('opacity', 0.3)
+      } else {
+        sel.transition().duration(duration(180)).attr('opacity', 1)
+      }
+    })
+  }
+
+  function restoreAll() {
+    nodes.forEach((node) => {
+      select(node).transition().duration(duration(200)).attr('opacity', 1)
+    })
+  }
+
+  let lo = 0
+  let hi = data.length - 1
+  let foundIndex = -1
+
+  try {
+    while (lo <= hi) {
+      if (anim?.isAborted?.()) return
+      const mid = (lo + hi) >> 1
+      updateLabels(lo, mid, hi)
+      dimOutside(lo, hi)
+      await wait(120, anim)
+      if (anim?.isAborted?.()) return
+
+      const midNode = nodes[mid]
+      if (!midNode) break
+      const midSel = select(midNode)
+
+      // 高亮 mid 元素（琥珀色脉冲）
+      await transitionEnd(
+        midSel.select('rect')
+          .interrupt()
+          .transition().duration(duration(260)).ease(EASING.easeOutBack)
+          .attr('fill', C.nodeActive).attr('stroke', C.nodeActiveStroke)
+          .attr('transform', cellTransform(0, 0, checkPulseSX, checkPulseSY))
+      )
+      if (anim?.isAborted?.()) return
+      await wait(200, anim)
+      if (anim?.isAborted?.()) return
+
+      if (data[mid] === value) {
+        // 找到：绿色弹性脉冲
+        await transitionEnd(
+          midSel.select('rect')
+            .interrupt()
+            .transition().duration(duration(320)).ease(EASING.easeOutBack)
+            .attr('fill', C.nodeLeaf).attr('stroke', C.nodeLeafStroke)
+            .attr('transform', cellTransform(0, 0, foundPulseSX, foundPulseSY))
+        )
+        if (anim?.isAborted?.()) return
+        await transitionEnd(
+          midSel.select('rect')
+            .interrupt()
+            .transition().duration(duration(350)).ease(EASING.easeOutElastic)
+            .attr('transform', cellTransform(0, 0, 1, 1))
+        )
+        foundIndex = mid
+        break
+      } else if (data[mid] < value) {
+        lo = mid + 1
+      } else {
+        hi = mid - 1
+      }
+
+      // mid 恢复默认色（保留在范围内但不高亮）
+      await transitionEnd(
+        midSel.select('rect')
+          .interrupt()
+          .transition().duration(duration(180)).ease(EASING.easeOutCubic)
+          .attr('fill', C.nodeDefault).attr('stroke', C.nodeDefaultStroke)
+          .attr('transform', cellTransform(0, 0, 1, 1))
+      )
+      await wait(100, anim)
+    }
+
+    // 未找到：最后检查的元素变红
+    if (foundIndex === -1) {
+      if (anim?.isAborted?.()) return
+      const lastMid = (lo + hi) >> 1
+      const safeMid = Math.max(0, Math.min(nodes.length - 1, lastMid))
+      const lastNode = nodes[safeMid]
+      if (lastNode) {
+        await transitionEnd(
+          select(lastNode).select('rect')
+            .interrupt()
+            .transition().duration(duration(300)).ease(EASING.easeOutCubic)
+            .attr('fill', C.nodeError).attr('stroke', C.nodeErrorStroke)
+        )
+      }
+    }
+
+    await wait(500, anim)
+  } finally {
+    // 清理标签与范围指示，恢复所有元素透明度
+    labelLayer.remove()
+    rangeLayer.remove()
+    restoreAll()
+  }
+}

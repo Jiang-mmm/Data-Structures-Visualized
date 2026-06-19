@@ -70,5 +70,85 @@ export const doublyLinkedListConfig: LearningModeConfig = {
       highlightTerms: ['curr.prev.next', 'curr.next.prev'],
       tips: ['双向链表删除不需要找前驱节点，因为节点自带 prev 指针'],
     },
+    {
+      id: 'insert-at',
+      title: '按位置插入',
+      description: '遍历到目标位置，建立新节点与前驱、后继的双向指针关系',
+      codeSnippet: `function insertAt(index, value) {
+  if (index === 0) return insertHead(value)
+  const node = new DoublyNode(value)
+  let curr = this.head
+  for (let i = 0; i < index - 1; i++) {
+    curr = curr.next
+  }
+  node.next = curr.next
+  node.prev = curr
+  if (curr.next) curr.next.prev = node
+  curr.next = node
+}`,
+      highlightedLine: 8,
+      highlightTerms: ['node.prev', 'curr.next.prev'],
+      tips: ['双向链表插入需要维护 4 个指针（2 个方向 × 2 个节点），比单链表多 2 个'],
+    },
+    {
+      id: 'search',
+      title: '查找节点',
+      description: '从头节点遍历，逐个比较节点值。双向链表也可从尾部反向查找',
+      codeSnippet: `function search(value) {
+  let curr = this.head
+  let index = 0
+  while (curr) {
+    if (curr.value === value) return index
+    curr = curr.next
+    index++
+  }
+  return -1
+}`,
+      highlightedLine: 5,
+      highlightTerms: ['curr.value === value', 'while'],
+      tips: ['双向链表查找复杂度与单链表相同 O(n)，但支持双向遍历'],
+    },
+    {
+      id: 'reverse',
+      title: '反转双向链表',
+      description: '交换每个节点的 prev 和 next 指针，最后更新头指针',
+      codeSnippet: `function reverse() {
+  let curr = this.head
+  let temp = null
+  while (curr) {
+    temp = curr.prev
+    curr.prev = curr.next
+    curr.next = temp
+    curr = curr.prev
+  }
+  if (temp) this.head = temp.prev
+}`,
+      highlightedLine: 5,
+      highlightTerms: ['curr.prev', 'curr.next'],
+      tips: [
+        '双向链表反转比单链表简单：直接交换每个节点的 prev/next',
+        '注意遍历方向：交换后 curr.next 变成了原 prev，所以用 curr.prev 前进',
+      ],
+      complexity: { time: 'O(n)', space: 'O(1)' },
+    },
+    {
+      id: 'detect-cycle',
+      title: '环检测',
+      description: 'Floyd 龟兔算法同样适用于双向链表，快慢指针相遇即存在环',
+      codeSnippet: `function hasCycle() {
+  let slow = this.head
+  let fast = this.head
+  while (fast && fast.next) {
+    slow = slow.next
+    fast = fast.next.next
+    if (slow === fast) return true
+  }
+  return false
+}`,
+      highlightedLine: 6,
+      highlightTerms: ['slow === fast', 'fast.next.next'],
+      tips: ['环检测算法与单链表完全一致，因为环只涉及 next 指针'],
+      complexity: { time: 'O(n)', space: 'O(1)' },
+    },
   ],
 }

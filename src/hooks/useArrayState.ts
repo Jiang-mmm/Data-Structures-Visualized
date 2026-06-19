@@ -35,7 +35,7 @@ export function useArrayState() {
     const newData = [...data]
     newData.splice(index, 0, safeValue)
     push(newData)
-    addLog('oper', tStatic('hooks.arrayLogInsertSuccess').replace('{value}', String(safeValue)).replace('{index}', String(index)).replace('{length}', String(newData.length)))
+    addLog('oper', tStatic('hooks.arrayLogInsertSuccess').replace('{value}', String(safeValue)).replace('{index}', String(index)).replace('{length}', String(newData.length)), 'insert')
     showToast({ type: 'success', message: tStatic('hooks.arrayInsertSuccess').replace('{value}', String(safeValue)).replace('{index}', String(index)) })
     return true
   }, [data, push, addLog])
@@ -50,7 +50,7 @@ export function useArrayState() {
     const newData = [...data]
     newData.splice(index, 1)
     push(newData)
-    addLog('oper', tStatic('hooks.arrayLogDeleteSuccess').replace('{index}', String(index)).replace('{value}', String(value)).replace('{length}', String(newData.length)))
+    addLog('oper', tStatic('hooks.arrayLogDeleteSuccess').replace('{index}', String(index)).replace('{value}', String(value)).replace('{length}', String(newData.length)), 'delete')
     showToast({ type: 'success', message: tStatic('hooks.arrayDeleteSuccess').replace('{index}', String(index)).replace('{value}', String(value)) })
     return value
   }, [data, push, addLog])
@@ -58,13 +58,55 @@ export function useArrayState() {
   const search = useCallback((value: number): number => {
     const index = data.indexOf(value)
     if (index !== -1) {
-      addLog('oper', tStatic('hooks.arrayLogSearchFound').replace('{value}', String(value)).replace('{index}', String(index)))
+      addLog('oper', tStatic('hooks.arrayLogSearchFound').replace('{value}', String(value)).replace('{index}', String(index)), 'search')
       showToast({ type: 'success', message: tStatic('hooks.arraySearchFound').replace('{value}', String(value)).replace('{index}', String(index)) })
     } else {
-      addLog('oper', tStatic('hooks.arrayLogSearchNotFound').replace('{value}', String(value)))
+      addLog('oper', tStatic('hooks.arrayLogSearchNotFound').replace('{value}', String(value)), 'search')
       showToast({ type: 'warning', message: tStatic('hooks.arraySearchNotFound').replace('{value}', String(value)) })
     }
     return index
+  }, [data, addLog])
+
+  const searchAll = useCallback((value: number): number[] => {
+    const indices: number[] = []
+    for (let i = 0; i < data.length; i++) {
+      if (data[i] === value) indices.push(i)
+    }
+    if (indices.length > 0) {
+      addLog('oper', tStatic('hooks.arrayLogSearchAllFound').replace('{value}', String(value)).replace('{count}', String(indices.length)).replace('{indices}', indices.join(', ')), 'searchAll')
+      showToast({ type: 'success', message: tStatic('hooks.arraySearchAllFound').replace('{count}', String(indices.length)).replace('{value}', String(value)).replace('{indices}', indices.join(', ')) })
+    } else {
+      addLog('oper', tStatic('hooks.arrayLogSearchAllNotFound').replace('{value}', String(value)), 'searchAll')
+      showToast({ type: 'warning', message: tStatic('hooks.arraySearchAllNotFound').replace('{value}', String(value)) })
+    }
+    return indices
+  }, [data, addLog])
+
+  const binarySearch = useCallback((value: number): number => {
+    // 二分查找前提：数组必须有序（升序）
+    const isSorted = data.every((v, i) => i === 0 || data[i - 1] <= v)
+    if (!isSorted) {
+      showToast({ type: 'warning', message: tStatic('hooks.arrayBinarySearchUnsorted') })
+      addLog('error', tStatic('hooks.arrayLogBinarySearchUnsorted'))
+      return -1
+    }
+    let lo = 0
+    let hi = data.length - 1
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1
+      if (data[mid] === value) {
+        addLog('oper', tStatic('hooks.arrayLogBinarySearchFound').replace('{value}', String(value)).replace('{index}', String(mid)), 'binarySearch')
+        showToast({ type: 'success', message: tStatic('hooks.arrayBinarySearchFound').replace('{value}', String(value)).replace('{index}', String(mid)) })
+        return mid
+      } else if (data[mid] < value) {
+        lo = mid + 1
+      } else {
+        hi = mid - 1
+      }
+    }
+    addLog('oper', tStatic('hooks.arrayLogBinarySearchNotFound').replace('{value}', String(value)), 'binarySearch')
+    showToast({ type: 'warning', message: tStatic('hooks.arrayBinarySearchNotFound').replace('{value}', String(value)) })
+    return -1
   }, [data, addLog])
 
   const randomize = useCallback((): void => {
@@ -76,7 +118,7 @@ export function useArrayState() {
 
   return {
     data, logs, isAnimating, setIsAnimating,
-    insert, remove, search, randomize, reset, loadData,
+    insert, remove, search, searchAll, binarySearch, randomize, reset, loadData,
     undo, redo, canUndo, canRedo,
     getUndoPreview, getRedoPreview,
   }

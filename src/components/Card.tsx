@@ -18,20 +18,24 @@ interface CardProps {
   className?: string
 }
 
+/**
+ * 使用 !important 确保在 dark 模式下，分组强调色能压住
+ * `dark:border-dark-border`（双类选择器，优先级更高）的全边框色。
+ */
 const accentBorderClass: Record<CardAccent, string> = {
-  blue: 'border-t-accent-blue',
-  amber: 'border-t-accent-amber',
-  red: 'border-t-accent-rose',
+  blue: '!border-t-card-group-linear',
+  amber: '!border-t-card-group-tree',
+  red: '!border-t-card-group-graph',
 }
 
 /**
- * 渐变类名映射：使用主题感知的 accent token，
+ * 渐变类名映射：使用卡片分组语义 token，
  * 颜色随当前主题（default/forest/warm/royal）动态变化。
  */
 const gradientClass: Record<CardAccent, string> = {
-  blue: 'bg-gradient-to-br from-accent-blue/10 to-accent-blue/5 dark:from-accent-blue/20 dark:to-accent-blue/10',
-  amber: 'bg-gradient-to-br from-accent-amber/10 to-accent-amber/5 dark:from-accent-amber/20 dark:to-accent-amber/10',
-  red: 'bg-gradient-to-br from-accent-rose/10 to-accent-rose/5 dark:from-accent-rose/20 dark:to-accent-rose/10',
+  blue: 'bg-gradient-to-br from-card-group-linear/10 to-card-group-linear/5 dark:from-card-group-linear/20 dark:to-card-group-linear/10',
+  amber: 'bg-gradient-to-br from-card-group-tree/10 to-card-group-tree/5 dark:from-card-group-tree/20 dark:to-card-group-tree/10',
+  red: 'bg-gradient-to-br from-card-group-graph/10 to-card-group-graph/5 dark:from-card-group-graph/20 dark:to-card-group-graph/10',
 }
 
 const variantClass: Record<CardVariant, string> = {

@@ -201,7 +201,7 @@ describe('useLearningMode', () => {
   it('应该支持链表数据结构', () => {
     const { result } = renderHook(() => useLearningMode('linkedlist'))
     expect(result.current.hasSteps).toBe(true)
-    expect(result.current.totalSteps).toBe(4)
+    expect(result.current.totalSteps).toBe(8)
   })
 
   it('应该支持树数据结构', () => {

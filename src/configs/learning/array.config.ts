@@ -60,5 +60,43 @@ export const arrayConfig: LearningModeConfig = {
       highlightTerms: ['arr[i] === target', 'O(n)'],
       tips: ['数组是最基础的数据结构，几乎所有其他数据结构都建立在数组之上'],
     },
+    {
+      id: 'searchAll',
+      title: '查找全部',
+      description: '线性查找收集所有匹配项的索引，时间复杂度 O(n)。适用于重复元素的场景',
+      codeSnippet: `function searchAll(arr, target) {
+  const indices = []
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === target) indices.push(i)
+  }
+  return indices
+}`,
+      highlightedLine: 4,
+      highlightTerms: ['indices.push(i)', 'O(n)'],
+      tips: ['查找全部仍为 O(n)，无法利用有序性加速，因为需要检查每个元素'],
+    },
+    {
+      id: 'binarySearch',
+      title: '二分查找',
+      description: '要求数组升序有序。每次比较中点元素，将搜索范围缩小一半，时间复杂度 O(log n)',
+      codeSnippet: `function binarySearch(arr, target) {
+  let lo = 0, hi = arr.length - 1
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1
+    if (arr[mid] === target) return mid
+    else if (arr[mid] < target) lo = mid + 1
+    else hi = mid - 1
+  }
+  return -1  // 未找到
+}`,
+      highlightedLine: 5,
+      highlightTerms: ['mid = (lo + hi) >> 1', 'O(log n)'],
+      tips: [
+        '二分查找的前提是数组有序，否则结果不可靠',
+        '每次迭代范围减半：n → n/2 → n/4 → ... → 1，共 log₂(n) 步',
+        'mid = (lo + hi) >> 1 等价于 Math.floor((lo + hi) / 2)，位运算更快',
+      ],
+      complexity: { time: 'O(log n)', space: 'O(1)' },
+    },
   ],
 }

@@ -19,6 +19,8 @@ export interface Locale {
     title: string
     subtitle: string
     search: string
+    searchAll: string
+    binarySearch: string
     insert: string
     delete: string
     indexPlaceholder: string
@@ -75,6 +77,7 @@ export interface Locale {
     inorder: string
     postorder: string
     levelorder: string
+    nodeTitle: string
   }
   graph: {
     title: string
@@ -149,6 +152,7 @@ export interface Locale {
     shell: string
     comb: string
     tim: string
+    counting: string
     axisX: string
     axisY: string
   }
@@ -259,6 +263,7 @@ export interface Locale {
     noLogs: string
     autoScroll: string
     freeze: string
+    viewCode: string
     type: {
       oper: string
       info: string
@@ -559,6 +564,16 @@ export interface Locale {
     arraySearchFound: string
     arrayLogSearchNotFound: string
     arraySearchNotFound: string
+    arrayLogSearchAllFound: string
+    arraySearchAllFound: string
+    arrayLogSearchAllNotFound: string
+    arraySearchAllNotFound: string
+    arrayLogBinarySearchFound: string
+    arrayBinarySearchFound: string
+    arrayLogBinarySearchNotFound: string
+    arrayBinarySearchNotFound: string
+    arrayBinarySearchUnsorted: string
+    arrayLogBinarySearchUnsorted: string
     arrayLogRandom: string
     stackFull: string
     stackLogPush: string
@@ -740,6 +755,8 @@ export const zh: Locale = {
     title: '数组',
     subtitle: '线性结构 · 连续内存 · 随机访问 O(1)',
     search: '查找',
+    searchAll: '查找全部',
+    binarySearch: '二分查找',
     insert: '按位插',
     delete: '删除',
     indexPlaceholder: '索引 (0~19)',
@@ -796,6 +813,7 @@ export const zh: Locale = {
     inorder: '中序',
     postorder: '后序',
     levelorder: '层序',
+    nodeTitle: '值: {value}\n高度: {height}\n平衡因子: {balanceFactor}',
   },
   graph: {
     title: '图',
@@ -872,6 +890,7 @@ export const zh: Locale = {
     shell: '希尔排序',
     comb: '梳排序',
     tim: 'TimSort',
+    counting: '计数排序',
   },
   compare: {
     title: '算法对比',
@@ -1060,6 +1079,7 @@ export const zh: Locale = {
     noLogs: '暂无日志记录',
     autoScroll: 'AUTO↓',
     freeze: 'FREEZE',
+    viewCode: '查看代码',
     type: {
       oper: '操作',
       info: '信息',
@@ -1280,6 +1300,16 @@ export const zh: Locale = {
     arraySearchFound: '找到 {value} 在位置 {index}',
     arrayLogSearchNotFound: 'search({value}) 未找到',
     arraySearchNotFound: '未找到 {value}',
+    arrayLogSearchAllFound: 'searchAll({value}) 找到 {count} 个，索引: {indices}',
+    arraySearchAllFound: '找到 {count} 个 {value}，位置: {indices}',
+    arrayLogSearchAllNotFound: 'searchAll({value}) 未找到',
+    arraySearchAllNotFound: '未找到 {value}',
+    arrayLogBinarySearchFound: 'binarySearch({value}) 找到，索引: {index}',
+    arrayBinarySearchFound: '二分查找：{value} 在位置 {index}',
+    arrayLogBinarySearchNotFound: 'binarySearch({value}) 未找到',
+    arrayBinarySearchNotFound: '二分查找未找到 {value}',
+    arrayBinarySearchUnsorted: '数组未排序，二分查找需要有序数组',
+    arrayLogBinarySearchUnsorted: 'binarySearch 失败：数组未排序',
     arrayLogRandom: '随机生成数组: [{data}]',
     stackFull: '栈已满 (最大 {max})',
     stackLogPush: 'push({value}) → 栈顶: {top}, 大小: {size}',
@@ -1504,6 +1534,8 @@ export const en: Locale = {
     title: 'Array',
     subtitle: 'Linear Data Structure · Contiguous Memory · Random Access',
     search: 'Search',
+    searchAll: 'Find All',
+    binarySearch: 'Binary Search',
     insert: 'Insert',
     delete: 'Delete',
     indexPlaceholder: 'Index',
@@ -1560,6 +1592,7 @@ export const en: Locale = {
     inorder: 'Inorder',
     postorder: 'Postorder',
     levelorder: 'Level Order',
+    nodeTitle: 'Value: {value}\nHeight: {height}\nBalance Factor: {balanceFactor}',
   },
   graph: {
     title: 'Graph',
@@ -1636,6 +1669,7 @@ export const en: Locale = {
     shell: 'Shell Sort',
     comb: 'Comb Sort',
     tim: 'TimSort',
+    counting: 'Counting Sort',
   },
   compare: {
     title: 'Algorithm Compare',
@@ -1824,6 +1858,7 @@ export const en: Locale = {
     noLogs: 'No logs yet',
     autoScroll: 'AUTO↓',
     freeze: 'FREEZE',
+    viewCode: 'View Code',
     type: {
       oper: 'Oper',
       info: 'Info',
@@ -2044,6 +2079,16 @@ export const en: Locale = {
     arraySearchFound: 'Found {value} at position {index}',
     arrayLogSearchNotFound: 'search({value}) not found',
     arraySearchNotFound: '{value} not found',
+    arrayLogSearchAllFound: 'searchAll({value}) found {count}, indices: {indices}',
+    arraySearchAllFound: 'Found {count} of {value}, at positions: {indices}',
+    arrayLogSearchAllNotFound: 'searchAll({value}) not found',
+    arraySearchAllNotFound: '{value} not found',
+    arrayLogBinarySearchFound: 'binarySearch({value}) found, index: {index}',
+    arrayBinarySearchFound: 'Binary search: {value} at position {index}',
+    arrayLogBinarySearchNotFound: 'binarySearch({value}) not found',
+    arrayBinarySearchNotFound: 'Binary search: {value} not found',
+    arrayBinarySearchUnsorted: 'Array is not sorted; binary search requires a sorted array',
+    arrayLogBinarySearchUnsorted: 'binarySearch failed: array not sorted',
     arrayLogRandom: 'Random array: [{data}]',
     stackFull: 'Stack full (max {max})',
     stackLogPush: 'push({value}) → top: {top}, size: {size}',
