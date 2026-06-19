@@ -495,8 +495,21 @@
 - 页面层：7 个页面接 handleJumpToStep 回调
 - **全结构覆盖完成**：用户操作任意数据结构都能"查看代码"
 
+### Phase 5.6: 统一信息面板 InfoPanel（已完成）
+**移除 LogPanel + LearningModeToggle，新建统一 InfoPanel：**
+- 新建 `src/components/InfoPanel.tsx`：右侧常驻面板（桌面端 w-96，移动端底部抽屉）
+- 含两个 tab：操作日志 | 学习模式，视觉风格采用 StepExplainer 设计语言（白色卡片 + Neo-Brutalist 硬阴影）
+- 重构 `LogPanel.tsx` 支持 `variant="embedded"` 模式：卡片化时间线替代深色反色背景
+- 自动跳转机制：最新日志携带 codeStepId 时自动切换到学习模式 tab 并 goToStep
+- 13 个页面布局重构：垂直堆叠改为左右分栏（`flex-col lg:flex-row`）
+- GraphAlgorithmPage：ComplexityChart 移至左侧，右侧 InfoPanel
+- SortComparePage：添加 learningMode，InfoPanel 替代底部 LogPanel
+- 新增 i18n `infoPanel` 翻译命名空间（中英文）
+- 新增 InfoPanel 测试（9 个）+ LogPanel embedded 模式测试（5 个）
+- **验证**：3089 测试通过、ESLint 0 errors、tsc 0 errors、build 成功、bundle 预算通过
+
 ### Phase 6: 全量验证（已通过）
-- 单元测试：3075/3075 通过
+- 单元测试：3089/3089 通过
 - ESLint：0 errors, 0 warnings
 - TypeScript：0 errors
 - 生产构建：成功（bundle 预算通过）
