@@ -35,11 +35,13 @@
 #### 文档与版本号同步 [P1]
 - **修改原因：** 用户要求确认所有文档同步更新；TODO.md 仍停留在 v9.0，README/ARCHITECTURE/CODE_WIKI 未反映 v11 内容
 - **修改内容：**
-  - `package.json`：`version` 8.0.0 → 11.0.0
+  - `package.json`：`version` 8.0.0 → 11.0.1
+  - `package-lock.json`：`version` 8.0.0 → 11.0.1
   - `PROJECT_SUMMARY.md`：更新日期、测试数（3042）、页面数（14）、Hooks（12）、Visualizers（11）、AVL 树
-  - `README.md`：版本、日期、AVL 树、测试数、页面数、主题 token 等
-  - `ARCHITECTURE.md`：版本 v11.0，增加 AvlTreePage、useAvlTreeState、avlTreeVisualizer
-  - `CODE_WIKI.md`：版本 v11.0，增加 AVL 树功能矩阵
+  - `README.md`：版本 v11.0.1、日期、AVL 树、测试数、页面数、主题 token 等
+  - `ARCHITECTURE.md`：版本 v11.0.1，增加 AvlTreePage、useAvlTreeState、avlTreeVisualizer
+  - `CODE_WIKI.md`：版本 v11.0.1，增加 AVL 树功能矩阵
+  - `docs/PRD.md`：版本 v11.0.1、日期、12 种数据结构、AVL 树
   - `TODO.md`：补充 v10.0/v11.0 已完成项，更新待办与技术债务状态
   - `CHANGELOG.md`：补充本次最终交付条目与质量指标
 - **风险说明：** 无运行时影响
@@ -74,11 +76,13 @@
 | `src/pages/Home.tsx` | 修改 | 三色分组配色 |
 | `src/components/OperationBar.tsx` 等 20+ 文件 | 修改 | 硬编码颜色替换为语义化 token |
 | `src/__tests__/components/Card.test.tsx` | 修改 | 更新 gradient 断言 |
-| `package.json` | 修改 | 版本 11.0.0 |
-| `PROJECT_SUMMARY.md` | 修改 | v11 统计与状态更新 |
-| `README.md` | 修改 | v11 功能与指标更新 |
-| `ARCHITECTURE.md` | 修改 | v11 架构层更新 |
-| `CODE_WIKI.md` | 修改 | v11 功能矩阵更新 |
+| `package.json` | 修改 | 版本 11.0.1 |
+| `package-lock.json` | 修改 | 版本 8.0.0 → 11.0.1 |
+| `PROJECT_SUMMARY.md` | 修改 | v11.0.1 统计与状态更新 |
+| `README.md` | 修改 | v11.0.1 功能与指标更新 |
+| `ARCHITECTURE.md` | 修改 | v11.0.1 架构层更新 |
+| `CODE_WIKI.md` | 修改 | v11.0.1 功能矩阵更新 |
+| `docs/PRD.md` | 修改 | v11.0.1、日期、12 种数据结构、AVL 树 |
 | `TODO.md` | 修改 | v10/v11 已完成项与待办状态 |
 | `CHANGELOG.md` | 修改 | 最终交付条目与质量指标 |
 

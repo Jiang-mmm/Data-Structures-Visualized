@@ -18,12 +18,14 @@
 
 ### 文档
 - 更新 `PROJECT_SUMMARY.md`：v11 日期、3042 单元测试、14 页面、12 Hooks、11 Visualizers、AVL 树
-- 更新 `README.md`：版本 v11.0、日期、AVL 树、3042 测试、14 页面
-- 更新 `ARCHITECTURE.md`：版本 v11.0，增加 AvlTreePage / useAvlTreeState / avlTreeVisualizer
-- 更新 `CODE_WIKI.md`：版本 v11.0，增加 AVL 树功能矩阵
+- 更新 `README.md`：版本 v11.0.1、日期、AVL 树、3042 测试、14 页面
+- 更新 `ARCHITECTURE.md`：版本 v11.0.1，增加 AvlTreePage / useAvlTreeState / avlTreeVisualizer
+- 更新 `CODE_WIKI.md`：版本 v11.0.1，增加 AVL 树功能矩阵
 - 更新 `TODO.md`：补充 v10.0/v11.0 已完成项，调整待办与技术债务状态
 - 更新 `WORKLOG.md`：记录 v10/v11 最终验证与部署
-- `package.json`：`version` 8.0.0 → 11.0.0
+- 更新 `docs/PRD.md`：版本 v11.0.1、日期、12 种数据结构、AVL 树
+- `package.json`：`version` 8.0.0 → 11.0.1
+- `package-lock.json`：`version` 8.0.0 → 11.0.1
 
 ### 质量指标
 

@@ -176,7 +176,7 @@
 |---|------|--------|------|------|
 | F1 | README.md 更新 | P3 | ✅ | 功能列表、测试数据、快速开始章节已同步到 v11.0.1 |
 | F2 | CHANGELOG.md 完善 | P3 | ⬜ | 补充 v4.0-v8.0 变更历史 |
-| F3 | 版本号同步 | P3 | ✅ | package.json 已更新到 11.0.0 |
+| F3 | 版本号同步 | P3 | ✅ | package.json / package-lock.json 已更新到 11.0.1 |
 | F5 | GitHub Pages 部署验证 | P3 | ✅ | 已推送 origin/main，CI/Deploy 工作流自动触发 |
 
 ---
