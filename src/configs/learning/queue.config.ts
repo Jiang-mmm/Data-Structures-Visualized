@@ -55,5 +55,19 @@ export const queueConfig: LearningModeConfig = {
       highlightTerms: ['items[queue.front]', '只读取'],
       tips: ['优先队列（堆）是队列的扩展：出队时返回优先级最高的元素'],
     },
+    {
+      id: 'clear',
+      title: '清空队列 Clear',
+      description: '移除队列中所有元素，front 和 rear 指针重置。时间复杂度 O(1) 或 O(n)。',
+      codeSnippet: `function clear(queue) {
+  queue.front = 0
+  queue.rear = -1
+  // 或 queue.items = []
+}`,
+      highlightedLine: 3,
+      highlightTerms: ['front', 'rear', 'clear'],
+      tips: ['清空后队列为空', '循环队列实现中需重置 front=0, rear=-1'],
+      complexity: { time: 'O(1) 或 O(n)', space: 'O(1)' },
+    },
   ],
 }

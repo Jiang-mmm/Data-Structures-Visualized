@@ -26,7 +26,7 @@ export function useStackState() {
     }
     const newData = [...data, safeValue]
     push(newData)
-    addLog('oper', tStatic('hooks.stackLogPush').replace('{value}', String(safeValue)).replace('{top}', String(safeValue)).replace('{size}', String(newData.length)))
+    addLog('oper', tStatic('hooks.stackLogPush').replace('{value}', String(safeValue)).replace('{top}', String(safeValue)).replace('{size}', String(newData.length)), 'push')
     showToast({ type: 'success', message: tStatic('hooks.stackPushSuccess').replace('{value}', String(safeValue)) })
     return true
   }, [data, push, addLog])
@@ -38,7 +38,7 @@ export function useStackState() {
     }
     const newData = data.slice(0, -1)
     push(newData)
-    addLog('oper', tStatic('hooks.stackLogPop').replace('{value}', String(data[data.length - 1])).replace('{size}', String(newData.length)))
+    addLog('oper', tStatic('hooks.stackLogPop').replace('{value}', String(data[data.length - 1])).replace('{size}', String(newData.length)), 'pop')
     showToast({ type: 'success', message: tStatic('hooks.stackPopSuccess').replace('{value}', String(data[data.length - 1])) })
     return data[data.length - 1]
   }, [data, push, addLog])
@@ -48,14 +48,14 @@ export function useStackState() {
       showToast({ type: 'warning', message: tStatic('hooks.stackEmpty') })
       return null
     }
-    addLog('oper', tStatic('hooks.stackLogPeek').replace('{value}', String(data[data.length - 1])))
+    addLog('oper', tStatic('hooks.stackLogPeek').replace('{value}', String(data[data.length - 1])), 'peek')
     showToast({ type: 'info', message: tStatic('hooks.stackPeek').replace('{value}', String(data[data.length - 1])) })
     return data[data.length - 1]
   }, [data, addLog])
 
   const clear = useCallback((): void => {
     push([])
-    addLog('oper', tStatic('hooks.stackLogClear'))
+    addLog('oper', tStatic('hooks.stackLogClear'), 'clear')
     showToast({ type: 'info', message: tStatic('hooks.stackCleared') })
   }, [push, addLog])
 

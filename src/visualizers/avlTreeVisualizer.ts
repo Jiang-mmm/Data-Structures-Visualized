@@ -470,6 +470,65 @@ function addVisitOrderLabel(
     .attr('opacity', 1))
 }
 
+/** 遍历专用节点脉冲：更大的振幅、更长的停留，让每一步都清晰可见 */
+async function pulseTraverseNode(
+  nodeGroup: ReturnType<typeof select>,
+  C: ReturnType<typeof getColors>,
+  dataLength = 0
+) {
+  const circle = nodeGroup.select('circle')
+  const t = circle
+    .transition()
+    .duration(duration(450, dataLength))
+    .ease(EASING.easeOutBack)
+    .attr('r', NODE_RADIUS + 10)
+    .attr('fill', C.nodeActive)
+    .attr('stroke', C.nodeActiveStroke)
+    .transition()
+    .duration(duration(350, dataLength))
+    .ease(EASING.easeOutCubic)
+    .attr('r', NODE_RADIUS + 4)
+    .attr('fill', C.nodeVisited)
+    .attr('stroke', C.nodeVisitedStroke)
+  await transitionEnd(t)
+}
+
+/** 边流动点：从父节点沿边路径移动到当前节点，突出遍历方向 */
+async function traceEdgeToNode(
+  container: ReturnType<typeof select>,
+  nodeId: string,
+  parentId: string | null,
+  C: ReturnType<typeof getColors>,
+  dataLength = 0
+) {
+  if (!parentId) return
+  const edge = container.select(`.avl-edge.from-${parentId}-to-${nodeId}`)
+  if (edge.empty()) return
+
+  const pathEl = edge.node() as SVGPathElement
+  if (!pathEl || typeof pathEl.getTotalLength !== 'function') return
+  const length = pathEl.getTotalLength()
+  const start = pathEl.getPointAtLength(0)
+
+  const traveler = container
+    .insert('circle', 'g.avl-node')
+    .attr('cx', start.x)
+    .attr('cy', start.y)
+    .attr('r', 4)
+    .attr('fill', C.nodeActive)
+    .attr('opacity', 0.9)
+
+  await transitionEnd(
+    traveler
+      .transition()
+      .duration(duration(350, dataLength))
+      .ease(EASING.easeOutCubic)
+      .attrTween('cx', () => (t: number) => pathEl.getPointAtLength(t * length).x)
+      .attrTween('cy', () => (t: number) => pathEl.getPointAtLength(t * length).y)
+      .remove()
+  )
+}
+
 /**
  * 动画：高亮插入路径
  * @param svg SVG 元素
@@ -620,14 +679,18 @@ export async function animateTraversal(
     const nodeGroup = getNodeGroupById(container, id)
     if (nodeGroup.empty()) continue
 
-    await pulseNode(nodeGroup, C, false, false, data.nodes.length)
+    const parentId = nodeMap.get(id)?.parent || null
+
+    await traceEdgeToNode(container, id, parentId, C, data.nodes.length)
     if (anim?.isAborted?.()) return
 
-    addRippleEffect(container, id, C, data.nodes.length)
-    highlightEntryEdge(container, id, nodeMap.get(id)?.parent || null, C, data.nodes.length)
+    await pulseTraverseNode(nodeGroup, C, data.nodes.length)
+    if (anim?.isAborted?.()) return
+
+    highlightEntryEdge(container, id, parentId, C, data.nodes.length)
     addVisitOrderLabel(nodeGroup, i + 1, C, data.nodes.length)
   }
 
-  // 等待最后一个节点的波纹/边高亮/序号标签动画完成，避免页面立即重绘将其截断
-  await wait(700, anim)
+  // 等待最后一个节点的边高亮/序号标签动画完成，避免页面立即重绘将其截断
+  await wait(500, anim)
 }

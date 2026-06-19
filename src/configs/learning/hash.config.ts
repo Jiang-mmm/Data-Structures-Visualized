@@ -63,5 +63,22 @@ function get(key) {
       highlightTerms: ['item.key === key'],
       tips: ['哈希表是 JavaScript 对象/Map 的底层实现，是最重要的数据结构之一'],
     },
+    {
+      id: 'remove',
+      title: '删除键值对 Remove',
+      description: '根据 key 计算哈希定位桶，在桶内查找并删除对应键值对。链地址法需处理链表节点删除。',
+      codeSnippet: `function remove(key) {
+  const index = hash(key, this.size)
+  const bucket = this.buckets[index]
+  const i = bucket.findIndex(item => item.key === key)
+  if (i === -1) return false
+  bucket.splice(i, 1)
+  return true
+}`,
+      highlightedLine: 6,
+      highlightTerms: ['splice', 'findIndex', 'remove'],
+      tips: ['删除前需检查 key 是否存在', '链地址法删除链表节点需维护前驱指针', '开放寻址法删除需标记"已删除"而非真正移除（避免中断探测链）'],
+      complexity: { time: '平均 O(1)，最坏 O(n)', space: 'O(1)' },
+    },
   ],
 }

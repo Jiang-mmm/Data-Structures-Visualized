@@ -124,6 +124,14 @@ export default function TreePage() {
     setIsAnimating(false)
   }, [abortAnimation, setIsAnimating])
 
+  const handleJumpToStep = useCallback((stepId: string): void => {
+    const idx = learningMode.steps.findIndex(s => s.id === stepId)
+    if (idx >= 0) {
+      setShowLearning(true)
+      learningMode.goToStep(idx)
+    }
+  }, [learningMode.steps, learningMode.goToStep])
+
   const handleReset = useCallback((): void => {
     clearTreePositions()
     reset()
@@ -207,7 +215,7 @@ export default function TreePage() {
         learningMode={learningMode}
         isAnimating={isAnimating}
       />
-      <LogPanel logs={logs} />
+      <LogPanel logs={logs} onJumpToStep={handleJumpToStep} />
     </div>
   )
 }

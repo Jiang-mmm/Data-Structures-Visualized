@@ -37,14 +37,14 @@ export function useHashState() {
     if (existing) {
       const newData = data.map(e => e.key === safeKey ? { ...e, value } : e)
       push(newData)
-      addLog('oper', tStatic('hooks.hashLogInsertUpdate').replace('{key}', String(safeKey)).replace('{value}', value).replace('{hash}', String(hashFn(safeKey))))
+      addLog('oper', tStatic('hooks.hashLogInsertUpdate').replace('{key}', String(safeKey)).replace('{value}', value).replace('{hash}', String(hashFn(safeKey))), 'insert')
       showToast({ type: 'info', message: tStatic('hooks.hashKeyUpdated').replace('{key}', String(safeKey)) })
       return true
     }
 
     const newData = [...data, { key: safeKey, value }]
     push(newData)
-    addLog('oper', tStatic('hooks.hashLogInsertSuccess').replace('{key}', String(safeKey)).replace('{value}', value).replace('{hash}', String(hashFn(safeKey))))
+    addLog('oper', tStatic('hooks.hashLogInsertSuccess').replace('{key}', String(safeKey)).replace('{value}', value).replace('{hash}', String(hashFn(safeKey))), 'insert')
     addLog('code', `index = key % ${BUCKET_COUNT}; table[index].push({key, value})`)
     showToast({ type: 'success', message: tStatic('hooks.hashInsertSuccess').replace('{bucket}', String(hashFn(safeKey))) })
     return true
@@ -60,14 +60,14 @@ export function useHashState() {
     const idx = data.findIndex(entry => entry.key === safeKey)
     if (idx === -1) {
       showToast({ type: 'warning', message: tStatic('hooks.hashKeyNotFound').replace('{key}', String(safeKey)) })
-      addLog('oper', tStatic('hooks.hashLogDeleteNotFound').replace('{key}', String(safeKey)))
+      addLog('oper', tStatic('hooks.hashLogDeleteNotFound').replace('{key}', String(safeKey)), 'remove')
       return false
     }
 
     const newData = [...data]
     newData.splice(idx, 1)
     push(newData)
-    addLog('oper', tStatic('hooks.hashLogDeleteSuccess').replace('{key}', String(safeKey)).replace('{hash}', String(hashFn(safeKey))))
+    addLog('oper', tStatic('hooks.hashLogDeleteSuccess').replace('{key}', String(safeKey)).replace('{hash}', String(hashFn(safeKey))), 'remove')
     showToast({ type: 'success', message: tStatic('hooks.hashDeleteSuccess').replace('{key}', String(safeKey)) })
     return true
   }, [data, push, addLog])
@@ -78,10 +78,10 @@ export function useHashState() {
 
     const entry = data.find(e => e.key === safeKey)
     if (entry) {
-      addLog('oper', tStatic('hooks.hashLogSearchFound').replace('{key}', String(safeKey)).replace('{value}', entry.value).replace('{bucket}', String(hashFn(safeKey))))
+      addLog('oper', tStatic('hooks.hashLogSearchFound').replace('{key}', String(safeKey)).replace('{value}', entry.value).replace('{bucket}', String(hashFn(safeKey))), 'search')
       showToast({ type: 'success', message: `${safeKey} → "${entry.value}"` })
     } else {
-      addLog('oper', tStatic('hooks.hashLogSearchNotFound').replace('{key}', String(safeKey)))
+      addLog('oper', tStatic('hooks.hashLogSearchNotFound').replace('{key}', String(safeKey)), 'search')
       showToast({ type: 'warning', message: tStatic('hooks.hashKeyNotFound').replace('{key}', String(safeKey)) })
     }
     return entry || null

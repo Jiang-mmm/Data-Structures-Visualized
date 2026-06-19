@@ -46,6 +46,14 @@ export default function QueuePage() {
     setIsAnimating(false)
   }, [abortAnimation, setIsAnimating])
 
+  const handleJumpToStep = useCallback((stepId: string): void => {
+    const idx = learningMode.steps.findIndex(s => s.id === stepId)
+    if (idx >= 0) {
+      setShowLearning(true)
+      learningMode.goToStep(idx)
+    }
+  }, [learningMode.steps, learningMode.goToStep])
+
   const handleEnqueue = useCallback(async (): Promise<void> => {
     if (isAnimating) return
     const error = getValidationError(inputValue)
@@ -143,7 +151,7 @@ export default function QueuePage() {
         isAnimating={isAnimating}
       />
 
-      <LogPanel logs={logs} />
+      <LogPanel logs={logs} onJumpToStep={handleJumpToStep} />
     </div>
   )
 }

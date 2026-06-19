@@ -61,7 +61,7 @@ export function useTreeState() {
     const trimmed = trimTrailingZeros(newData)
     push(trimmed)
     const nodeCount = trimmed.filter(v => v !== 0).length
-    addLog('oper', tStatic('hooks.treeLogInsert').replace('{value}', String(safeValue)).replace('{count}', String(nodeCount)))
+    addLog('oper', tStatic('hooks.treeLogInsert').replace('{value}', String(safeValue)).replace('{count}', String(nodeCount)), 'insert')
     addLog('code', `if (value < node.val) node.left = insert(node.left, val);`)
     showToast({ type: 'success', message: tStatic('hooks.treeInsertSuccess').replace('{value}', String(safeValue)) })
   }, [data, push, addLog])
@@ -75,7 +75,7 @@ export function useTreeState() {
       traverse(2 * index + 2)
     }
     traverse(0)
-    addLog('oper', tStatic('hooks.treeLogPreorder').replace('{data}', result.map(i => data[i]).join(', ')))
+    addLog('oper', tStatic('hooks.treeLogPreorder').replace('{data}', result.map(i => data[i]).join(', ')), 'preorder')
     addLog('code', `visit(node); preorder(node.left); preorder(node.right);`)
     return result
   }, [data, addLog])
@@ -89,7 +89,7 @@ export function useTreeState() {
       traverse(2 * index + 2)
     }
     traverse(0)
-    addLog('oper', tStatic('hooks.treeLogInorder').replace('{data}', result.map(i => data[i]).join(', ')))
+    addLog('oper', tStatic('hooks.treeLogInorder').replace('{data}', result.map(i => data[i]).join(', ')), 'inorder')
     addLog('code', `inorder(node.left); visit(node); inorder(node.right);`)
     return result
   }, [data, addLog])
@@ -103,7 +103,7 @@ export function useTreeState() {
       result.push(index)
     }
     traverse(0)
-    addLog('oper', tStatic('hooks.treeLogPostorder').replace('{data}', result.map(i => data[i]).join(', ')))
+    addLog('oper', tStatic('hooks.treeLogPostorder').replace('{data}', result.map(i => data[i]).join(', ')), 'postorder')
     addLog('code', `postorder(node.left); postorder(node.right); visit(node);`)
     return result
   }, [data, addLog])
@@ -117,7 +117,7 @@ export function useTreeState() {
       result.push(index)
       queue.push(2 * index + 1, 2 * index + 2)
     }
-    addLog('oper', tStatic('hooks.treeLogLevelorder').replace('{data}', result.map(i => data[i]).join(', ')))
+    addLog('oper', tStatic('hooks.treeLogLevelorder').replace('{data}', result.map(i => data[i]).join(', ')), 'levelorder')
     addLog('code', `queue.push(root); while(queue) { visit(queue.shift()); push(children); }`)
     return result
   }, [data, addLog])
@@ -128,12 +128,12 @@ export function useTreeState() {
     while (index < data.length && data[index] !== 0) {
       path.push(index)
       if (value === data[index]) {
-        addLog('oper', tStatic('hooks.treeLogSearchFound').replace('{value}', String(value)).replace('{index}', String(index)).replace('{depth}', String(path.length)))
+        addLog('oper', tStatic('hooks.treeLogSearchFound').replace('{value}', String(value)).replace('{index}', String(index)).replace('{depth}', String(path.length)), 'search')
         return { found: index, path }
       }
       index = value < data[index] ? 2 * index + 1 : 2 * index + 2
     }
-    addLog('oper', tStatic('hooks.treeLogSearchNotFound').replace('{value}', String(value)))
+    addLog('oper', tStatic('hooks.treeLogSearchNotFound').replace('{value}', String(value)), 'search')
     return { found: -1, path }
   }, [data, addLog])
 
@@ -147,7 +147,7 @@ export function useTreeState() {
 
     if (targetIndex === -1) {
       showToast({ type: 'warning', message: tStatic('hooks.treeDeleteNotFound').replace('{value}', String(value)) })
-      addLog('oper', tStatic('hooks.treeLogDeleteNotFound').replace('{value}', String(value)))
+      addLog('oper', tStatic('hooks.treeLogDeleteNotFound').replace('{value}', String(value)), 'delete')
       return null
     }
 
@@ -178,7 +178,7 @@ export function useTreeState() {
     const trimmed = trimTrailingZeros(newData)
     push(trimmed)
     const nodeCount = trimmed.filter(v => v !== 0).length
-    addLog('oper', tStatic('hooks.treeLogDeleteSuccess').replace('{value}', String(value)).replace('{count}', String(nodeCount)))
+    addLog('oper', tStatic('hooks.treeLogDeleteSuccess').replace('{value}', String(value)).replace('{count}', String(nodeCount)), 'delete')
     showToast({ type: 'success', message: tStatic('hooks.treeDeleteSuccess').replace('{value}', String(value)) })
     return targetIndex
   }, [data, push, addLog])

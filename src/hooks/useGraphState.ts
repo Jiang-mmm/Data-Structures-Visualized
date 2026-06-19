@@ -60,7 +60,7 @@ export function useGraphState() {
     const group = Math.floor(Math.random() * 3)
     const newNodes = [...nodes, { id, group }]
     pushGraph({ nodes: newNodes, links })
-    addLog('oper', tStatic('hooks.graphLogAddNode').replace('{id}', id).replace('{count}', String(newNodes.length)))
+    addLog('oper', tStatic('hooks.graphLogAddNode').replace('{id}', id).replace('{count}', String(newNodes.length)), 'add-node')
     showToast({ type: 'success', message: tStatic('hooks.graphNodeAdded').replace('{id}', id) })
   }, [nodes, links, pushGraph, addLog])
 
@@ -79,7 +79,7 @@ export function useGraphState() {
     }
     const newLinks = [...links, { source: sourceId, target: targetId, weight: weight || 1 }]
     pushGraph({ nodes, links: newLinks })
-    addLog('oper', tStatic('hooks.graphLogAddEdge').replace('{source}', sourceId).replace('{target}', targetId).replace('{weight}', String(weight || 1)).replace('{count}', String(newLinks.length)))
+    addLog('oper', tStatic('hooks.graphLogAddEdge').replace('{source}', sourceId).replace('{target}', targetId).replace('{weight}', String(weight || 1)).replace('{count}', String(newLinks.length)), 'add-edge')
     showToast({ type: 'success', message: tStatic('hooks.graphEdgeAdded').replace('{source}', sourceId).replace('{target}', targetId) })
     return true
   }, [nodes, links, pushGraph, addLog])
@@ -91,7 +91,7 @@ export function useGraphState() {
       return s !== nodeId && t !== nodeId
     })
     pushGraph({ nodes: newNodes, links: newLinks })
-    addLog('oper', tStatic('hooks.graphNodeDeleted').replace('{id}', nodeId))
+    addLog('oper', tStatic('hooks.graphNodeDeleted').replace('{id}', nodeId), 'delete-node')
     showToast({ type: 'info', message: tStatic('hooks.graphNodeDeleted').replace('{id}', nodeId) })
   }, [nodes, links, pushGraph, addLog])
 
@@ -101,20 +101,20 @@ export function useGraphState() {
       return !(s === sourceId && t === targetId) && !(s === targetId && t === sourceId)
     })
     pushGraph({ nodes, links: newLinks })
-    addLog('oper', tStatic('hooks.graphEdgeDeleted').replace('{source}', sourceId).replace('{target}', targetId))
+    addLog('oper', tStatic('hooks.graphEdgeDeleted').replace('{source}', sourceId).replace('{target}', targetId), 'delete-edge')
     showToast({ type: 'info', message: tStatic('hooks.graphEdgeDeleted').replace('{source}', sourceId).replace('{target}', targetId) })
   }, [nodes, links, pushGraph, addLog])
 
   const bfs = useCallback((startId: string) => {
-    addLog('info', tStatic('hooks.graphLogBfsStart').replace('{id}', startId))
+    addLog('info', tStatic('hooks.graphLogBfsStart').replace('{id}', startId), 'bfs')
   }, [addLog])
 
   const dfs = useCallback((startId: string) => {
-    addLog('info', tStatic('hooks.graphLogDfsStart').replace('{id}', startId))
+    addLog('info', tStatic('hooks.graphLogDfsStart').replace('{id}', startId), 'dfs')
   }, [addLog])
 
   const dijkstra = useCallback((startId: string, endId: string) => {
-    addLog('info', tStatic('hooks.graphLogDijkstraStart').replace('{start}', startId).replace('{end}', endId))
+    addLog('info', tStatic('hooks.graphLogDijkstraStart').replace('{start}', startId).replace('{end}', endId), 'dijkstra')
   }, [addLog])
 
   const getAdjacencyMatrix = useCallback(() => {

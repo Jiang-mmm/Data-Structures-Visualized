@@ -81,6 +81,14 @@ export default function GraphPage() {
     setIsAnimating(false)
   }, [abortAnimation, setIsAnimating])
 
+  const handleJumpToStep = useCallback((stepId: string): void => {
+    const idx = learningMode.steps.findIndex(s => s.id === stepId)
+    if (idx >= 0) {
+      setShowLearning(true)
+      learningMode.goToStep(idx)
+    }
+  }, [learningMode.steps, learningMode.goToStep])
+
   const handleBFS = useCallback(async (): Promise<void> => {
     if (isAnimating) return
     setIsAnimating(true)
@@ -319,7 +327,7 @@ export default function GraphPage() {
         learningMode={learningMode}
         isAnimating={isAnimating}
       />
-      <LogPanel logs={logs} />
+      <LogPanel logs={logs} onJumpToStep={handleJumpToStep} />
     </div>
   )
 }

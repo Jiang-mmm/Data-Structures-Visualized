@@ -75,5 +75,27 @@ export const trieConfig: LearningModeConfig = {
       highlightTerms: ['前缀不存在', '自动补全'],
       tips: ['Trie 的典型应用：搜索引擎自动补全、拼写检查、IP 路由表、词频统计'],
     },
+    {
+      id: 'remove',
+      title: '删除单词 Remove',
+      description: '递归查找单词路径，从叶子向上回溯删除节点。仅删除不影响其他单词的节点，保留共享前缀。',
+      codeSnippet: `function remove(node, word, depth = 0) {
+  if (depth === word.length) {
+    node.isEnd = false
+  } else {
+    const child = node.children[word[depth]]
+    if (!child) return
+    remove(child, word, depth + 1)
+    // 子节点无孩子且非单词结尾时删除
+    if (Object.keys(child.children).length === 0 && !child.isEnd) {
+      delete node.children[word[depth]]
+    }
+  }
+}`,
+      highlightedLine: 9,
+      highlightTerms: ['isEnd', 'delete', 'remove'],
+      tips: ['删除前需确认单词存在', '共享前缀节点不能删除（其他单词仍在用）', '仅将 isEnd 置 false 即可"软删除"'],
+      complexity: { time: 'O(m)，m 为单词长度', space: 'O(m) 递归栈' },
+    },
   ],
 }

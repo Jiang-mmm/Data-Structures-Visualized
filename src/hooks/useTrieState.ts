@@ -150,7 +150,7 @@ export function useTrieState() {
     }
     const newData = insertWord(data, cleanWord)
     push(newData)
-    addLog('oper', tStatic('hooks.trieLogInsert').replace('{word}', cleanWord))
+    addLog('oper', tStatic('hooks.trieLogInsert').replace('{word}', cleanWord), 'insert')
     addLog('code', `for (ch in word) { if (!node.children[ch]) node.children[ch] = new TrieNode(); node = node.children[ch]; } node.isEndOfWord = true;`)
     showToast({ type: 'success', message: tStatic('hooks.trieInsertSuccess').replace('{word}', cleanWord) })
   }, [data, push, addLog])
@@ -164,11 +164,11 @@ export function useTrieState() {
     const newData = deleteWord(data, cleanWord)
     if (newData === data) {
       showToast({ type: 'warning', message: tStatic('hooks.trieDeleteNotFound').replace('{word}', cleanWord) })
-      addLog('oper', tStatic('hooks.trieLogDeleteNotFound').replace('{word}', cleanWord))
+      addLog('oper', tStatic('hooks.trieLogDeleteNotFound').replace('{word}', cleanWord), 'remove')
       return
     }
     push(newData)
-    addLog('oper', tStatic('hooks.trieLogDeleteSuccess').replace('{word}', cleanWord))
+    addLog('oper', tStatic('hooks.trieLogDeleteSuccess').replace('{word}', cleanWord), 'remove')
     addLog('code', `node.isEndOfWord = false; removeEmptyNodes();`)
     showToast({ type: 'success', message: tStatic('hooks.trieDeleteSuccess').replace('{word}', cleanWord) })
   }, [data, push, addLog])
@@ -178,9 +178,9 @@ export function useTrieState() {
     const cleanWord = word.trim().toLowerCase()
     const result = searchWord(data, cleanWord)
     if (result.found) {
-      addLog('oper', tStatic('hooks.trieLogSearchFound').replace('{word}', cleanWord))
+      addLog('oper', tStatic('hooks.trieLogSearchFound').replace('{word}', cleanWord), 'search')
     } else {
-      addLog('oper', tStatic('hooks.trieLogSearchNotFound').replace('{word}', cleanWord))
+      addLog('oper', tStatic('hooks.trieLogSearchNotFound').replace('{word}', cleanWord), 'search')
     }
     return result
   }, [data, addLog])
@@ -190,9 +190,9 @@ export function useTrieState() {
     const cleanPrefix = prefix.trim().toLowerCase()
     const result = startsWith(data, cleanPrefix)
     if (result.found && result.words.length > 0) {
-      addLog('oper', tStatic('hooks.trieLogPrefixFound').replace('{prefix}', cleanPrefix).replace('{count}', String(result.words.length)).replace('{words}', result.words.join(', ')))
+      addLog('oper', tStatic('hooks.trieLogPrefixFound').replace('{prefix}', cleanPrefix).replace('{count}', String(result.words.length)).replace('{words}', result.words.join(', ')), 'prefix')
     } else {
-      addLog('oper', tStatic('hooks.trieLogPrefixNotFound').replace('{prefix}', cleanPrefix))
+      addLog('oper', tStatic('hooks.trieLogPrefixNotFound').replace('{prefix}', cleanPrefix), 'prefix')
     }
     return result
   }, [data, addLog])

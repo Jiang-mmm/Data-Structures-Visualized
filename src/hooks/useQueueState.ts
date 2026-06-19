@@ -26,7 +26,7 @@ export function useQueueState() {
     }
     const newData = [...data, safeValue]
     push(newData)
-    addLog('oper', tStatic('hooks.queueLogEnqueue').replace('{value}', String(safeValue)).replace('{tail}', String(safeValue)).replace('{size}', String(newData.length)))
+    addLog('oper', tStatic('hooks.queueLogEnqueue').replace('{value}', String(safeValue)).replace('{tail}', String(safeValue)).replace('{size}', String(newData.length)), 'enqueue')
     showToast({ type: 'success', message: tStatic('hooks.queueEnqueueSuccess').replace('{value}', String(safeValue)) })
     return true
   }, [data, push, addLog])
@@ -38,7 +38,7 @@ export function useQueueState() {
     }
     const newData = data.slice(1)
     push(newData)
-    addLog('oper', tStatic('hooks.queueLogDequeue').replace('{value}', String(data[0])).replace('{size}', String(newData.length)))
+    addLog('oper', tStatic('hooks.queueLogDequeue').replace('{value}', String(data[0])).replace('{size}', String(newData.length)), 'dequeue')
     showToast({ type: 'success', message: tStatic('hooks.queueDequeueSuccess').replace('{value}', String(data[0])) })
     return data[0]
   }, [data, push, addLog])
@@ -48,14 +48,14 @@ export function useQueueState() {
       showToast({ type: 'warning', message: tStatic('hooks.queueEmpty') })
       return null
     }
-    addLog('oper', tStatic('hooks.queueLogFront').replace('{value}', String(data[0])))
+    addLog('oper', tStatic('hooks.queueLogFront').replace('{value}', String(data[0])), 'front')
     showToast({ type: 'info', message: tStatic('hooks.queueFront').replace('{value}', String(data[0])) })
     return data[0]
   }, [data, addLog])
 
   const clear = useCallback((): void => {
     push([])
-    addLog('oper', tStatic('hooks.queueLogClear'))
+    addLog('oper', tStatic('hooks.queueLogClear'), 'clear')
     showToast({ type: 'info', message: tStatic('hooks.queueCleared') })
   }, [push, addLog])
 

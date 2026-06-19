@@ -52,7 +52,7 @@ export function useHeapState() {
 
     const newData = siftUp([...data, safeValue], data.length)
     push(newData)
-    addLog('oper', tStatic('hooks.heapLogInsert').replace('{value}', String(safeValue)).replace('{size}', String(newData.length)))
+    addLog('oper', tStatic('hooks.heapLogInsert').replace('{value}', String(safeValue)).replace('{size}', String(newData.length)), 'insert')
     addLog('code', `heap.push(value); siftUp(heap.length - 1)`)
     showToast({ type: 'success', message: tStatic('hooks.heapInsertSuccess').replace('{value}', String(safeValue)) })
     return true
@@ -61,7 +61,7 @@ export function useHeapState() {
   const extractMax = useCallback((): number | null => {
     if (data.length === 0) {
       showToast({ type: 'warning', message: tStatic('hooks.heapEmpty') })
-      addLog('oper', tStatic('hooks.heapLogExtractEmpty'))
+      addLog('oper', tStatic('hooks.heapLogExtractEmpty'), 'extract')
       return null
     }
 
@@ -76,7 +76,7 @@ export function useHeapState() {
       newData = siftDown(newData, 0)
     }
     push(newData)
-    addLog('oper', tStatic('hooks.heapLogExtract').replace('{value}', String(max)).replace('{size}', String(newData.length)))
+    addLog('oper', tStatic('hooks.heapLogExtract').replace('{value}', String(max)).replace('{size}', String(newData.length)), 'extract')
     addLog('code', `max = heap[0]; heap[0] = heap.pop(); siftDown(0)`)
     showToast({ type: 'success', message: tStatic('hooks.heapExtractSuccess').replace('{value}', String(max)) })
     return max
@@ -84,10 +84,10 @@ export function useHeapState() {
 
   const peek = useCallback((): number | null => {
     if (data.length === 0) {
-      addLog('oper', tStatic('hooks.heapLogPeekEmpty'))
+      addLog('oper', tStatic('hooks.heapLogPeekEmpty'), 'peek')
       return null
     }
-    addLog('oper', `peek() → ${data[0]}`)
+    addLog('oper', `peek() → ${data[0]}`, 'peek')
     return data[0]
   }, [data, addLog])
 

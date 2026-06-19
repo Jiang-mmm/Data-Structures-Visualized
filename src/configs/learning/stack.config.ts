@@ -60,5 +60,18 @@ export const stackConfig: LearningModeConfig = {
       highlightTerms: ['items[stack.top]', '只读取'],
       tips: ['JavaScript 中用数组模拟栈：push/pop 对应入栈/出栈'],
     },
+    {
+      id: 'clear',
+      title: '清空栈 Clear',
+      description: '将栈中所有元素移除，栈顶指针重置为 -1。时间复杂度 O(1)（重置指针）或 O(n)（清空数组）。',
+      codeSnippet: `function clear(stack) {
+  stack.top = -1
+  // 或 stack.items = []
+}`,
+      highlightedLine: 2,
+      highlightTerms: ['top', 'clear'],
+      tips: ['清空后栈为空，再次 pop/peek 会报下溢错误', '数组实现中可复用空间只需重置 top 指针'],
+      complexity: { time: 'O(1) 或 O(n)', space: 'O(1)' },
+    },
   ],
 }

@@ -207,13 +207,13 @@ describe('useLearningMode', () => {
   it('应该支持树数据结构', () => {
     const { result } = renderHook(() => useLearningMode('tree'))
     expect(result.current.hasSteps).toBe(true)
-    expect(result.current.totalSteps).toBe(4)
+    expect(result.current.totalSteps).toBe(9)
   })
 
   it('应该支持哈希表数据结构', () => {
     const { result } = renderHook(() => useLearningMode('hash'))
     expect(result.current.hasSteps).toBe(true)
-    expect(result.current.totalSteps).toBe(4)
+    expect(result.current.totalSteps).toBe(5)
   })
 
   it('链表学习步骤包含正确的标题', () => {
