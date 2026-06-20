@@ -40,6 +40,15 @@
 | TypeScript strict | 0 错误 |
 | Build | 成功 |
 | Bundle 预算 | 符合（index 63.40KB / vendor-react 231.35KB / vendor-d3 52.54KB） |
+| CI (Actions run #46) | ✅ success（Node 20 + 22 matrix，lint/typecheck/build/unit/E2E core + comprehensive 全绿） |
+| Deploy (Actions run #44) | ✅ success（actions/deploy-pages，~51s 完成，commit `5532edf`） |
+| GitHub Pages | ✅ live @ https://jiang-mmm.github.io/Data-Structures-Visualized/ |
+
+### 部署信息
+
+- **策略：** `git push origin feature/v12-advanced-data-structures:main`（避免本地切换分支，main 直接指向 feature tip）
+- **网络突破：** 临时禁用全局代理 `git -c http.proxy= -c https.proxy=`（Clash 7897 未运行），HTTPS 直连成功
+- **新页面在线验证：** `/skip-list`、`/union-find`、`/red-black-tree`、`/graph-algorithm`（8 个图算法含 Bellman-Ford / Floyd-Warshall / Prim / Kruskal）
 
 ---
 

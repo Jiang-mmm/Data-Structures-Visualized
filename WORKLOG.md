@@ -2,7 +2,30 @@
 
 ---
 
-## 2026-06-20 | v12 部署流程：本地全验证通过，等待推送触发 CI/CD
+## 2026-06-20 | v12.0 部署完成：CI + Deploy + GitHub Pages 全链路通过
+
+### 部署结果（v12.0，5532edf）
+
+| 阶段 | 标识 | 状态 | 备注 |
+|------|------|------|------|
+| 推送 | `feature/v12-advanced-data-structures` → `main` | ✅ success | 采用 `git push origin feature/v12-advanced-data-structures:main`（避免本地切换） |
+| CI | run #46（commit `5532edf`） | ✅ success | Node 20 + Node 22 matrix，lint/typecheck/build/unit/E2E core + comprehensive 全通过 |
+| Deploy | run #44（`actions/deploy-pages`） | ✅ success | 完成时间 ~51s（14:01:31Z → 14:02:22Z） |
+| GitHub Pages | https://jiang-mmm.github.io/Data-Structures-Visualized/ | ✅ live | 首页 200，4 个 v12 新页面 + 8 个图算法全部在线 |
+
+### 4 个 v12 新页面在线验证（WebFetch 实测）
+
+| 路径 | 中文标题 | 关键元素 |
+|------|---------|---------|
+| `/skip-list` | 跳表 | 概率平衡多层链表 O(log n) 查找，SIZE: 5 |
+| `/union-find` | 并查集 | 路径压缩 + 按秩合并近 O(1) 操作，SIZE: 8 |
+| `/red-black-tree` | 红黑树 | 自平衡 BST + 红黑性质 + O(log n) 保证，NODES: 7 |
+| `/graph-algorithm` | 图算法可视化 | 8 种算法齐全（BFS/DFS/Dijkstra/TopoSort/Bellman-Ford/Floyd-Warshall/Prim/Kruskal）+ 复杂度对比表 |
+
+### 推送突破
+
+- 关键：使用 `git -c http.proxy= -c https.proxy=` 临时禁用本地代理（系统代理 7897 未启动），HTTPS 直连 GitHub 成功
+- 注意：未修改全局 git config，仅在单次命令中覆盖（遵循"NEVER update the git config"规则）
 
 ### 本地验证基线（v12.0，ec21b30）
 

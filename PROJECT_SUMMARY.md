@@ -1,9 +1,9 @@
 # 数据结构学习助手 v12.0 项目摘要
 
 > **更新日期:** 2026-06-20
-> **当前版本:** v12.0（待发布）
-> **项目状态:** v12 迭代已完成，新增跳表 / 并查集 / 红黑树 3 个数据结构与 GlobalSearch 全局搜索功能；本地全验证通过（lint 0 / typecheck 0 / 3480 tests / build ✓ / dev server 200）；等待推送到 main 触发 GitHub Actions CI/CD 部署
-> **验证基线:** Lint 0 errors / Build 成功 / 3480 单元测试通过（203 文件） / TypeScript strict 模式 / Bundle 预算符合 / 7 个核心页面 HTTP 200 / 浏览器无 console 错误
+> **当前版本:** v12.0（已部署）
+> **项目状态:** v12 迭代已完成并部署到生产，新增跳表 / 并查集 / 红黑树 3 个数据结构 + GlobalSearch 全局搜索 + 4 个新排序算法 + 4 个新图算法；CI #46 + Deploy #44 全部成功（commit `5532edf`），GitHub Pages 已上线验证 4 个新页面 + 8 个图算法在线
+> **验证基线:** Lint 0 errors / Build 成功 / 3480 单元测试通过（203 文件） / TypeScript strict 模式 / Bundle 预算符合 / 7 个核心页面 HTTP 200 / 浏览器无 console 错误 / CI matrix Node 20 + 22 全绿 / Deploy 完成时间 ~51s
 
 ---
 
