@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { Animation } from '../../utils/animationEngine'
 
 interface ChainableCall {
   method: string
@@ -200,12 +201,24 @@ describe('unionFindVisualizer', () => {
     })
 
     it('应该支持 anim 参数', async () => {
-      const anim = { isAborted: () => false }
+      const anim: Animation = {
+        promise: Promise.resolve(),
+        isAborted: () => false,
+        abort: () => undefined,
+        resolve: () => undefined,
+        reject: () => undefined,
+      }
       await expect(animateInsertUnionFind(svg, 1, anim)).resolves.not.toThrow()
     })
 
     it('anim 中止时应提前返回', async () => {
-      const anim = { isAborted: () => true }
+      const anim: Animation = {
+        promise: Promise.resolve(),
+        isAborted: () => true,
+        abort: () => undefined,
+        resolve: () => undefined,
+        reject: () => undefined,
+      }
       await expect(animateInsertUnionFind(svg, 1, anim)).resolves.not.toThrow()
     })
   })
@@ -220,12 +233,24 @@ describe('unionFindVisualizer', () => {
     })
 
     it('应该支持 anim 参数', async () => {
-      const anim = { isAborted: () => false }
+      const anim: Animation = {
+        promise: Promise.resolve(),
+        isAborted: () => false,
+        abort: () => undefined,
+        resolve: () => undefined,
+        reject: () => undefined,
+      }
       await expect(animateDeleteUnionFind(svg, 1, anim)).resolves.not.toThrow()
     })
 
     it('anim 中止时应提前返回', async () => {
-      const anim = { isAborted: () => true }
+      const anim: Animation = {
+        promise: Promise.resolve(),
+        isAborted: () => true,
+        abort: () => undefined,
+        resolve: () => undefined,
+        reject: () => undefined,
+      }
       await expect(animateDeleteUnionFind(svg, 1, anim)).resolves.not.toThrow()
     })
   })
@@ -244,12 +269,24 @@ describe('unionFindVisualizer', () => {
     })
 
     it('应该支持 anim 参数', async () => {
-      const anim = { isAborted: () => false }
+      const anim: Animation = {
+        promise: Promise.resolve(),
+        isAborted: () => false,
+        abort: () => undefined,
+        resolve: () => undefined,
+        reject: () => undefined,
+      }
       await expect(animateFindUnionFind(svg, ['n2'], 'n1', anim)).resolves.not.toThrow()
     })
 
     it('anim 中止时应提前返回', async () => {
-      const anim = { isAborted: () => true }
+      const anim: Animation = {
+        promise: Promise.resolve(),
+        isAborted: () => true,
+        abort: () => undefined,
+        resolve: () => undefined,
+        reject: () => undefined,
+      }
       await expect(animateFindUnionFind(svg, ['n2'], 'n1', anim)).resolves.not.toThrow()
     })
   })
@@ -264,12 +301,24 @@ describe('unionFindVisualizer', () => {
     })
 
     it('应该支持 anim 参数', async () => {
-      const anim = { isAborted: () => false }
+      const anim = {
+        promise: Promise.resolve(),
+        isAborted: () => false,
+        abort: () => undefined,
+        resolve: () => undefined,
+        reject: () => undefined,
+      }
       await expect(animateUnionUnionFind(svg, 'n1', 'n4', anim)).resolves.not.toThrow()
     })
 
     it('anim 中止时应提前返回', async () => {
-      const anim = { isAborted: () => true }
+      const anim = {
+        promise: Promise.resolve(),
+        isAborted: () => true,
+        abort: () => undefined,
+        resolve: () => undefined,
+        reject: () => undefined,
+      }
       await expect(animateUnionUnionFind(svg, 'n1', 'n4', anim)).resolves.not.toThrow()
     })
   })

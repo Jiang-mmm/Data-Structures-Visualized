@@ -25,8 +25,8 @@
 | **跳表 SkipList** | 插入、删除、搜索、多层索引遍历（概率平衡可视化） |
 | **并查集 UnionFind** | MakeSet、Find、Union（路径压缩 + 按秩合并）、连通性查询 |
 | **红黑树 RedBlackTree** | 插入、删除、查找、Fixup 着色 + 左右旋转 |
-| **算法对比 SortCompare** | 8 种排序算法并行对比，实时进度追踪，性能图表 |
-| **图算法 GraphAlgorithm** | BFS、DFS、Dijkstra、拓扑排序可视化 + 学习模式 |
+| **算法对比 SortCompare** | 12 种排序算法并行对比，实时进度追踪，性能图表 |
+| **图算法 GraphAlgorithm** | BFS、DFS、Dijkstra、拓扑排序、Bellman-Ford、Floyd-Warshall、Prim、Kruskal（8 种算法）+ 学习模式 |
 | **全局搜索 GlobalSearch** | Ctrl/Cmd+K 唤起，数据结构/算法/页面快速跳转，键盘导航 |
 
 ## 关键特性
@@ -110,7 +110,7 @@ node e2e/run-all-tests.js
 ```
 src/
 ├── algorithms/          # 算法实现
-│   ├── sorting/         # 8 种排序算法（插件注册模式）
+│   ├── sorting/         # 12 种排序算法（插件注册模式）
 │   │   ├── bubbleSort.ts
 │   │   ├── selectionSort.ts
 │   │   ├── insertionSort.ts

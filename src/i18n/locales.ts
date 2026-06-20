@@ -219,12 +219,14 @@ export interface Locale {
     linkedlist: string
     tree: string
     avlTree: string
+    redBlackTree: string
     graph: string
     sort: string
     hash: string
     heap: string
     trie: string
     skipList: string
+    unionFind: string
     compare: string
     graphAlgorithm: string
     themeDefault: string

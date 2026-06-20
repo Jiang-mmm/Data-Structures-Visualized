@@ -4,6 +4,45 @@
 
 ---
 
+## [v12.0.0] - 2026-06-20
+
+### 新增
+- **跳表 SkipList:** `src/algorithms/skipList.ts` 多层链表 + 概率平衡 + 扁平化数据表示（nodes/edges/maxLevel）；`src/hooks/useSkipListState.ts` 继承 `useDataStructureState`；`src/visualizers/skipListVisualizer.ts` 多层水平布局；`src/pages/SkipListPage.tsx` 操作面板 + 撤销/重做；`src/configs/learning/skipList.config.ts` 7 步学习步骤；路由 `/skip-list`
+- **并查集 Union-Find:** `src/algorithms/unionFind.ts` 路径压缩 + 按秩合并 + 扁平化数据；`src/hooks/useUnionFindState.ts` insert/remove/find/union/checkConnected；`src/visualizers/unionFindVisualizer.ts` 森林布局（按连通分量分组）；`src/pages/UnionFindPage.tsx` 双输入框 A/B + 5 个操作按钮；`src/configs/learning/unionFind.config.ts` 7 步学习步骤；路由 `/union-find`
+- **红黑树 Red-Black Tree:** `src/algorithms/redBlackTree.ts` 递归对象表示 + 插入 + fixup 着色 + 左右旋转 + 深拷贝不可变更新；`src/hooks/useRedBlackTreeState.ts` 继承 `useDataStructureState`；`src/visualizers/redBlackTreeVisualizer.ts` 树形布局 + 红黑颜色区分；`src/pages/RedBlackTreePage.tsx` 参照 SkipListPage 模式；`src/configs/learning/redBlackTree.config.ts` 7 步学习步骤；路由 `/red-black-tree`
+- **全局搜索 GlobalSearch:** `src/data/searchIndex.ts` 从 STRUCTURE_KEYS + learningConfigs 动态生成 SearchItem[]；`src/components/GlobalSearch.tsx` Ctrl/Cmd+K 唤起、键盘上下导航、Enter 选中、Esc 关闭、Neo-Brutalist 风格面板；Layout 集成 + 桌面/移动端自适应
+- **i18n 扩展:** 新增 skipList/unionFind/redBlackTree/globalSearch 4 个命名空间
+- **代码揭示机制全覆盖:** 7 个 Hook（stack/queue/tree/hash/heap/trie/graph）添加 `codeStepId` 字段；6 个学习配置扩展（树遍历拆分为 preorder/inorder/postorder/levelorder；图遍历拆分为 bfs/dfs/dijkstra；增加 treetraversal/graphbfs/graphdfs/graphdijkstra 4 个 algorithmKey）；7 个 Page 接入 `onJumpToStep` 回调
+
+### 优化
+- **Sidebar 导出 STRUCTURE_KEYS:** 供 GlobalSearch 复用，避免导航与搜索索引重复定义
+- **learning-configs 单独 chunk:** `vite.config.js` 添加 manualChunks 拆分 `learning-configs`，避免 index chunk 超限
+- **测试基础设施:** `src/__tests__/Layout.test.tsx` 添加 GlobalSearch mock，`src/__tests__/components/GlobalSearch.test.tsx` 添加 scrollIntoView mock
+- **代码风格统一与架构优化 (P1-P6):** 17 个 components/ 文件 + useI18n.ts 的 type 前缀导入、移除未使用 React、后置 memo；useHeapState/useHashState 多行解构、useTrieState void 返回类型、catch (error) 统一；新增 `src/visualizers/visualizerConstants.ts` 提取 DEFAULT_NODE_RADIUS / DEFAULT_LEVEL_HEIGHT；`useSharedData<T>` 泛型化消除 11 个页面的 as any 滥用；7 个文件 24 处英文注释翻译为中文；安装 typescript-eslint@8.61.1，tseslint.config 覆盖 TS 文件
+
+### 文档
+- 更新 `WORKLOG.md`：顶部添加 v12 迭代记录
+- 更新 `TODO.md`：v12 任务表 + v13+ 后续阶段
+- 更新 `PROJECT_SUMMARY.md`：数据结构 13 → 15，测试 3089 → 3480，Hook 数 25 → 26
+- 更新 `ARCHITECTURE.md`：分层架构图更新
+- 更新 `CODE_WIKI.md`：核心功能矩阵 + 路由映射表
+- 更新 `README.md`：功能列表 + 快捷键（Ctrl/Cmd+K）
+- 更新 `CLAUDE.md`：16 数据结构/算法页 + 15 Hooks + GlobalSearch 说明
+- `package.json`：`version` 11.0.1 → 12.0.0
+- `package-lock.json`：`version` 11.0.1 → 12.0.0
+
+### 质量指标
+
+| 指标 | 结果 |
+|------|------|
+| 单元测试 | 3480 tests passed（203 文件，较 v11.0.1 新增 391 个） |
+| ESLint | 0 errors / 66 warnings（既有代码模式） |
+| TypeScript strict | 0 错误 |
+| Build | 成功 |
+| Bundle 预算 | 符合（index 63.40KB / vendor-react 231.35KB / vendor-d3 52.54KB） |
+
+---
+
 ## [Phase 5.6] - 2026-06-20
 
 ### 新增

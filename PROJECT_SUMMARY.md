@@ -38,10 +38,10 @@
 ## 三、六层架构
 
 ```
-Entry (main.tsx → App.tsx) → Pages (17) → Components (34) → Hooks (25) → Visualizers (14) → Algorithms/Utils
+Entry (main.tsx → App.tsx) → Pages (17) → Components (34) → Hooks (26) → Visualizers (14) → Algorithms/Utils
 ```
 
-- **状态管理:** 无 Redux/Zustand，每个数据结构独立 `use*State` Hook（15 个），内部统一使用 `useHistory`（useRef 实现的撤销/重做栈，最多 20 步）
+- **状态管理:** 无 Redux/Zustand，每个数据结构独立 `use*State` Hook（14 个），内部统一使用 `useHistory`（useRef 实现的撤销/重做栈，最多 20 步）
 - **可视化模式:** D3.js 全清+全绘策略（`container.selectAll('*').remove()` 后重建），SVG 使用 viewBox 自适应；公共居中布局由 `visualizerLayout.ts` 统一处理
 - **动画引擎:** `src/utils/animationEngine.ts` 集中管理，提供全局速度倍率、性能模式、5 种动画预设、FPS 监控、可中止动画、delayStart 延迟启动 API
 - **学习路径系统:** `useLearningProgress` 重构后支持 CustomEvent 同步、SyncStatus 状态、统计 API、目标设定；配合 `ProgressOverview`、`LearningRecommendations`、`learningRecommender` 实现进度可视化与智能推荐

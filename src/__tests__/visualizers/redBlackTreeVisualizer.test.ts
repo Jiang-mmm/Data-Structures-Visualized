@@ -182,7 +182,7 @@ describe('redBlackTreeVisualizer', () => {
       const bigNodes = Array.from({ length: 30 }, (_, i) => ({
         id: `n${i}`,
         value: i + 1,
-        color: i % 2 === 0 ? 'black' : 'red' as const,
+        color: (i % 2 === 0 ? 'black' : 'red') as 'red' | 'black',
         parent: i === 0 ? '' : `n${Math.floor((i - 1) / 2)}`,
         depth: Math.floor(Math.log2(i + 1)),
         isLeft: i % 2 === 1,
@@ -192,7 +192,7 @@ describe('redBlackTreeVisualizer', () => {
       for (let i = 1; i < bigNodes.length; i++) {
         bigEdges.push({ from: bigNodes[i].parent, to: bigNodes[i].id })
       }
-      const bigData = { nodes: bigNodes, edges: bigEdges }
+      const bigData: RedBlackFlattened = { nodes: bigNodes, edges: bigEdges }
       expect(() => renderRedBlackTree(svg, bigData, {})).not.toThrow()
     })
 

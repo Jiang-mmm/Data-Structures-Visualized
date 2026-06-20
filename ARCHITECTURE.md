@@ -123,8 +123,8 @@
 | | `useLearningProgress` | 学习进度管理（CustomEvent 同步 + SyncStatus + 统计 API + 目标设定） |
 | | `usePageTracker` | 页面访问追踪 |
 | **Visualizers** | `*Visualizer.ts` | D3.js SVG 渲染 + 动画（14 个），AVL 树遍历使用边流动点 + 节点脉冲高亮 |
-| **Algorithms** | `sorting/*` | 8 种排序算法实现（插件注册模式） |
-| | `graph/*` | 4 种图算法实现 |
+| **Algorithms** | `sorting/*` | 12 种排序算法实现（插件注册模式） |
+| | `graph/*` | 8 种图算法实现 |
 | | `skipList.ts` | 跳表算法实现（多层链表 + 概率平衡 + 搜索/插入/删除） |
 | | `unionFind.ts` | 并查集算法实现（路径压缩 + 按秩合并 + 连通性查询） |
 | | `redBlackTree.ts` | 红黑树算法实现（插入 + fixup + 左右旋转 + 着色） |

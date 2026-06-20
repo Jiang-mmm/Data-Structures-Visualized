@@ -293,8 +293,8 @@ export function insertRedBlack(root: RedBlackNode | null, value: number): RedBla
     parent.right = newNode
   }
 
-  // 修复红黑性质
-  return fixInsert(newRoot, newNode)
+  // 修复红黑性质（newRoot 在此一定非 null：若为 null，line 284-288 已提前 return）
+  return fixInsert(newRoot as RedBlackNode, newNode)
 }
 
 /**

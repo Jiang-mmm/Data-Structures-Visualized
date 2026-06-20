@@ -287,7 +287,7 @@ src/
 - `KeyboardHelp.tsx`：键盘快捷键帮助
 - `ErrorBoundary.tsx`：错误边界
 
-### 3.4 Hooks 层职责（25 个 hooks）
+### 3.4 Hooks 层职责（26 个 hooks）
 
 **数据结构状态 hooks（14 个，均基于 `useDataStructureState`）**：
 - `useArrayState`、`useStackState`、`useQueueState`、`useLinkedListState`

@@ -124,7 +124,7 @@ export default function UnionFindPage() {
     const errorA = getValidationError(inputValue)
     const errorB = getValidationError(inputValueB)
     if (errorA || errorB) {
-      showToast({ type: 'error', message: errorA || errorB })
+      showToast({ type: 'error', message: errorA || errorB || 'invalid input' })
       return
     }
     const valueA = parseInt(inputValue, 10)
@@ -157,7 +157,7 @@ export default function UnionFindPage() {
     const errorA = getValidationError(inputValue)
     const errorB = getValidationError(inputValueB)
     if (errorA || errorB) {
-      showToast({ type: 'error', message: errorA || errorB })
+      showToast({ type: 'error', message: errorA || errorB || 'invalid input' })
       return
     }
     const valueA = parseInt(inputValue, 10)

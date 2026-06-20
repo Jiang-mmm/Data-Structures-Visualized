@@ -2,7 +2,7 @@
 
 > **版本:** v12.0
 > **更新日期:** 2026-06-20
-> **状态:** v12 迭代（跳表 / 并查集 / 红黑树 / 全局搜索）已完成；v12.x 后续阶段（B 树、线段树、测验系统等）待开始
+> **状态:** v12.0 迭代（跳表 / 并查集 / 红黑树 / 全局搜索 / D1 新增 4 图算法 / D2 新增 4 排序算法）已完成；v12.x 后续阶段（B 树、线段树、测验系统等）待开始
 > **详细迭代计划:** docs/iteration-plan-v10.md（最新），v10/v11/v12 迭代记录见 WORKLOG.md
 
 ---
@@ -18,6 +18,8 @@
 | v12-T9 | Sidebar/Home/App 集成 | P1 | ✅ | Sidebar 导出 STRUCTURE_KEYS + 3 个导航项和图标；Home 新增 3 张卡片；App 新增 3 条 lazy Route |
 | v12-T10 | i18n 与学习配置注册 | P1 | ✅ | locales.ts 新增 4 个命名空间；learning/index.ts 注册 3 个新配置（37 个总计） |
 | v12-T11 | Bundle 优化 | P2 | ✅ | vite.config.js 添加 learning-configs manualChunks 规则 |
+| v12-T12 | 新增图算法 D1 | P1 | ✅ | Bellman-Ford、Floyd-Warshall、Prim、Kruskal + 学习配置 + 单元测试，graph 算法扩展到 8 种 |
+| v12-T13 | 新增排序算法 D2 | P1 | ✅ | TimSort、ShellSort、CombSort、Counting + 学习配置 + 单元测试，sorting 算法扩展到 12 种 |
 
 ### 质量验证
 
