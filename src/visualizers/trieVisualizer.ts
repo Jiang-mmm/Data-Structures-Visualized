@@ -4,6 +4,7 @@ import { duration, EASING, transitionEnd, type Animation } from '../utils/animat
 import { calculateCenterStart } from '../utils/visualizerLayout'
 import type { TrieFlattened } from '../hooks/useTrieState'
 import { tStatic } from '../i18n/useI18n'
+import { DEFAULT_NODE_RADIUS as NODE_RADIUS } from './visualizerConstants'
 
 export interface TrieVisualizerOptions {
   isDark?: boolean
@@ -26,8 +27,7 @@ interface TrieEdge {
   char: string
 }
 
-// 与 graph 模块对齐的节点尺寸（graph NODE_RADIUS=20，trie 略大以保证可读性）
-const NODE_RADIUS = 22
+// trie 节点半径与 tree/avlTree/heap 保持一致（DEFAULT_NODE_RADIUS）
 const ROOT_RADIUS = 26
 // end-of-word 节点使用胶囊形（pill）
 const PILL_WIDTH = 48

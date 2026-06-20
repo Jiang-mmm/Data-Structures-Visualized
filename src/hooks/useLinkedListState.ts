@@ -115,7 +115,7 @@ export function useLinkedListState() {
       // slow 走 1 步：当前索引 i → 下一个索引 i+1，尾部之后为 null
       slow = slow === NULL ? NULL : (slow + 1 < data.length ? slow + 1 : NULL)
       // fast 走 2 步
-      let next = fast === NULL ? NULL : (fast + 1 < data.length ? fast + 1 : NULL)
+      const next = fast === NULL ? NULL : (fast + 1 < data.length ? fast + 1 : NULL)
       fast = next === NULL ? NULL : (next + 1 < data.length ? next + 1 : NULL)
       steps.push({ slow, fast })
 

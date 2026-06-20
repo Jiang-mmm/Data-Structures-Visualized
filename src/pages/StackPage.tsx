@@ -30,7 +30,7 @@ export default function StackPage() {
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('stack')
-  useSharedData({ dataType: 'stack', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
+  useSharedData({ dataType: 'stack', loadData, validator: Array.isArray })
   usePageTracker('stack')
 
   useKeyboard({
@@ -62,8 +62,8 @@ export default function StackPage() {
     try {
       if (svgRef.current) await animatePush(svgRef.current, value, data, dimensions, anim)
       push(value)
-    } catch (e) {
-      handleAnimationError(e, t('stack.push'))
+    } catch (error) {
+      handleAnimationError(error, t('stack.push'))
     } finally {
       setIsAnimating(false)
     }
@@ -75,7 +75,7 @@ export default function StackPage() {
     setIsAnimating(true)
     const anim = getAnimationContext()
     try { if (svgRef.current) await animatePop(svgRef.current, data, dimensions, anim); pop() }
-    catch (e) { handleAnimationError(e, t('stack.pop')) }
+    catch (error) { handleAnimationError(error, t('stack.pop')) }
     finally { setIsAnimating(false) }
   }, [isAnimating, data, dimensions, pop, setIsAnimating, getAnimationContext, svgRef])
 
@@ -84,7 +84,7 @@ export default function StackPage() {
     setIsAnimating(true)
     const anim = getAnimationContext()
     try { if (svgRef.current) await animatePeek(svgRef.current, data, dimensions, anim); peek() }
-    catch (e) { handleAnimationError(e, t('stack.peek')) }
+    catch (error) { handleAnimationError(error, t('stack.peek')) }
     finally { setIsAnimating(false) }
   }, [isAnimating, data, dimensions, peek, setIsAnimating, getAnimationContext, svgRef])
 

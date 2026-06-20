@@ -122,7 +122,7 @@ interface TimelineProps {
   maxHeight?: string
 }
 
-export default memo(function Timeline({ history, currentIndex, onJump, maxHeight = 'h-32' }: TimelineProps) {
+function Timeline({ history, currentIndex, onJump, maxHeight = 'h-32' }: TimelineProps) {
   const clickable = !!onJump
   const { t } = useGlobalSettings()
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -195,4 +195,6 @@ export default memo(function Timeline({ history, currentIndex, onJump, maxHeight
       </div>
     </div>
   )
-})
+}
+
+export default memo(Timeline)

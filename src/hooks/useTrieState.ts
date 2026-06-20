@@ -136,7 +136,7 @@ export function useTrieState() {
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
   } = useDataStructureState<TrieNode>(buildInitialTrie(), { storageKey: 'trie' })
 
-  const insert = useCallback((word: string) => {
+  const insert = useCallback((word: string): void => {
     if (!word || typeof word !== 'string' || word.trim().length === 0) {
       showToast({ type: 'error', message: tStatic('errors.enterWord') })
       addLog('error', tStatic('hooks.trieInputRequired'))
@@ -155,7 +155,7 @@ export function useTrieState() {
     showToast({ type: 'success', message: tStatic('hooks.trieInsertSuccess').replace('{word}', cleanWord) })
   }, [data, push, addLog])
 
-  const remove = useCallback((word: string) => {
+  const remove = useCallback((word: string): void => {
     if (!word || typeof word !== 'string') {
       showToast({ type: 'error', message: tStatic('errors.enterWord') })
       return

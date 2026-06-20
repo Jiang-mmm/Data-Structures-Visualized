@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo, memo, ReactNode } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo, memo, type ReactNode } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useColorTheme } from '../hooks/useColorTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'

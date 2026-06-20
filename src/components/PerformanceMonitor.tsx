@@ -25,7 +25,7 @@ function getFPSBg(fps: number): string {
   return 'bg-accent-rose'
 }
 
-export default memo(function PerformanceMonitor() {
+function PerformanceMonitor() {
   const { t } = useGlobalSettings()
   const [fps, setFps] = useState<number>(60)
   const [memory, setMemory] = useState<MemoryInfo | null>(null)
@@ -138,4 +138,6 @@ export default memo(function PerformanceMonitor() {
       )}
     </div>
   )
-})
+}
+
+export default memo(PerformanceMonitor)

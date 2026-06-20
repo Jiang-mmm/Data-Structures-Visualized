@@ -1,4 +1,4 @@
-import { useState, memo, useCallback, ReactNode } from 'react'
+import { useState, memo, useCallback, type ReactNode } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
 interface UndoPreviewButtonProps {
@@ -31,7 +31,7 @@ function formatPreviewData(data: unknown, t: (key: string) => string): string {
   return String(data).slice(0, 30)
 }
 
-export default memo(function UndoPreviewButton({
+function UndoPreviewButton({
   onClick,
   disabled,
   variant = 'outline',
@@ -98,4 +98,6 @@ export default memo(function UndoPreviewButton({
       )}
     </div>
   )
-})
+}
+
+export default memo(UndoPreviewButton)

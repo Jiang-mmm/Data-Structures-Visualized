@@ -1,4 +1,4 @@
-import { memo, ReactNode, ButtonHTMLAttributes } from 'react'
+import { memo, type ReactNode, type ButtonHTMLAttributes } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import Button, { type ButtonVariant } from './Button'
 

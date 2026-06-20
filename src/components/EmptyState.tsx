@@ -12,7 +12,7 @@ interface EmptyStateProps {
   fillKey?: string
 }
 
-export default memo(function EmptyState({ icon = '∅', titleKey = 'emptyState.defaultTitle', title, descriptionKey = 'emptyState.defaultDesc', description, onFill, fillKey = 'emptyState.fill' }: EmptyStateProps) {
+function EmptyState({ icon = '∅', titleKey = 'emptyState.defaultTitle', title, descriptionKey = 'emptyState.defaultDesc', description, onFill, fillKey = 'emptyState.fill' }: EmptyStateProps) {
   const { t } = useGlobalSettings()
   const displayTitle = title || t(titleKey)
   const displayDesc = description || t(descriptionKey)
@@ -38,4 +38,6 @@ export default memo(function EmptyState({ icon = '∅', titleKey = 'emptyState.d
       </div>
     </div>
   )
-})
+}
+
+export default memo(EmptyState)

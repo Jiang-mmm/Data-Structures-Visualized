@@ -105,7 +105,9 @@ registerSortAlgorithm('radix', {
   variant: 'teal',
   execute: async (arr, { animateCompare, animateSorted, renderSortBars }, svgRef, dimensions, anim, callbacks) => {
     const n = arr.length
-    let comparisons = 0, swaps = 0, stepCount = 0
+    let comparisons = 0
+    const swaps = 0
+    let stepCount = 0
 
     const max = Math.max(...arr)
     let exp = 1

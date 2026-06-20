@@ -39,8 +39,11 @@ function siftUp(arr: number[], index: number): number[] {
 }
 
 export function useHeapState() {
-  const { data, logs, isAnimating, setIsAnimating, push, addLog, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } =
-    useDataStructureState<number[]>(INITIAL_HEAP, { storageKey: 'heap' })
+  const {
+    data, logs, isAnimating, setIsAnimating,
+    push, addLog, reset, loadData,
+    undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
+  } = useDataStructureState<number[]>(INITIAL_HEAP, { storageKey: 'heap' })
 
   const insert = useCallback((value: string | number): boolean => {
     const { valid, value: safeValue } = validateNumericInput(value)

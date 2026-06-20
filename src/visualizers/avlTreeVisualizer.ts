@@ -20,6 +20,7 @@ import { getViewBoxSize, calculateCenterStart } from '../utils/visualizerLayout'
 import { getLargeDataThreshold } from '../utils/performanceConfig'
 import { tStatic } from '../i18n/useI18n'
 import type { AvlFlattened, AvlFlattenedNode } from '../types/hooks'
+import { DEFAULT_NODE_RADIUS as NODE_RADIUS, DEFAULT_LEVEL_HEIGHT as LEVEL_HEIGHT } from './visualizerConstants'
 
 export interface AvlTreeVisualizerOptions {
   isDark?: boolean
@@ -35,8 +36,6 @@ export interface AvlHighlightState {
   foundNodeId?: string | null
 }
 
-const NODE_RADIUS = 22
-const LEVEL_HEIGHT = 80
 const MIN_NODE_SPACING = 70
 const TOP_MARGIN = 40
 const BOTTOM_MARGIN = 40

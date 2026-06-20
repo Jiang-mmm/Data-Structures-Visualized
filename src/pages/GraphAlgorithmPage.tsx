@@ -130,9 +130,9 @@ export default function GraphAlgorithmPage() {
       hasRunRef.current = true
       addLog('info', `${selectedAlgorithm.toUpperCase()} ${t('page.done')} · ${result?.visited.length} nodes`)
       showToast({ type: 'success', message: `${selectedAlgorithm.toUpperCase()} ${t('page.done')}` })
-    } catch (e) {
-      handleAnimationError(e, selectedAlgorithm.toUpperCase())
-      addLog('error', `${t('errors.graphRunError')}: ${e}`)
+    } catch (error) {
+      handleAnimationError(error, selectedAlgorithm.toUpperCase())
+      addLog('error', `${t('errors.graphRunError')}: ${error}`)
       showToast({ type: 'error', message: t('errors.graphRunError') })
     }
 

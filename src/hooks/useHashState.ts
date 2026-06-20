@@ -22,8 +22,11 @@ function hashFn(key: number): number {
 }
 
 export function useHashState() {
-  const { data, logs, isAnimating, setIsAnimating, push, addLog, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } =
-    useDataStructureState<HashEntry[]>(INITIAL_DATA, { storageKey: 'hash' })
+  const {
+    data, logs, isAnimating, setIsAnimating,
+    push, addLog, reset, loadData,
+    undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
+  } = useDataStructureState<HashEntry[]>(INITIAL_DATA, { storageKey: 'hash' })
 
   const insert = useCallback((key: string | number, value: string): boolean => {
     const { valid, value: safeKey } = validateNumericInput(key)

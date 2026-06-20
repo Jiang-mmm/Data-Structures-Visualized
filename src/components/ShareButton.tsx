@@ -10,7 +10,7 @@ interface ShareButtonProps {
   disabled?: boolean
 }
 
-export default memo(function ShareButton({ data, dataType, disabled = false }: ShareButtonProps) {
+function ShareButton({ data, dataType, disabled = false }: ShareButtonProps) {
   const { t } = useGlobalSettings()
   const [showTooltip, setShowTooltip] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -67,4 +67,6 @@ export default memo(function ShareButton({ data, dataType, disabled = false }: S
       )}
     </div>
   )
-})
+}
+
+export default memo(ShareButton)

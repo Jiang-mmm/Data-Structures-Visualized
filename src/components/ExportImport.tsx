@@ -7,12 +7,12 @@ import { OperationButton } from './OperationBar'
 interface ExportImportProps {
   dataType: string
   data: unknown
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   onImport?: (result: any) => void
   disabled?: boolean
 }
 
-export default memo(function ExportImport({ dataType, data, onImport, disabled }: ExportImportProps) {
+function ExportImport({ dataType, data, onImport, disabled }: ExportImportProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { t } = useGlobalSettings()
 
@@ -31,8 +31,8 @@ export default memo(function ExportImport({ dataType, data, onImport, disabled }
     try {
       const result = await importState(file)
       onImport?.(result)
-    } catch (err) {
-      showToast({ type: 'error', message: `${t('exportImport.importFailed')}: ${(err as Error).message}` })
+    } catch (error) {
+      showToast({ type: 'error', message: `${t('exportImport.importFailed')}: ${(error as Error).message}` })
     }
 
     if (fileInputRef.current) {
@@ -57,4 +57,6 @@ export default memo(function ExportImport({ dataType, data, onImport, disabled }
       />
     </div>
   )
-})
+}
+
+export default memo(ExportImport)

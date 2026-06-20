@@ -4,9 +4,8 @@ import { showToast } from '../components/toastStore'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
 import { getLargeDataThreshold } from '../utils/performanceConfig'
+import { DEFAULT_NODE_RADIUS as NODE_RADIUS, DEFAULT_LEVEL_HEIGHT as LEVEL_HEIGHT } from './visualizerConstants'
 
-const NODE_RADIUS = 22
-const LEVEL_HEIGHT = 80
 const BASE_DURATION = 350
 
 const DEFAULT_EDGE_STROKE_WIDTH = 2
@@ -129,7 +128,7 @@ function calculateDefaultPosition(node: TreeNodeData, width: number, height?: nu
   const levelWidth = Math.pow(2, node.level)
   const spacing = safeWidth / (levelWidth + 1)
 
-  // Adaptive vertical spacing: shrink LEVEL_HEIGHT if tree overflows
+  // 自适应垂直间距：树溢出时缩小 LEVEL_HEIGHT
   const maxLevel = node.level
   const topMargin = 50
   const bottomMargin = 30
@@ -256,7 +255,7 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
       return
     }
 
-    // Clean up stale position entries for removed nodes
+    // 清理已删除节点的过期位置记录
     for (const key of positionStore.keys()) {
       if (key >= data.length) positionStore.delete(key)
     }
@@ -354,7 +353,7 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
       .attr('fill', C.textLight).attr('font-size', '9px')
       .text((d: TreeNodeData) => `[${d.dataIndex}]`)
 
-    // Hover micro-animation: scale up + shadow glow
+    // hover 微动画：放大 + 阴影发光
     nodeGroups
       .on('mouseover', function(this: SVGGElement) {
         const g = select(this)

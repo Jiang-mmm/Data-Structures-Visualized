@@ -35,7 +35,7 @@ export default function TreePage() {
     return (stored === 'curved' || stored === 'straight' || stored === 'orthogonal') ? stored as EdgeStyle : 'straight'
   })
   const learningMode = useLearningMode('tree')
-  useSharedData({ dataType: 'tree', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
+  useSharedData({ dataType: 'tree', loadData, validator: Array.isArray })
   usePageTracker('tree')
 
   useKeyboard({
@@ -55,8 +55,8 @@ export default function TreePage() {
     try {
       if (svgRef.current) await animateInsertNode(svgRef.current, value, data, { ...dimensions, edgeStyle }, anim)
       insert(value)
-    } catch (e) {
-      handleAnimationError(e, t('tree.insert'))
+    } catch (error) {
+      handleAnimationError(error, t('tree.insert'))
     } finally {
       setIsAnimating(false)
     }
@@ -70,7 +70,7 @@ export default function TreePage() {
     try {
       const order = fn()
       if (svgRef.current) await animateTraversal(svgRef.current, order, data, dimensions, anim)
-    } catch (e) { handleAnimationError(e, t('tree.preorder')) }
+    } catch (error) { handleAnimationError(error, t('tree.preorder')) }
     finally { setIsAnimating(false) }
   }, [isAnimating, data, dimensions, setIsAnimating, getAnimationContext, svgRef, t])
 
@@ -80,7 +80,7 @@ export default function TreePage() {
     const anim = getAnimationContext()
     const order = levelorder()
     try { if (svgRef.current) await animateLevelOrder(svgRef.current, order, data, dimensions, anim) }
-    catch (e) { handleAnimationError(e, t('tree.levelorder')) }
+    catch (error) { handleAnimationError(error, t('tree.levelorder')) }
     finally { setIsAnimating(false) }
   }, [isAnimating, data, dimensions, levelorder, setIsAnimating, getAnimationContext, svgRef, t])
 
@@ -94,7 +94,7 @@ export default function TreePage() {
     const anim = getAnimationContext()
     const { found, path } = search(value)
     try { if (svgRef.current) await animateSearch(svgRef.current, path, found, data, dimensions, anim) }
-    catch (e) { handleAnimationError(e, t('tree.search')) }
+    catch (error) { handleAnimationError(error, t('tree.search')) }
     finally { setIsAnimating(false) }
   }, [isAnimating, searchValue, data, dimensions, search, setIsAnimating, getAnimationContext, svgRef])
 
@@ -109,8 +109,8 @@ export default function TreePage() {
     try {
       if (svgRef.current) await animateDeleteNode(svgRef.current, value, data, { width: dimensions.width, height: dimensions.height }, anim)
       deleteNode(value)
-    } catch (e) {
-      handleAnimationError(e, t('common.delete'))
+    } catch (error) {
+      handleAnimationError(error, t('common.delete'))
     } finally {
       setIsAnimating(false)
     }

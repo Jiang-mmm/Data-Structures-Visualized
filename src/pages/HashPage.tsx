@@ -29,7 +29,7 @@ export default function HashPage() {
   const [keyValue, setKeyValue] = useState<string>('')
   const [valueInput, setValueInput] = useState<string>('')
   const learningMode = useLearningMode('hash')
-  useSharedData({ dataType: 'hash', loadData: ((d: unknown) => loadData(d as any)) as any, validator: (d) => Array.isArray(d) })
+  useSharedData({ dataType: 'hash', loadData, validator: (d) => Array.isArray(d) })
   usePageTracker('hash')
 
   useKeyboard({
@@ -69,8 +69,8 @@ export default function HashPage() {
       await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())))
       if (anim?.isAborted?.()) return
       if (svgRef.current) await animateInsertHash(svgRef.current, key, value, { hashFn: hashFn as any }, anim)
-    } catch (e) {
-      handleAnimationError(e, t('hash.insert'))
+    } catch (error) {
+      handleAnimationError(error, t('hash.insert'))
     } finally {
       setIsAnimating(false)
     }
@@ -88,7 +88,7 @@ export default function HashPage() {
     const anim = getAnimationContext()
     const found = search(key)
     try { if (svgRef.current) await animateSearchHash(svgRef.current, key, !!found, data, { hashFn: hashFn as any }, anim) }
-    catch (e) { handleAnimationError(e, t('hash.search')) }
+    catch (error) { handleAnimationError(error, t('hash.search')) }
     finally { setIsAnimating(false) }
   }, [isAnimating, keyValue, search, data, setIsAnimating, getAnimationContext, svgRef, hashFn])
 
@@ -103,8 +103,8 @@ export default function HashPage() {
     try {
       if (svgRef.current) await animateDeleteHash(svgRef.current, key, data, { hashFn: hashFn as any }, anim)
       remove(key)
-    } catch (e) {
-      handleAnimationError(e, t('hash.remove'))
+    } catch (error) {
+      handleAnimationError(error, t('hash.remove'))
     } finally {
       setIsAnimating(false)
     }

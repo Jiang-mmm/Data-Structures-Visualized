@@ -3,13 +3,13 @@ import { decodeData } from '../utils/shareUtils'
 import { showToast } from '../components/toastStore'
 import { tStatic } from '../i18n/useI18n'
 
-interface UseSharedDataOptions {
+interface UseSharedDataOptions<T> {
   dataType: string
-  loadData: (data: unknown) => void
+  loadData: (data: T) => void
   validator?: (data: unknown) => boolean
 }
 
-export function useSharedData({ dataType, loadData, validator }: UseSharedDataOptions) {
+export function useSharedData<T>({ dataType, loadData, validator }: UseSharedDataOptions<T>) {
   const loadedRef = useRef(false)
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export function useSharedData({ dataType, loadData, validator }: UseSharedDataOp
       return
     }
 
-    loadData(decoded)
+    loadData(decoded as T)
     showToast({ type: 'success', message: tStatic('share.loaded') })
     cleanUrl()
   }, [dataType, loadData, validator])

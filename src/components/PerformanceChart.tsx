@@ -126,7 +126,7 @@ function PerformanceChart({ results }: PerformanceChartProps) {
         }
       })
 
-      // Background stripe for each group
+      // 每组的背景条纹
       if (i % 2 === 1) {
         g.append('rect')
           .attr('class', 'bg-stripe')

@@ -7,7 +7,7 @@ interface ProgressBarProps {
   height?: string
 }
 
-export default memo(function ProgressBar({ progress, label, height = 'h-2' }: ProgressBarProps) {
+function ProgressBar({ progress, label, height = 'h-2' }: ProgressBarProps) {
   const { t } = useGlobalSettings()
   const clamped = Math.max(0, Math.min(100, progress))
 
@@ -29,4 +29,6 @@ export default memo(function ProgressBar({ progress, label, height = 'h-2' }: Pr
       {label && <span className="text-xs text-ink-light dark:text-dark-ink-light whitespace-nowrap font-mono tabular-nums">{label}</span>}
     </div>
   )
-})
+}
+
+export default memo(ProgressBar)

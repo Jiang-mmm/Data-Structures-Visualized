@@ -37,7 +37,7 @@ export default function AvlTreePage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
   const learningMode = useLearningMode('avlTree')
-  useSharedData({ dataType: 'avlTree', loadData: ((d: unknown) => loadData(d as any)) as any, validator: (d: unknown) => d !== null })
+  useSharedData({ dataType: 'avlTree', loadData, validator: (d: unknown) => d !== null })
   usePageTracker('avlTree')
 
   // 扁平化数据（仅在 data 变化时重新计算）
@@ -62,8 +62,8 @@ export default function AvlTreePage() {
       const { path } = search(value)
       if (svgRef.current) await animateInsertPath(svgRef.current, path, flattenedData, anim)
       insert(value)
-    } catch (e) {
-      handleAnimationError(e, t('avlTree.insert'))
+    } catch (error) {
+      handleAnimationError(error, t('avlTree.insert'))
     } finally {
       setIsAnimating(false)
     }
@@ -77,7 +77,7 @@ export default function AvlTreePage() {
     try {
       const order = fn()
       if (svgRef.current) await animateTraversal(svgRef.current, order, flattenedData, anim)
-    } catch (e) { handleAnimationError(e, t('avlTree.preorder')) }
+    } catch (error) { handleAnimationError(error, t('avlTree.preorder')) }
     finally { setIsAnimating(false) }
   }, [isAnimating, flattenedData, setIsAnimating, getAnimationContext, svgRef, t])
 
@@ -92,7 +92,7 @@ export default function AvlTreePage() {
     const { found, path } = search(value)
     try {
       if (svgRef.current) await animateSearchPath(svgRef.current, path, found ? value : null, flattenedData, anim)
-    } catch (e) { handleAnimationError(e, t('avlTree.search')) }
+    } catch (error) { handleAnimationError(error, t('avlTree.search')) }
     finally { setIsAnimating(false) }
   }, [isAnimating, searchValue, flattenedData, search, setIsAnimating, getAnimationContext, svgRef, t])
 
@@ -109,8 +109,8 @@ export default function AvlTreePage() {
       const { path } = search(value)
       if (svgRef.current) await animateSearchPath(svgRef.current, path, value, flattenedData, anim)
       deleteNode(value)
-    } catch (e) {
-      handleAnimationError(e, t('common.delete'))
+    } catch (error) {
+      handleAnimationError(error, t('common.delete'))
     } finally {
       setIsAnimating(false)
     }

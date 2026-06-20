@@ -35,7 +35,7 @@ export default function SortPage() {
   const { t } = useGlobalSettings()
   const { data, logs, isAnimating, setIsAnimating, stats, progress, randomize, reset, loadData, stop, runAlgorithm, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useSortState()
   const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
-  useSharedData({ dataType: 'sort', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
+  useSharedData({ dataType: 'sort', loadData, validator: Array.isArray })
   usePageTracker('sort')
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('bubble')
   const learningMode = useLearningMode(selectedAlgorithm)
@@ -65,8 +65,8 @@ export default function SortPage() {
     const anim = getAnimationContext()
     try {
       await runAlgorithm(algorithmKey, animateFns as any, svgRef, dimensions, anim)
-    } catch (e) {
-      if (e instanceof Error && e.message !== 'Animation aborted') {
+    } catch (error) {
+      if (error instanceof Error && error.message !== 'Animation aborted') {
         showToast({ type: 'error', message: t('errors.animationError').replace('{action}', '') })
       }
     } finally {

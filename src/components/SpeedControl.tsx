@@ -17,7 +17,7 @@ const SPEED_OPTIONS: SpeedOption[] = [
 
 const PRESET_KEYS = Object.keys(ANIMATION_PRESETS)
 
-export default memo(function SpeedControl() {
+function SpeedControl() {
   const { animationSpeed, setAnimationSpeed, currentPreset, applyPreset, t } = useGlobalSettings()
   const [showPresets, setShowPresets] = useState<boolean>(false)
   const [focusedIndex, setFocusedIndex] = useState<number>(-1)
@@ -102,4 +102,6 @@ export default memo(function SpeedControl() {
       </div>
     </div>
   )
-})
+}
+
+export default memo(SpeedControl)

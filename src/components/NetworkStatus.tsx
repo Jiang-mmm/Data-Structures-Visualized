@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, memo } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
-export default memo(function NetworkStatus() {
+function NetworkStatus() {
   const { t } = useGlobalSettings()
   const [showOffline, setShowOffline] = useState<boolean>(false)
   const [showReconnected, setShowReconnected] = useState<boolean>(false)
@@ -52,4 +52,6 @@ export default memo(function NetworkStatus() {
       )}
     </div>
   )
-})
+}
+
+export default memo(NetworkStatus)

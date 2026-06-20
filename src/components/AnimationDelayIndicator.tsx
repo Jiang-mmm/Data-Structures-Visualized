@@ -5,7 +5,7 @@ interface AnimationDelayIndicatorProps {
   message?: string
 }
 
-export default memo(function AnimationDelayIndicator({ message }: AnimationDelayIndicatorProps) {
+function AnimationDelayIndicator({ message }: AnimationDelayIndicatorProps) {
   const { t } = useGlobalSettings()
   const text = message || t('tree.animationStarting')
   return (
@@ -20,4 +20,6 @@ export default memo(function AnimationDelayIndicator({ message }: AnimationDelay
       </div>
     </div>
   )
-})
+}
+
+export default memo(AnimationDelayIndicator)

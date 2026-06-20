@@ -39,7 +39,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
     return
   }
 
-  // Add drop shadow for entries
+  // 为条目添加阴影
   const defs = container.select('defs')
   if (defs.select('#hash-shadow').empty()) {
     const filter = defs.append('filter').attr('id', 'hash-shadow').attr('x', '-30%').attr('y', '-30%').attr('width', '160%').attr('height', '160%')
@@ -78,7 +78,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       .attr('class', `hash-bucket-${bi}`)
       .attr('transform', `translate(${bx}, ${by})`)
 
-    // Bucket label (index number) above the box
+    // 桶标签（索引号）在框上方
     bucketGroup.append('text')
       .attr('x', BUCKET_WIDTH / 2).attr('y', -8)
       .attr('text-anchor', 'middle')
@@ -86,14 +86,14 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       .attr('font-family', 'var(--font-mono)')
       .text(`[${bi}]`)
 
-    // Bucket box
+    // 桶框
     bucketGroup.append('rect')
       .attr('x', 0).attr('y', 0)
       .attr('width', BUCKET_WIDTH).attr('height', BUCKET_HEIGHT)
       .attr('rx', 6)
       .attr('fill', C.bucketBg).attr('stroke', bucket.entries.length > 0 ? C.nodeDefaultStroke : C.bucketStroke).attr('stroke-width', bucket.entries.length > 0 ? 2 : 1.5)
 
-    // Entry count badge
+    // 条目数量徽章
     if (bucket.entries.length > 0) {
       bucketGroup.append('rect')
         .attr('x', BUCKET_WIDTH - 12).attr('y', -12)
@@ -114,7 +114,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       const entry = bucket.entries[ei]
       const ey = entryStartY + ei * (ENTRY_RADIUS * 2 + 24)
 
-      // Connector line from bucket to first entry (with arrow)
+      // 从桶到第一个条目的连接线（带箭头）
       if (ei === 0) {
         container.append('line')
           .attr('x1', centerX).attr('y1', by + BUCKET_HEIGHT)
@@ -123,7 +123,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
           .attr('marker-end', 'url(#hash-arrow)')
       }
 
-      // Connector between entries (with arrow)
+      // 条目之间的连接线（带箭头）
       if (ei > 0) {
         const prevEy = entryStartY + (ei - 1) * (ENTRY_RADIUS * 2 + 24)
         container.append('line')
@@ -167,14 +167,14 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
         .attr('fill', gradUrl('node-default')).attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
         .attr('filter', 'url(#hash-shadow)')
 
-      // Key text (top half of circle)
+      // key 文本（圆圈上半部分）
       entryGroup.append('text')
         .attr('dy', '-0.2em').attr('text-anchor', 'middle')
         .attr('fill', C.textWhite).attr('font-size', '12px').attr('font-weight', 'bold')
         .attr('font-family', 'var(--font-mono)')
         .text(entry.key)
 
-      // Value text (below circle, not inside)
+      // value 文本（圆圈下方，不在内部）
       const fullValue = String(entry.value)
       const displayValue = fullValue.length > 10 ? fullValue.slice(0, 9) + '…' : fullValue
       entryGroup.append('text')
@@ -252,12 +252,12 @@ export async function animateInsertHash(svg: SVGSVGElement, key: number | string
     const match = originalTransform.match(/translate\(([^,]+),\s*([^)]+)\)/)
     const targetY = match ? parseFloat(match[2]) : 0
 
-    // Start from above
+    // 从上方开始
     entryGroup.attr('transform', originalTransform.replace(/translate\(([^,]+),\s*[^)]+\)/, `translate($1, ${targetY - 60})`))
     circle.attr('opacity', 0)
     texts.attr('opacity', 0)
 
-    // Drop down with smooth cubic movement
+    // 平滑三次曲线下落
     await transitionEnd(
       entryGroup
         .transition().duration(duration(350)).ease(EASING.easeOutCubic)

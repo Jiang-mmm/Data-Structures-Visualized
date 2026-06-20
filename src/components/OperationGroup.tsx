@@ -32,7 +32,7 @@ function OperationGroup({
   useEffect(() => {
     if (!contentRef.current) return
     if (isOpen) {
-      // Only animate open if not already fully open ('none')
+      // 仅在未完全展开时播放展开动画（'none'）
       if (maxHeight !== 'none') {
         setMaxHeight(`${contentRef.current.scrollHeight}px`)
         const timer = setTimeout(() => setMaxHeight('none'), 200)

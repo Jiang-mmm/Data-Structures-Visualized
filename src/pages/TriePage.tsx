@@ -27,7 +27,7 @@ export default function TriePage() {
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('trie')
-  useSharedData({ dataType: 'trie', loadData: ((d: unknown) => loadData(d as any)) as any, validator: (d): d is unknown => !!(d && typeof d === 'object' && !Array.isArray(d)) })
+  useSharedData({ dataType: 'trie', loadData, validator: (d): d is unknown => !!(d && typeof d === 'object' && !Array.isArray(d)) })
   usePageTracker('trie')
 
   useKeyboard({
@@ -65,8 +65,8 @@ export default function TriePage() {
       await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())))
       if (anim?.isAborted?.()) return
       if (svgRef.current) await animateInsertTrie(svgRef.current, word, anim)
-    } catch (e) {
-      handleAnimationError(e, t('trie.insert'))
+    } catch (error) {
+      handleAnimationError(error, t('trie.insert'))
     } finally {
       setIsAnimating(false)
     }
@@ -85,8 +85,8 @@ export default function TriePage() {
     try {
       if (svgRef.current) await animateDeleteTrie(svgRef.current, word, anim)
       remove(word)
-    } catch (e) {
-      handleAnimationError(e, t('trie.delete'))
+    } catch (error) {
+      handleAnimationError(error, t('trie.delete'))
     } finally {
       setIsAnimating(false)
     }
@@ -105,8 +105,8 @@ export default function TriePage() {
     try {
       const result = search(word)
       if (svgRef.current) await animateSearchTrie(svgRef.current, result.found, word, anim)
-    } catch (e) {
-      handleAnimationError(e, t('trie.search'))
+    } catch (error) {
+      handleAnimationError(error, t('trie.search'))
     } finally {
       setIsAnimating(false)
     }
@@ -129,8 +129,8 @@ export default function TriePage() {
         showToast({ type: 'info', message: t('errors.noPrefixMatch') })
       }
       if (svgRef.current) await animateSearchTrie(svgRef.current, result.words.length > 0, prefix, anim)
-    } catch (e) {
-      handleAnimationError(e, t('trie.prefixSearch'))
+    } catch (error) {
+      handleAnimationError(error, t('trie.prefixSearch'))
     } finally {
       setIsAnimating(false)
     }

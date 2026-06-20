@@ -25,7 +25,7 @@ function isValidStoredData(data: unknown): boolean {
     const obj = data as Record<string, unknown>
     const keys = Object.keys(obj)
     if (keys.length === 0) return false
-    // Validate that object values are safe JSON-like primitives/objects/arrays
+    // 验证对象值是安全的 JSON 类原生类型/对象/数组
     return keys.every(k => {
       const v = obj[k]
       if (v === null || v === undefined || typeof v === 'boolean' || typeof v === 'string') return true
@@ -105,7 +105,7 @@ export function useDataStructureState<T>(initialData: T, options: DataStructureS
     }
   }, [])
 
-  // Debounced localStorage write to avoid excessive I/O
+  // 防抖 localStorage 写入以避免过多 I/O
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const dataRef = useRef(data)
   dataRef.current = data
@@ -122,8 +122,8 @@ export function useDataStructureState<T>(initialData: T, options: DataStructureS
     }
   }, [storageKey, data])
 
-  // Flush pending save before page unload to prevent data loss.
-  // Only save when there is a pending debounced write; otherwise external
+  // 页面卸载前刷新待保存数据以防止数据丢失。
+  // 仅在有待处理的防抖写入时保存；否则外部
   // modifications to localStorage (e.g. test setup) could be overwritten by
   // stale in-memory data during reload/navigation.
   useEffect(() => {

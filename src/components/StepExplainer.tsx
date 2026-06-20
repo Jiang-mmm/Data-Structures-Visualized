@@ -1,4 +1,4 @@
-import { memo, useState, useEffect, useRef, useCallback } from 'react'
+import { memo, useState, useEffect, useRef, useCallback, type ReactNode } from 'react'
 import type { LearningStep } from '../configs/learning'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
@@ -14,7 +14,7 @@ interface StepExplainerProps {
   isAnimating: boolean
 }
 
-function highlightCode(line: string, terms: string[], _isHighlighted: boolean): React.ReactNode {
+function highlightCode(line: string, terms: string[], _isHighlighted: boolean): ReactNode {
   if (!terms.length || !line.trim()) return line
 
   const escaped = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))

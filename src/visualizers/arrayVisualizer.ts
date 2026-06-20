@@ -78,7 +78,7 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVi
 
     const ns = 'http://www.w3.org/2000/svg'
 
-    // Add drop shadow filter for array cells
+    // 为数组单元格添加阴影滤镜
     const defs = svg.querySelector('defs')
     if (defs && !defs.querySelector('#array-shadow')) {
       const filter = document.createElementNS(ns, 'filter')

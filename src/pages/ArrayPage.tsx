@@ -31,7 +31,7 @@ export default function ArrayPage() {
   const [inputValue, setInputValue] = useState<string>('')
   const [inputIndex, setInputIndex] = useState<string>('')
   const learningMode = useLearningMode('array')
-  useSharedData({ dataType: 'array', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
+  useSharedData({ dataType: 'array', loadData, validator: Array.isArray })
   usePageTracker('array')
 
   useKeyboard({
@@ -89,8 +89,8 @@ export default function ArrayPage() {
         await animateInsert(svgRef.current, index, value, data, dimensions, anim)
       }
       insert(value, index)
-    } catch (e) {
-      handleAnimationError(e, t('array.insert'))
+    } catch (error) {
+      handleAnimationError(error, t('array.insert'))
     } finally {
       setIsAnimating(false)
     }
@@ -108,8 +108,8 @@ export default function ArrayPage() {
     try {
       if (svgRef.current) await animateDelete(svgRef.current, index, data, dimensions, anim)
       remove(index)
-    } catch (e) {
-      handleAnimationError(e, t('common.delete'))
+    } catch (error) {
+      handleAnimationError(error, t('common.delete'))
     } finally {
       setIsAnimating(false)
     }
@@ -126,8 +126,8 @@ export default function ArrayPage() {
     try {
       const idx = search(value)
       if (svgRef.current) await animateSearch(svgRef.current, idx, data, dimensions, anim)
-    } catch (e) {
-      handleAnimationError(e, t('common.search'))
+    } catch (error) {
+      handleAnimationError(error, t('common.search'))
     } finally {
       setIsAnimating(false)
     }
@@ -144,8 +144,8 @@ export default function ArrayPage() {
     try {
       const indices = searchAll(value)
       if (svgRef.current) await animateSearchAll(svgRef.current, indices, data, dimensions, anim)
-    } catch (e) {
-      handleAnimationError(e, t('common.search'))
+    } catch (error) {
+      handleAnimationError(error, t('common.search'))
     } finally {
       setIsAnimating(false)
     }
@@ -167,8 +167,8 @@ export default function ArrayPage() {
         if (!isSorted) return
       }
       if (svgRef.current) await animateBinarySearch(svgRef.current, value, data, dimensions, anim)
-    } catch (e) {
-      handleAnimationError(e, t('common.search'))
+    } catch (error) {
+      handleAnimationError(error, t('common.search'))
     } finally {
       setIsAnimating(false)
     }

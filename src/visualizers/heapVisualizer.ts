@@ -4,8 +4,7 @@ import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils
 import { tStatic } from '../i18n/useI18n'
 import { calculateCenterStart } from '../utils/visualizerLayout'
 import { shouldSkipAnimation } from '../utils/performanceConfig'
-
-const NODE_RADIUS = 22
+import { DEFAULT_NODE_RADIUS as NODE_RADIUS } from './visualizerConstants'
 
 interface HeapOptions {
   width: number
@@ -184,7 +183,7 @@ export async function animateInsertHeap(svg: SVGSVGElement, _value: number, data
   const container = select(svg)
   const defaultEase = getDefaultEasing()
 
-  // Find the newly inserted node (last heap-node in DOM)
+  // 查找新插入的节点（DOM 中最后一个堆节点）
   const allNodes = container.selectAll('.heap-node').nodes()
   if (allNodes.length === 0) return
   const newNode = select(allNodes[allNodes.length - 1] as SVGGElement)
@@ -291,7 +290,7 @@ export async function animateExtractHeap(svg: SVGSVGElement, anim?: Animation) {
 
       if (anim?.isAborted?.()) return
 
-      // Highlight left child
+      // 高亮左子节点
       if (!leftGroup.empty()) {
         // 拆分链式过渡为两段顺序 await
         const leftCircle = leftGroup.select('circle')
@@ -310,7 +309,7 @@ export async function animateExtractHeap(svg: SVGSVGElement, anim?: Animation) {
         )
       }
 
-      // Highlight right child if exists
+      // 高亮右子节点（如果存在）
       if (rightGroup && !rightGroup.empty()) {
         // 拆分链式过渡为两段顺序 await
         const rightCircle = rightGroup.select('circle')
@@ -329,7 +328,7 @@ export async function animateExtractHeap(svg: SVGSVGElement, anim?: Animation) {
         )
       }
 
-      // Move to the child that would be swapped (simulated)
+      // 移动到需要交换的子节点（模拟）
       idx = leftIdx
     }
 
@@ -358,7 +357,7 @@ export async function animatePeekHeap(svg: SVGSVGElement, anim?: Animation) {
 
   if (!rootGroup.empty()) {
     if (anim?.isAborted?.()) return
-    // Elastic bounce effect for peek
+    // peek 的弹性反弹效果
     // 拆分链式过渡为两段顺序 await
     const rootCircle = rootGroup.select('circle')
     await transitionEnd(

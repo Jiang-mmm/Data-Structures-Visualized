@@ -30,7 +30,7 @@ export default function QueuePage() {
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('queue')
-  useSharedData({ dataType: 'queue', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
+  useSharedData({ dataType: 'queue', loadData, validator: Array.isArray })
   usePageTracker('queue')
 
   useKeyboard({
@@ -62,8 +62,8 @@ export default function QueuePage() {
     try {
       if (svgRef.current) await animateEnqueue(svgRef.current, value, data, dimensions, anim)
       enqueue(value)
-    } catch (e) {
-      handleAnimationError(e, t('queue.enqueue'))
+    } catch (error) {
+      handleAnimationError(error, t('queue.enqueue'))
     } finally {
       setIsAnimating(false)
     }
@@ -75,7 +75,7 @@ export default function QueuePage() {
     setIsAnimating(true)
     const anim = getAnimationContext()
     try { if (svgRef.current) await animateDequeue(svgRef.current, data, dimensions, anim); dequeue() }
-    catch (e) { handleAnimationError(e, t('queue.dequeue')) }
+    catch (error) { handleAnimationError(error, t('queue.dequeue')) }
     finally { setIsAnimating(false) }
   }, [isAnimating, data, setIsAnimating, getAnimationContext, svgRef, dimensions, dequeue])
 
@@ -84,7 +84,7 @@ export default function QueuePage() {
     setIsAnimating(true)
     const anim = getAnimationContext()
     try { if (svgRef.current) await animateFront(svgRef.current, data, dimensions, anim); front() }
-    catch (e) { handleAnimationError(e, t('queue.peek')) }
+    catch (error) { handleAnimationError(error, t('queue.peek')) }
     finally { setIsAnimating(false) }
   }, [isAnimating, data, setIsAnimating, getAnimationContext, svgRef, dimensions, front])
 

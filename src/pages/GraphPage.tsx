@@ -38,7 +38,7 @@ export default function GraphPage() {
   const [algorithmStart, setAlgorithmStart] = useState<string>('A')
   const [algorithmEnd, setAlgorithmEnd] = useState<string>('F')
   const learningMode = useLearningMode('graph')
-  useSharedData({ dataType: 'graph', loadData: ((d: unknown) => loadData(d as any)) as any, validator: (d): d is unknown => !!(d && typeof d === 'object' && 'nodes' in d && 'links' in d && Array.isArray((d as Record<string, unknown>).nodes) && Array.isArray((d as Record<string, unknown>).links)) })
+  useSharedData({ dataType: 'graph', loadData, validator: (d): d is unknown => !!(d && typeof d === 'object' && 'nodes' in d && 'links' in d && Array.isArray((d as Record<string, unknown>).nodes) && Array.isArray((d as Record<string, unknown>).links)) })
   usePageTracker('graph')
 
   useKeyboard({
@@ -95,8 +95,8 @@ export default function GraphPage() {
       if (svgRef.current) {
         await animateBFS(svgRef.current, algorithmStart.toUpperCase(), nodes, links, dimensions, anim)
       }
-    } catch (e) {
-      handleAnimationError(e, 'BFS')
+    } catch (error) {
+      handleAnimationError(error, 'BFS')
     } finally {
       setIsAnimating(false)
     }
@@ -110,8 +110,8 @@ export default function GraphPage() {
       if (svgRef.current) {
         await animateDFS(svgRef.current, algorithmStart.toUpperCase(), nodes, links, dimensions, anim)
       }
-    } catch (e) {
-      handleAnimationError(e, 'DFS')
+    } catch (error) {
+      handleAnimationError(error, 'DFS')
     } finally {
       setIsAnimating(false)
     }
@@ -125,8 +125,8 @@ export default function GraphPage() {
       if (svgRef.current) {
         await animateDijkstra(svgRef.current, algorithmStart.toUpperCase(), algorithmEnd.toUpperCase(), nodes, links, dimensions, anim)
       }
-    } catch (e) {
-      handleAnimationError(e, 'Dijkstra')
+    } catch (error) {
+      handleAnimationError(error, 'Dijkstra')
     } finally {
       setIsAnimating(false)
     }

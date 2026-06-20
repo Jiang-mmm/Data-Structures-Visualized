@@ -33,7 +33,7 @@ export default function LinkedListPage() {
   const [inputIndex, setInputIndex] = useState<string>('')
   const [isDoublyMode, setIsDoublyMode] = useState(false)
   const learningMode = useLearningMode(isDoublyMode ? 'doublyLinkedList' : 'linkedlist')
-  useSharedData({ dataType: 'linkedlist', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
+  useSharedData({ dataType: 'linkedlist', loadData, validator: Array.isArray })
   usePageTracker('linkedlist')
 
   useKeyboard({
@@ -77,8 +77,8 @@ export default function LinkedListPage() {
     try {
       if (svgRef.current) await animateInsertHead(svgRef.current, value, data, dimensions, anim)
       insertHead(value)
-    } catch (e) {
-      handleAnimationError(e, t('linkedlist.pushFront'))
+    } catch (error) {
+      handleAnimationError(error, t('linkedlist.pushFront'))
     } finally {
       setIsAnimating(false)
     }
@@ -94,8 +94,8 @@ export default function LinkedListPage() {
     try {
       if (svgRef.current) await animateInsertTail(svgRef.current, value, data, dimensions, anim)
       insertTail(value)
-    } catch (e) {
-      handleAnimationError(e, t('linkedlist.pushBack'))
+    } catch (error) {
+      handleAnimationError(error, t('linkedlist.pushBack'))
     } finally {
       setIsAnimating(false)
     }
@@ -111,8 +111,8 @@ export default function LinkedListPage() {
     try {
       if (svgRef.current) await animateDeleteNode(svgRef.current, index, data, dimensions, anim)
       deleteAt(index)
-    } catch (e) {
-      handleAnimationError(e, t('common.delete'))
+    } catch (error) {
+      handleAnimationError(error, t('common.delete'))
     } finally {
       setIsAnimating(false)
     }
@@ -128,8 +128,8 @@ export default function LinkedListPage() {
     try {
       const idx = search(value)
       if (svgRef.current) await animateSearchNode(svgRef.current, idx, data, dimensions, anim)
-    } catch (e) {
-      handleAnimationError(e, t('linkedlist.find'))
+    } catch (error) {
+      handleAnimationError(error, t('linkedlist.find'))
     } finally {
       setIsAnimating(false)
     }
@@ -147,8 +147,8 @@ export default function LinkedListPage() {
     try {
       if (svgRef.current) await animateInsertAt(svgRef.current, index, value, data, dimensions, anim)
       insertAt(index, value)
-    } catch (e) {
-      handleAnimationError(e, t('linkedlist.insertAt'))
+    } catch (error) {
+      handleAnimationError(error, t('linkedlist.insertAt'))
     } finally {
       setIsAnimating(false)
     }
@@ -167,8 +167,8 @@ export default function LinkedListPage() {
     try {
       if (svgRef.current) await animateReverse(svgRef.current, data, dimensions, anim)
       reverse()
-    } catch (e) {
-      handleAnimationError(e, t('linkedlist.reverse'))
+    } catch (error) {
+      handleAnimationError(error, t('linkedlist.reverse'))
     } finally {
       setIsAnimating(false)
     }
@@ -182,8 +182,8 @@ export default function LinkedListPage() {
     const anim = getAnimationContext()
     try {
       if (svgRef.current) await animateCycleDetection(svgRef.current, steps, anim)
-    } catch (e) {
-      handleAnimationError(e, t('linkedlist.detectCycle'))
+    } catch (error) {
+      handleAnimationError(error, t('linkedlist.detectCycle'))
     } finally {
       setIsAnimating(false)
     }

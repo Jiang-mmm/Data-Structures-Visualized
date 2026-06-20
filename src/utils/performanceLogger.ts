@@ -239,10 +239,10 @@ export function measurePerf<T>(functionName: string, fn: () => T): T {
     const elapsed = performance.now() - start
     perfLogger.recordFunction(functionName, elapsed)
     return result
-  } catch (err) {
+  } catch (error) {
     const elapsed = performance.now() - start
     perfLogger.recordFunction(functionName, elapsed)
-    throw err
+    throw error
   }
 }
 
@@ -253,10 +253,10 @@ export async function measurePerfAsync<T>(functionName: string, fn: () => Promis
     const elapsed = performance.now() - start
     perfLogger.recordFunction(functionName, elapsed)
     return result
-  } catch (err) {
+  } catch (error) {
     const elapsed = performance.now() - start
     perfLogger.recordFunction(functionName, elapsed)
-    throw err
+    throw error
   }
 }
 

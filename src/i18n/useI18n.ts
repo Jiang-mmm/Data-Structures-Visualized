@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { zh, en, Locale } from './locales'
+import { zh, en, type Locale } from './locales'
 
 const LANGUAGES: Record<string, Locale> = {
   zh,

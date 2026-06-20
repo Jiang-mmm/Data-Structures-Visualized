@@ -29,7 +29,7 @@ export default function HeapPage() {
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('heapStructure')
-  useSharedData({ dataType: 'heap', loadData: ((d: unknown) => loadData(d as any)) as any, validator: Array.isArray })
+  useSharedData({ dataType: 'heap', loadData, validator: Array.isArray })
   usePageTracker('heap')
 
   useKeyboard({
@@ -67,8 +67,8 @@ export default function HeapPage() {
       await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())))
       if (anim?.isAborted?.()) return
       if (svgRef.current) await animateInsertHeap(svgRef.current, value, data, anim)
-    } catch (e) {
-      handleAnimationError(e, t('heap.insert'))
+    } catch (error) {
+      handleAnimationError(error, t('heap.insert'))
     } finally {
       setIsAnimating(false)
     }
@@ -81,8 +81,8 @@ export default function HeapPage() {
     try {
       if (svgRef.current) await animateExtractHeap(svgRef.current, anim)
       extractMax()
-    } catch (e) {
-      handleAnimationError(e, t('heap.extractMax'))
+    } catch (error) {
+      handleAnimationError(error, t('heap.extractMax'))
     } finally {
       setIsAnimating(false)
     }
@@ -95,8 +95,8 @@ export default function HeapPage() {
     try {
       if (svgRef.current) await animatePeekHeap(svgRef.current, anim)
       peek()
-    } catch (e) {
-      handleAnimationError(e, t('heap.peek'))
+    } catch (error) {
+      handleAnimationError(error, t('heap.peek'))
     } finally {
       setIsAnimating(false)
     }

@@ -243,7 +243,7 @@ export default function SortComparePage() {
             progress: 100,
           },
         }))
-      } catch (e) {
+      } catch {
         setAlgoResults(prev => ({
           ...prev,
           [key]: { comparisons: 0, swaps: 0, steps: 0, done: true, error: true },

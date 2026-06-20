@@ -1,4 +1,4 @@
-import { Component, ReactNode, ErrorInfo } from 'react'
+import { Component, type ReactNode, type ErrorInfo } from 'react'
 import { showToast } from './toastStore'
 import { tStatic } from '../i18n/useI18n'
 
