@@ -3,7 +3,37 @@
 > **版本:** v12.0
 > **更新日期:** 2026-06-20
 > **状态:** v12.0 迭代（跳表 / 并查集 / 红黑树 / 全局搜索 / D1 新增 4 图算法 / D2 新增 4 排序算法）已完成；v12.x 后续阶段（B 树、线段树、测验系统等）待开始
+> **v13 起点:** 2026-06-20 完成全面代码体检（56 条独立问题），4 阶段修复路线已就位
 > **详细迭代计划:** docs/iteration-plan-v10.md（最新），v10/v11/v12 迭代记录见 WORKLOG.md
+> **v13 体检报告:** [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md)
+
+---
+
+## v13 修复路线（来自 audit-merged.md，2026-06-20 待启动）
+
+| Phase | 主题 | 包含问题 | 预计工时 | 验证方式 |
+|-------|------|----------|----------|----------|
+| **A** | 紧急修复（安全+数据完整性） | S-01/S-02/S-03/E-01/E-04、A-01、A-05 | 1~2 天 | `npm ci --dry-run` 通过；恶意 localStorage 注入测试；E2E 数据导入导出往返 |
+| **B** | 体验+工程优化（性能+渲染+a11y） | P-01~P-04、ANIM-1~5、PERF-1~5、VIZ-1~5、BUG-1~7、A11Y-1~6、MOB-1~6、FB-1~6 | 3~5 天 | 单元测试 100% 覆盖改动函数；E2E 跑 a11y + core + comprehensive；axe-core 零违规 |
+| **C** | 文档完善（一致性+API 文档） | D-01~D-07、E-02、E-07、E-09、E-10 | 1~2 天 | 文档自检脚本通过；CONTRIBUTING + API docs 在线可读 |
+| **D** | 测试+CI 升级（e2e 框架+覆盖率可视化） | T-01~T-08、E-03、E-05、E-06、E-08 | 2~3 天 | Playwright Test 框架跑通；CI artifacts 上传；E2E 时间 < 30 分钟 |
+
+**总预计工时**: 7~12 天（单人）
+
+### Top10 优先清单
+
+| 序 | 标签 | 等级 | 问题 | 文件 | 修复方向 |
+|----|------|------|------|------|----------|
+| 1 | A-独报 | P1 | devDependencies 版本越界（vite ^8 / vitest ^4 / eslint ^10 / tailwind ^4.3 / @sentry ^10） | `package.json:38-54` | `npm ci` 校验 + CI `npm ls --depth=0` |
+| 2 | 共识 | P1 | `isValidStoredData` 不递归深度 + `loadFromStorage` `JSON.parse as T` | `useDataStructureState.ts:14-51` | zod/valibot 统一 schema |
+| 3 | 共识 | P1 | useVisualizer rafId 闭包错乱 + animationEngine 模块单例 + wait() 闭包链 | `useVisualizer.ts:40-66` + `animationEngine.ts:20-30, 286-293` | rafId 提 ref；preset 挂 useVisualizer() 上下文；wait 加 clearTimers() |
+| 4 | 共识 | P1 | `treeVisualizer positionStore` 全局单例 | `treeVisualizer.ts:39-51` | `Map<svgElement, Map<dataIndex, pos>>` 绑 svg |
+| 5 | A-独报 | P1 | `useDataStructureState` 渲染阶段写 ref | `useDataStructureState.ts:110-111` | useEffect 包裹 |
+| 6 | A-独报 | P1 | `react-hooks/set-state-in-effect` 永久降级 warn | `eslint.config.js:36-37` | 逐文件开启 error 修补后启用 |
+| 7 | A-独报 | P1 | vite.config.js 配 `loli.net` 注释写 google fonts | `vite.config.js:27-45` | 移除 loli.net 规则 |
+| 8 | B-独报 | P1 | InfoPanel 自动跳转 + LogPanel aria-live 双重轰炸 | `InfoPanel.tsx:36-48` + `LogPanel.tsx:60-61` | 自动跳转改高亮+徽标；aria-relevant=additions |
+| 9 | B-独报 | P1 | 树/图键盘 ↑↓ 跳"前/后节点"而非"父/子" + AVL/UnionFind 节点不可 tab | `treeVisualizer.ts:322-335` 等 4 文件 | parentMap + 补 tabindex/role/aria-label |
+| 10 | B-独报 | P1 | undo/redo/applyPreset 不打断正在跑的动画 | `useHistory.ts:27-35` 等 3 文件 | 先 `animRef.current?.abort()` |
 
 ---
 

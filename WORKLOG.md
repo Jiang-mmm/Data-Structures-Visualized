@@ -2,6 +2,66 @@
 
 ---
 
+## 2026-06-20 | v13 全面代码体检完成（双模型互盲 + 集中仲裁）
+
+### 体检方法
+
+- **范围**: 6 维（架构/安全/性能/可测试性/文档/工程化）+ 8 角度（visualizer 差异/动画性能/教学闭环/移动端/a11y/visualizer bug/性能监控/教学反馈）
+- **深度**: 双模型互盲 — Subagent A（工程审计师）独立审查 44 条 + Subagent B（教学体验+渲染工程师，**未参考 A 报告**）独立审查 45 条
+- **仲裁**: 我合并去重，按 `[共识]/[A-独报-工程]/[B-独报-体验]/[仲裁]` 标签分级
+- **结果**: 89 条原始问题 → 56 条独立问题（共识 6 + A-独报 21 + B-独报 29）
+
+### 问题统计
+
+| 等级 | 共识 | A-独报 | B-独报 | 合计 |
+|------|------|--------|--------|------|
+| P0 致命 | 0 | 0 | 0 | 0 |
+| P1 高 | 4 | 11 | 14 | **29** |
+| P2 中 | 2 | 9 | 13 | **24** |
+| P3 低 | 0 | 1 | 2 | **3** |
+| **合计** | **6** | **21** | **29** | **56** |
+
+### 产物（feature/v13-code-audit 分支）
+
+| 文件 | 路径 |
+|------|------|
+| Design spec | [docs/superpowers/specs/2026-06-20-v13-code-audit-design.md](./docs/superpowers/specs/2026-06-20-v13-code-audit-design.md) |
+| 实施计划 | [docs/superpowers/plans/2026-06-20-v13-code-audit-plan.md](./docs/superpowers/plans/2026-06-20-v13-code-audit-plan.md) |
+| Subagent A 报告 | [docs/audit-2026-06-20/audit-report-A.md](./docs/audit-2026-06-20/audit-report-A.md) |
+| Subagent B 报告 | [docs/audit-2026-06-20/audit-report-B.md](./docs/audit-2026-06-20/audit-report-B.md) |
+| 合并仲裁报告（核心） | [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md) |
+
+### v13 修复路线（4 阶段，7~12 天单人）
+
+- **Phase A** 紧急修复（安全+数据完整性）1~2 天
+- **Phase B** 体验+工程优化（性能+渲染+a11y）3~5 天
+- **Phase C** 文档完善（一致性+API 文档）1~2 天
+- **Phase D** 测试+CI 升级（e2e 框架+覆盖率可视化）2~3 天
+
+### 关键 Top10（详见 audit-merged.md）
+
+| 序 | 问题 | 标签 |
+|----|------|------|
+| 1 | devDependencies 版本越界（vite ^8 / vitest ^4 / eslint ^10 / tailwind ^4.3 / @sentry ^10） | A-独报 |
+| 2 | `isValidStoredData` 不递归深度 + `loadFromStorage` `JSON.parse as T` | 共识 |
+| 3 | useVisualizer rafId 闭包错乱 + animationEngine 模块单例 + wait() 闭包链 | 共识 |
+| 4 | `treeVisualizer positionStore` 全局单例 | 共识 |
+| 5 | `useDataStructureState` 渲染阶段写 ref | A-独报 |
+| 6 | `react-hooks/set-state-in-effect` 永久降级 warn | A-独报 |
+| 7 | vite.config.js 配 `loli.net` 注释写 google fonts | A-独报 |
+| 8 | InfoPanel 自动跳转 + LogPanel aria-live 双重轰炸 | B-独报 |
+| 9 | 树/图键盘 ↑↓ 跳"前/后节点"而非"父/子" + AVL/UnionFind 节点不可 tab | B-独报 |
+| 10 | undo/redo/applyPreset 不打断正在跑的动画 | B-独报 |
+
+### 工作纪律
+
+- 边界：仅文档/审计产物，无业务代码改动
+- 分支：`feature/v13-code-audit`（基于 main），不 push、不合并 main
+- 1 个 commit：`docs: v13 全面代码体检报告与实施计划`
+- 后续：v13 启动时按 Phase A→D 顺序执行，修复前需先做 TDD 测试
+
+---
+
 ## 2026-06-20 | v12.0 部署完成：CI + Deploy + GitHub Pages 全链路通过
 
 ### 部署结果（v12.0，5532edf）

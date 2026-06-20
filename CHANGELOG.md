@@ -4,6 +4,24 @@
 
 ---
 
+## [v13.0.0-rc1] - 2026-06-20
+
+### Meta
+- 完成 v13 全面代码体检（**双模型互盲 + 集中仲裁**）
+- **范围**：6 维（架构/安全/性能/可测试性/文档/工程化）+ 8 角度（visualizer 差异/动画性能/教学闭环/移动端/a11y/visualizer bug/性能监控/教学反馈）
+- **方法**：Subagent A（工程审计师）独立审查 44 条 + Subagent B（教学体验+渲染工程师，**双盲**）独立审查 45 条 → 我合并仲裁 56 条独立问题
+- **产物**：
+  - [Design Spec](./docs/superpowers/specs/2026-06-20-v13-code-audit-design.md)
+  - [实施计划](./docs/superpowers/plans/2026-06-20-v13-code-audit-plan.md)
+  - [Subagent A 报告（工程）](./docs/audit-2026-06-20/audit-report-A.md)
+  - [Subagent B 报告（教学+渲染）](./docs/audit-2026-06-20/audit-report-B.md)
+  - [合并仲裁报告（含 Top10 + v13 路线）](./docs/audit-2026-06-20/audit-merged.md)
+- **分级**：P0 致命 0 / P1 高 29 / P2 中 24 / P3 低 3
+- **路线**：v13 Phase A（紧急修复 1~2 天）→ B（体验+工程 3~5 天）→ C（文档 1~2 天）→ D（测试+CI 2~3 天）
+- **状态**：仅元数据，不含代码改动；代码修复待 v13 启动时按 Phase A→D 顺序执行
+
+---
+
 ## [v12.0.0] - 2026-06-20
 
 ### 新增

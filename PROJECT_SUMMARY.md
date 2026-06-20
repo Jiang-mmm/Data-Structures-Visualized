@@ -7,6 +7,45 @@
 
 ---
 
+## v13 起点（2026-06-20 全面代码体检完成）
+
+> **审计方法**: 双模型互盲 + 集中仲裁
+> **产物**: [合并仲裁报告](./docs/audit-2026-06-20/audit-merged.md) / [设计 spec](./docs/superpowers/specs/2026-06-20-v13-code-audit-design.md) / [实施计划](./docs/superpowers/plans/2026-06-20-v13-code-audit-plan.md)
+> **问题数**: 56 条独立问题（P0: 0 / P1: 29 / P2: 24 / P3: 3）— 共识 6 + A-独报 21 + B-独报 29
+
+### v13 路线（4 阶段，7~12 天单人）
+
+| Phase | 主题 | 工时 |
+|-------|------|------|
+| A | 紧急修复（安全+数据完整性） | 1~2 天 |
+| B | 体验+工程优化（性能+渲染+a11y） | 3~5 天 |
+| C | 文档完善（一致性+API 文档） | 1~2 天 |
+| D | 测试+CI 升级（e2e 框架+覆盖率可视化） | 2~3 天 |
+
+### Top10 优先（详见 audit-merged.md）
+
+1. devDependencies 版本越界（A-独报 P1）
+2. `isValidStoredData` 不递归深度（共识 P1）
+3. useVisualizer rafId 闭包错乱 + animationEngine 模块单例 + wait() 闭包链（共识 P1）
+4. `treeVisualizer positionStore` 全局单例（共识 P1）
+5. `useDataStructureState` 渲染阶段写 ref（A-独报 P1）
+6. `react-hooks/set-state-in-effect` 永久降级 warn（A-独报 P1）
+7. vite.config.js 配 `loli.net` 注释写 google fonts（A-独报 P1）
+8. InfoPanel 自动跳转 + LogPanel aria-live 双重轰炸（B-独报 P1）
+9. 树/图键盘 ↑↓ 跳"前/后节点"而非"父/子"（B-独报 P1）
+10. undo/redo/applyPreset 不打断正在跑的动画（B-独报 P1）
+
+### 后续 v14+ 方向
+
+- **架构演进**: 引入 Zustand/Jotai 替代 useRef/useState 混合；`animationEngine` 升级为声明式 API
+- **算法扩展**: A*、KMP、Rabin-Karp、斐波那契堆、B 树/B+ 树
+- **教学能力**: 成就系统、学习路径推荐、错题本
+- **工程化**: Storybook + 视觉回归测试、Lighthouse CI
+- **国际化**: 多语言扩展、术语表统一
+- **可视化**: 3D 模式（WebGL）、实时多算法对比
+
+---
+
 ## 一、项目定位
 
 **ds-visualizer**（数据结构学习助手）是一款面向计算机专业在校生的轻量级前端开源教学工具，通过 D3.js SVG 动态动画实现 15 种数据结构 + 12 种算法的交互式可视化、分步学习模式。
