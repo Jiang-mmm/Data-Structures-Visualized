@@ -2,6 +2,29 @@
 
 ---
 
+## 2026-06-20 | v12 部署流程：本地全验证通过，等待推送触发 CI/CD
+
+### 本地验证基线（v12.0，ec21b30）
+
+| 项目 | 结果 |
+|------|------|
+| ESLint | 0 errors / 66 warnings（既有 react-hooks/exhaustive-deps） |
+| TypeScript strict | 0 errors |
+| 单元测试 | 3480 passed（203 文件，55.44s） |
+| 构建 | `npm run build` ✓ Bundle size check passed |
+| Dev server | `npm run dev` 启动在 `http://localhost:3002/Data-Structures-Visualized/` |
+| HTTP 探活 | Home/SkipList/UnionFind/RedBlack/Tree/GraphAlgo 全部 200 OK |
+| 浏览器控制台 | 无错误（OpenPreview 实测 React 渲染正常） |
+
+### 推送状态
+
+- 当前分支：`feature/v12-advanced-data-structures`（含 3 个新提交：9b7100a 风格统一、61bdc5f v12 功能、ec21b30 文档同步）
+- 阻塞：Clash 代理（`127.0.0.1:7897`）未运行 + GitHub 直连被 ISP 重置
+- 用户已选择"启动 Clash 代理"作为解决方案
+- 待执行：push feature 分支 → `git checkout main && git merge --no-ff feature/v12-advanced-data-structures` → `git push origin main` → 等待 CI workflow_run 触发 deploy.yml → 验证 `https://jiang-mmm.github.io/Data-Structures-Visualized/`
+
+---
+
 ## 2026-06-20 | v12 迭代：跳表 / 并查集 / 红黑树 / 全局搜索
 
 ### 执行概要
