@@ -1,9 +1,64 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** v11.0.1
+> **版本:** v12.0
 > **更新日期:** 2026-06-20
-> **状态:** v10/v11 视觉统一、交互优化、AVL 树新增、本地打开兼容修复、统一信息面板已完成；后续功能扩展待开始
-> **详细迭代计划:** docs/iteration-plan-v10.md（最新），v10/v11 迭代记录见 WORKLOG.md
+> **状态:** v12 迭代（跳表 / 并查集 / 红黑树 / 全局搜索）已完成；v12.x 后续阶段（B 树、线段树、测验系统等）待开始
+> **详细迭代计划:** docs/iteration-plan-v10.md（最新），v10/v11/v12 迭代记录见 WORKLOG.md
+
+---
+
+## 已完成（v12 - 跳表 / 并查集 / 红黑树 / 全局搜索）
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| v12-T5 | 跳表 SkipList | P1 | ✅ | 算法 + Hook + 可视化器（多层水平布局）+ 页面（`/skip-list`）+ 学习配置（7 步）+ 108 个新测试 |
+| v12-T6 | 并查集 Union-Find | P1 | ✅ | 算法（路径压缩 + 按秩合并）+ Hook + 可视化器（森林布局）+ 页面（`/union-find`）+ 学习配置（7 步）+ 132 个新测试 |
+| v12-T7 | 红黑树 Red-Black Tree | P1 | ✅ | 算法（递归对象表示，插入 + fixup + 旋转）+ Hook + 可视化器（红黑颜色区分）+ 页面（`/red-black-tree`）+ 学习配置（7 步）+ 138 个新测试 |
+| v12-T8 | 全局搜索 GlobalSearch | P1 | ✅ | 搜索索引（searchIndex.ts）+ 组件（Ctrl/Cmd+K 唤起，键盘导航）+ Layout 集成 + 13 个新测试 |
+| v12-T9 | Sidebar/Home/App 集成 | P1 | ✅ | Sidebar 导出 STRUCTURE_KEYS + 3 个导航项和图标；Home 新增 3 张卡片；App 新增 3 条 lazy Route |
+| v12-T10 | i18n 与学习配置注册 | P1 | ✅ | locales.ts 新增 4 个命名空间；learning/index.ts 注册 3 个新配置（37 个总计） |
+| v12-T11 | Bundle 优化 | P2 | ✅ | vite.config.js 添加 learning-configs manualChunks 规则 |
+
+### 质量验证
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| v12-Q1 | 单元测试 | P0 | ✅ | 3480 tests passed（203 文件），较 v11 增加 391 个新测试 |
+| v12-Q2 | ESLint | P0 | ✅ | 0 errors / 66 warnings（全部既有模式） |
+| v12-Q3 | TypeScript strict | P0 | ✅ | 0 错误 |
+| v12-Q4 | 生产构建 | P0 | ✅ | 成功，Bundle size check passed（index 63.40KB / vendor-react 231.35KB / vendor-d3 52.54KB） |
+
+### 数据结构总数变化
+
+- v11：12 个数据结构页面（14 条路由含 compare 和 graph-algorithm）
+- v12：15 个数据结构页面（17 条路由），新增跳表、并查集、红黑树
+
+### 学习配置总数变化
+
+- v11：34 个学习配置
+- v12：37 个学习配置（新增 skipList、unionFind、redBlackTree）
+
+---
+
+## 已完成（代码风格统一与架构优化 P1-P6）
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| P1 | Import 与导出风格统一 | P1 | ✅ | 17 个 components/ 文件 + useI18n.ts：type 前缀导入、移除未使用 React、后置 memo |
+| P2 | 解构与函数签名统一 | P1 | ✅ | useHeapState/useHashState 多行解构、useTrieState void 返回类型、catch (error) 统一 |
+| P3 | 类型去重与常量提取 | P1 | ✅ | 新增 visualizerConstants.ts，提取 DEFAULT_NODE_RADIUS / DEFAULT_LEVEL_HEIGHT |
+| P4 | 页面公共逻辑提取 | P1 | ✅ | useSharedData<T> 泛型化，11 个页面消除 as any 滥用 |
+| P5 | 注释语言统一 | P2 | ✅ | 7 个文件 24 处英文注释翻译为中文，保留技术术语与 JSDoc |
+| P6 | ESLint 配置增强 | P1 | ✅ | 安装 typescript-eslint@8.61.1，tseslint.config 覆盖 TS 文件，no-unused-vars 规则 |
+
+### 质量验证
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| P1-P6-Q1 | 单元测试 | P0 | ✅ | 3089 tests passed（190 文件） |
+| P1-P6-Q2 | ESLint | P0 | ✅ | 0 errors / 59 warnings（全是 react-hooks/exhaustive-deps，已有代码模式） |
+| P1-P6-Q3 | TypeScript strict | P0 | ✅ | 0 错误 |
+| P1-P6-Q4 | 生产构建 | P0 | ✅ | 成功，bundle 预算通过 |
 
 ---
 
@@ -180,7 +235,23 @@
 
 ---
 
-## 当前迭代（后续功能扩展 - 待开始）
+## 当前迭代（v12.x 后续阶段 - 待开始）
+
+### Phase G：数据结构扩展（P1 - 待开始）
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| G1 | B 树 B-Tree | P1 | ⬜ | 多路搜索树，磁盘存储场景；算法 + Hook + 可视化器 + 页面 + 学习配置 + 测试 |
+| G2 | 线段树 Segment Tree | P1 | ⬜ | 区间查询与更新；算法 + Hook + 可视化器 + 页面 + 学习配置 + 测试 |
+| G3 | doublyLinkedList 页面 | P2 | ⬜ | 双向链表配置已存在，需创建对应页面或 LinkedListPage 切换 |
+
+### Phase H：学习体验增强（P2 - 待开始）
+
+| # | 任务 | 优先级 | 状态 | 说明 |
+|---|------|--------|------|------|
+| H1 | 测验系统 | P2 | ⬜ | 每个数据结构配套测验题，含选择题、填空题、代码题；进度统计与错题本 |
+| H2 | 全局搜索增强 | P3 | ⬜ | GlobalSearch 支持模糊匹配、搜索历史、算法复杂度搜索 |
+| H3 | SortComparePage 学习模式 | P3 | ⬜ | 对比页面集成学习步骤 |
 
 ### Phase U：UI 美化后续（基于审查报告中期项 - 待开始）
 
@@ -268,6 +339,7 @@
 | v10.0: UI 打磨与可视化定位修复 | v10.0.0 | 数组/字典树可视化居中修复、首页配色统一、Card 渐变、主题渐变 token、2978 单元测试 |
 | v11.0: 全面视觉统一与交互优化 | v11.0.0 | 全局色彩统一、排序序号、字典树动画重设计、Button/Undo 变体修复、2996→3042 单元测试 |
 | v11.0.1: 最终验证与部署 | v11.0.1 | 本地打开兼容、全站配色统一、a11y 对比度修复、文档同步、GitHub 部署 |
+| v12.0: 数据结构扩展与全局搜索 | v12.0 | 跳表 / 并查集 / 红黑树 3 个新数据结构、GlobalSearch 全局搜索（Ctrl/Cmd+K）、391 个新测试、3480 单元测试 |
 
 > 详细变更历史见 CHANGELOG.md，工作日志见 WORKLOG.md。
 

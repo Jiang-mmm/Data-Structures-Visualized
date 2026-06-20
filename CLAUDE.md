@@ -26,9 +26,9 @@ E2E tests: `node e2e/run-all-tests.js` (requires dev server running at `http://l
 
 Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components → Hooks → Visualizers → Algorithms/Utils**.
 
-**Routing:** React Router v7 with protocol-aware router: `BrowserRouter` for http(s):// (basename `/Data-Structures-Visualized`) and `HashRouter` for file://. All 14 pages are `React.lazy` code-split via `Suspense`.
+**Routing:** React Router v7 with protocol-aware router: `BrowserRouter` for http(s):// (basename `/Data-Structures-Visualized`) and `HashRouter` for file://. All 17 pages are `React.lazy` code-split via `Suspense`.
 
-**State management:** No Redux/Zustand. Each data structure has its own `use*State` hook (12 total) built on `useState` + `useCallback`. All hooks internally use `useHistory` — a `useRef`-based undo/redo stack (max 20 steps). History is stored in refs, not state, to avoid unnecessary re-renders.
+**State management:** No Redux/Zustand. Each data structure has its own `use*State` hook (15 total) built on `useState` + `useCallback`. All hooks internally use `useHistory` — a `useRef`-based undo/redo stack (max 20 steps). History is stored in refs, not state, to avoid unnecessary re-renders.
 
 **Visualization pattern:** D3.js drives SVG with a **full-clear + full-render** strategy (not D3 enter/update/exit). Every data change calls `container.selectAll('*').remove()` then re-creates all elements. SVGs use `viewBox` (not width/height attributes) with `className="w-full h-full"` to avoid dual-coordinate-system issues.
 
@@ -36,9 +36,11 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 
 **Styling:** Tailwind CSS v4 via `@tailwindcss/vite`. Neo-Brutalist design (hard borders, hard shadows, high contrast). Custom CSS utilities in `index.css` (`neo-border`, `dot-grid`, `grain`). Supports light/dark/system themes and 4 color themes.
 
-**Data persistence:** All 12 data structures auto-save/restore via localStorage.
+**Data persistence:** All 15 data structures auto-save/restore via localStorage.
 
 **i18n:** Custom lightweight implementation (Chinese + English) — `src/i18n/locales.ts` + `src/i18n/useI18n.ts`. No external i18n library.
+
+**Global search:** `src/components/GlobalSearch.tsx` mounted in `Layout.tsx`, triggered by Ctrl/Cmd+K. Data source is `src/data/searchIndex.ts`, which aggregates data structure/algorithm/page metadata. Reuses `STRUCTURE_KEYS` exported from `Sidebar.tsx` for navigation consistency.
 
 ## Key Patterns to Follow
 
@@ -52,14 +54,14 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 
 ## Testing
 
-- **Unit tests:** Vitest + React Testing Library. 1274 tests across 87 files in `src/__tests__/`. Test files mirror source: `useArrayState.test.ts`, `arrayVisualizer.test.ts`, etc.
-- **Known failures:** 0 unit test failures. All 1274 pass.
+- **Unit tests:** Vitest + React Testing Library. 3480 tests across 203 files in `src/__tests__/`. Test files mirror source: `useArrayState.test.ts`, `arrayVisualizer.test.ts`, etc.
+- **Known failures:** 0 unit test failures. All 3480 pass.
 - **Test setup:** `src/__tests__/setup.js` (jsdom environment, jest-dom matchers, SVG mocks).
 - **E2E:** Playwright in `e2e/` directory. Run with `node e2e/run-all-tests.js` (requires dev server at `http://localhost:3000/Data-Structures-Visualized/`). Uses `domcontentloaded` wait strategy.
 - **Cross-browser:** E2E supports `BROWSER=firefox` env var. Run with `BROWSER=firefox node e2e/test-home.js`.
-- **Comprehensive suites:** `test-comprehensive.js` (all 11 data structures), `test-interactions.js` (cross-module), `test-persistence.js` (localStorage + boundaries). Run after core E2E.
+- **Comprehensive suites:** `test-comprehensive.js` (all 15 data structures), `test-interactions.js` (cross-module), `test-persistence.js` (localStorage + boundaries). Run after core E2E.
 - **Screenshot assertions:** `verifyScreenshot()` helper in `test-helpers.js` checks file existence + 5KB minimum size.
-- **A11y testing:** `test-a11y.js` uses `@axe-core/playwright` to scan all 12 pages for WCAG 2 AA violations. Run with `node e2e/test-a11y.js` (requires dev server).
+- **A11y testing:** `test-a11y.js` uses `@axe-core/playwright` to scan all 17 pages for WCAG 2 AA violations. Run with `node e2e/test-a11y.js` (requires dev server).
 
 ## Conventions
 
@@ -77,3 +79,10 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 - **Graph state**: `nodeCounter` is a useRef inside the hook (not module-level). Both `nodes` and `links` are stored as a single `GraphData` object in `useDataStructureState`, so both are persisted to localStorage and included in undo/redo.
 - **Accessibility**: SVG visualizations must have `role="img"` and `aria-label` (via `Visualizer` component's `ariaLabel` prop). All interactive elements need `aria-label` or visible text. Use `t()` for all user-facing strings. Error toasts use `aria-live="assertive"`.
 - **Bundle optimization**: Vendor chunks are split via `manualChunks` in `vite.config.js` (vendor-react, vendor-d3). `scripts/check-bundle.js` enforces size budgets (index < 110KB, vendor-react < 250KB, vendor-d3 < 60KB).
+- **Type imports**: Use `type` prefix for type-only imports (e.g., `import { type ReactNode } from 'react'`). Remove unused `import React` (React 19 automatic JSX runtime). Use post-declaration `memo` (`const X = memo(function X() {...})`) for debuggable component names.
+- **Destructuring format**: `useDataStructureState` destructuring uses multi-line format (4-5 fields per line) when field count ≥ 4.
+- **catch parameters**: All catch blocks use `catch (error)` (not `e`/`err`). When the error variable is unused, use optional catch binding `catch {}`.
+- **Visualizer shared constants**: Cross-visualizer identical constants live in `src/visualizers/visualizerConstants.ts` (`DEFAULT_NODE_RADIUS`, `DEFAULT_LEVEL_HEIGHT`). Only extract truly identical constants; visualizer-specific values stay local.
+- **useSharedData is generic**: `useSharedData<T>` infers `T` from the `loadData` function. Never wrap with `as any` — pass `loadData` directly.
+- **Comment language**: Business logic comments in Chinese. JSDoc on public APIs stays in English. Technical terms (localStorage, DOM, hover, FPS) are not translated. Test file comments are not modified.
+- **ESLint config**: `eslint.config.js` uses `tseslint.config` (not `defineConfig`), covering both JS and TS files via `tseslint.configs.recommended`. `@typescript-eslint/no-unused-vars` is enabled with `varsIgnorePattern: '^_'`. `react-hooks/set-state-in-effect` and `react-hooks/refs` are downgraded to `warn` (existing code patterns).

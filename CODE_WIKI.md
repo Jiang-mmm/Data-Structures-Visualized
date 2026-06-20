@@ -1,7 +1,7 @@
 # 数据结构学习助手 — Code Wiki
 
-> **版本:** v11.0.1
-> **日期:** 2026-06-19
+> **版本:** v12.0
+> **日期:** 2026-06-20
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **部署:** GitHub Pages（base path `/Data-Structures-Visualized/`）
 
@@ -45,8 +45,12 @@
 | **哈希表 Hash Table** | 插入、删除、查找（取模哈希 + 链地址法） | 桶数组 + 链表冲突节点 |
 | **堆 Heap** | Insert、ExtractMax、Peek | 完全二叉树层级布局 + 违规检测 |
 | **字典树 Trie** | 插入、删除、查找、前缀匹配 | 树形层级布局 + 边标签可视化 |
+| **跳表 SkipList** | 插入、删除、搜索、多层索引遍历 | 扁平化多层链表布局 + 概率平衡可视化 |
+| **并查集 UnionFind** | MakeSet、Find、Union（路径压缩 + 按秩合并）、连通性查询 | 集合森林布局 + 树高/秩展示 |
+| **红黑树 RedBlackTree** | 插入、删除、查找、Fixup 着色 + 左右旋转 | 树状布局 + 红黑节点着色 + 旋转动画 |
 | **算法对比 SortCompare** | 8 种排序算法并行对比 | 多算法并行可视化 + PerformanceChart |
 | **图算法 GraphAlgorithm** | BFS、DFS、Dijkstra、拓扑排序 | SVG 可视化 + 学习模式 + 复杂度对比 |
+| **全局搜索 GlobalSearch** | Ctrl/Cmd+K 唤起、数据结构/算法/页面快速跳转 | 键盘上下导航 + Enter 选中 + 模糊匹配 |
 
 ### 1.3 关键特性
 
@@ -55,8 +59,9 @@
 - **实时动画反馈** — 基于 D3.js 的数据驱动动画，支持速度调节和 5 种动画预设
 - **操作日志系统** — 时间戳 + 操作类型 + 详情的完整执行记录
 - **Undo/Redo 支持** — 基于历史栈的状态回溯（最多 20 步，动画期间自动禁用）
-- **学习模式** — 22 个算法的学习步骤配置，含代码片段、复杂度、提示
-- **学习路径** — 12 个数据结构的学习顺序与依赖关系可视化
+- **学习模式** — 37 个算法的学习步骤配置，含代码片段、复杂度、提示
+- **学习路径** — 15 个数据结构的学习顺序与依赖关系可视化
+- **全局搜索** — Ctrl/Cmd+K 快捷键唤起，支持数据结构/算法/页面快速跳转，键盘上下导航 + Enter 选中
 - **多语言支持** — 中文 + 英文，自研轻量 i18n 实现
 - **多主题支持** — 明暗模式（light/dark/system）+ 4 套颜色主题
 - **PWA 支持** — 离线缓存、可安装、自动更新
@@ -95,30 +100,34 @@
 └──────────────────────────┬──────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│  第 2 层：Pages（页面层）— 13 个 React.lazy 代码分割页面          │
+│  第 2 层：Pages（页面层）— 17 个 React.lazy 代码分割页面          │
 │  Home / ArrayPage / StackPage / ... / GraphAlgorithmPage         │
+│  + SkipListPage / UnionFindPage / RedBlackTreePage               │
 └──────────────────────────┬──────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│  第 3 层：Components（组件层）— 28 个可复用组件                   │
+│  第 3 层：Components（组件层）— 34 个可复用组件                   │
 │  Visualizer / OperationBar / OperationGroup / Sidebar / ...     │
+│  + InfoPanel / GlobalSearch                                      │
 └──────────────────────────┬──────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│  第 4 层：Hooks（状态管理层）— 22 个自定义 hooks                  │
-│  use*State（11 个）→ useDataStructureState → useHistory          │
+│  第 4 层：Hooks（状态管理层）— 25 个自定义 hooks                  │
+│  use*State（14 个）→ useDataStructureState → useHistory          │
 │  + useGlobalSettings / useTheme / useI18n / useLearningMode ...  │
 └──────────────────────────┬──────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│  第 5 层：Visualizers（可视化器层）— 10 个纯函数模块              │
+│  第 5 层：Visualizers（可视化器层）— 14 个纯函数模块              │
 │  arrayVisualizer / stackVisualizer / ... / sortVisualizer        │
+│  + skipListVisualizer / unionFindVisualizer / redBlackTreeVisualizer │
 │  统一模式：renderXxx（静态渲染）+ animateXxx（动画）              │
 └──────────────────────────┬──────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────────┐
 │  第 6 层：Algorithms / Utils（算法与工具层）                      │
 │  algorithms/sorting（注册表，8 种）+ algorithms/graph（4 种）     │
+│  algorithms/skipList + algorithms/unionFind + algorithms/redBlackTree │
 │  utils/animationEngine + d3Imports + validate + themeColors ...  │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -147,10 +156,10 @@ main.tsx
 App.tsx
   └─ GlobalSettingsProvider（Context 全局设置）
      └─ BrowserRouter（basename="/Data-Structures-Visualized"）
-        └─ Layout（侧边栏 + 主内容区 + 键盘帮助 + 性能监控 + 网络状态）
+        └─ Layout（侧边栏 + 主内容区 + 键盘帮助 + 性能监控 + 网络状态 + GlobalSearch）
            └─ ErrorBoundary
               └─ Suspense（fallback=PageLoader）
-                 └─ Routes（13 条路由，全部 React.lazy）
+                 └─ Routes（17 条路由，全部 React.lazy）
 ```
 
 ### 2.4 路由映射表
@@ -168,8 +177,12 @@ App.tsx
 | `/hash` | `HashPage` | `HashPage.tsx` | 哈希表 |
 | `/heap` | `HeapPage` | `HeapPage.tsx` | 堆 |
 | `/trie` | `TriePage` | `TriePage.tsx` | 字典树 |
+| `/skip-list` | `SkipListPage` | `SkipListPage.tsx` | 跳表 |
+| `/union-find` | `UnionFindPage` | `UnionFindPage.tsx` | 并查集 |
+| `/red-black-tree` | `RedBlackTreePage` | `RedBlackTreePage.tsx` | 红黑树 |
 | `/compare` | `SortComparePage` | `SortComparePage.tsx` | 排序对比 |
 | `/graph-algorithm` | `GraphAlgorithmPage` | `GraphAlgorithmPage.tsx` | 图算法演示 |
+| `/learning-path` | `LearningPath` | `LearningPath.tsx` | 学习路径 |
 | `*` | `Home` | - | 兜底路由 |
 
 ---
@@ -180,25 +193,30 @@ App.tsx
 
 ```
 src/
-├── __tests__/                 # 单元测试（86 个文件）
+├── __tests__/                 # 单元测试（203 个文件）
 │   ├── __snapshots__/
-│   ├── pages/                 # 14 个页面测试 + testUtils.tsx
-│   ├── visualizers/           # 11 个可视化测试 + d3MockHelper.ts
+│   ├── pages/                 # 17 个页面测试 + testUtils.tsx
+│   ├── visualizers/           # 14 个可视化测试 + d3MockHelper.ts
 │   └── *.test.ts(x)           # 组件/hooks/utils 测试
 ├── algorithms/
 │   ├── graph/                 # 图算法（bfs/dfs/dijkstra/topoSort）
-│   └── sorting/               # 排序算法注册表（8 种）
+│   ├── sorting/               # 排序算法注册表（8 种）
+│   ├── skipList.ts            # 跳表算法
+│   ├── unionFind.ts           # 并查集算法
+│   └── redBlackTree.ts        # 红黑树算法
 ├── assets/                    # 静态资源
-├── components/                # 28 个 React 组件 + toastStore.ts
+├── components/                # 34 个 React 组件 + toastStore.ts
 ├── configs/
-│   ├── learning/              # 22 个学习模式配置 + index.ts + types.ts
+│   ├── learning/              # 37 个学习模式配置 + index.ts + types.ts
 │   └── learningPath.ts        # 学习路径配置
-├── hooks/                     # 22 个自定义 hooks
+├── data/
+│   └── searchIndex.ts         # 全局搜索索引数据源
+├── hooks/                     # 25 个自定义 hooks
 ├── i18n/                      # 国际化（locales.ts + useI18n.ts）
-├── pages/                     # 14 个页面组件
+├── pages/                     # 17 个页面组件
 ├── types/                     # 类型声明（hooks.d.ts + learning.d.ts）
 ├── utils/                     # 11 个工具模块
-├── visualizers/               # 11 个可视化器
+├── visualizers/               # 14 个可视化器
 ├── App.tsx                    # 根组件
 ├── index.css                  # 全局样式 + Tailwind @theme
 ├── main.tsx                   # 入口
@@ -218,16 +236,20 @@ src/
 | 哈希表 | `useHashState` | `hashVisualizer` | `HashPage` | `/hash` | `ds-visualizer-data-hash` | `[{12,Alice},...]` |
 | 堆 | `useHeapState` | `heapVisualizer` | `HeapPage` | `/heap` | `ds-visualizer-data-heap` | `[95,80,70,60,50,40,30]` |
 | 字典树 | `useTrieState` | `trieVisualizer` | `TriePage` | `/trie` | `ds-visualizer-data-trie` | TrieNode 树 |
+| 跳表 | `useSkipListState` | `skipListVisualizer` | `SkipListPage` | `/skip-list` | `ds-visualizer-data-skiplist` | 多层链表 |
+| 并查集 | `useUnionFindState` | `unionFindVisualizer` | `UnionFindPage` | `/union-find` | `ds-visualizer-data-unionfind` | 集合森林 |
+| 红黑树 | `useRedBlackTreeState` | `redBlackTreeVisualizer` | `RedBlackTreePage` | `/red-black-tree` | `ds-visualizer-data-redblacktree` | RBTree 节点树 |
 | 排序 | `useSortState` | `sortVisualizer` | `SortPage` | `/sort` | `ds-visualizer-data-sort` | 15 元素数组 |
 | 排序对比 | （复用 sort） | `sortVisualizer` | `SortComparePage` | `/compare` | - | - |
 | 图算法 | （复用 graph） | `graphVisualizer` | `GraphAlgorithmPage` | `/graph-algorithm` | - | - |
 
-### 3.3 组件层职责分组（28 个组件）
+### 3.3 组件层职责分组（34 个组件）
 
 **布局与导航类**：
-- `Layout.tsx`：整体布局骨架（Sidebar + main + 辅助组件）
-- `Sidebar.tsx`：左侧导航栏，13 个结构入口 + 主题切换 + 语言切换
+- `Layout.tsx`：整体布局骨架（Sidebar + main + 辅助组件 + GlobalSearch 挂载 + Ctrl/Cmd+K 监听）
+- `Sidebar.tsx`：左侧导航栏，16 个结构入口 + 主题切换 + 语言切换；导出 `STRUCTURE_KEYS` 供 GlobalSearch 复用
 - `PageHeader.tsx`：页面标题区
+- `GlobalSearch.tsx`：全局搜索弹窗（Ctrl/Cmd+K 唤起），键盘上下导航 + Enter 选中，数据源来自 `src/data/searchIndex.ts`
 
 **可视化容器类**：
 - `Visualizer.tsx`：通用 SVG 容器，封装缩放/平移/网格/触摸捏合，接收 `renderFn` 渲染回调
@@ -265,11 +287,14 @@ src/
 - `KeyboardHelp.tsx`：键盘快捷键帮助
 - `ErrorBoundary.tsx`：错误边界
 
-### 3.4 Hooks 层职责（22 个 hooks）
+### 3.4 Hooks 层职责（25 个 hooks）
 
-**数据结构状态 hooks（11 个，均基于 `useDataStructureState`）**：
+**数据结构状态 hooks（14 个，均基于 `useDataStructureState`）**：
 - `useArrayState`、`useStackState`、`useQueueState`、`useLinkedListState`
 - `useTreeState`、`useGraphState`、`useHashState`、`useHeapState`、`useTrieState`
+- `useSkipListState`（跳表，扁平化数据表示 + 多层链表 + 概率平衡）
+- `useUnionFindState`（并查集，路径压缩 + 按秩合并）
+- `useRedBlackTreeState`（红黑树，递归对象表示 + 插入 fixup + 旋转 + 深拷贝不可变更新）
 - `useSortState`（排序，含统计与进度）
 - `useDataStructureState`（通用基座）
 
@@ -283,15 +308,16 @@ src/
 - `useI18n`：国际化（语言切换 + 持久化）
 - `useLearningMode`：学习模式步骤导航
 - `useLearningProgress`：学习进度追踪
-- `useSharedData`：URL 分享数据加载
+- `useSharedData`：URL 分享数据加载（泛型函数 `useSharedData<T>`，TypeScript 从 `loadData` 自动推断类型 `T`，消除 `as any` 滥用）
 - `usePageTracker`：页面访问追踪
 
-### 3.5 Visualizers 层职责（11 个可视化器）
+### 3.5 Visualizers 层职责（14 个可视化器）
 
 全部为纯函数模块（非组件），统一遵循以下模式：
 - 从 `../utils/d3Imports` 导入 D3（**禁止直接 import 'd3'**）
 - 从 `../utils/animationEngine` 导入 `duration` / `EASING` / `transitionEnd` / `wait` / `Animation`
 - 从 `../utils/themeColors` 导入 `getColors` / `detectDarkMode` / `ensureGradientDefs` / `gradUrl`
+- 从 `./visualizerConstants` 导入跨 visualizer 共享的常量（`DEFAULT_NODE_RADIUS` / `DEFAULT_LEVEL_HEIGHT`）
 - 导出 `renderXxx(svg, data, options)` 纯静态渲染函数
 - 导出 `animateXxx(svg, ..., anim)` 动画函数
 - 内部使用 `purgeSVG` 全清全渲染策略
@@ -309,6 +335,10 @@ src/
 | `heapVisualizer.ts` | 堆 | `renderHeap`, `animateInsert`, `animateExtractMax` |
 | `trieVisualizer.ts` | 字典树 | `renderTrie`, `animateInsert/Remove/Search` |
 | `sortVisualizer.ts` | 排序 | `renderSortBars`, `animateCompare`, `animateSwap`, `animateSorted` |
+| `skipListVisualizer.ts` | 跳表 | `renderSkipList`, `animateInsert`, `animateDelete`, `animateSearch` |
+| `unionFindVisualizer.ts` | 并查集 | `renderUnionFind`, `animateUnion`, `animateFind`, `animateMakeSet` |
+| `redBlackTreeVisualizer.ts` | 红黑树 | `renderRedBlackTree`, `animateInsert`, `animateDelete`, `animateSearch`, `animateRotation` |
+| `visualizerConstants.ts` | 共享常量 | `DEFAULT_NODE_RADIUS`（tree/avlTree/trie/heap 共用）, `DEFAULT_LEVEL_HEIGHT`（tree/avlTree 共用） |
 
 ### 3.6 Algorithms 层职责
 
@@ -328,6 +358,11 @@ src/
 - 统一返回 `GraphAlgorithmResult`：`{ visited, edges, steps }`
 - 通过 `onStep` 回调实现步进式可视化
 
+**高级数据结构算法（3 种，直接导出）**：
+- `skipList.ts`：跳表算法（多层链表 + 概率平衡 + 搜索/插入/删除）
+- `unionFind.ts`：并查集算法（路径压缩 + 按秩合并 + 连通性查询）
+- `redBlackTree.ts`：红黑树算法（插入 + fixup + 左右旋转 + 着色，递归对象表示 + 深拷贝不可变更新）
+
 ### 3.7 Utils 层职责（11 个工具模块）
 
 | 工具文件 | 职责 |
@@ -346,17 +381,23 @@ src/
 
 ### 3.8 配置系统
 
-**学习模式配置 `src/configs/learning/`（22 个配置文件）**：
+**学习模式配置 `src/configs/learning/`（37 个配置文件）**：
 
 | 类别 | 配置文件 |
 |------|---------|
-| 数据结构 | `array.config`、`stack.config`、`queue.config`、`linkedlist.config`、`doublyLinkedList.config`、`tree.config`、`hash.config`、`heapStructure.config`、`trie.config`、`graph.config` |
+| 数据结构 | `array.config`、`stack.config`、`queue.config`、`linkedlist.config`、`doublyLinkedList.config`、`tree.config`、`hash.config`、`heapStructure.config`、`trie.config`、`graph.config`、`skipList.config`、`unionFind.config`、`redBlackTree.config` |
 | 排序算法 | `bubble.config`、`selection.config`、`insertion.config`、`quick.config`、`merge.config`、`heap.config`、`radix.config`、`bucket.config` |
 | 图算法 | `bfs.config`、`dfs.config`、`dijkstra.config`、`topoSort.config` |
+| 树遍历 | `treePreorder.config`、`treeInorder.config`、`treePostorder.config`、`treeLevelorder.config` |
+| 拓展主题 | `complexityAnalysis.config`、`advancedDataStructures.config`、`realWorldApplications.config` |
 
 **学习路径配置 `src/configs/learningPath.ts`**：
-- 定义 `LEARNING_PATH: LearningPathNode[]`，描述 12 个数据结构的学习顺序与依赖
-- 字段：`id` / `nameKey` / `descriptionKey` / `path` / `category`（linear/tree/graph/hash/sort）/ `prerequisites` / `difficulty`（1-3）
+- 定义 `LEARNING_PATH: LearningPathNode[]`，描述 15 个数据结构的学习顺序与依赖
+- 字段：`id` / `nameKey` / `descriptionKey` / `path` / `category`（linear/tree/graph/hash/sort/advanced）/ `prerequisites` / `difficulty`（1-3）
+
+**全局搜索索引 `src/data/searchIndex.ts`**：
+- 聚合数据结构 / 算法 / 页面元数据供 `GlobalSearch` 组件检索
+- 复用 `Sidebar.tsx` 导出的 `STRUCTURE_KEYS` 保持导航一致性
 
 ---
 
@@ -843,9 +884,9 @@ interface EmptyStateProps {
 
 文件路径：`src/components/Sidebar.tsx`
 
-**导航结构**：13 个导航项（home/array/stack/queue/linkedlist/tree/graph/sort/hash/heap/trie/compare/graphAlgorithm）
+**导航结构**：16 个导航项（home/array/stack/queue/linkedlist/tree/graph/sort/hash/heap/trie/skip-list/union-find/red-black-tree/compare/graphAlgorithm）
 
-**功能**：响应式（桌面 sticky + 移动抽屉）、主题控制（4 色 + 明暗 + 语言）、无障碍（`aria-current` / `aria-expanded`）、移动端手势（左滑关闭）
+**功能**：响应式（桌面 sticky + 移动抽屉）、主题控制（4 色 + 明暗 + 语言）、无障碍（`aria-current` / `aria-expanded`）、移动端手势（左滑关闭）、导出 `STRUCTURE_KEYS` 数组供 `GlobalSearch` 等模块复用
 
 ---
 
@@ -1093,7 +1134,7 @@ manualChunks(id) {
 
 #### 7.5.3 其他优化
 
-- **代码分割**：App.tsx 用 `React.lazy` 懒加载 14 个页面
+- **代码分割**：App.tsx 用 `React.lazy` 懒加载 17 个页面
 - **D3 预构建**：`optimizeDeps.include` 减少 dev 启动时间
 - **PWA 缓存**：静态资源 + 字体 CacheFirst
 
@@ -1107,11 +1148,11 @@ manualChunks(id) {
 
 | 层级 | 工具 | 文件数 | 说明 |
 |------|------|--------|------|
-| 单元测试 | Vitest + React Testing Library | 86 个 | 覆盖 hooks/components/utils/visualizers/pages |
+| 单元测试 | Vitest + React Testing Library | 203 个 | 覆盖 hooks/components/utils/visualizers/pages |
 | E2E 测试 | Playwright | 8 个核心 + 4 个验证 | 跨浏览器（chromium + firefox） |
 | 质量检查 | 自定义脚本 | 1 个 | `quality-check.mjs` |
 
-**CLAUDE.md 声称**：1133 个单元测试，0 失败，全部通过。
+**当前测试基线**：3480 个单元测试，0 失败，全部通过。
 
 ### 8.2 单元测试
 
@@ -1127,11 +1168,11 @@ manualChunks(id) {
 
 | 类别 | 数量 | 说明 |
 |------|------|------|
-| 页面测试（`pages/`） | 14 个 + testUtils.tsx | 覆盖全部 14 个页面 |
-| 可视化器测试（`visualizers/`） | 11 个 + d3MockHelper.ts | 覆盖 11 个 visualizer |
-| Hooks 测试 | 19 个 | 覆盖核心 hook |
-| 组件测试 | 19 个 | Layout/Sidebar/Toast/OperationBar 等 |
-| 工具/算法测试 | 13 个 | animationEngine/sorting/graph/validate 等 |
+| 页面测试（`pages/`） | 17 个 + testUtils.tsx | 覆盖全部 17 个页面 |
+| 可视化器测试（`visualizers/`） | 14 个 + d3MockHelper.ts | 覆盖 14 个 visualizer |
+| Hooks 测试 | 22 个 | 覆盖核心 hook（含 useSkipListState / useUnionFindState / useRedBlackTreeState） |
+| 组件测试 | 22 个 | Layout/Sidebar/Toast/OperationBar/GlobalSearch 等 |
+| 工具/算法测试 | 16 个 | animationEngine/sorting/graph/validate/skipList/unionFind/redBlackTree 等 |
 
 #### 8.2.3 三种典型测试模式
 
@@ -1324,7 +1365,7 @@ A: 确认所有 D3 导入来自 `src/utils/d3Imports.ts`，而非直接 `import 
 
 **Q3: ESLint 不检查 TypeScript 文件**
 
-A: 当前 `eslint.config.js` 的 `files` 仅匹配 `**/*.{js,jsx}`。如需检查 TS 文件，需扩展匹配模式为 `**/*.{js,jsx,ts,tsx}` 并配置 `@typescript-eslint` parser。
+A: 已修复。`eslint.config.js` 已从 `defineConfig` 改为 `tseslint.config`，通过 `...tseslint.configs.recommended` 规则集覆盖 `**/*.{ts,tsx}` 文件，并启用 `@typescript-eslint/no-unused-vars` 规则（`varsIgnorePattern: '^_'`）。新增 `typescript-eslint@8.61.1` devDependency。
 
 ### 10.2 测试问题
 
@@ -1379,9 +1420,10 @@ A: `useDataStructureState` 的 `isValidStoredData` 会校验数据结构。各 h
 
 ### 11.1 高优先级
 
-1. **ESLint 覆盖 TypeScript 文件**
-   - 当前 `eslint.config.js` 仅匹配 `**/*.{js,jsx}`，TS 文件未被检查
-   - 建议扩展匹配模式 + 安装 `@typescript-eslint` parser
+1. **ESLint 覆盖 TypeScript 文件** ✅ 已完成
+   - `eslint.config.js` 已改为 `tseslint.config`，通过 `tseslint.configs.recommended` 覆盖 `**/*.{ts,tsx}` 文件
+   - 已安装 `typescript-eslint@8.61.1` devDependency
+   - 已启用 `@typescript-eslint/no-unused-vars` 规则（`varsIgnorePattern: '^_'`）
 
 2. **启用 TypeScript 严格模式**
    - 当前 `strict: false`、`noUnusedLocals: false`、`noUnusedParameters: false`
@@ -1458,8 +1500,13 @@ A: `useDataStructureState` 的 `isValidStoredData` 会校验数据结构。各 h
 | 国际化 | `src/i18n/useI18n.ts` | 语言切换 |
 | 主题颜色 | `src/utils/themeColors.ts` | 4 套调色板 |
 | 输入验证 | `src/utils/validate.ts` | XSS + 范围检查 |
-| 学习配置注册 | `src/configs/learning/index.ts` | 22 个学习模式配置 |
+| 学习配置注册 | `src/configs/learning/index.ts` | 37 个学习模式配置 |
 | 排序算法注册 | `src/algorithms/sorting/index.ts` | 8 种排序算法 |
+| 跳表算法 | `src/algorithms/skipList.ts` | 多层链表 + 概率平衡 |
+| 并查集算法 | `src/algorithms/unionFind.ts` | 路径压缩 + 按秩合并 |
+| 红黑树算法 | `src/algorithms/redBlackTree.ts` | 插入 fixup + 旋转 + 着色 |
+| 全局搜索索引 | `src/data/searchIndex.ts` | 数据结构/算法/页面元数据 |
+| 全局搜索组件 | `src/components/GlobalSearch.tsx` | Ctrl/Cmd+K 唤起 + 键盘导航 |
 | 类型声明 | `src/types/hooks.d.ts` | 数据结构状态接口 |
 | 学习类型 | `src/types/learning.d.ts` | 学习模式类型 |
 
@@ -1469,7 +1516,7 @@ A: `useDataStructureState` 的 `isValidStoredData` 会校验数据结构。各 h
 |------|------|------|
 | Vite 配置 | `vite.config.js` | 构建 + PWA + 别名 |
 | TS 配置 | `tsconfig.json` | TypeScript 编译选项 |
-| ESLint 配置 | `eslint.config.js` | flat config |
+| ESLint 配置 | `eslint.config.js` | flat config（tseslint.config，覆盖 JS + TS 文件） |
 | Vitest 配置 | `vitest.config.js` | 测试环境 |
 | Bundle 检查 | `scripts/check-bundle.js` | 包体积预算 |
 | CI 配置 | `.github/workflows/ci.yml` | 持续集成 |
@@ -1499,4 +1546,4 @@ A: `useDataStructureState` 的 `isValidStoredData` 会校验数据结构。各 h
 
 ---
 
-> **文档维护说明**：本文档基于 2026-06-17 的项目状态生成。如项目架构发生重大变更，请同步更新本文档。文档优先级参考 `PROJECT_SUMMARY.md` → `TODO.md` → `ARCHITECTURE.md` → `README.md` → 代码实现。
+> **文档维护说明**：本文档基于 2026-06-20 的项目状态（v12.0）生成。如项目架构发生重大变更，请同步更新本文档。文档优先级参考 `PROJECT_SUMMARY.md` → `TODO.md` → `ARCHITECTURE.md` → `README.md` → 代码实现。

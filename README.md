@@ -1,7 +1,7 @@
 # 数据结构学习助手
 
-> **版本:** v11.0.1
-> **更新日期:** 2026-06-19
+> **版本:** v12.0
+> **更新日期:** 2026-06-20
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 
@@ -22,8 +22,12 @@
 | **哈希表 Hash Table** | 插入、删除、查找（取模哈希 + 链地址法） |
 | **堆 Heap** | Insert、ExtractMax、Peek（最大堆 + 违规检测） |
 | **字典树 Trie** | 插入、删除、查找、前缀匹配（边标签可视化） |
+| **跳表 SkipList** | 插入、删除、搜索、多层索引遍历（概率平衡可视化） |
+| **并查集 UnionFind** | MakeSet、Find、Union（路径压缩 + 按秩合并）、连通性查询 |
+| **红黑树 RedBlackTree** | 插入、删除、查找、Fixup 着色 + 左右旋转 |
 | **算法对比 SortCompare** | 8 种排序算法并行对比，实时进度追踪，性能图表 |
 | **图算法 GraphAlgorithm** | BFS、DFS、Dijkstra、拓扑排序可视化 + 学习模式 |
+| **全局搜索 GlobalSearch** | Ctrl/Cmd+K 唤起，数据结构/算法/页面快速跳转，键盘导航 |
 
 ## 关键特性
 
@@ -32,12 +36,13 @@
 - **操作日志系统** — 时间戳 + 操作类型 + 详情的完整执行记录，卡片式时间线展示
 - **Undo/Redo 支持** — 基于历史栈的状态回溯（动画期间自动禁用）
 - **撤销预览** — 悬停显示撤销/重做后的数据状态预览
-- **键盘快捷键** — Ctrl+Z 撤销、Ctrl+Shift+Z 重做、R 重置、? 帮助、左右箭头导航 Timeline
+- **键盘快捷键** — Ctrl+Z 撤销、Ctrl+Shift+Z 重做、R 重置、? 帮助、左右箭头导航 Timeline、Ctrl/Cmd+K 全局搜索
 - **输入验证** — 数值范围 1~99，索引边界检查，非法输入 Toast 提示
 - **导入/导出** — 数据持久化，支持 JSON/CSV 格式导入导出，含版本校验
-- **数据持久化** — 12 种数据结构自动保存/恢复，页面刷新后数据不丢失（localStorage）
+- **数据持久化** — 15 种数据结构自动保存/恢复，页面刷新后数据不丢失（localStorage）
 - **分享功能** — Base64 编码数据到 URL，一键复制分享链接
 - **国际化（i18n）** — 中英文切换，轻量级翻译系统，无第三方依赖
+- **全局搜索** — Ctrl/Cmd+K 快捷键唤起，支持数据结构/算法/页面快速跳转，键盘上下导航 + Enter 选中
 - **算法对比模式** — 8 种排序算法并行对比，实时进度追踪
 - **性能对比图表** — D3 柱状图对比排序算法性能（比较次数/交换次数/总步数三维度）
 - **复杂度可视化** — 时间/空间复杂度增长曲线对比（ComplexityChart）
@@ -53,7 +58,7 @@
 - **响应式布局** — 适配不同屏幕尺寸，侧边栏可折叠，移动端触控优化
 - **性能监控面板** — FPS/内存实时显示，帧率自适应动画降级
 - **网络离线检测** — 离线状态实时提示
-- **单元测试覆盖** — 3089 tests（189 个测试文件），核心逻辑覆盖率 > 80%
+- **单元测试覆盖** — 3480 tests（203 个测试文件），核心逻辑覆盖率 > 80%
 - **E2E 测试覆盖** — 12 文件 317 用例，Chromium + Firefox 双浏览器，Playwright 自动化
 - **无障碍（a11y）** — axe-core WCAG 2 AA 零 violations，全局焦点可见性
 - **错误边界恢复** — ErrorBoundary 异常 UI + safeAnimate 统一错误恢复
@@ -115,17 +120,21 @@ src/
 │   │   ├── radixSort.ts
 │   │   ├── bucketSort.ts
 │   │   └── index.ts
-│   └── graph/           # 4 种图算法
-│       ├── bfs.ts
-│       ├── dfs.ts
-│       ├── dijkstra.ts
-│       ├── topoSort.ts
-│       └── index.ts
-├── components/          # 公共 UI 组件（20+ 个）
+│   ├── graph/           # 4 种图算法
+│   │   ├── bfs.ts
+│   │   ├── dfs.ts
+│   │   ├── dijkstra.ts
+│   │   ├── topoSort.ts
+│   │   └── index.ts
+│   ├── skipList.ts      # 跳表算法
+│   ├── unionFind.ts     # 并查集算法
+│   └── redBlackTree.ts  # 红黑树算法
+├── components/          # 公共 UI 组件（34 个）
 │   ├── ComplexityChart.tsx
 │   ├── EmptyState.tsx
 │   ├── ErrorBoundary.tsx
 │   ├── ExportImport.tsx
+│   ├── GlobalSearch.tsx
 │   ├── InfoPanel.tsx
 │   ├── KeyboardHelp.tsx
 │   ├── Layout.tsx
@@ -145,7 +154,11 @@ src/
 │   ├── UndoRedoBar.tsx
 │   ├── Visualizer.tsx
 │   └── toastStore.ts
-├── hooks/               # 自定义 Hooks（17+ 个）
+├── configs/
+│   └── learning/        # 37 个学习模式配置
+├── data/
+│   └── searchIndex.ts   # 全局搜索索引数据源
+├── hooks/               # 自定义 Hooks（25 个）
 │   ├── useArrayState.ts
 │   ├── useCommonKeyboard.ts
 │   ├── useDataStructureState.ts
@@ -159,16 +172,19 @@ src/
 │   ├── useLearningMode.ts
 │   ├── useLinkedListState.ts
 │   ├── useQueueState.ts
+│   ├── useRedBlackTreeState.ts
+│   ├── useSkipListState.ts
 │   ├── useSortState.ts
 │   ├── useStackState.ts
 │   ├── useTheme.ts
 │   ├── useTreeState.ts
 │   ├── useTrieState.ts
+│   ├── useUnionFindState.ts
 │   └── useVisualizer.ts
 ├── i18n/                # 国际化
 │   ├── locales.ts
 │   └── useI18n.ts
-├── pages/               # 页面组件（13 个）
+├── pages/               # 页面组件（17 个）
 │   ├── ArrayPage.tsx
 │   ├── GraphAlgorithmPage.tsx
 │   ├── GraphPage.tsx
@@ -177,11 +193,14 @@ src/
 │   ├── Home.tsx
 │   ├── LinkedListPage.tsx
 │   ├── QueuePage.tsx
+│   ├── RedBlackTreePage.tsx
+│   ├── SkipListPage.tsx
 │   ├── SortComparePage.tsx
 │   ├── SortPage.tsx
 │   ├── StackPage.tsx
 │   ├── TreePage.tsx
-│   └── TriePage.tsx
+│   ├── TriePage.tsx
+│   └── UnionFindPage.tsx
 ├── types/               # TypeScript 类型声明
 │   ├── animationEngine.d.ts
 │   ├── hooks.d.ts
@@ -198,17 +217,21 @@ src/
 │   ├── themeColors.ts
 │   ├── timeslicing.ts
 │   └── validate.ts
-├── visualizers/         # 10 个 D3.js 可视化渲染模块
+├── visualizers/         # 14 个 D3.js 可视化渲染模块
 │   ├── arrayVisualizer.ts
 │   ├── graphVisualizer.ts
 │   ├── hashVisualizer.ts
 │   ├── heapVisualizer.ts
 │   ├── linkedListVisualizer.ts
 │   ├── queueVisualizer.ts
+│   ├── redBlackTreeVisualizer.ts
+│   ├── skipListVisualizer.ts
 │   ├── sortVisualizer.ts
 │   ├── stackVisualizer.ts
 │   ├── treeVisualizer.ts
-│   └── trieVisualizer.ts
+│   ├── trieVisualizer.ts
+│   ├── unionFindVisualizer.ts
+│   └── visualizerConstants.ts
 ├── __tests__/           # 单元测试（Vitest + Testing Library）
 ├── App.tsx              # 路由配置根组件
 ├── main.tsx             # 应用入口
@@ -229,6 +252,18 @@ src/
 - 开发规范与新增数据结构流程
 
 ## 修复记录
+
+### v12.0 (2026-06-20)
+
+- **新增跳表 SkipList** — 多层链表 + 概率平衡 + 搜索/插入/删除可视化
+- **新增并查集 UnionFind** — 路径压缩 + 按秩合并 + 连通性查询
+- **新增红黑树 RedBlackTree** — 插入 fixup + 左右旋转 + 着色，递归对象表示 + 深拷贝不可变更新
+- **新增全局搜索 GlobalSearch** — Ctrl/Cmd+K 唤起，数据结构/算法/页面快速跳转，键盘上下导航 + Enter 选中
+- **学习配置扩展** — 34 → 37 个学习模式配置（新增 skipList/unionFind/redBlackTree + 树遍历拆分）
+- **Sidebar 导出 STRUCTURE_KEYS** — 供 GlobalSearch 复用，保持导航一致性
+- **i18n 扩展** — 新增 skipList/unionFind/redBlackTree/globalSearch 4 个命名空间
+- **测试覆盖** — 3089 → 3480 tests（203 个测试文件），新增 391 个测试
+- **数据结构总数** — 12 → 15 种（路由 14 → 17）
 
 ### v6.5 (2026-06-15)
 

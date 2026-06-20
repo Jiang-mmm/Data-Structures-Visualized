@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo, type ReactNode } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { useColorTheme } from '../hooks/useColorTheme'
@@ -17,7 +17,8 @@ interface SwipeState {
   isSwiping: boolean
 }
 
-const STRUCTURE_KEYS: StructureItem[] = [
+// eslint-disable-next-line react-refresh/only-export-components
+export const STRUCTURE_KEYS: StructureItem[] = [
   { path: '/', key: 'home' },
   { path: '/array', key: 'array' },
   { path: '/stack', key: 'stack' },
@@ -25,16 +26,19 @@ const STRUCTURE_KEYS: StructureItem[] = [
   { path: '/linkedlist', key: 'linkedlist' },
   { path: '/tree', key: 'tree' },
   { path: '/avl-tree', key: 'avlTree' },
+  { path: '/red-black-tree', key: 'redBlackTree' },
   { path: '/graph', key: 'graph' },
   { path: '/sort', key: 'sort' },
   { path: '/hash', key: 'hash' },
   { path: '/heap', key: 'heap' },
   { path: '/trie', key: 'trie' },
+  { path: '/skip-list', key: 'skipList' },
   { path: '/compare', key: 'compare' },
   { path: '/graph-algorithm', key: 'graphAlgorithm' },
+  { path: '/union-find', key: 'unionFind' },
 ]
 
-function getIconSvg(index: number): React.ReactNode {
+function getIconSvg(index: number): ReactNode {
   const p = {
     className: 'w-4 h-4 flex-shrink-0',
     viewBox: '0 0 20 20',
@@ -59,20 +63,26 @@ function getIconSvg(index: number): React.ReactNode {
       return <svg {...p}><circle cx="10" cy="4.5" r="2" /><circle cx="5" cy="14" r="2" /><circle cx="15" cy="14" r="2" /><line x1="8.5" y1="6.2" x2="6.2" y2="12.2" /><line x1="11.5" y1="6.2" x2="13.8" y2="12.2" /></svg>
     case 6: // AVL Tree - balanced tree with height indicator
       return <svg {...p}><circle cx="10" cy="4" r="2" /><circle cx="5" cy="13" r="2" /><circle cx="15" cy="13" r="2" /><line x1="8.5" y1="5.7" x2="6.2" y2="11.3" /><line x1="11.5" y1="5.7" x2="13.8" y2="11.3" /><line x1="3" y1="17" x2="17" y2="17" strokeDasharray="2,1.5" /></svg>
-    case 7: // Graph - triangle network
+    case 7: // Red-Black Tree - tree with colored nodes (filled circles)
+      return <svg {...p}><circle cx="10" cy="4" r="2" fill="currentColor" /><circle cx="5" cy="13" r="2" /><circle cx="15" cy="13" r="2" /><line x1="8.5" y1="5.7" x2="6.2" y2="11.3" /><line x1="11.5" y1="5.7" x2="13.8" y2="11.3" /></svg>
+    case 8: // Graph - triangle network
       return <svg {...p}><circle cx="10" cy="4.5" r="2" /><circle cx="4.5" cy="15" r="2" /><circle cx="15.5" cy="15" r="2" /><line x1="8.5" y1="6.2" x2="5.8" y2="13.2" /><line x1="11.5" y1="6.2" x2="14.2" y2="13.2" /><line x1="6.5" y1="15" x2="13.5" y2="15" /></svg>
-    case 8: // Sort - ascending bars
+    case 9: // Sort - ascending bars
       return <svg {...p}><rect x="3" y="13" width="3" height="4" rx="0.5" /><rect x="7.5" y="9" width="3" height="8" rx="0.5" /><rect x="12" y="5" width="3" height="12" rx="0.5" /></svg>
-    case 9: // Hash
+    case 10: // Hash
       return <svg {...p}><line x1="7" y1="3" x2="6" y2="17" /><line x1="13" y1="3" x2="12" y2="17" /><line x1="3" y1="7" x2="17" y2="7" /><line x1="3" y1="13" x2="17" y2="13" /></svg>
-    case 10: // Heap - pyramid
+    case 11: // Heap - pyramid
       return <svg {...p}><circle cx="10" cy="4.5" r="2" /><circle cx="5.5" cy="14" r="2" /><circle cx="14.5" cy="14" r="2" /><line x1="8.5" y1="6.2" x2="6.8" y2="12.2" /><line x1="11.5" y1="6.2" x2="13.2" y2="12.2" /></svg>
-    case 11: // Trie - root with branches
+    case 12: // Trie - root with branches
       return <svg {...p}><circle cx="10" cy="4" r="2" /><circle cx="5" cy="13" r="1.5" /><circle cx="10" cy="15" r="1.5" /><circle cx="15" cy="13" r="1.5" /><line x1="8.8" y1="5.7" x2="5.6" y2="11.6" /><line x1="10" y1="6" x2="10" y2="13.5" /><line x1="11.2" y1="5.7" x2="14.4" y2="11.6" /></svg>
-    case 12: // Compare - two bar charts
+    case 13: // SkipList - multi-level linked list
+      return <svg {...p}><circle cx="4" cy="5" r="1.5" /><circle cx="10" cy="5" r="1.5" /><circle cx="16" cy="5" r="1.5" /><line x1="5.5" y1="5" x2="8.5" y2="5" /><line x1="11.5" y1="5" x2="14.5" y2="5" /><circle cx="4" cy="10" r="1.5" /><circle cx="10" cy="10" r="1.5" /><circle cx="16" cy="10" r="1.5" /><line x1="5.5" y1="10" x2="8.5" y2="10" /><line x1="11.5" y1="10" x2="14.5" y2="10" /><circle cx="4" cy="15" r="1.5" /><circle cx="10" cy="15" r="1.5" /><circle cx="16" cy="15" r="1.5" /><line x1="5.5" y1="15" x2="8.5" y2="15" /><line x1="11.5" y1="15" x2="14.5" y2="15" /></svg>
+    case 14: // Compare - two bar charts
       return <svg {...p}><rect x="3" y="9" width="3" height="8" rx="0.5" /><rect x="7.5" y="5" width="3" height="12" rx="0.5" /><rect x="12.5" y="7" width="3" height="10" rx="0.5" /><line x1="2" y1="17" x2="17" y2="17" /></svg>
-    case 13: // Graph Algorithm - node with circular arrow
+    case 15: // Graph Algorithm - node with circular arrow
       return <svg {...p}><circle cx="10" cy="10" r="6" /><polyline points="10,6 12,8 10,10" /><path d="M7 15a6 6 0 016-6" /></svg>
+    case 16: // Union-Find - two trees merging
+      return <svg {...p}><circle cx="5" cy="5" r="1.8" /><circle cx="15" cy="5" r="1.8" /><circle cx="5" cy="14" r="1.8" /><circle cx="15" cy="14" r="1.8" /><line x1="5" y1="6.8" x2="5" y2="12.2" /><line x1="15" y1="6.8" x2="15" y2="12.2" /><line x1="6.8" y1="5" x2="13.2" y2="5" /></svg>
     default:
       return <svg {...p}><circle cx="10" cy="10" r="6" /></svg>
   }

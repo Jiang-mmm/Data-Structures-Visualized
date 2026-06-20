@@ -91,6 +91,10 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('src/i18n/locales')) {
             return 'i18n-locales';
           }
+          // 学习模式配置较大，拆分到独立 chunk 以控制 index 体积
+          if (id.includes('src/configs/learning')) {
+            return 'learning-configs';
+          }
         },
       },
     },

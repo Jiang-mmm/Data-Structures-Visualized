@@ -16,6 +16,9 @@ const HashPage = lazy(() => import('./pages/HashPage'))
 const HeapPage = lazy(() => import('./pages/HeapPage'))
 const TriePage = lazy(() => import('./pages/TriePage'))
 const AvlTreePage = lazy(() => import('./pages/AvlTreePage'))
+const RedBlackTreePage = lazy(() => import('./pages/RedBlackTreePage'))
+const SkipListPage = lazy(() => import('./pages/SkipListPage'))
+const UnionFindPage = lazy(() => import('./pages/UnionFindPage'))
 const SortComparePage = lazy(() => import('./pages/SortComparePage'))
 const GraphAlgorithmPage = lazy(() => import('./pages/GraphAlgorithmPage'))
 
@@ -57,6 +60,9 @@ function App() {
               <Route path="/heap" element={<HeapPage />} />
               <Route path="/trie" element={<TriePage />} />
               <Route path="/avl-tree" element={<AvlTreePage />} />
+              <Route path="/red-black-tree" element={<RedBlackTreePage />} />
+              <Route path="/skip-list" element={<SkipListPage />} />
+              <Route path="/union-find" element={<UnionFindPage />} />
               <Route path="/compare" element={<SortComparePage />} />
               <Route path="/graph-algorithm" element={<GraphAlgorithmPage />} />
               <Route path="*" element={<Home />} />

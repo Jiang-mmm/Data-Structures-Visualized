@@ -79,6 +79,17 @@ export interface Locale {
     levelorder: string
     nodeTitle: string
   }
+  redBlackTree: {
+    title: string
+    subtitle: string
+    insert: string
+    search: string
+    inorder: string
+    inputPlaceholder: string
+    nodeTitle: string
+    colorRed: string
+    colorBlack: string
+  }
   graph: {
     title: string
     subtitle: string
@@ -130,6 +141,26 @@ export interface Locale {
     search: string
     prefixSearch: string
     rootLabel: string
+  }
+  skipList: {
+    title: string
+    subtitle: string
+    inputPlaceholder: string
+    insert: string
+    delete: string
+    search: string
+    headLabel: string
+  }
+  unionFind: {
+    title: string
+    subtitle: string
+    inputPlaceholder: string
+    inputPlaceholderB: string
+    insert: string
+    remove: string
+    find: string
+    union: string
+    connected: string
   }
   sort: {
     title: string
@@ -193,6 +224,7 @@ export interface Locale {
     hash: string
     heap: string
     trie: string
+    skipList: string
     compare: string
     graphAlgorithm: string
     themeDefault: string
@@ -227,10 +259,13 @@ export interface Locale {
     emptyLinkedListShort: string
     emptyTreeShort: string
     emptyAvlShort: string
+    emptyRedBlackTreeShort: string
     emptyGraphShort: string
     emptyHashShort: string
     emptyHeapShort: string
     emptyTrieShort: string
+    emptySkipListShort: string
+    emptyUnionFindShort: string
     nodeNotFound: string
     emptyArray: string
     emptyArrayDesc: string
@@ -244,6 +279,8 @@ export interface Locale {
     emptyTreeDesc: string
     emptyAvl: string
     emptyAvlDesc: string
+    emptyRedBlackTree: string
+    emptyRedBlackTreeDesc: string
     emptyGraph: string
     emptyGraphDesc: string
     emptyHash: string
@@ -252,6 +289,10 @@ export interface Locale {
     emptyHeapDesc: string
     emptyTrie: string
     emptyTrieDesc: string
+    emptySkipList: string
+    emptySkipListDesc: string
+    emptyUnionFind: string
+    emptyUnionFindDesc: string
     emptySort: string
     emptySortDesc: string
     defaultTitle: string
@@ -458,11 +499,14 @@ export interface Locale {
     linkedlistLabel: string
     treeLabel: string
     avlTreeLabel: string
+    redBlackTreeLabel: string
     graphLabel: string
     sortLabel: string
     hashLabel: string
     heapLabel: string
     trieLabel: string
+    skipListLabel: string
+    unionFindLabel: string
   }
   shortcuts: {
     title: string
@@ -557,6 +601,8 @@ export interface Locale {
     tail: string
     top: string
     endOfWord: string
+    redNode: string
+    blackNode: string
   }
   hooks: {
     inputInvalid: string
@@ -653,6 +699,13 @@ export interface Locale {
     avlLogInorder: string
     avlLogPostorder: string
     avlLogLevelorder: string
+    redBlackTreeLogInsert: string
+    redBlackTreeInsertSuccess: string
+    redBlackTreeInsertDuplicate: string
+    redBlackTreeLogInsertDuplicate: string
+    redBlackTreeLogSearchFound: string
+    redBlackTreeLogSearchNotFound: string
+    redBlackTreeLogInorder: string
     graphLogAddNode: string
     graphNodeAdded: string
     graphSelfLoop: string
@@ -700,6 +753,38 @@ export interface Locale {
     trieLogSearchNotFound: string
     trieLogPrefixFound: string
     trieLogPrefixNotFound: string
+    skipListInputRequired: string
+    skipListLogInsertError: string
+    skipListLogInsert: string
+    skipListInsertSuccess: string
+    skipListInsertDuplicate: string
+    skipListLogInsertDuplicate: string
+    skipListDeleteNotFound: string
+    skipListLogDeleteNotFound: string
+    skipListLogDeleteSuccess: string
+    skipListDeleteSuccess: string
+    skipListLogSearchFound: string
+    skipListLogSearchNotFound: string
+    unionFindInputRequired: string
+    unionFindLogInsertError: string
+    unionFindLogInsert: string
+    unionFindInsertSuccess: string
+    unionFindInsertDuplicate: string
+    unionFindLogInsertDuplicate: string
+    unionFindDeleteNotFound: string
+    unionFindLogDeleteNotFound: string
+    unionFindLogDeleteSuccess: string
+    unionFindDeleteSuccess: string
+    unionFindLogFind: string
+    unionFindLogFindNotFound: string
+    unionFindNodeNotFound: string
+    unionFindLogNodeNotFound: string
+    unionFindAlreadyConnected: string
+    unionFindLogAlreadyConnected: string
+    unionFindUnionSuccess: string
+    unionFindLogUnion: string
+    unionFindLogConnected: string
+    unionFindLogNotConnected: string
   }
   speedControl: {
     presetDefault: string
@@ -730,6 +815,15 @@ export interface Locale {
     linkedlist: ContentTierStructure
     tree: ContentTierStructure
     avlTree: ContentTierStructure
+  }
+  globalSearch: {
+    title: string
+    placeholder: string
+    inputAriaLabel: string
+    shortcut: string
+    noResults: string
+    categoryPage: string
+    categoryLearning: string
   }
 }
 
@@ -825,6 +919,17 @@ export const zh: Locale = {
     levelorder: '层序',
     nodeTitle: '值: {value}\n高度: {height}\n平衡因子: {balanceFactor}',
   },
+  redBlackTree: {
+    title: '红黑树',
+    subtitle: '自平衡 BST · 红黑性质 · O(log n) 保证',
+    insert: '插入',
+    search: '查找',
+    inorder: '中序',
+    inputPlaceholder: '输入 1-99',
+    nodeTitle: '值: {value}, 颜色: {color}',
+    colorRed: '红色',
+    colorBlack: '黑色',
+  },
   graph: {
     title: '图',
     subtitle: '网络结构 · BFS / DFS · 最短路径',
@@ -876,6 +981,26 @@ export const zh: Locale = {
     search: '查找',
     prefixSearch: '前缀匹配',
     rootLabel: '根',
+  },
+  skipList: {
+    title: '跳表',
+    subtitle: '概率平衡 · 多层链表 · O(log n) 查找',
+    inputPlaceholder: '值 (1~99)',
+    insert: '插入',
+    delete: '删除',
+    search: '查找',
+    headLabel: 'H',
+  },
+  unionFind: {
+    title: '并查集',
+    subtitle: '路径压缩 · 按秩合并 · 近 O(1) 操作',
+    inputPlaceholder: '值 A (1~99)',
+    inputPlaceholderB: '值 B (1~99)',
+    insert: '插入',
+    remove: '删除',
+    find: '查找根',
+    union: '合并',
+    connected: '连通性',
   },
   sort: {
     title: '排序',
@@ -934,13 +1059,16 @@ export const zh: Locale = {
     linkedlist: '链表',
     tree: '二叉树',
     avlTree: 'AVL 树',
+    redBlackTree: '红黑树',
     graph: '图',
     sort: '排序',
     hash: '哈希表',
     heap: '堆',
     trie: '字典树',
+    skipList: '跳表',
     compare: '算法对比',
     graphAlgorithm: '图算法',
+    unionFind: '并查集',
     themeDefault: '默认',
     themeForest: '森林',
     themeWarm: '暖色',
@@ -973,10 +1101,13 @@ export const zh: Locale = {
     emptyLinkedListShort: '空链表',
     emptyTreeShort: '空二叉树',
     emptyAvlShort: '空 AVL 树 · 请插入节点',
+    emptyRedBlackTreeShort: '空红黑树 · 请插入节点',
     emptyGraphShort: '空图 · 请添加节点',
     emptyHashShort: '空哈希表 · 请插入键值对',
     emptyHeapShort: '空堆 · 请插入元素',
     emptyTrieShort: '空字典树 · 请插入单词',
+    emptySkipListShort: '空跳表 · 请插入元素',
+    emptyUnionFindShort: '空并查集 · 请插入元素',
     nodeNotFound: '未找到目标节点',
     emptyArray: '数组为空',
     emptyArrayDesc: '点击下方按钮生成随机数据或手动插入元素',
@@ -990,6 +1121,8 @@ export const zh: Locale = {
     emptyTreeDesc: '点击插入按钮添加节点',
     emptyAvl: 'AVL 树为空',
     emptyAvlDesc: '点击插入按钮添加节点',
+    emptyRedBlackTree: '红黑树为空',
+    emptyRedBlackTreeDesc: '点击插入按钮添加节点',
     emptyGraph: '图为空',
     emptyGraphDesc: '点击添加节点按钮创建图',
     emptyHash: '哈希表为空',
@@ -998,6 +1131,10 @@ export const zh: Locale = {
     emptyHeapDesc: '点击插入按钮添加元素',
     emptyTrie: '字典树为空',
     emptyTrieDesc: '点击插入按钮添加单词',
+    emptySkipList: '跳表为空',
+    emptySkipListDesc: '点击插入按钮添加元素',
+    emptyUnionFind: '并查集为空',
+    emptyUnionFindDesc: '点击插入按钮添加元素',
     emptySort: '排序数据为空',
     emptySortDesc: '点击随机生成按钮创建排序数据',
     defaultTitle: '暂无数据',
@@ -1029,11 +1166,14 @@ export const zh: Locale = {
     linkedlistLabel: '链表可视化',
     treeLabel: '二叉树可视化',
     avlTreeLabel: 'AVL 树可视化',
+    redBlackTreeLabel: '红黑树可视化',
     graphLabel: '图可视化',
     sortLabel: '排序可视化',
     hashLabel: '哈希表可视化',
     heapLabel: '堆可视化',
     trieLabel: '字典树可视化',
+    skipListLabel: '跳表可视化',
+    unionFindLabel: '并查集可视化',
   },
   shortcuts: {
     title: '键盘快捷键',
@@ -1303,6 +1443,8 @@ export const zh: Locale = {
     tail: '尾节点',
     top: '栈顶',
     endOfWord: '词尾标记',
+    redNode: '红色节点',
+    blackNode: '黑色节点',
   },
   hooks: {
     inputInvalid: '请输入 1~99 之间的整数',
@@ -1399,6 +1541,13 @@ export const zh: Locale = {
     avlLogInorder: '中序遍历（有序）: [{data}]',
     avlLogPostorder: '后序遍历: [{data}]',
     avlLogLevelorder: '层序遍历: [{data}]',
+    redBlackTreeLogInsert: 'insert({value}) → 插入成功并修复红黑性质，节点数: {count}',
+    redBlackTreeInsertSuccess: '插入节点 {value}（已平衡）',
+    redBlackTreeInsertDuplicate: '节点 {value} 已存在，不重复插入',
+    redBlackTreeLogInsertDuplicate: 'insert({value}) → 值已存在，跳过',
+    redBlackTreeLogSearchFound: 'search({value}) → 找到，深度: {depth}',
+    redBlackTreeLogSearchNotFound: 'search({value}) → 未找到',
+    redBlackTreeLogInorder: '中序遍历（有序）: [{data}]',
     graphLogAddNode: 'addNode("{id}") → 节点数: {count}',
     graphNodeAdded: '添加节点 {id}',
     graphSelfLoop: '不能连接自身',
@@ -1446,6 +1595,38 @@ export const zh: Locale = {
     trieLogSearchNotFound: 'search("{word}") → 未找到',
     trieLogPrefixFound: 'startsWith("{prefix}") → 找到 {count} 个: [{words}]',
     trieLogPrefixNotFound: 'startsWith("{prefix}") → 无前缀匹配',
+    skipListInputRequired: '请输入有效数值',
+    skipListLogInsertError: '插入失败: {value}（无效或超出范围）',
+    skipListLogInsert: 'insert({value}) → 随机层数，maxLevel={level}',
+    skipListInsertSuccess: '已插入 {value}',
+    skipListInsertDuplicate: '{value} 已存在，跳表不允许重复值',
+    skipListLogInsertDuplicate: 'insert({value}) → 重复值，跳过',
+    skipListDeleteNotFound: '未找到 {value}，无法删除',
+    skipListLogDeleteNotFound: 'delete({value}) → 未找到',
+    skipListLogDeleteSuccess: 'delete({value}) → 已删除',
+    skipListDeleteSuccess: '已删除 {value}',
+    skipListLogSearchFound: 'search({value}) → 找到 ✓',
+    skipListLogSearchNotFound: 'search({value}) → 未找到',
+    unionFindInputRequired: '请输入有效数值',
+    unionFindLogInsertError: '插入失败: {value}（无效或超出范围）',
+    unionFindLogInsert: 'insert({value}) → makeSet，parent=自身',
+    unionFindInsertSuccess: '已插入 {value}',
+    unionFindInsertDuplicate: '{value} 已存在，并查集不允许重复值',
+    unionFindLogInsertDuplicate: 'insert({value}) → 重复值，跳过',
+    unionFindDeleteNotFound: '未找到 {value}，无法删除',
+    unionFindLogDeleteNotFound: 'delete({value}) → 未找到',
+    unionFindLogDeleteSuccess: 'delete({value}) → 已删除',
+    unionFindDeleteSuccess: '已删除 {value}',
+    unionFindLogFind: 'find({value}) → root={root}（路径压缩）',
+    unionFindLogFindNotFound: 'find({value}) → 未找到',
+    unionFindNodeNotFound: '节点不存在',
+    unionFindLogNodeNotFound: '操作失败: 节点不存在',
+    unionFindAlreadyConnected: '{a} 与 {b} 已在同一集合',
+    unionFindLogAlreadyConnected: 'union({a}, {b}) → 已连通，跳过',
+    unionFindUnionSuccess: '已合并 {a} 与 {b}',
+    unionFindLogUnion: 'union({a}, {b}) → 按秩合并',
+    unionFindLogConnected: 'connected({a}, {b}) → 同集合 ✓',
+    unionFindLogNotConnected: 'connected({a}, {b}) → 不同集合 ✗',
   },
   speedControl: {
     presetDefault: '标准',
@@ -1531,6 +1712,15 @@ export const zh: Locale = {
       advancedEngineering: 'Linux 内核早期使用 AVL 树管理进程虚拟内存区域（后被红黑树替代）；C++ std::map 通常用红黑树而非 AVL（权衡旋转次数）；AVL 树适合查找密集型场景如只读数据库索引；实现时注意 height 字段的正确维护是平衡的关键。',
     },
   },
+  globalSearch: {
+    title: '全局搜索',
+    placeholder: '搜索页面、算法、学习步骤...',
+    inputAriaLabel: '搜索输入框',
+    shortcut: 'Ctrl + K',
+    noResults: '无搜索结果',
+    categoryPage: '页面',
+    categoryLearning: '学习步骤',
+  },
 }
 
 export const en: Locale = {
@@ -1614,6 +1804,17 @@ export const en: Locale = {
     levelorder: 'Level Order',
     nodeTitle: 'Value: {value}\nHeight: {height}\nBalance Factor: {balanceFactor}',
   },
+  redBlackTree: {
+    title: 'Red-Black Tree',
+    subtitle: 'Self-balancing BST · Red-Black Properties · O(log n) Guaranteed',
+    insert: 'Insert',
+    search: 'Search',
+    inorder: 'Inorder',
+    inputPlaceholder: 'Enter 1-99',
+    nodeTitle: 'Value: {value}, Color: {color}',
+    colorRed: 'Red',
+    colorBlack: 'Black',
+  },
   graph: {
     title: 'Graph',
     subtitle: 'Network Structure · Traversal Algorithms · Shortest Path',
@@ -1665,6 +1866,26 @@ export const en: Locale = {
     search: 'Search',
     prefixSearch: 'Prefix Match',
     rootLabel: 'root',
+  },
+  skipList: {
+    title: 'SkipList',
+    subtitle: 'Probabilistic Balance · Multi-level List · O(log n) Search',
+    inputPlaceholder: 'Value (1-99)',
+    insert: 'Insert',
+    delete: 'Delete',
+    search: 'Search',
+    headLabel: 'H',
+  },
+  unionFind: {
+    title: 'Union-Find',
+    subtitle: 'Path Compression · Union by Rank · Near O(1) Operations',
+    inputPlaceholder: 'Value A (1-99)',
+    inputPlaceholderB: 'Value B (1-99)',
+    insert: 'Insert',
+    remove: 'Delete',
+    find: 'Find Root',
+    union: 'Union',
+    connected: 'Connected',
   },
   sort: {
     title: 'Sorting',
@@ -1723,13 +1944,16 @@ export const en: Locale = {
     linkedlist: 'Linked List',
     tree: 'Binary Tree',
     avlTree: 'AVL Tree',
+    redBlackTree: 'Red-Black Tree',
     graph: 'Graph',
     sort: 'Sorting',
     hash: 'Hash Table',
     heap: 'Heap',
     trie: 'Trie',
+    skipList: 'SkipList',
     compare: 'Compare',
     graphAlgorithm: 'Graph Algo',
+    unionFind: 'Union-Find',
     themeDefault: 'Default',
     themeForest: 'Forest',
     themeWarm: 'Warm',
@@ -1762,10 +1986,13 @@ export const en: Locale = {
     emptyLinkedListShort: 'Empty Linked List',
     emptyTreeShort: 'Empty Tree',
     emptyAvlShort: 'Empty AVL Tree · Insert nodes',
+    emptyRedBlackTreeShort: 'Empty Red-Black Tree · Insert nodes',
     emptyGraphShort: 'Empty Graph · Add nodes',
     emptyHashShort: 'Empty Hash · Insert key-value pairs',
     emptyHeapShort: 'Empty Heap · Insert elements',
     emptyTrieShort: 'Empty Trie · Insert words',
+    emptySkipListShort: 'Empty SkipList · Insert elements',
+    emptyUnionFindShort: 'Empty Union-Find · Insert elements',
     nodeNotFound: 'Target node not found',
     emptyArray: 'Array is empty',
     emptyArrayDesc: 'Click below to generate random data or insert elements manually',
@@ -1779,6 +2006,8 @@ export const en: Locale = {
     emptyTreeDesc: 'Click insert to add nodes',
     emptyAvl: 'AVL tree is empty',
     emptyAvlDesc: 'Click insert to add nodes',
+    emptyRedBlackTree: 'Red-Black tree is empty',
+    emptyRedBlackTreeDesc: 'Click insert to add nodes',
     emptyGraph: 'Graph is empty',
     emptyGraphDesc: 'Click add node to create the graph',
     emptyHash: 'Hash table is empty',
@@ -1787,6 +2016,10 @@ export const en: Locale = {
     emptyHeapDesc: 'Click insert to add elements',
     emptyTrie: 'Trie is empty',
     emptyTrieDesc: 'Click insert to add words',
+    emptySkipList: 'SkipList is empty',
+    emptySkipListDesc: 'Click insert to add elements',
+    emptyUnionFind: 'Union-Find is empty',
+    emptyUnionFindDesc: 'Click insert to add elements',
     emptySort: 'Sort data is empty',
     emptySortDesc: 'Click randomize to generate sort data',
     defaultTitle: 'No data',
@@ -1818,11 +2051,14 @@ export const en: Locale = {
     linkedlistLabel: 'Linked list visualization',
     treeLabel: 'Binary tree visualization',
     avlTreeLabel: 'AVL tree visualization',
+    redBlackTreeLabel: 'Red-Black tree visualization',
     graphLabel: 'Graph visualization',
     sortLabel: 'Sorting visualization',
     hashLabel: 'Hash table visualization',
     heapLabel: 'Heap visualization',
     trieLabel: 'Trie visualization',
+    skipListLabel: 'SkipList visualization',
+    unionFindLabel: 'Union-Find visualization',
   },
   shortcuts: {
     title: 'Keyboard Shortcuts',
@@ -2092,6 +2328,8 @@ export const en: Locale = {
     tail: 'Tail',
     top: 'Top',
     endOfWord: 'End of Word',
+    redNode: 'Red Node',
+    blackNode: 'Black Node',
   },
   hooks: {
     inputInvalid: 'Please enter an integer between 1-99',
@@ -2188,6 +2426,13 @@ export const en: Locale = {
     avlLogInorder: 'Inorder (sorted): [{data}]',
     avlLogPostorder: 'Postorder: [{data}]',
     avlLogLevelorder: 'Level order: [{data}]',
+    redBlackTreeLogInsert: 'insert({value}) → inserted and fixup applied, nodes: {count}',
+    redBlackTreeInsertSuccess: 'Inserted node {value} (balanced)',
+    redBlackTreeInsertDuplicate: 'Node {value} already exists, skipping',
+    redBlackTreeLogInsertDuplicate: 'insert({value}) → duplicate, skipped',
+    redBlackTreeLogSearchFound: 'search({value}) → found, depth: {depth}',
+    redBlackTreeLogSearchNotFound: 'search({value}) → not found',
+    redBlackTreeLogInorder: 'Inorder (sorted): [{data}]',
     graphLogAddNode: 'addNode("{id}") → nodes: {count}',
     graphNodeAdded: 'Added node {id}',
     graphSelfLoop: 'Cannot connect to self',
@@ -2235,6 +2480,38 @@ export const en: Locale = {
     trieLogSearchNotFound: 'search("{word}") → not found',
     trieLogPrefixFound: 'startsWith("{prefix}") → found {count}: [{words}]',
     trieLogPrefixNotFound: 'startsWith("{prefix}") → no prefix match',
+    skipListInputRequired: 'Please enter a valid number',
+    skipListLogInsertError: 'Insert failed: {value} (invalid or out of range)',
+    skipListLogInsert: 'insert({value}) → random level, maxLevel={level}',
+    skipListInsertSuccess: 'Inserted {value}',
+    skipListInsertDuplicate: '{value} already exists, SkipList does not allow duplicates',
+    skipListLogInsertDuplicate: 'insert({value}) → duplicate, skipped',
+    skipListDeleteNotFound: '{value} not found, cannot delete',
+    skipListLogDeleteNotFound: 'delete({value}) → not found',
+    skipListLogDeleteSuccess: 'delete({value}) → deleted',
+    skipListDeleteSuccess: 'Deleted {value}',
+    skipListLogSearchFound: 'search({value}) → found ✓',
+    skipListLogSearchNotFound: 'search({value}) → not found',
+    unionFindInputRequired: 'Please enter a valid number',
+    unionFindLogInsertError: 'Insert failed: {value} (invalid or out of range)',
+    unionFindLogInsert: 'insert({value}) → makeSet, parent=self',
+    unionFindInsertSuccess: 'Inserted {value}',
+    unionFindInsertDuplicate: '{value} already exists, Union-Find does not allow duplicates',
+    unionFindLogInsertDuplicate: 'insert({value}) → duplicate, skipped',
+    unionFindDeleteNotFound: '{value} not found, cannot delete',
+    unionFindLogDeleteNotFound: 'delete({value}) → not found',
+    unionFindLogDeleteSuccess: 'delete({value}) → deleted',
+    unionFindDeleteSuccess: 'Deleted {value}',
+    unionFindLogFind: 'find({value}) → root={root} (path compression)',
+    unionFindLogFindNotFound: 'find({value}) → not found',
+    unionFindNodeNotFound: 'Node not found',
+    unionFindLogNodeNotFound: 'Operation failed: node not found',
+    unionFindAlreadyConnected: '{a} and {b} are already in the same set',
+    unionFindLogAlreadyConnected: 'union({a}, {b}) → already connected, skipped',
+    unionFindUnionSuccess: 'Unioned {a} and {b}',
+    unionFindLogUnion: 'union({a}, {b}) → union by rank',
+    unionFindLogConnected: 'connected({a}, {b}) → same set ✓',
+    unionFindLogNotConnected: 'connected({a}, {b}) → different sets ✗',
   },
   speedControl: {
     presetDefault: 'Default',
@@ -2319,5 +2596,14 @@ export const en: Locale = {
       advancedComparison: 'AVL vs Red-Black: AVL is more strictly balanced with faster lookups (smaller height) but more rotations for insert/delete; red-black has bounded rotations (insert 2, delete 3), better for write-heavy workloads. AVL vs plain BST: AVL guarantees O(log n), plain BST can degrade to O(n) linked list.',
       advancedEngineering: 'Linux kernel historically used AVL trees for process virtual memory areas (later replaced by red-black trees); C++ std::map typically uses red-black over AVL (trading rotation count); AVL trees suit lookup-intensive scenarios like read-only database indexes; correct height field maintenance is the key to balancing.',
     },
+  },
+  globalSearch: {
+    title: 'Global Search',
+    placeholder: 'Search pages, algorithms, learning steps...',
+    inputAriaLabel: 'Search input',
+    shortcut: 'Ctrl + K',
+    noResults: 'No results found',
+    categoryPage: 'Page',
+    categoryLearning: 'Learning Step',
   },
 }

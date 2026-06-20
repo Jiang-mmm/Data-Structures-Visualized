@@ -22,12 +22,15 @@ import { linkedlistConfig } from './linkedlist.config'
 import { doublyLinkedListConfig } from './doublyLinkedList.config'
 import { treeConfig } from './tree.config'
 import { avlTreeConfig } from './avlTree.config'
+import { redBlackTreeConfig } from './redBlackTree.config'
 import { hashConfig } from './hash.config'
 import { arrayConfig } from './array.config'
 import { stackConfig } from './stack.config'
 import { queueConfig } from './queue.config'
 import { heapStructureConfig } from './heapStructure.config'
 import { trieConfig } from './trie.config'
+import { skipListConfig } from './skipList.config'
+import { unionFindConfig } from './unionFind.config'
 import { graphConfig } from './graph.config'
 import { complexityAnalysisConfig } from './complexityAnalysis.config'
 import { advancedDataStructuresConfig } from './advancedDataStructures.config'
@@ -58,12 +61,15 @@ export const learningConfigs = {
   doublyLinkedList: doublyLinkedListConfig,
   tree: treeConfig,
   avlTree: avlTreeConfig,
+  redBlackTree: redBlackTreeConfig,
   hash: hashConfig,
   array: arrayConfig,
   stack: stackConfig,
   queue: queueConfig,
   heapStructure: heapStructureConfig,
   trie: trieConfig,
+  skipList: skipListConfig,
+  unionFind: unionFindConfig,
   graph: graphConfig,
   complexityAnalysis: complexityAnalysisConfig,
   advancedDataStructures: advancedDataStructuresConfig,

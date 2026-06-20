@@ -23,6 +23,10 @@ vi.mock('../components/NetworkStatus', () => ({
   default: () => <div data-testid="network-status">NetworkStatus</div>,
 }))
 
+vi.mock('../components/GlobalSearch', () => ({
+  GlobalSearch: () => null,
+}))
+
 describe('Layout', () => {
   it('应该渲染子元素', () => {
     render(

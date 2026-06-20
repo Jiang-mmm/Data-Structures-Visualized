@@ -1,7 +1,7 @@
 # 数据结构学习助手 — Architecture 文档
 
-> **版本:** v11.0.1
-> **更新日期:** 2026-06-19
+> **版本:** v12.0
+> **更新日期:** 2026-06-20
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 
 ---
@@ -22,6 +22,7 @@
 │                        页面层 (Pages)                             │
 │  ArrayPage | StackPage | QueuePage | LinkedListPage | TreePage   │
 │  AvlTreePage | GraphPage | SortPage | HashPage | HeapPage | TriePage │
+│  SkipListPage | UnionFindPage | RedBlackTreePage                 │
 │  SortComparePage | GraphAlgorithmPage | Home | LearningPath      │
 ├─────────────────────────────────────────────────────────────────┤
 │                      公共组件层 (Components)                       │
@@ -31,12 +32,13 @@
 │  KeyboardHelp | EmptyState | NetworkStatus | PerformanceMonitor │
 │  UndoRedoBar | Sidebar | Layout | ErrorBoundary                  │
 │  ProgressOverview | LearningRecommendations | ContentTier        │
-│  AnimationDelayIndicator                                         │
+│  AnimationDelayIndicator | InfoPanel | GlobalSearch              │
 ├─────────────────────────────────────────────────────────────────┤
 │                       状态管理层 (Hooks)                          │
 │  useArrayState | useStackState | useQueueState                   │
 │  useLinkedListState | useTreeState | useAvlTreeState | useGraphState │
 │  useSortState | useHashState | useHeapState | useTrieState       │
+│  useSkipListState | useUnionFindState | useRedBlackTreeState     │
 │  useHistory | useVisualizer | useKeyboard | useCommonKeyboard    │
 │  useTheme | useI18n | useGlobalSettings | useLearningMode        │
 │  useLearningProgress | usePageTracker                            │
@@ -46,11 +48,13 @@
 │  linkedListVisualizer | treeVisualizer | avlTreeVisualizer        │
 │  graphVisualizer | sortVisualizer | hashVisualizer               │
 │  heapVisualizer | trieVisualizer                                 │
+│  skipListVisualizer | unionFindVisualizer | redBlackTreeVisualizer │
 ├─────────────────────────────────────────────────────────────────┤
 │                      算法层 (Algorithms)                          │
 │  sorting: bubble | selection | insertion | quick | merge         │
 │          heap | radix | bucket                                   │
 │  graph: bfs | dfs | dijkstra | topoSort                          │
+│  skipList | unionFind | redBlackTree                             │
 ├─────────────────────────────────────────────────────────────────┤
 │                       工具层 (Utils)                              │
 │  animationEngine | validate | dataExport | debounce              │
@@ -61,7 +65,10 @@
 │  locales.ts (zh + en) | useI18n.ts                               │
 ├─────────────────────────────────────────────────────────────────┤
 │                      配置层 (Configs)                             │
-│  learning/ — 学习模式算法步骤配置（按算法分文件，含拓展主题）       │
+│  learning/ — 学习模式算法步骤配置（37 个配置，按算法分文件，含拓展主题）│
+├─────────────────────────────────────────────────────────────────┤
+│                      数据层 (Data)                                │
+│  searchIndex.ts — 全局搜索索引（数据结构/算法/页面元数据）          │
 ├─────────────────────────────────────────────────────────────────┤
 │                      类型层 (Types)                               │
 │  animationEngine.d.ts | hooks.d.ts | toastStore.d.ts             │
@@ -100,10 +107,11 @@
 | | `LearningRecommendations.tsx` | 学习推荐展示组件，基于 learningRecommender 算法 |
 | | `ContentTier.tsx` | 内容分层组件，基础/进阶/拓展三层内容展示 |
 | | `AnimationDelayIndicator.tsx` | 延迟启动动画的可视化反馈指示器 |
-| | `Sidebar.tsx` | 左侧导航栏 + 主题切换 + 版本号 |
-| | `Layout.tsx` | 页面整体布局框架 |
+| | `GlobalSearch.tsx` | 全局搜索弹窗（Ctrl/Cmd+K 唤起），支持数据结构/算法/页面快速跳转，键盘上下导航 + Enter 选中 |
+| | `Sidebar.tsx` | 左侧导航栏 + 主题切换 + 版本号；导出 `STRUCTURE_KEYS` 供 GlobalSearch 等模块复用 |
+| | `Layout.tsx` | 页面整体布局框架；挂载 GlobalSearch 并监听 Ctrl/Cmd+K 全局快捷键 |
 | | `ErrorBoundary.tsx` | 错误边界捕获 + 异常恢复 UI |
-| **Hooks** | `use*State` | 各数据结构状态管理（11 个） |
+| **Hooks** | `use*State` | 各数据结构状态管理（14 个） |
 | | `useHistory` | 通用历史栈（Undo/Redo，最大 20 步） |
 | | `useVisualizer` | 可视化容器管理（尺寸、ResizeObserver、动画上下文） |
 | | `useKeyboard` | 键盘快捷键监听（含输入框焦点防护） |
@@ -114,9 +122,12 @@
 | | `useLearningMode` | 交互式学习模式步骤管理 |
 | | `useLearningProgress` | 学习进度管理（CustomEvent 同步 + SyncStatus + 统计 API + 目标设定） |
 | | `usePageTracker` | 页面访问追踪 |
-| **Visualizers** | `*Visualizer.ts` | D3.js SVG 渲染 + 动画（11 个），AVL 树遍历使用边流动点 + 节点脉冲高亮 |
+| **Visualizers** | `*Visualizer.ts` | D3.js SVG 渲染 + 动画（14 个），AVL 树遍历使用边流动点 + 节点脉冲高亮 |
 | **Algorithms** | `sorting/*` | 8 种排序算法实现（插件注册模式） |
 | | `graph/*` | 4 种图算法实现 |
+| | `skipList.ts` | 跳表算法实现（多层链表 + 概率平衡 + 搜索/插入/删除） |
+| | `unionFind.ts` | 并查集算法实现（路径压缩 + 按秩合并 + 连通性查询） |
+| | `redBlackTree.ts` | 红黑树算法实现（插入 + fixup + 左右旋转 + 着色） |
 | **Utils** | `animationEngine.ts` | 动画时序控制、性能模式、缓动函数、FPS 监控、动画预设、delayStart 延迟启动 |
 | | `validate.ts` | 输入验证（XSS 净化、数值范围、导入数据校验） |
 | | `dataExport.ts` | JSON/CSV 序列化、版本校验、文件下载 |
@@ -128,8 +139,9 @@
 | | `shareUtils.ts` | 分享数据 Base64 编解码 |
 | | `visualizerLayout.ts` | 可视化公共居中布局工具，统一数组/栈/队列/链表等主体定位 |
 | | `learningRecommender.ts` | 学习推荐算法，基于学习进度智能推荐下一步学习内容 |
-| **i18n** | `locales.ts` | 完整中英文翻译键值对 |
-| **Configs** | `learning/*.config.ts` | 学习模式算法步骤配置（含 3 个拓展主题：complexityAnalysis/advancedDataStructures/realWorldApplications） |
+| **i18n** | `locales.ts` | 完整中英文翻译键值对（含 skipList / unionFind / redBlackTree / globalSearch 命名空间） |
+| **Configs** | `learning/*.config.ts` | 学习模式算法步骤配置（37 个配置，含 3 个拓展主题：complexityAnalysis/advancedDataStructures/realWorldApplications） |
+| **Data** | `searchIndex.ts` | 全局搜索索引数据源，聚合数据结构/算法/页面元数据供 GlobalSearch 检索 |
 | **Types** | `*.d.ts` | TypeScript 类型声明文件 |
 
 ---
@@ -304,7 +316,7 @@ const StackPage = lazy(() => import('./pages/StackPage'))
 - E2E 核心流程 — 中优先级
 
 **当前状态:**
-- 2866 个单元测试（182 个测试文件），100% 通过率，TypeScript strict 模式
+- 3480 个单元测试（203 个测试文件），100% 通过率，TypeScript strict 模式
 - 9 个 E2E 测试文件，282 用例，98.2% 通过率（Chromium + Firefox）
 - axe-core WCAG 2 AA 零 violations
 
@@ -487,8 +499,9 @@ t(key) 函数根据当前语言返回翻译文本
 main.tsx
   └── App.tsx
         ├── Layout.tsx
-        │     ├── Sidebar.tsx ──→ useTheme ──→ useI18n
+        │     ├── Sidebar.tsx ──→ useTheme ──→ useI18n（导出 STRUCTURE_KEYS）
         │     ├── KeyboardHelp.tsx ──→ useGlobalSettings
+        │     ├── GlobalSearch.tsx ──→ searchIndex ──→ Sidebar.STRUCTURE_KEYS
         │     └── PerformanceMonitor.tsx
         ├── Home.tsx ──→ useGlobalSettings
         ├── ArrayPage.tsx ──→ useArrayState ──→ useHistory
@@ -514,6 +527,18 @@ main.tsx
         │                    └── hashVisualizer
         ├── HeapPage.tsx ──→ useHeapState ──→ useHistory
         ├── TriePage.tsx ──→ useTrieState ──→ useHistory
+        ├── SkipListPage.tsx ──→ useSkipListState ──→ useHistory
+        │                        ├── algorithms/skipList
+        │                        ├── useLearningMode
+        │                        └── skipListVisualizer
+        ├── UnionFindPage.tsx ──→ useUnionFindState ──→ useHistory
+        │                          ├── algorithms/unionFind
+        │                          ├── useLearningMode
+        │                          └── unionFindVisualizer
+        ├── RedBlackTreePage.tsx ──→ useRedBlackTreeState ──→ useHistory
+        │                             ├── algorithms/redBlackTree
+        │                             ├── useLearningMode
+        │                             └── redBlackTreeVisualizer
         ├── SortComparePage.tsx ──→ useSortState ──→ useHistory
         │                           ├── algorithms/sorting/*
         │                           ├── PerformanceChart ──→ d3Imports
@@ -545,6 +570,7 @@ main.tsx
 | `visualizerLayout.ts` | arrayVisualizer、stackVisualizer、queueVisualizer、linkedListVisualizer |
 | `learningRecommender.ts` | LearningRecommendations 组件、LearningPath 页面 |
 | `useLearningProgress.ts` | ProgressOverview、LearningRecommendations、LearningPath、各学习模式页面 |
+| `searchIndex.ts` | GlobalSearch 组件 |
 
 ---
 
@@ -666,7 +692,67 @@ main.tsx
 
 ---
 
-## 8. 技术债务
+## 8. 代码风格规范
+
+### 8.1 Import 风格
+
+- **类型导入使用 `type` 前缀**：从模块导入类型时，使用 `import { type ReactNode } from 'react'` 或 `import { type Locale } from './locales'`，明确区分类型导入与值导入，便于 tree-shaking。
+- **移除未使用的 `import React`**：React 19 + 自动 JSX runtime 下无需显式导入 React。
+- **`memo` 后置包装**：使用 `const Component = memo(function Component() {...})` 而非内联 `memo(() => {...})`，便于调试栈追踪与组件命名。
+
+### 8.2 解构风格
+
+- **`useDataStructureState` 多行解构**：当解构字段数 ≥ 4 时使用多行格式（4-5 字段/行），提升可读性：
+
+```typescript
+const {
+  data, setData, logs, addLog, isAnimating, setIsAnimating,
+  undo, redo, canUndo, canRedo, reset, loadData,
+} = useDataStructureState(...)
+```
+
+### 8.3 catch 参数约定
+
+- **统一使用 `catch (error)`**：所有 catch 块的参数命名为 `error`，不使用 `e` / `err`。
+- **不使用变量时用 `catch {}`**：当 catch 块不需要使用错误对象时，使用 optional catch binding（`catch {}`），避免未使用变量警告。
+
+### 8.4 共享常量
+
+- **`src/visualizers/visualizerConstants.ts`**：提取跨多个 visualizer 值相同且语义一致的常量。
+  - `DEFAULT_NODE_RADIUS = 22`：tree / avlTree / trie / heap 共用
+  - `DEFAULT_LEVEL_HEIGHT = 80`：tree / avlTree 共用
+- **仅提取完全相同的常量**：值不同或语义不同的常量保留在各 visualizer 内（如 visualizer 的 `GraphNode` 有 `fx/fy` 字段用于 D3 force simulation，与 hook 的 `GraphNode` 类型差异有意义，不强行去重）。
+
+### 8.5 泛型 Hook
+
+- **`useSharedData<T>` 泛型化**：`loadData` 类型从 `(data: unknown) => void` 改为 `(data: T) => void`，TypeScript 从调用方传入的 `loadData` 函数自动推断类型 `T`，消除 `as any` 滥用：
+
+```typescript
+// 旧：as any 滥用
+loadData: ((d: unknown) => loadData(d as any)) as any
+
+// 新：直接传递，类型自动推断
+loadData
+```
+
+### 8.6 注释语言
+
+- **业务注释使用中文**：代码内的业务逻辑注释、TODO、说明性注释使用中文。
+- **JSDoc 保留英文**：公共 API 的 JSDoc 文档注释保留英文，便于工具链解析。
+- **技术术语不翻译**：localStorage、DOM、hover、LEVEL_HEIGHT、FPS 等技术术语保留原文。
+- **不修改测试文件注释**：测试文件的注释保持原样，避免影响测试快照。
+
+### 8.7 ESLint 配置
+
+- **使用 `tseslint.config`**：`eslint.config.js` 从 `defineConfig` 改为 `tseslint.config`，支持 TS 文件检查。
+- **覆盖 TS 文件**：通过 `...tseslint.configs.recommended` 规则集覆盖 `**/*.{ts,tsx}` 文件。
+- **`@typescript-eslint/no-unused-vars`**：启用规则，`varsIgnorePattern: '^_'`（下划线前缀变量不报错）。
+- **已有代码模式降级为 warn**：`react-hooks/set-state-in-effect` 和 `react-hooks/refs` 降级为 `warn`，避免破坏已有功能模式。
+- **测试文件规则放宽**：`src/__tests__/**` 关闭 `@typescript-eslint/no-unsafe-function-type` 等规则，适配测试场景。
+
+---
+
+## 9. 技术债务
 
 | 债务项 | 说明 | 优先级 | 计划 |
 |--------|------|--------|------|
@@ -680,4 +766,4 @@ main.tsx
 
 ---
 
-> 本文档最后更新于 2026-06-19，与代码库版本 v11.0.1 同步维护。
+> 本文档最后更新于 2026-06-20，与代码库版本 v12.0 同步维护。

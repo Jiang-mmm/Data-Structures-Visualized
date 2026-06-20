@@ -2,6 +2,208 @@
 
 ---
 
+## 2026-06-20 | v12 迭代：跳表 / 并查集 / 红黑树 / 全局搜索
+
+### 执行概要
+
+v12 迭代新增 3 个数据结构（跳表 SkipList、并查集 Union-Find、红黑树 Red-Black Tree）与全局搜索功能（GlobalSearch，Ctrl/Cmd+K 唤起）。新增 391 个单元测试，全部验证通过（lint 0 errors / typecheck 0 errors / 3480 tests passed / build 成功）。
+
+### 完成内容
+
+#### Task 5：跳表 SkipList [P1]
+- **新增文件：**
+  - `src/algorithms/skipList.ts`：扁平化数据表示，多层链表，概率平衡
+  - `src/hooks/useSkipListState.ts`：跳表状态管理 Hook
+  - `src/visualizers/skipListVisualizer.ts`：多层水平布局可视化
+  - `src/pages/SkipListPage.tsx`：跳表页面（路由 `/skip-list`）
+  - `src/configs/learning/skipList.config.ts`：7 步学习配置
+- **测试：** 108 个新测试
+
+#### Task 6：并查集 Union-Find [P1]
+- **新增文件：**
+  - `src/algorithms/unionFind.ts`：路径压缩 + 按秩合并，扁平化数据表示
+  - `src/hooks/useUnionFindState.ts`：并查集状态管理 Hook
+  - `src/visualizers/unionFindVisualizer.ts`：森林布局可视化
+  - `src/pages/UnionFindPage.tsx`：并查集页面（路由 `/union-find`）
+  - `src/configs/learning/unionFind.config.ts`：7 步学习配置
+- **测试：** 132 个新测试
+
+#### Task 7：红黑树 Red-Black Tree [P1]
+- **新增文件：**
+  - `src/algorithms/redBlackTree.ts`：递归对象表示，插入 + fixup + 旋转，深拷贝不可变更新
+  - `src/hooks/useRedBlackTreeState.ts`：红黑树状态管理 Hook
+  - `src/visualizers/redBlackTreeVisualizer.ts`：树形布局可视化，红黑颜色区分
+  - `src/pages/RedBlackTreePage.tsx`：红黑树页面（路由 `/red-black-tree`）
+  - `src/configs/learning/redBlackTree.config.ts`：7 步学习配置
+- **测试：** 138 个新测试
+
+#### Task 8：全局搜索 GlobalSearch [P1]
+- **新增文件：**
+  - `src/data/searchIndex.ts`：搜索索引，从 STRUCTURE_KEYS + learningConfigs 生成
+  - `src/components/GlobalSearch.tsx`：全局搜索组件（Ctrl/Cmd+K 唤起，键盘导航）
+- **修改文件：**
+  - `src/components/Layout.tsx`：挂载 GlobalSearch + 监听 Ctrl/Cmd+K 快捷键
+- **测试：** 13 个新测试
+
+#### 其他修改
+- `src/components/Sidebar.tsx`：导出 STRUCTURE_KEYS，新增 3 个导航项和图标（case 7 红黑树、case 15 graph-algorithm、case 16 union-find）
+- `src/pages/Home.tsx`：新增 3 张卡片（跳表、并查集、红黑树）
+- `src/App.tsx`：新增 3 条 lazy Route（`/skip-list`、`/union-find`、`/red-black-tree`）
+- `src/i18n/locales.ts`：新增 skipList、unionFind、redBlackTree、globalSearch 命名空间
+- `src/configs/learning/index.ts`：注册 3 个新学习配置（37 个总计）
+- `src/__tests__/newLearningConfigs.test.ts`：计数断言更新为 37
+- `vite.config.js`：添加 learning-configs manualChunks 规则（bundle 优化）
+- `src/__tests__/Layout.test.tsx`：添加 GlobalSearch mock
+
+### 验证方式
+
+| 验证项 | 命令 | 结果 |
+|--------|------|------|
+| 单元测试 | `npm run test:run` | ✅ 3480 tests passed（203 文件），较 v11 增加 391 个新测试 |
+| ESLint | `npm run lint` | ✅ 0 errors / 66 warnings（全部既有模式） |
+| TypeScript | `npx tsc --noEmit` | ✅ 0 错误 |
+| 生产构建 | `npm run build` | ✅ 构建成功，Bundle size check passed |
+
+### Bundle 体积
+
+| Chunk | 实际体积 | 预算 |
+|-------|---------|------|
+| index | 63.40 KB | 110 KB |
+| vendor-react | 231.35 KB | 250 KB |
+| vendor-d3 | 52.54 KB | 60 KB |
+
+### 数据结构总数变化
+
+- v11：12 个数据结构页面（14 条路由含 compare 和 graph-algorithm）
+- v12：15 个数据结构页面（17 条路由），新增跳表、并查集、红黑树
+
+### 学习配置总数变化
+
+- v11：34 个学习配置
+- v12：37 个学习配置（新增 skipList、unionFind、redBlackTree）
+
+### 修改文件清单
+
+| 文件 | 类型 | 修改内容 |
+|------|------|---------|
+| `src/algorithms/skipList.ts` | 新增 | 跳表算法（扁平化数据表示，多层链表，概率平衡） |
+| `src/algorithms/unionFind.ts` | 新增 | 并查集算法（路径压缩 + 按秩合并） |
+| `src/algorithms/redBlackTree.ts` | 新增 | 红黑树算法（递归对象表示，插入 + fixup + 旋转） |
+| `src/hooks/useSkipListState.ts` | 新增 | 跳表状态 Hook |
+| `src/hooks/useUnionFindState.ts` | 新增 | 并查集状态 Hook |
+| `src/hooks/useRedBlackTreeState.ts` | 新增 | 红黑树状态 Hook |
+| `src/visualizers/skipListVisualizer.ts` | 新增 | 跳表可视化（多层水平布局） |
+| `src/visualizers/unionFindVisualizer.ts` | 新增 | 并查集可视化（森林布局） |
+| `src/visualizers/redBlackTreeVisualizer.ts` | 新增 | 红黑树可视化（树形布局，红黑颜色区分） |
+| `src/pages/SkipListPage.tsx` | 新增 | 跳表页面 |
+| `src/pages/UnionFindPage.tsx` | 新增 | 并查集页面 |
+| `src/pages/RedBlackTreePage.tsx` | 新增 | 红黑树页面 |
+| `src/configs/learning/skipList.config.ts` | 新增 | 跳表学习配置（7 步） |
+| `src/configs/learning/unionFind.config.ts` | 新增 | 并查集学习配置（7 步） |
+| `src/configs/learning/redBlackTree.config.ts` | 新增 | 红黑树学习配置（7 步） |
+| `src/data/searchIndex.ts` | 新增 | 全局搜索索引（STRUCTURE_KEYS + learningConfigs 生成） |
+| `src/components/GlobalSearch.tsx` | 新增 | 全局搜索组件（Ctrl/Cmd+K 唤起，键盘导航） |
+| `src/components/Sidebar.tsx` | 修改 | 导出 STRUCTURE_KEYS，新增 3 个导航项和图标 |
+| `src/pages/Home.tsx` | 修改 | 新增 3 张卡片（跳表、并查集、红黑树） |
+| `src/App.tsx` | 修改 | 新增 3 条 lazy Route |
+| `src/i18n/locales.ts` | 修改 | 新增 skipList/unionFind/redBlackTree/globalSearch 命名空间 |
+| `src/configs/learning/index.ts` | 修改 | 注册 3 个新学习配置（37 个总计） |
+| `src/__tests__/newLearningConfigs.test.ts` | 修改 | 计数断言更新为 37 |
+| `vite.config.js` | 修改 | 添加 learning-configs manualChunks 规则 |
+| `src/__tests__/Layout.test.tsx` | 修改 | 添加 GlobalSearch mock |
+| 多个测试文件 | 新增 | 391 个新测试（108 + 132 + 138 + 13） |
+
+---
+
+## 2026-06-20 | 代码风格统一与架构优化（P1-P6）
+
+### 执行概要
+
+对全项目进行代码风格统一与架构优化，分 P1-P6 六个阶段推进：统一 Import/导出风格、解构与函数签名、类型去重与常量提取、页面公共逻辑泛型化、注释语言统一、ESLint 配置增强覆盖 TS 文件。所有验证通过（lint 0 errors, typecheck 0 errors, 3089 tests passed, build 成功）。
+
+### 完成内容
+
+#### P1: Import 与导出风格统一
+- **修改文件：** 17 个 `components/` 文件 + 1 个 `i18n/useI18n.ts`
+- **修改内容：**
+  - 添加 `type` 前缀到类型导入（如 `import { type ReactNode } from 'react'`）
+  - 移除未使用的 `import React`
+  - 内联 `memo` 改为后置 `memo`（`const X = memo(function X() {...})`）
+  - `useI18n.ts`：添加 `type` 前缀到 `Locale` 导入
+
+#### P2: 解构与函数签名统一
+- **修改文件：** `useHeapState.ts`、`useHashState.ts`、`useTrieState.ts`、13 个页面文件、`ExportImport.tsx`、`performanceLogger.ts`、`SortComparePage.tsx`
+- **修改内容：**
+  - `useHeapState.ts` / `useHashState.ts`：单行解构改为多行格式（4-5 字段/行）
+  - `useTrieState.ts`：`insert` / `remove` 添加 `: void` 返回类型
+  - 13 个页面文件：`catch (e)` → `catch (error)`，同步更新 `handleAnimationError` 调用
+  - `ExportImport.tsx` / `performanceLogger.ts`：`catch (err)` → `catch (error)`
+  - `SortComparePage.tsx`：`catch (e)` → `catch {}`（optional catch binding，不使用变量）
+
+#### P3: 类型去重与常量提取
+- **新增文件：** `src/visualizers/visualizerConstants.ts`
+- **修改文件：** `treeVisualizer.ts`、`avlTreeVisualizer.ts`、`trieVisualizer.ts`、`heapVisualizer.ts`
+- **修改内容：**
+  - 提取 `DEFAULT_NODE_RADIUS = 22`（tree/avlTree/trie/heap 4 个 visualizer 共用）
+  - 提取 `DEFAULT_LEVEL_HEIGHT = 80`（tree/avlTree 2 个 visualizer 共用）
+  - 4 个 visualizer 从共享文件导入常量
+  - 类型去重未强行执行（hook 与 visualizer 的类型差异有意义，如 visualizer 的 `GraphNode` 有 `fx/fy` 字段用于 D3 force simulation）
+
+#### P4: 页面公共逻辑提取
+- **修改文件：** `useSharedData.ts` + 11 个页面文件
+- **修改内容：**
+  - `useSharedData.ts` 改为泛型函数 `useSharedData<T>`，`loadData` 类型从 `(data: unknown) => void` 改为 `(data: T) => void`
+  - 11 个页面文件消除 `as any` 滥用：`loadData: ((d: unknown) => loadData(d as any)) as any` → `loadData`
+
+#### P5: 注释语言统一
+- **修改文件：** 7 个文件（`heapVisualizer`、`treeVisualizer`、`hashVisualizer`、`arrayVisualizer`、`useDataStructureState`、`OperationGroup`、`PerformanceChart`）
+- **修改内容：**
+  - 24 处英文注释翻译为中文
+  - 保留技术术语（localStorage、DOM、hover、LEVEL_HEIGHT 等）不翻译
+  - 不修改测试文件和 JSDoc 注释
+
+#### P6: ESLint 配置增强
+- **新增依赖：** `typescript-eslint@8.61.1`（devDependency）
+- **修改文件：** `eslint.config.js`、`src/algorithms/sorting/index.ts`
+- **修改内容：**
+  - `eslint.config.js` 从 `defineConfig` 改为 `tseslint.config`
+  - 添加 TS 文件支持（`tseslint.configs.recommended` 规则集）
+  - 添加 `@typescript-eslint/no-unused-vars` 规则（`varsIgnorePattern: '^_'`）
+  - 降级 `react-hooks/set-state-in-effect` 和 `react-hooks/refs` 为 `warn`（已有代码模式，修改可能影响功能）
+  - 测试文件关闭 `@typescript-eslint/no-unsafe-function-type`
+  - 修复 `prefer-const` 错误（`src/algorithms/sorting/index.ts`：`swaps` 改为 `const`）
+
+### 验证方式
+
+| 验证项 | 命令 | 结果 |
+|--------|------|------|
+| 单元测试 | `npm run test:run` | ✅ 3089 tests passed（190 文件） |
+| ESLint | `npm run lint` | ✅ 0 errors / 59 warnings（全是 react-hooks/exhaustive-deps，已有代码模式） |
+| TypeScript | `npx tsc --noEmit` | ✅ 0 错误 |
+| 生产构建 | `npm run build` | ✅ 构建成功，bundle 预算通过 |
+
+### 修改文件清单
+
+| 文件 | 类型 | 修改内容 |
+|------|------|---------|
+| `src/components/` 17 个文件 | 修改 | type 前缀导入、移除未使用 React、后置 memo |
+| `src/i18n/useI18n.ts` | 修改 | Locale 类型导入添加 type 前缀 |
+| `src/hooks/useHeapState.ts`、`useHashState.ts` | 修改 | 多行解构格式 |
+| `src/hooks/useTrieState.ts` | 修改 | insert/remove 添加 void 返回类型 |
+| 13 个页面文件 | 修改 | catch (e) → catch (error) |
+| `src/components/ExportImport.tsx`、`src/utils/performanceLogger.ts` | 修改 | catch (err) → catch (error) |
+| `src/pages/SortComparePage.tsx` | 修改 | catch (e) → catch {} |
+| `src/visualizers/visualizerConstants.ts` | 新增 | 共享常量 DEFAULT_NODE_RADIUS / DEFAULT_LEVEL_HEIGHT |
+| `treeVisualizer.ts`、`avlTreeVisualizer.ts`、`trieVisualizer.ts`、`heapVisualizer.ts` | 修改 | 从共享文件导入常量 |
+| `src/hooks/useSharedData.ts` | 修改 | 泛型化 useSharedData<T> |
+| 11 个页面文件 | 修改 | 消除 as any 滥用 |
+| 7 个文件（visualizers/hooks/components） | 修改 | 24 处英文注释翻译为中文 |
+| `eslint.config.js` | 修改 | tseslint.config + TS 文件支持 |
+| `src/algorithms/sorting/index.ts` | 修改 | swaps 改为 const |
+| `package.json` / `package-lock.json` | 修改 | 新增 typescript-eslint devDependency |
+
+---
+
 ## 2026-06-20 | Phase 5.6：统一信息面板（InfoPanel）取代 LogPanel + LearningModeToggle
 
 ### 执行概要
