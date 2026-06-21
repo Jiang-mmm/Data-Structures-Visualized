@@ -231,7 +231,7 @@ v9.0 全面迭代优化已完成，分 4 个 Phase 推进：
 
 ## 七、UI 美化迭代状态
 
-基于 `docs/项目视觉设计审查报告.md` 的长期 UI 美化计划，已完成前三个阶段、Phase U1 及 v10 UI 打磨：
+基于 [docs/archive/referenced-planning.md](./docs/archive/referenced-planning.md) 中归档的「项目视觉设计审查报告」的长期 UI 美化计划，已完成前三个阶段、Phase U1 及 v10 UI 打磨：
 
 | Phase | 内容 | 状态 |
 |-------|------|------|

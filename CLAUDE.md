@@ -2,6 +2,16 @@
 
 This file provides guidance to MiMo Code (claude.ai/code) when working with code in this repository.
 
+## AI 协作前置步骤（开发前必读）
+
+> 开始任何代码开发任务前，**必须**先读取项目当前状态，避免基于过时代码或已归档文档做决策。
+
+1. **读取 `PROJECT_STATUS.md`** — 了解当前版本、分支、最近完成的工作、下一步方向、已知约束。
+2. **读取 `TODO.md` 顶部 3 段** — 确认当前活跃任务与优先级。
+3. **读取 `WORKLOG.md` 前 60 行** — 了解最近工作上下文。
+4. 若状态文档与代码冲突，**以 `PROJECT_STATUS.md` 和 `TODO.md` 为准**。
+5. 历史参考请访问 `docs/archive/`，**禁止**将归档文档作为当前开发决策依据。
+
 ## Project Overview
 
 **ds-visualizer** (数据结构学习助手) — a Chinese-language educational web app for university students to learn data structures through interactive D3.js SVG animations. React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4. Deployed to GitHub Pages at base path `/Data-Structures-Visualized/`.

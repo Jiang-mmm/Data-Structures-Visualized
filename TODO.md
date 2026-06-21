@@ -4,7 +4,7 @@
 > **更新日期:** 2026-06-20
 > **状态:** v12.0 迭代（跳表 / 并查集 / 红黑树 / 全局搜索 / D1 新增 4 图算法 / D2 新增 4 排序算法）已完成；v12.x 后续阶段（B 树、线段树、测验系统等）待开始
 > **v13 起点:** 2026-06-20 完成全面代码体检（56 条独立问题），4 阶段修复路线已就位
-> **详细迭代计划:** docs/iteration-plan-v10.md（最新），v10/v11/v12 迭代记录见 WORKLOG.md
+> **详细迭代计划:** [docs/iteration-plan-v11.md](./docs/iteration-plan-v11.md)（最新），v10/v11/v12 迭代记录见 WORKLOG.md
 > **v13 体检报告:** [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md)
 
 ---
@@ -247,7 +247,7 @@
 
 ## 已完成（UI 美化 Phase 1-3）
 
-基于 `docs/项目视觉设计审查报告.md` 的长期 UI 美化计划。
+基于 [docs/archive/referenced-planning.md](./docs/archive/referenced-planning.md) 中归档的「项目视觉设计审查报告」的长期 UI 美化计划。
 
 | # | 任务 | 优先级 | 状态 | 说明 |
 |---|------|--------|------|------|
