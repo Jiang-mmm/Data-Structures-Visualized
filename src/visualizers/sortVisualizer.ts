@@ -1,6 +1,7 @@
 import { select } from '../utils/d3Imports'
 import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
+import { isLargeData } from '../utils/performanceConfig'
 
 const BAR_GAP_RATIO = 0.35
 const CORNER_RADIUS = 4
@@ -41,6 +42,8 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
   const C = getColors(isDark)
   const container = select(svg)
 
+  // 大数据场景：简化渲染（跳过阴影、渐变）
+  const isLarge = isLargeData('sort', data.length)
 
   if (!data || data.length === 0) {
     container.selectAll('g.bar').remove()
@@ -50,19 +53,23 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
 
   const { barWidth, maxBarHeight, maxVal, gap, offsetX, n } = getLayout(data, width, height)
 
-  ensureGradientDefs(svg, isDark)
+  if (!isLarge) {
+    ensureGradientDefs(svg, isDark)
+  }
 
-  // Add drop shadow filter for bars
-  const defs = container.select('defs')
-  if (defs.select('#bar-shadow').empty()) {
-    const filter = defs.append('filter').attr('id', 'bar-shadow').attr('x', '-20%').attr('y', '-20%').attr('width', '140%').attr('height', '140%')
-    filter.append('feDropShadow').attr('dx', 1).attr('dy', 2).attr('stdDeviation', 2).attr('flood-opacity', 0.15)
+  // Add drop shadow filter for bars (大数据场景跳过)
+  if (!isLarge) {
+    const defs = container.select('defs')
+    if (defs.select('#bar-shadow').empty()) {
+      const filter = defs.append('filter').attr('id', 'bar-shadow').attr('x', '-20%').attr('y', '-20%').attr('width', '140%').attr('height', '140%')
+      filter.append('feDropShadow').attr('dx', 1).attr('dy', 2).attr('stdDeviation', 2).attr('flood-opacity', 0.15)
+    }
   }
 
   container.selectAll('g.sort-grid').remove()
 
   if (data.length > 100) {
-    renderSortBarsImmediate(svg, data, options, container, { barWidth, maxBarHeight, maxVal, gap, offsetX, n, C })
+    renderSortBarsImmediate(svg, data, options, container, { barWidth, maxBarHeight, maxVal, gap, offsetX, n, C, isLarge })
   } else {
     container.selectAll('g.bar')
       .data(data, (_d: number, i: number) => i)
@@ -78,10 +85,10 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
             .attr('width', barWidth)
             .attr('height', (d: number) => (d / maxVal) * maxBarHeight)
             .attr('rx', CORNER_RADIUS)
-            .attr('fill', gradUrl('bar-default'))
+            .attr('fill', isLarge ? C.sortDefault : gradUrl('bar-default'))
             .attr('stroke', C.sortDefaultStroke)
             .attr('stroke-width', 1.5)
-            .attr('filter', 'url(#bar-shadow)')
+            .attr('filter', isLarge ? null : 'url(#bar-shadow)')
 
           // Tooltip only
           g.append('title').text((d: number, i: number) => `[${i}] = ${d}`)
@@ -115,7 +122,7 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
             .transition().duration(duration(200))
             .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight)
             .attr('height', (d: number) => (d / maxVal) * maxBarHeight)
-            .attr('fill', gradUrl('bar-default'))
+            .attr('fill', isLarge ? C.sortDefault : gradUrl('bar-default'))
             .attr('stroke', C.sortDefaultStroke)
             .attr('stroke-width', 1.5)
 
@@ -133,9 +140,9 @@ export function renderSortBars(svg: SVGSVGElement, data: number[], options: Sort
   }
 }
 
-function renderSortBarsImmediate(_svg: SVGSVGElement, data: number[], options: SortOptions, container: ReturnType<typeof select>, layout: LayoutResult & { C: ReturnType<typeof getColors> }): void {
+function renderSortBarsImmediate(_svg: SVGSVGElement, data: number[], options: SortOptions, container: ReturnType<typeof select>, layout: LayoutResult & { C: ReturnType<typeof getColors>; isLarge: boolean }): void {
   const { height } = options
-  const { barWidth, maxBarHeight, maxVal, gap, offsetX, n, C } = layout
+  const { barWidth, maxBarHeight, maxVal, gap, offsetX, n, C, isLarge } = layout
 
 
   container.selectAll('g.bar')
@@ -152,7 +159,7 @@ function renderSortBarsImmediate(_svg: SVGSVGElement, data: number[], options: S
           .attr('width', barWidth)
           .attr('height', (d: number) => (d / maxVal) * maxBarHeight)
           .attr('rx', CORNER_RADIUS)
-          .attr('fill', gradUrl('bar-default'))
+          .attr('fill', isLarge ? C.sortDefault : gradUrl('bar-default'))
           .attr('stroke', C.sortDefaultStroke)
           .attr('stroke-width', 1.5)
 
@@ -184,7 +191,7 @@ function renderSortBarsImmediate(_svg: SVGSVGElement, data: number[], options: S
         update.select('rect')
           .attr('y', (d: number) => height - 45 - (d / maxVal) * maxBarHeight)
           .attr('height', (d: number) => (d / maxVal) * maxBarHeight)
-          .attr('fill', gradUrl('bar-default'))
+          .attr('fill', isLarge ? C.sortDefault : gradUrl('bar-default'))
           .attr('stroke', C.sortDefaultStroke)
           .attr('stroke-width', 1.5)
 

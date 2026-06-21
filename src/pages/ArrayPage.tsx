@@ -7,6 +7,7 @@ import ShareButton from '../components/ShareButton'
 import Visualizer from '../components/Visualizer'
 import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
+import PerformanceIndicator from '../components/PerformanceIndicator'
 import { renderArray, animateInsert, animateDelete, animateSearch, animateSearchAll, animateBinarySearch } from '../visualizers/arrayVisualizer'
 import { useArrayState } from '../hooks/useArrayState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -230,6 +231,9 @@ export default function ArrayPage() {
       <ContentTier structureKey="array" />
       <div className="flex-1 flex flex-col lg:flex-row min-h-0">
         <div className="relative flex flex-col flex-1 min-h-0">
+          <div className="absolute top-2 right-2 z-20">
+            <PerformanceIndicator visualizerKey="array" dataLength={data.length} />
+          </div>
           <Visualizer data={data} renderFn={renderArray as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.arrayLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: `${data.length} / 20` }]} />} />
           {data.length === 0 && (
             <EmptyState icon="▦" titleKey="emptyState.emptyArray" descriptionKey="emptyState.emptyArrayDesc" onFill={randomize} />

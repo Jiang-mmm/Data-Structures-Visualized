@@ -126,6 +126,54 @@ describe('arrayVisualizer', () => {
         expect(indexText?.getAttribute('font-family')).toContain('var(--font-mono)')
       })
     })
+
+    it('大数据场景（>100）应使用简化渲染：无阴影滤镜、无渐变、无数值标签', () => {
+      const largeData = Array.from({ length: 101 }, (_, i) => i + 1)
+      expect(() => renderArray(svg, largeData, { width: 800, height: 400 })).not.toThrow()
+
+      // 无阴影 filter 定义
+      expect(svg.querySelector('#array-shadow')).toBeNull()
+
+      // rect 无 filter 属性，fill 为纯色（非渐变 url）
+      const rects = svg.querySelectorAll('rect')
+      expect(rects.length).toBe(101)
+      rects.forEach(rect => {
+        expect(rect.getAttribute('filter')).toBeNull()
+        const fill = rect.getAttribute('fill') || ''
+        expect(fill).not.toContain('url(')
+      })
+
+      // 无数值标签文本（>100 个元素时跳过）
+      const items = svg.querySelectorAll('.array-item')
+      items.forEach(item => {
+        const texts = Array.from(item.querySelectorAll('text'))
+        // 只有索引标签 [i]，无数值标签
+        const valueTexts = texts.filter(t => !t.textContent?.startsWith('['))
+        expect(valueTexts.length).toBe(0)
+      })
+    })
+
+    it('大数据场景（>=50 且 <=100）应跳过阴影和渐变但保留数值标签', () => {
+      const data = Array.from({ length: 50 }, (_, i) => i + 1)
+      renderArray(svg, data, { width: 800, height: 400 })
+
+      // 无阴影 filter 定义
+      expect(svg.querySelector('#array-shadow')).toBeNull()
+
+      // rect 无 filter 属性，fill 为纯色
+      const rects = svg.querySelectorAll('rect')
+      rects.forEach(rect => {
+        expect(rect.getAttribute('filter')).toBeNull()
+        const fill = rect.getAttribute('fill') || ''
+        expect(fill).not.toContain('url(')
+      })
+
+      // 保留数值标签（<=100）
+      const firstItem = svg.querySelector('.array-item')
+      const texts = firstItem ? Array.from(firstItem.querySelectorAll('text')) : []
+      const valueTexts = texts.filter(t => !t.textContent?.startsWith('['))
+      expect(valueTexts.length).toBeGreaterThan(0)
+    })
   })
 
   describe('renderArray 居中定位', () => {

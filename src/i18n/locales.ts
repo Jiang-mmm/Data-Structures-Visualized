@@ -917,6 +917,10 @@ export interface Locale {
     reload: string
     close: string
   }
+  performance: {
+    mode: string
+    hint: string
+  }
 }
 
 interface ContentTierStructure {
@@ -1903,6 +1907,10 @@ export const zh: Locale = {
     reload: '刷新',
     close: '关闭',
   },
+  performance: {
+    mode: '性能模式',
+    hint: '大数据场景已跳过动画',
+  },
 }
 
 export const en: Locale = {
@@ -2877,5 +2885,9 @@ export const en: Locale = {
     updateAvailable: 'Update available',
     reload: 'Reload',
     close: 'Close',
+  },
+  performance: {
+    mode: 'Performance Mode',
+    hint: 'Animations skipped for large data',
   },
 }
