@@ -126,7 +126,7 @@ export default function SortComparePage() {
   const [showExportMenu, setShowExportMenu] = useState<boolean>(false)
   const exportMenuRef = useRef<HTMLDivElement>(null)
   const { t } = useGlobalSettings()
-  const learningMode = useLearningMode('bubble')
+  const learningMode = useLearningMode('sortCompare')
 
   const svgRefs = useRef<Record<string, SVGSVGElement | null>>({})
   const dimensionsMap = useRef<Record<string, { width: number; height: number }>>({})

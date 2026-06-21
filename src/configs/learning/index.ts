@@ -35,6 +35,7 @@ import { graphConfig } from './graph.config'
 import { complexityAnalysisConfig } from './complexityAnalysis.config'
 import { advancedDataStructuresConfig } from './advancedDataStructures.config'
 import { realWorldApplicationsConfig } from './realWorldApplications.config'
+import { sortCompareConfig } from './sortCompare.config'
 
 export const learningConfigs = {
   bfs: bfsConfig,
@@ -74,6 +75,7 @@ export const learningConfigs = {
   complexityAnalysis: complexityAnalysisConfig,
   advancedDataStructures: advancedDataStructuresConfig,
   realWorldApplications: realWorldApplicationsConfig,
+  sortCompare: sortCompareConfig,
 }
 
 export type LearningConfigKey = keyof typeof learningConfigs
