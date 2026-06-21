@@ -2,7 +2,7 @@
 
 > **文件用途**: AI 开发前必读。本文件汇总项目最新进展，避免 AI 基于过时的代码或文档状态做决策。
 > **更新频率**: 每次迭代结束 / 每个子阶段验收后 / 启动新的开发任务前。
-> **最后更新**: 2026-06-21
+> **最后更新**: 2026-06-22
 
 ---
 
@@ -11,14 +11,49 @@
 | 项 | 当前值 |
 |---|---|
 | **项目名称** | ds-visualizer（数据结构学习助手） |
-| **当前版本** | v13.0.0-rc2（Phase A/B/C/D 已完成；Path 3 H2 全局搜索增强已完成） |
+| **当前版本** | v13.0.0 GA（Path 3 H2/H3/H1 全部完成，学习体验闭环） |
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 |
 | **当前分支** | `feature/v13-path3-learning-enhancements` |
-| **基线状态** | 2261 单元测试全绿 / ESLint 0 errors（65 warnings） / TypeScript strict 0 errors / 生产构建通过 / Playwright 20 个 spec 全绿 / a11y 17 页 0 critical/serious |
+| **基线状态** | 2280 单元测试全绿 / ESLint 0 errors（65 warnings） / 生产构建通过 / Playwright 20 个 spec 全绿 / a11y 17 页 0 critical/serious |
 
 ---
 
 ## 2. 最近完成的工作
+
+### 2026-06-22 | v13.0.0 GA — Path 3 H3 + H1 完成
+
+#### H3 — SortComparePage 学习模式
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 学习配置 | `src/configs/learning/sortCompare.config.ts` | 5 步学习配置（选择算法、初始化、第一轮比较、关键差异、完成对比） |
+| 配置注册 | `src/configs/learning/index.ts` | 注册 `sortCompare`（37 → 38 个学习配置） |
+| 页面集成 | `src/pages/SortComparePage.tsx` | 接入 `useLearningMode('sortCompare')` |
+| 测试 | `src/__tests__/pages/SortComparePage.test.tsx` | 新增 4 个学习配置测试 |
+
+#### H1 — 测验系统
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 类型扩展 | `src/types/learning.d.ts` | `QuizQuestion` 接口 + `LearningModeConfig.quiz` 字段 |
+| Hook | `src/hooks/useQuizProgress.ts` | 测验进度管理（localStorage 持久化、提交/导航/重置/得分） |
+| 组件 | `src/components/QuizPanel.tsx` | 测验 UI（题目、选项、即时反馈、解释、进度条、完成徽标） |
+| InfoPanel 集成 | `src/components/InfoPanel.tsx` | 桌面端与移动端学习标签页底部嵌入 QuizPanel |
+| 测验题目 | `array.config.ts` / `bubble.config.ts` / `tree.config.ts` | 各添加 3 道单选题 |
+| 页面接入 | `ArrayPage.tsx` / `SortPage.tsx` / `TreePage.tsx` | 传递 `algorithmKey` + `quizQuestions` 到 InfoPanel |
+| i18n | `src/i18n/locales.ts` | 新增 `quiz` 命名空间（16 键，中英文） |
+| 测试 | `useQuizProgress.test.ts`（10）+ `QuizPanel.test.tsx`（9） | 覆盖答题/得分/重置/导航/空题目 |
+
+#### 验证
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2280 passed（123 文件），较 rc3 新增 23 个测试 |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| Git commits | H3 `2f56b83` / H1 `c07b89a` |
+
+---
 
 ### 2026-06-21 | Path 3 H2 全局搜索增强完成
 

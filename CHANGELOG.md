@@ -4,6 +4,42 @@
 
 ---
 
+## [v13.0.0 GA] - 2026-06-22
+
+### Path 3 H3 — SortComparePage 学习模式
+- 新增 `src/configs/learning/sortCompare.config.ts`：5 步学习配置（选择算法、初始化、第一轮比较、关键差异、完成对比）
+- 更新 `src/configs/learning/index.ts`：注册 `sortCompare` 配置（37 → 38 个学习配置）
+- 更新 `src/pages/SortComparePage.tsx`：接入 `useLearningMode('sortCompare')`
+- 更新 `src/__tests__/pages/SortComparePage.test.tsx`：新增 4 个学习配置测试
+
+### Path 3 H1 — 测验系统
+- 新增 `src/types/learning.d.ts`：`QuizQuestion` 接口与 `LearningModeConfig.quiz` 字段
+- 新增 `src/hooks/useQuizProgress.ts`：测验进度管理 Hook（localStorage 持久化，提交/导航/重置/得分计算）
+- 新增 `src/components/QuizPanel.tsx`：测验 UI 组件（题目展示、选项选择、即时反馈、解释、进度条、完成徽标）
+- 更新 `src/components/InfoPanel.tsx`：集成 QuizPanel（桌面端与移动端学习标签页）
+- 更新 `src/configs/learning/array.config.ts`、`bubble.config.ts`、`tree.config.ts`：各添加 3 道测验题
+- 更新 `src/pages/ArrayPage.tsx`、`SortPage.tsx`、`TreePage.tsx`：传递 quizQuestions 到 InfoPanel
+- 更新 `src/i18n/locales.ts`：新增 `quiz` 命名空间（16 个键，中英文）
+- 修复 `src/__tests__/newLearningConfigs.test.ts`：配置总数断言 37 → 38
+
+### Tests
+- 新增 `src/__tests__/hooks/useQuizProgress.test.ts`（10 tests）
+- 新增 `src/__tests__/components/QuizPanel.test.tsx`（9 tests）
+- 新增 `src/__tests__/pages/SortComparePage.test.tsx`（4 tests）
+
+### Verification
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2280 passed（123 文件），较 rc3 新增 23 个测试 |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| Git commits | H3 `2f56b83` / H1 `c07b89a` |
+
+### 里程碑
+v13.0.0 GA — 学习体验闭环完成（全局搜索增强 + SortCompare 学习模式 + 测验系统）
+
+---
+
 ## [v13.0.0-rc3] - 2026-06-21
 
 ### Path 3 H2 — 全局搜索增强

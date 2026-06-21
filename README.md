@@ -1,9 +1,9 @@
 # 数据结构学习助手
 
-> **版本:** v13.0.0-rc2
-> **更新日期:** 2026-06-21
+> **版本:** v13.0.0 GA
+> **更新日期:** 2026-06-22
 > **v13 起点:** [v13 全面代码体检已完成（2026-06-20）](./docs/audit-2026-06-20/audit-merged.md) — 双模型互盲审查 56 条独立问题，4 阶段修复路线已就位
-> **v13 Phase A/B/C/D:** 已完成（2026-06-21）— 路径一修复路线全部结束；统一 schema 校验、devDependencies 版本锁定、动画引擎 FPS 降级/中断、Visualizer 渲染一致性、a11y 与键盘导航、移动端触控、文档同步、Playwright E2E 与 CI 增强；Path 3 H2 全局搜索增强（fuzzy 匹配、搜索历史、复杂度过滤、分类展示）已完成；2261 tests / lint 0 errors / typecheck / build / Playwright 20 spec / a11y 17 页 0 violations 全通过
+> **v13 GA:** 已完成（2026-06-22）— 路径一修复路线全部结束；Path 3 学习体验闭环（H2 全局搜索增强 + H3 SortComparePage 学习模式 + H1 测验系统）全部完成；2280 tests / lint 0 errors / typecheck / build / Playwright 20 spec / a11y 17 页 0 violations 全通过
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 

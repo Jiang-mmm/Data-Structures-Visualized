@@ -2,6 +2,56 @@
 
 ---
 
+## 2026-06-22 | v13.0.0 GA — Path 3 H3 + H1 完成
+
+### 任务范围
+
+按 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 完成 Path 3 剩余两个子阶段，达成 v13.0.0 GA。
+
+#### H3 — SortComparePage 学习模式
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| H3-1 学习配置 | `src/configs/learning/sortCompare.config.ts` | 5 步（select/init/firstRound/keyDiff/complete） |
+| H3-2 配置注册 | `src/configs/learning/index.ts` | 注册 `sortCompare`（37 → 38） |
+| H3-3 页面集成 | `src/pages/SortComparePage.tsx` | `useLearningMode('sortCompare')` |
+| H3-4 测试 | `src/__tests__/pages/SortComparePage.test.tsx` | 4 个测试 |
+
+#### H1 — 测验系统
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| H1-1 类型扩展 | `src/types/learning.d.ts` | `QuizQuestion` 接口 + `quiz?` 字段 |
+| H1-2 Hook | `src/hooks/useQuizProgress.ts` | localStorage 持久化、提交/导航/重置/得分 |
+| H1-3 组件 | `src/components/QuizPanel.tsx` | 题目、选项、即时反馈、解释、进度条 |
+| H1-4 InfoPanel 集成 | `src/components/InfoPanel.tsx` | 桌面/移动端学习标签页底部 |
+| H1-5 测验题目 | `array/bubble/tree.config.ts` | 各 3 道单选题 |
+| H1-6 页面接入 | `ArrayPage/SortPage/TreePage.tsx` | 传递 algorithmKey + quizQuestions |
+| H1-7 i18n | `src/i18n/locales.ts` | quiz 命名空间 16 键 |
+| H1-8 测试 | `useQuizProgress.test.ts`（10）+ `QuizPanel.test.tsx`（9） | 19 个测试 |
+
+### 修复记录
+
+| 问题 | 原因 | 修复 |
+|------|------|------|
+| `newLearningConfigs.test.ts` 配置总数断言失败 | 新增 sortCompare 配置后总数从 37 变为 38 | 更新断言 37 → 38 |
+| `QuizPanel.tsx` react-hooks/rules-of-hooks 报错 | `useCallback` 在早返回之后调用 | 将所有 `useCallback` 移至早返回之前 |
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2280 passed（123 文件），较 rc3 新增 23 个测试 |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| Git commits | H3 `2f56b83` / H1 `c07b89a` |
+
+### 里程碑
+
+v13.0.0 GA — 学习体验闭环完成（全局搜索增强 + SortCompare 学习模式 + 测验系统）
+
+---
+
 ## 2026-06-21 | Path 3 H2 全局搜索增强完成
 
 ### 任务范围

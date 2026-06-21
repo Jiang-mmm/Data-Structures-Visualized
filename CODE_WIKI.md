@@ -1,7 +1,7 @@
 # 数据结构学习助手 — Code Wiki
 
-> **版本:** v13.0.0-rc3（Path 3 H2 完成）
-> **日期:** 2026-06-21
+> **版本:** v13.0.0 GA（Path 3 H2/H3/H1 全部完成，学习体验闭环）
+> **日期:** 2026-06-22
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **部署:** GitHub Pages（base path `/Data-Structures-Visualized/`）
 
