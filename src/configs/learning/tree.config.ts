@@ -156,4 +156,27 @@ export const treeConfig: LearningModeConfig = {
       complexity: { time: '平均 O(log n)，最坏 O(n)', space: 'O(h)' },
     },
   ],
+  quiz: [
+    {
+      id: 'q1',
+      question: '二叉搜索树（BST）的中序遍历结果有什么特点？',
+      options: ['降序排列', '升序排列', '随机排列', '按插入顺序'],
+      correctIndex: 1,
+      explanation: 'BST 的中序遍历（左→根→右）会得到升序排列的节点值，这是 BST 的核心性质之一。',
+    },
+    {
+      id: 'q2',
+      question: '在平衡 BST 中查找一个元素的平均时间复杂度是？',
+      options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+      correctIndex: 1,
+      explanation: '平衡 BST 的高度约为 log n，因此查找操作的平均和最坏时间复杂度均为 O(log n)。',
+    },
+    {
+      id: 'q3',
+      question: 'BST 删除节点时，若节点有两个子节点，通常用什么策略？',
+      options: ['直接删除并断开子树', '用中序后继（右子树最小值）替换', '用左子节点替换', '标记为已删除但不移除'],
+      correctIndex: 1,
+      explanation: '双子节点删除常用中序后继（右子树的最小值）替换被删节点，保持 BST 性质不变。也可用中序前驱（左子树最大值）。',
+    },
+  ],
 }

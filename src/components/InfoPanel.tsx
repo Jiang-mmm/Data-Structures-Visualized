@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, memo, useCallback } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import LogPanel from './LogPanel'
 import StepExplainer from './StepExplainer'
+import QuizPanel from './QuizPanel'
 import type { LearningStep } from '../configs/learning'
+import type { QuizQuestion } from '../types/learning'
 
 interface InfoPanelLearningMode {
   currentStep: LearningStep | null
@@ -22,11 +24,15 @@ interface InfoPanelProps {
   learningMode: InfoPanelLearningMode
   isAnimating: boolean
   onJumpToStep?: (stepId: string) => void
+  /** 算法标识，用于测验进度持久化 */
+  algorithmKey?: string
+  /** 测验题目列表（可选，有则展示 QuizPanel） */
+  quizQuestions?: QuizQuestion[]
 }
 
 type TabKey = 'log' | 'learning'
 
-function InfoPanel({ logs, learningMode, isAnimating, onJumpToStep }: InfoPanelProps) {
+function InfoPanel({ logs, learningMode, isAnimating, onJumpToStep, algorithmKey, quizQuestions }: InfoPanelProps) {
   const { t } = useGlobalSettings()
   const [activeTab, setActiveTab] = useState<TabKey>('log')
   const [mobileExpanded, setMobileExpanded] = useState(false)
@@ -108,6 +114,11 @@ function InfoPanel({ logs, learningMode, isAnimating, onJumpToStep }: InfoPanelP
                 onReset={learningMode.reset}
                 isAnimating={isAnimating}
               />
+              {quizQuestions && quizQuestions.length > 0 && algorithmKey && (
+                <div className="mt-3 border-t-2 border-ink dark:border-dark-border">
+                  <QuizPanel algorithmKey={algorithmKey} questions={quizQuestions} />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -185,6 +196,11 @@ function InfoPanel({ logs, learningMode, isAnimating, onJumpToStep }: InfoPanelP
                     onReset={learningMode.reset}
                     isAnimating={isAnimating}
                   />
+                  {quizQuestions && quizQuestions.length > 0 && algorithmKey && (
+                    <div className="mt-3 border-t-2 border-ink dark:border-dark-border">
+                      <QuizPanel algorithmKey={algorithmKey} questions={quizQuestions} />
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -21,6 +21,7 @@ import ColorLegend from '../components/ColorLegend'
 import StatsOverlay from '../components/StatsOverlay'
 import ContentTier from '../components/ContentTier'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { learningConfigs } from '../configs/learning'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
 
@@ -239,6 +240,8 @@ export default function ArrayPage() {
           learningMode={learningMode}
           isAnimating={isAnimating}
           onJumpToStep={handleJumpToStep}
+          algorithmKey="array"
+          quizQuestions={learningConfigs.array.quiz}
         />
       </div>
     </div>

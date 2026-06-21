@@ -58,4 +58,27 @@ export const bubbleConfig: LearningModeConfig = {
       tips: ['添加一个 swapped 标志，如果某轮没有交换就可以提前终止，最佳情况 O(n)'],
     },
   ],
+  quiz: [
+    {
+      id: 'q1',
+      question: '冒泡排序的平均时间复杂度是多少？',
+      options: ['O(n)', 'O(n log n)', 'O(n²)', 'O(1)'],
+      correctIndex: 2,
+      explanation: '冒泡排序使用双重嵌套循环，平均和最坏情况均为 O(n²)。加 swapped 标志后最佳情况为 O(n)。',
+    },
+    {
+      id: 'q2',
+      question: '冒泡排序是稳定排序吗？',
+      options: ['是，相等元素不会交换', '否，相等元素可能交换', '取决于数据', '不确定'],
+      correctIndex: 0,
+      explanation: '冒泡排序只在前元素大于后元素时交换（arr[j] > arr[j+1]），相等元素不会交换，因此是稳定排序。',
+    },
+    {
+      id: 'q3',
+      question: '添加 swapped 标志后，冒泡排序的最佳时间复杂度变为？',
+      options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+      correctIndex: 2,
+      explanation: '如果数组已经有序，带 swapped 标志的冒泡排序只需一轮遍历即可终止，最佳情况为 O(n)。',
+    },
+  ],
 }

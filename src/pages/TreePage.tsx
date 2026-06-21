@@ -21,6 +21,7 @@ import { getColors } from '../utils/themeColors'
 import ColorLegend from '../components/ColorLegend'
 import ContentTier from '../components/ContentTier'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { learningConfigs } from '../configs/learning'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
 
@@ -214,6 +215,8 @@ export default function TreePage() {
           learningMode={learningMode}
           isAnimating={isAnimating}
           onJumpToStep={handleJumpToStep}
+          algorithmKey="tree"
+          quizQuestions={learningConfigs.tree.quiz}
         />
       </div>
     </div>

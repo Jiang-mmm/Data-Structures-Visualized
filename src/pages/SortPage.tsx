@@ -15,6 +15,7 @@ import { useSortState } from '../hooks/useSortState'
 import { useVisualizer } from '../hooks/useVisualizer'
 import { useKeyboard } from '../hooks/useKeyboard'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { learningConfigs } from '../configs/learning'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
 import { getAllSortAlgorithms } from '../algorithms/sorting'
@@ -207,6 +208,8 @@ export default function SortPage() {
           learningMode={learningMode}
           isAnimating={isAnimating}
           onJumpToStep={handleJumpToStep}
+          algorithmKey={selectedAlgorithm}
+          quizQuestions={learningConfigs[selectedAlgorithm as keyof typeof learningConfigs]?.quiz}
         />
       </div>
     </div>

@@ -336,6 +336,24 @@ export interface Locale {
     tabs: string
     stepBadge: string
   }
+  quiz: {
+    title: string
+    question: string
+    of: string
+    submit: string
+    correct: string
+    incorrect: string
+    explanation: string
+    next: string
+    prev: string
+    score: string
+    correctCount: string
+    reset: string
+    complete: string
+    noQuestions: string
+    yourAnswer: string
+    correctAnswer: string
+  }
   errorBoundary: {
     title: string
     retry: string
@@ -1270,6 +1288,24 @@ export const zh: Locale = {
     tabs: '信息面板标签',
     stepBadge: '对应学习步骤',
   },
+  quiz: {
+    title: '课后测验',
+    question: '题目',
+    of: '/',
+    submit: '提交答案',
+    correct: '回答正确',
+    incorrect: '回答错误',
+    explanation: '解析',
+    next: '下一题',
+    prev: '上一题',
+    score: '得分',
+    correctCount: '答对',
+    reset: '重新开始',
+    complete: '测验完成',
+    noQuestions: '暂无测验题目',
+    yourAnswer: '你的答案',
+    correctAnswer: '正确答案',
+  },
   errorBoundary: {
     title: '组件异常',
     retry: '重试',
@@ -2163,6 +2199,24 @@ export const en: Locale = {
     recent: 'Recent',
     tabs: 'Info panel tabs',
     stepBadge: 'Step matches',
+  },
+  quiz: {
+    title: 'Quiz',
+    question: 'Question',
+    of: '/',
+    submit: 'Submit',
+    correct: 'Correct',
+    incorrect: 'Incorrect',
+    explanation: 'Explanation',
+    next: 'Next',
+    prev: 'Previous',
+    score: 'Score',
+    correctCount: 'Correct',
+    reset: 'Restart',
+    complete: 'Quiz Complete',
+    noQuestions: 'No quiz questions',
+    yourAnswer: 'Your answer',
+    correctAnswer: 'Correct answer',
   },
   errorBoundary: {
     title: 'Component Error',
