@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef, useMemo, memo, ReactNode } fr
 import { useTheme } from '../hooks/useTheme'
 import { useColorTheme } from '../hooks/useColorTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { useGestures } from '../hooks/useGestures'
 import { measureRender } from '../utils/animationEngine'
 
 interface VisualizerProps {
@@ -14,6 +15,10 @@ interface VisualizerProps {
   ariaLabel?: string
   renderOptions?: Record<string, unknown>
   overlay?: ReactNode
+  /** 左滑回调（deltaX < 0 时触发） */
+  onSwipeLeft?: () => void
+  /** 右滑回调（deltaX > 0 时触发） */
+  onSwipeRight?: () => void
 }
 
 const ZOOM_MIN = 0.5
@@ -29,7 +34,7 @@ function loadNumber(key: string, fallback: number): number {
   try { const v = localStorage.getItem(key); return v !== null ? Number(v) : fallback } catch { return fallback }
 }
 
-function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel, renderOptions, overlay }: VisualizerProps) {
+function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel, renderOptions, overlay, onSwipeLeft, onSwipeRight }: VisualizerProps) {
   const { resolved: themeResolved } = useTheme()
   const { theme: colorTheme } = useColorTheme()
   const { t } = useGlobalSettings()
@@ -44,6 +49,16 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
   // 导致动画进行中 Visualizer 重渲染（selectAll('*').interrupt()）打断 D3 过渡
   const dimensionsRef = useRef(dimensions)
   dimensionsRef.current = dimensions
+
+  // 移动端手势：左滑/右滑回调（不传 onPinch，缩放仍由上方原生 touch 处理）
+  const handleSwipeHorizontal = useCallback((deltaX: number) => {
+    if (deltaX < 0) {
+      onSwipeLeft?.()
+    } else {
+      onSwipeRight?.()
+    }
+  }, [onSwipeLeft, onSwipeRight])
+  useGestures(containerRef, { onSwipeHorizontal: handleSwipeHorizontal })
 
   const handleZoomIn = useCallback(() => {
     setZoom(z => {
