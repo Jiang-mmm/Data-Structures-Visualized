@@ -6,6 +6,7 @@ import { calculateCenterStart } from '../utils/visualizerLayout'
 import { shouldSkipAnimation } from '../utils/performanceConfig'
 
 export const RECT_WIDTH = 80
+export const MAX_RECT_WIDTH = RECT_WIDTH
 export const RECT_HEIGHT = 50
 export const GAP = 8
 const BASE_DURATION = 400
@@ -16,21 +17,27 @@ interface StackVisualizerOptions {
   isDark?: boolean
 }
 
+function getRectWidth(width: number): number {
+  return Math.min(MAX_RECT_WIDTH, Math.max(40, Math.floor(width * 0.25)))
+}
+
 export function layout(data: number[], width: number, height: number) {
+  const rectWidth = getRectWidth(width)
   const totalHeight = data.length * (RECT_HEIGHT + GAP) - GAP
-  const startX = calculateCenterStart(RECT_WIDTH, width)
+  const startX = calculateCenterStart(rectWidth, width)
   const topY = calculateCenterStart(totalHeight, height)
   const startY = topY + totalHeight - RECT_HEIGHT
-  return { startX, startY, totalHeight, topY }
+  return { startX, startY, totalHeight, topY, rectWidth }
 }
 
 function drawContainer(container: ReturnType<typeof select>, data: number[], width: number, height: number, C: ReturnType<typeof getColors>) {
+  const rectWidth = getRectWidth(width)
   if (data.length === 0) {
-    const startX = calculateCenterStart(RECT_WIDTH, width)
+    const startX = calculateCenterStart(rectWidth, width)
     const startY = height / 2
     container.append('rect')
       .attr('x', startX - 4).attr('y', startY - 100)
-      .attr('width', RECT_WIDTH + 8).attr('height', 200).attr('rx', 8)
+      .attr('width', rectWidth + 8).attr('height', 200).attr('rx', 8)
       .attr('fill', 'none').attr('stroke', C.containerStroke).attr('stroke-width', 2)
       .attr('stroke-dasharray', '5,5')
     return
@@ -42,7 +49,7 @@ function drawContainer(container: ReturnType<typeof select>, data: number[], wid
   container.append('rect')
     .attr('class', 'stack-container')
     .attr('x', startX - 4).attr('y', topY - 4)
-    .attr('width', RECT_WIDTH + 8).attr('height', totalHeight + 8).attr('rx', 8)
+    .attr('width', rectWidth + 8).attr('height', totalHeight + 8).attr('rx', 8)
     .attr('fill', 'none').attr('stroke', C.containerStroke).attr('stroke-width', 2)
     .attr('stroke-dasharray', '5,5')
 }
@@ -51,6 +58,7 @@ export function renderStack(svg: SVGSVGElement, data: number[], options: StackVi
   const { width, height, isDark = detectDarkMode() } = options
   const C = getColors(isDark)
   const container = select(svg)
+  const rectWidth = getRectWidth(width)
   container.selectAll('*').remove()
   ensureGradientDefs(svg, isDark)
 
@@ -100,13 +108,13 @@ export function renderStack(svg: SVGSVGElement, data: number[], options: StackVi
     })
 
   groups.append('rect')
-    .attr('width', RECT_WIDTH).attr('height', RECT_HEIGHT).attr('rx', 6)
+    .attr('width', rectWidth).attr('height', RECT_HEIGHT).attr('rx', 6)
     .attr('fill', (_d: unknown, i: number) => i === data.length - 1 ? gradUrl('node-root') : gradUrl('bar-default'))
     .attr('stroke', (_d: unknown, i: number) => i === data.length - 1 ? C.nodeRootStroke : C.nodeDefaultStroke)
     .attr('stroke-width', 2)
 
   groups.append('text')
-    .attr('x', RECT_WIDTH / 2).attr('y', RECT_HEIGHT / 2).attr('dy', '0.35em')
+    .attr('x', rectWidth / 2).attr('y', RECT_HEIGHT / 2).attr('dy', '0.35em')
     .attr('text-anchor', 'middle').attr('fill', C.textWhite)
     .attr('font-size', '16px').attr('font-weight', 'bold')
     .text((d: number) => d)
@@ -114,11 +122,11 @@ export function renderStack(svg: SVGSVGElement, data: number[], options: StackVi
   // Stack Top label
   const topLabelY = startY - (data.length - 1) * (RECT_HEIGHT + GAP) + RECT_HEIGHT / 2
   container.append('rect')
-    .attr('x', startX + RECT_WIDTH + 12).attr('y', topLabelY - 12)
+    .attr('x', startX + rectWidth + 12).attr('y', topLabelY - 12)
     .attr('width', 110).attr('height', 24).attr('rx', 4)
     .attr('fill', C.containerStroke).attr('opacity', 0.3)
   container.append('text')
-    .attr('x', startX + RECT_WIDTH + 18)
+    .attr('x', startX + rectWidth + 18)
     .attr('y', topLabelY + 1)
     .attr('dy', '0.35em').attr('fill', C.textSecondary)
     .attr('font-size', '12px').attr('font-weight', 'bold')
@@ -128,11 +136,11 @@ export function renderStack(svg: SVGSVGElement, data: number[], options: StackVi
   // Stack Bottom label
   const bottomLabelY = startY + RECT_HEIGHT / 2
   container.append('rect')
-    .attr('x', startX + RECT_WIDTH + 12).attr('y', bottomLabelY - 12)
+    .attr('x', startX + rectWidth + 12).attr('y', bottomLabelY - 12)
     .attr('width', 110).attr('height', 24).attr('rx', 4)
     .attr('fill', C.containerStroke).attr('opacity', 0.3)
   container.append('text')
-    .attr('x', startX + RECT_WIDTH + 18)
+    .attr('x', startX + rectWidth + 18)
     .attr('y', bottomLabelY + 1)
     .attr('dy', '0.35em').attr('fill', C.textSecondary)
     .attr('font-size', '12px').attr('font-weight', 'bold')
@@ -147,7 +155,7 @@ export async function animatePush(svg: SVGSVGElement, value: number, data: numbe
   const container = select(svg)
   const { width, height } = options
   const newData = [...data, value]
-  const { startX, startY } = layout(newData, width, height)
+  const { startX, startY, rectWidth } = layout(newData, width, height)
 
   const existingNodes = container.selectAll('g.stack-item').nodes()
   for (let i = 0; i < existingNodes.length; i++) {
@@ -174,11 +182,11 @@ export async function animatePush(svg: SVGSVGElement, value: number, data: numbe
     .attr('opacity', 0)
 
   newGroup.append('rect')
-    .attr('width', RECT_WIDTH).attr('height', RECT_HEIGHT).attr('rx', 6)
+    .attr('width', rectWidth).attr('height', RECT_HEIGHT).attr('rx', 6)
     .attr('fill', C.nodeLeaf).attr('stroke', C.nodeLeafStroke).attr('stroke-width', 2)
 
   newGroup.append('text')
-    .attr('x', RECT_WIDTH / 2).attr('y', RECT_HEIGHT / 2).attr('dy', '0.35em')
+    .attr('x', rectWidth / 2).attr('y', RECT_HEIGHT / 2).attr('dy', '0.35em')
     .attr('text-anchor', 'middle').attr('fill', C.textWhite)
     .attr('font-size', '16px').attr('font-weight', 'bold').text(value)
 
@@ -224,13 +232,14 @@ export async function animatePop(svg: SVGSVGElement, data: number[], _options?: 
   )
 }
 
-export async function animatePeek(svg: SVGSVGElement, data: number[], _options?: StackVisualizerOptions, anim?: Animation) {
+export async function animatePeek(svg: SVGSVGElement, data: number[], options: StackVisualizerOptions = { width: 800, height: 400 }, anim?: Animation) {
   if (shouldSkipAnimation('stack', data.length)) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const container = select(svg)
   if (!data || data.length === 0) return
 
+  const { rectWidth } = layout(data, options.width, options.height)
   const topIndex = data.length - 1
   const topGroup = container.selectAll('g.stack-item').filter((_d: unknown, i: number) => i === topIndex)
   if (topGroup.empty()) return
@@ -256,10 +265,10 @@ export async function animatePeek(svg: SVGSVGElement, data: number[], _options?:
 
   await transitionEnd(
     topRect.transition().duration(duration(120)).ease(EASING.easeOutCubic)
-      .attr('width', RECT_WIDTH + 12).attr('height', RECT_HEIGHT + 8)
+      .attr('width', rectWidth + 12).attr('height', RECT_HEIGHT + 8)
       .attr('x', -6).attr('y', -4)
       .transition().duration(duration(600)).ease(EASING.easeOutElastic)
-      .attr('width', RECT_WIDTH).attr('height', RECT_HEIGHT)
+      .attr('width', rectWidth).attr('height', RECT_HEIGHT)
       .attr('x', 0).attr('y', 0)
   )
 

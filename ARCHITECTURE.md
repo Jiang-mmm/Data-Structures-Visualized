@@ -1,6 +1,6 @@
 # 数据结构学习助手 — Architecture 文档
 
-> **版本:** v13.0.0-rc1-phase-a
+> **版本:** v13.0.0-rc2
 > **更新日期:** 2026-06-21
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 
@@ -31,10 +31,10 @@ v13 起，每个重大版本（v14+）都应采用 **双模型互盲 + 集中仲
 
 | Phase | 主题 | 工时 |
 |-------|------|------|
-| A | 紧急修复（安全+数据完整性） | 1~2 天 |
-| B | 体验+工程优化 | 3~5 天 |
-| C | 文档完善 | 1~2 天 |
-| D | 测试+CI 升级 | 2~3 天 |
+| A | 紧急修复（安全+数据完整性） | 1~2 天 | ✅ 已完成 |
+| B | 体验+工程优化 | 3~5 天 | ✅ 已完成 |
+| C | 文档完善 | 1~2 天 | ✅ 已完成 |
+| D | 测试+CI 升级 | 2~3 天 | ✅ 已完成 |
 
 ### 工作流约束
 
@@ -52,6 +52,21 @@ v13 起，每个重大版本（v14+）都应采用 **双模型互盲 + 集中仲
 | 依赖版本锁定 | `package.json` + `.github/workflows/ci.yml` | devDependencies 改 `~`，CI 加 `npm ls --depth=0` |
 | Node 兼容修复 | `scripts/check-bundle.js` | 用 `fileURLToPath` 替代 `import.meta.dirname` |
 | 第三方代理移除 | `vite.config.js` | 移除 `loli.net` 字体缓存规则 |
+
+### Phase C/D 完成摘要（2026-06-21）
+
+| 修复项 | 文件 | 说明 |
+|--------|------|------|
+| 文档一致性 | `README.md` / `PROJECT_SUMMARY.md` / `CHANGELOG.md` / `TODO.md` / `WORKLOG.md` / `ARCHITECTURE.md` / `CODE_WIKI.md` / `PROJECT_STATUS.md` | 版本号与 Phase 状态同步 |
+| 版本升级 | `package.json` | version 升级为 `v13.0.0-rc2` |
+| Playwright a11y spec | `e2e/a11y.spec.ts` | 动态扫描 17 页 |
+| Playwright home spec | `e2e/home.spec.ts` | 首页 3 用例 |
+| a11y runner | `e2e/test-a11y.js` | 委托 Playwright Test |
+| E2E JSON 报告 | `e2e/run-all-tests.js` | 输出 `e2e/test-results.json` |
+| TypeScript setup | `src/__tests__/setup.ts` | 替代 `setup.js` |
+| D3 mock 增强 | `src/__tests__/visualizers/d3MockHelper.ts` | 调用记录与链式 forceSimulation |
+| Snapshot 测试 | `src/__tests__/visualizers/arrayVisualizer.snapshot.test.ts` | SVG 结构快照 |
+| CI 增强 | `.github/workflows/ci.yml` | a11y、覆盖率/构建/E2E 报告 artifact |
 
 ---
 
@@ -101,8 +116,9 @@ v13 起，每个重大版本（v14+）都应采用 **双模型互盲 + 集中仲
 ├─────────────────────────────────────────────────────────────────┤
 │                      算法层 (Algorithms)                          │
 │  sorting: bubble | selection | insertion | quick | merge         │
-│          heap | radix | bucket                                   │
-│  graph: bfs | dfs | dijkstra | topoSort                          │
+│          heap | radix | bucket | shell | comb | tim | counting   │
+│  graph: bfs | dfs | dijkstra | topoSort | bellmanFord |          │
+│          floydWarshall | prim | kruskal                            │
 │  skipList | unionFind | redBlackTree                             │
 ├─────────────────────────────────────────────────────────────────┤
 │                       工具层 (Utils)                              │
@@ -365,7 +381,7 @@ const StackPage = lazy(() => import('./pages/StackPage'))
 - E2E 核心流程 — 中优先级
 
 **当前状态:**
-- 3480 个单元测试（203 个测试文件），100% 通过率，TypeScript strict 模式
+- 3506 个单元测试（204 个测试文件），100% 通过率，TypeScript strict 模式
 - 9 个 E2E 测试文件，282 用例，98.2% 通过率（Chromium + Firefox）
 - axe-core WCAG 2 AA 零 violations
 

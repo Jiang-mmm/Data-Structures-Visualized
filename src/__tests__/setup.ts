@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom/vitest'
+import { beforeEach, vi } from 'vitest'
 
 beforeEach(() => {
   localStorage.clear()
@@ -6,7 +7,7 @@ beforeEach(() => {
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -19,12 +20,12 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 // Mock requestAnimationFrame for d3 transitions
-globalThis.requestAnimationFrame = (cb) => setTimeout(cb, 16)
-globalThis.cancelAnimationFrame = (id) => clearTimeout(id)
+globalThis.requestAnimationFrame = (cb: FrameRequestCallback) => setTimeout(cb, 16)
+globalThis.cancelAnimationFrame = (id: number) => clearTimeout(id)
 
 // Mock SVG transform for d3
 const originalGetAttribute = SVGElement.prototype.getAttribute
-SVGElement.prototype.getAttribute = function (name) {
+SVGElement.prototype.getAttribute = function (name: string): string | null {
   if (name === 'transform') {
     const val = originalGetAttribute.call(this, name)
     return val || ''

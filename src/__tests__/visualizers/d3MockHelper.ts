@@ -1,55 +1,86 @@
 import { vi } from 'vitest'
 
-// Creates a chainable D3 selection mock where every method returns the mock itself
+// Creates a chainable D3 selection mock where every method is a vi.fn
+// that records its arguments and returns the mock itself.
 export function createD3SelectionMock() {
-  const mock: Record<string | symbol, unknown> = {}
+  const calls: Array<{ method: string | symbol; args: unknown[] }> = []
 
-  const chainable = new Proxy(mock, {
-    get(target, prop: string | symbol) {
+  const chainable: Record<string | symbol, unknown> = {}
+
+  const getMethod = (prop: string | symbol) => {
+    if (!(prop in chainable)) {
+      chainable[prop] = vi.fn((...args: unknown[]) => {
+        calls.push({ method: prop, args })
+        return chainableProxy
+      })
+    }
+    return chainable[prop]
+  }
+
+  const chainableProxy = new Proxy(chainable, {
+    get(_target, prop: string | symbol) {
       if (prop === 'empty') return () => true
       if (prop === 'nodes') return (): unknown[] => []
       if (prop === 'node') return (): null => null
       if (prop === 'size') return () => 0
-      if (prop === 'text') return () => chainable
-      if (prop === 'attr') return () => chainable
-      if (prop === 'style') return () => chainable
-      if (prop === 'on') return chainable
-      if (prop === 'interrupt') return () => chainable
+      if (prop === 'text') return getMethod('text')
+      if (prop === 'attr') return getMethod('attr')
+      if (prop === 'style') return getMethod('style')
+      if (prop === 'on') return getMethod('on')
+      if (prop === 'interrupt') return getMethod('interrupt')
       if (prop === Symbol.iterator) return undefined
+      if (prop === '__calls') return calls
 
-      // All other methods return the chainable mock
-      if (!(prop in target)) {
-        target[prop] = vi.fn(() => chainable)
-      }
-      return target[prop]
+      return getMethod(prop)
     },
   })
 
-  return chainable
+  return chainableProxy
 }
 
-// Creates the vi.mock for d3Imports
+// Creates the vi.mock for d3Imports.
+// All factory functions return chainable mocks so callers can assert on
+// `select.mock.calls`, `forceSimulation.mock.calls`, etc.
 export function mockD3Imports() {
   const chainable = createD3SelectionMock()
+
+  // forceSimulation returns a self-referential object so that chained
+  // `.force().force().on()` calls keep returning the same simulation.
+  const simulation = {
+    force: vi.fn(() => simulation),
+    on: vi.fn(() => simulation),
+    stop: vi.fn(() => simulation),
+    alpha: vi.fn(() => ({ restart: vi.fn() })),
+  }
+
+  const forceLink = {
+    id: vi.fn(() => forceLink),
+    distance: vi.fn(() => forceLink),
+  }
+
+  const forceManyBody = {
+    strength: vi.fn(() => forceManyBody),
+  }
+
+  const forceCenter = {
+    x: vi.fn(() => forceCenter),
+    y: vi.fn(() => forceCenter),
+  }
+
+  const forceCollide = {
+    radius: vi.fn(() => forceCollide),
+  }
 
   return {
     select: vi.fn(() => chainable),
     d3Drag: vi.fn(() => ({
       on: vi.fn(() => ({ on: vi.fn(() => ({ on: vi.fn() })) })),
     })),
-    forceSimulation: vi.fn(() => ({
-      force: vi.fn(() => ({ force: vi.fn(() => ({ force: vi.fn(() => ({})) })) })),
-      on: vi.fn(),
-      stop: vi.fn(),
-      alpha: vi.fn(() => ({ restart: vi.fn() })),
-    })),
-    forceLink: vi.fn(() => ({
-      id: vi.fn(() => ({})),
-      distance: vi.fn(() => ({})),
-    })),
-    forceManyBody: vi.fn(() => ({ strength: vi.fn(() => ({})) })),
-    forceCenter: vi.fn(() => ({ x: vi.fn(() => ({})), y: vi.fn(() => ({})) })),
-    forceCollide: vi.fn(() => ({ radius: vi.fn(() => ({})) })),
+    forceSimulation: vi.fn(() => simulation),
+    forceLink: vi.fn(() => forceLink),
+    forceManyBody: vi.fn(() => forceManyBody),
+    forceCenter: vi.fn(() => forceCenter),
+    forceCollide: vi.fn(() => forceCollide),
   }
 }
 

@@ -24,12 +24,12 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function SkipListPage() {
   const { t } = useGlobalSettings()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const {
     data, logs, isAnimating, setIsAnimating,
     insert, remove, search, size, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useSkipListState()
-  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  } = useSkipListState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('skipList')
   useSharedData({

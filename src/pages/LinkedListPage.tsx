@@ -27,8 +27,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function LinkedListPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, insertHead, insertTail, insertAt, deleteAt, search, reverse, detectCycle, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, length } = useLinkedListState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, insertHead, insertTail, insertAt, deleteAt, search, reverse, detectCycle, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, length } = useLinkedListState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const [inputIndex, setInputIndex] = useState<string>('')
   const [isDoublyMode, setIsDoublyMode] = useState(false)

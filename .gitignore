@@ -33,5 +33,9 @@ e2e/screenshots/
 e2e/check-*.png
 e2e/test-report.txt
 e2e/quality-check-report.json
+e2e/test-results.json
+e2e/test-comprehensive-result-*.json
 test-output.txt
+test-results/
+playwright-report/
 .trae/

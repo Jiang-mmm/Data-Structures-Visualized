@@ -23,6 +23,7 @@ function UndoRedoBar({ undo, redo, canUndo, canRedo, getUndoPreview, getRedoPrev
         disabled={isAnimating || !canUndo}
         previewData={getUndoPreview()}
         previewLabel={t('shortcuts.undo')}
+        ariaKeyshortcuts="Control+Z"
       >
         {t('common.undo')}
       </UndoPreviewButton>
@@ -32,6 +33,7 @@ function UndoRedoBar({ undo, redo, canUndo, canRedo, getUndoPreview, getRedoPrev
         disabled={isAnimating || !canRedo}
         previewData={getRedoPreview()}
         previewLabel={t('shortcuts.redo')}
+        ariaKeyshortcuts="Control+Shift+Z"
       >
         {t('common.redo')}
       </UndoPreviewButton>

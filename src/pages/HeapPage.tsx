@@ -25,8 +25,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function HeapPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, insert, extractMax, peek, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, heapSize } = useHeapState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, insert, extractMax, peek, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, heapSize } = useHeapState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('heapStructure')
   useSharedData({ dataType: 'heap', loadData, validator: Array.isArray })

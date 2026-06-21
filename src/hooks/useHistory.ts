@@ -2,6 +2,16 @@ import { useState, useCallback, useRef } from 'react'
 
 const MAX_HISTORY = 20
 
+/**
+ * 提供基于 useRef 的撤销/重做历史栈（最多保留 20 步）
+ * @example
+ * ```ts
+ * const { state, push, undo, redo, canUndo, canRedo } = useHistory([1, 2, 3])
+ * push([1, 2, 3, 4]) // 记录新状态
+ * undo()              // 回到 [1, 2, 3]
+ * redo()              // 恢复 [1, 2, 3, 4]
+ * ```
+ */
 export function useHistory<T>(initialState: T) {
   const [state, setState] = useState<T>(initialState)
   const historyRef = useRef<T[]>([initialState])

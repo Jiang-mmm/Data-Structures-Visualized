@@ -114,7 +114,7 @@ describe('useKeyboard', () => {
       document.body.removeChild(input)
     })
 
-    it('输入框中 Ctrl 组合键应该触发', () => {
+    it('输入框中 Ctrl+Z 不应该触发，避免与浏览器原生撤销冲突', () => {
       const action = vi.fn()
       renderHook(() => useKeyboard({ 'ctrl+z': action }))
 
@@ -123,6 +123,21 @@ describe('useKeyboard', () => {
       input.focus()
 
       const event = new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, bubbles: true })
+      input.dispatchEvent(event)
+
+      expect(action).not.toHaveBeenCalled()
+      document.body.removeChild(input)
+    })
+
+    it('输入框中非撤销/重做 Ctrl 组合键仍应触发', () => {
+      const action = vi.fn()
+      renderHook(() => useKeyboard({ 'ctrl+s': action }))
+
+      const input = document.createElement('input')
+      document.body.appendChild(input)
+      input.focus()
+
+      const event = new KeyboardEvent('keydown', { key: 's', ctrlKey: true, bubbles: true })
       input.dispatchEvent(event)
 
       expect(action).toHaveBeenCalledTimes(1)

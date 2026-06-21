@@ -26,8 +26,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function StackPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, push, pop, peek, clear, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, size } = useStackState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, push, pop, peek, clear, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, size } = useStackState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('stack')
   useSharedData({ dataType: 'stack', loadData, validator: Array.isArray })

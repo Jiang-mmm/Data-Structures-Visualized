@@ -23,13 +23,13 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function RedBlackTreePage() {
   const { t } = useGlobalSettings()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const {
     data, logs, isAnimating, setIsAnimating,
     insert, search, inorder,
     getFlattened, nodeCount,
     reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useRedBlackTreeState()
-  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  } = useRedBlackTreeState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
   const learningMode = useLearningMode('redBlackTree')

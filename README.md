@@ -1,10 +1,10 @@
 # 数据结构学习助手
 
-> **版本:** v13.0.0-rc1-phase-a
+> **版本:** v13.0.0-rc2
 > **更新日期:** 2026-06-21
 > **v13 起点:** [v13 全面代码体检已完成（2026-06-20）](./docs/audit-2026-06-20/audit-merged.md) — 双模型互盲审查 56 条独立问题，4 阶段修复路线已就位
-> **v13 Phase A:** 已完成（2026-06-21）— 统一 schema 校验、devDependencies 版本锁定、移除第三方字体代理、Node 20+ 兼容修复、渲染阶段 ref 修复；3494 tests / lint 0 errors / typecheck / build 全通过
-> **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest
+> **v13 Phase A/B/C/D:** 已完成（2026-06-21）— 路径一修复路线全部结束；统一 schema 校验、devDependencies 版本锁定、动画引擎 FPS 降级/中断、Visualizer 渲染一致性、a11y 与键盘导航、移动端触控、文档同步、Playwright E2E 与 CI 增强；2234 tests / lint 0 errors / typecheck / build / Playwright 20 spec / a11y 17 页 0 violations 全通过
+> **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 
 一款面向大学生的 Web 端数据结构可视化教学工具，通过交互式动画演示，帮助学习者直观理解核心数据结构的原理与操作过程。
@@ -20,7 +20,7 @@
 | **二叉树 BinaryTree** | 插入、前序/中序/后序/层序遍历、查找、删除节点 |
 | **AVL 树 AVLTree** | 插入、删除、查找、自平衡旋转可视化 |
 | **图 Graph** | 添加/删除节点和边、BFS、DFS、Dijkstra、邻接矩阵/表视图 |
-| **排序 Sorting** | 冒泡、选择、插入、快速、归并、堆、基数、桶排序（8 种算法） |
+| **排序 Sorting** | 冒泡、选择、插入、快速、归并、堆、基数、桶、希尔、梳排、Tim、计数排序（12 种算法） |
 | **哈希表 Hash Table** | 插入、删除、查找（取模哈希 + 链地址法） |
 | **堆 Heap** | Insert、ExtractMax、Peek（最大堆 + 违规检测） |
 | **字典树 Trie** | 插入、删除、查找、前缀匹配（边标签可视化） |
@@ -45,7 +45,7 @@
 - **分享功能** — Base64 编码数据到 URL，一键复制分享链接
 - **国际化（i18n）** — 中英文切换，轻量级翻译系统，无第三方依赖
 - **全局搜索** — Ctrl/Cmd+K 快捷键唤起，支持数据结构/算法/页面快速跳转，键盘上下导航 + Enter 选中
-- **算法对比模式** — 8 种排序算法并行对比，实时进度追踪
+- **算法对比模式** — 12 种排序算法并行对比，实时进度追踪
 - **性能对比图表** — D3 柱状图对比排序算法性能（比较次数/交换次数/总步数三维度）
 - **复杂度可视化** — 时间/空间复杂度增长曲线对比（ComplexityChart）
 - **统一信息面板 InfoPanel** — 桌面端右侧持久面板 + 移动端底部抽屉，双 Tab（操作日志/学习模式），日志携带代码步骤时自动跳转学习 Tab
@@ -60,11 +60,11 @@
 - **响应式布局** — 适配不同屏幕尺寸，侧边栏可折叠，移动端触控优化
 - **性能监控面板** — FPS/内存实时显示，帧率自适应动画降级
 - **网络离线检测** — 离线状态实时提示
-- **单元测试覆盖** — 3480 tests（203 个测试文件），核心逻辑覆盖率 > 80%
+- **单元测试覆盖** — 2234 tests（118 个测试文件），核心逻辑覆盖率 > 80%
 - **E2E 测试覆盖** — 12 文件 317 用例，Chromium + Firefox 双浏览器，Playwright 自动化
 - **无障碍（a11y）** — axe-core WCAG 2 AA 零 violations，全局焦点可见性
 - **错误边界恢复** — ErrorBoundary 异常 UI + safeAnimate 统一错误恢复
-- **路由懒加载** — React.lazy + Suspense，主 bundle ~56 KB（gzip），25+ 个独立 chunk
+- **路由懒加载** — React.lazy + Suspense，主 bundle 预算 < 110 KB（gzip 约 65 KB），25+ 个独立 chunk
 - **TypeScript 严格模式** — 100% TypeScript 覆盖，strict 模式（noImplicitAny + strictNullChecks + noUnused）
 - **CI/CD** — GitHub Actions 自动 lint + typecheck + build + coverage + E2E，Playwright 浏览器缓存
 
@@ -72,8 +72,8 @@
 
 ### 环境要求
 
-- Node.js 18.x+
-- npm 9.x+
+- Node.js 20.x+
+- npm 10.x+
 
 ### 安装与运行
 
@@ -112,27 +112,30 @@ node e2e/run-all-tests.js
 ```
 src/
 ├── algorithms/          # 算法实现
-│   ├── sorting/         # 12 种排序算法（插件注册模式）
-│   │   ├── bubbleSort.ts
-│   │   ├── selectionSort.ts
-│   │   ├── insertionSort.ts
-│   │   ├── quickSort.ts
-│   │   ├── mergeSort.ts
-│   │   ├── heapSort.ts
-│   │   ├── radixSort.ts
-│   │   ├── bucketSort.ts
-│   │   └── index.ts
-│   ├── graph/           # 4 种图算法
+│   ├── sorting/         # 12 种排序算法（统一在 index.ts 注册）
+│   │   └── index.ts     # bubble/selection/insertion/quick/merge/heap/radix/bucket/shell/comb/tim/counting
+│   ├── graph/           # 8 种图算法
 │   │   ├── bfs.ts
 │   │   ├── dfs.ts
 │   │   ├── dijkstra.ts
 │   │   ├── topoSort.ts
+│   │   ├── bellmanFord.ts
+│   │   ├── floydWarshall.ts
+│   │   ├── prim.ts
+│   │   ├── kruskal.ts
 │   │   └── index.ts
+│   ├── avlTree.ts       # AVL 树算法
+│   ├── redBlackTree.ts  # 红黑树算法
 │   ├── skipList.ts      # 跳表算法
-│   ├── unionFind.ts     # 并查集算法
-│   └── redBlackTree.ts  # 红黑树算法
-├── components/          # 公共 UI 组件（34 个）
+│   └── unionFind.ts     # 并查集算法
+├── components/          # 公共 UI 组件（37 个 .tsx + toastStore.ts）
+│   ├── AlgorithmInfo.tsx
+│   ├── AnimationDelayIndicator.tsx
+│   ├── Button.tsx
+│   ├── Card.tsx
+│   ├── ColorLegend.tsx
 │   ├── ComplexityChart.tsx
+│   ├── ContentTier.tsx
 │   ├── EmptyState.tsx
 │   ├── ErrorBoundary.tsx
 │   ├── ExportImport.tsx
@@ -140,15 +143,22 @@ src/
 │   ├── InfoPanel.tsx
 │   ├── KeyboardHelp.tsx
 │   ├── Layout.tsx
+│   ├── LearningModeToggle.tsx
+│   ├── LearningPath.tsx
+│   ├── LearningRecommendations.tsx
 │   ├── LogPanel.tsx
 │   ├── NetworkStatus.tsx
 │   ├── OperationBar.tsx
+│   ├── OperationGroup.tsx
 │   ├── PageHeader.tsx
 │   ├── PerformanceChart.tsx
 │   ├── PerformanceMonitor.tsx
+│   ├── ProgressBar.tsx
+│   ├── ProgressOverview.tsx
 │   ├── ShareButton.tsx
 │   ├── Sidebar.tsx
 │   ├── SpeedControl.tsx
+│   ├── StatsOverlay.tsx
 │   ├── StepExplainer.tsx
 │   ├── Timeline.tsx
 │   ├── Toast.tsx
@@ -160,8 +170,10 @@ src/
 │   └── learning/        # 37 个学习模式配置
 ├── data/
 │   └── searchIndex.ts   # 全局搜索索引数据源
-├── hooks/               # 自定义 Hooks（25 个）
+├── hooks/               # 自定义 Hooks（27 个）
 │   ├── useArrayState.ts
+│   ├── useAvlTreeState.ts
+│   ├── useColorTheme.ts
 │   ├── useCommonKeyboard.ts
 │   ├── useDataStructureState.ts
 │   ├── useGlobalSettings.ts
@@ -172,9 +184,12 @@ src/
 │   ├── useI18n.ts
 │   ├── useKeyboard.ts
 │   ├── useLearningMode.ts
+│   ├── useLearningProgress.ts
 │   ├── useLinkedListState.ts
+│   ├── usePageTracker.ts
 │   ├── useQueueState.ts
 │   ├── useRedBlackTreeState.ts
+│   ├── useSharedData.ts
 │   ├── useSkipListState.ts
 │   ├── useSortState.ts
 │   ├── useStackState.ts
@@ -188,6 +203,7 @@ src/
 │   └── useI18n.ts
 ├── pages/               # 页面组件（17 个）
 │   ├── ArrayPage.tsx
+│   ├── AvlTreePage.tsx
 │   ├── GraphAlgorithmPage.tsx
 │   ├── GraphPage.tsx
 │   ├── HashPage.tsx
@@ -204,23 +220,27 @@ src/
 │   ├── TriePage.tsx
 │   └── UnionFindPage.tsx
 ├── types/               # TypeScript 类型声明
-│   ├── animationEngine.d.ts
 │   ├── hooks.d.ts
-│   ├── toastStore.d.ts
-│   ├── validate.d.ts
-│   └── visualizers.d.ts
+│   └── learning.d.ts
 ├── utils/               # 工具函数
 │   ├── animationEngine.ts
 │   ├── d3Imports.ts
 │   ├── dataExport.ts
 │   ├── debounce.ts
-│   ├── performanceBenchmark.ts
+│   ├── errorHandler.ts
+│   ├── learningRecommender.ts
+│   ├── performanceConfig.ts
+│   ├── performanceLogger.ts
+│   ├── schema.ts
+│   ├── sentry.ts
 │   ├── shareUtils.ts
 │   ├── themeColors.ts
 │   ├── timeslicing.ts
-│   └── validate.ts
-├── visualizers/         # 14 个 D3.js 可视化渲染模块
+│   ├── validate.ts
+│   └── visualizerLayout.ts
+├── visualizers/         # 15 个 D3.js 可视化渲染模块（含公共常量）
 │   ├── arrayVisualizer.ts
+│   ├── avlTreeVisualizer.ts
 │   ├── graphVisualizer.ts
 │   ├── hashVisualizer.ts
 │   ├── heapVisualizer.ts

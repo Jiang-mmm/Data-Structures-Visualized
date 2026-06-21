@@ -6,6 +6,10 @@ export interface ToastOptions {
   type: ToastType
   message: string
   duration?: number
+  /** 错误来源模块（如模块标题），仅在 type='error' 时用于前缀 */
+  module?: string
+  /** 错误来源操作（如操作按钮文本），仅在 type='error' 时用于前缀 */
+  operation?: string
 }
 
 export interface Toast extends ToastOptions {
@@ -38,10 +42,21 @@ function getSnapshot(): Toast[] {
   return toasts
 }
 
+export function formatErrorMessage(message: string, module?: string, operation?: string): string {
+  if (!module && !operation) return message
+  const parts: string[] = []
+  if (module) parts.push(module)
+  if (operation) parts.push(operation)
+  return `[${parts.join(' / ')}] ${message}`
+}
+
 export function showToast(options: ToastOptions): ToastCleanup {
   const id = ++toastId
   const duration = options.duration || 3000
-  toasts = [...toasts, { ...options, id }]
+  const message = options.type === 'error'
+    ? formatErrorMessage(options.message, options.module, options.operation)
+    : options.message
+  toasts = [...toasts, { ...options, message, id }]
   while (toasts.length > MAX_TOASTS) {
     toasts = toasts.slice(1)
   }

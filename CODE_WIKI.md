@@ -1,6 +1,6 @@
 # 数据结构学习助手 — Code Wiki
 
-> **版本:** v13.0.0-rc1-phase-a
+> **版本:** v13.0.0-rc2
 > **日期:** 2026-06-21
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **部署:** GitHub Pages（base path `/Data-Structures-Visualized/`）
@@ -41,15 +41,15 @@
 | **二叉树 BinaryTree** | 插入、前序/中序/后序/层序遍历、查找、删除 | 树状布局，节点生长动画 |
 | **AVL 树 AVLTree** | 插入、删除、查找、自平衡旋转可视化、前序/中序/后序/层序遍历 | 树状布局，旋转动画与平衡因子展示；遍历使用边流动点 + 节点脉冲高亮 |
 | **图 Graph** | 添加/删除节点和边、BFS、DFS、Dijkstra、邻接矩阵/邻接表 | 力导向布局、邻接矩阵/邻接表视图 |
-| **排序 Sorting** | 冒泡、选择、插入、快速、归并、堆、基数、桶排序 | 柱状图高度表示值，比较/交换动画 |
+| **排序 Sorting** | 冒泡、选择、插入、快速、归并、堆、基数、桶、希尔、梳排、Tim、计数排序 | 柱状图高度表示值，比较/交换动画 |
 | **哈希表 Hash Table** | 插入、删除、查找（取模哈希 + 链地址法） | 桶数组 + 链表冲突节点 |
 | **堆 Heap** | Insert、ExtractMax、Peek | 完全二叉树层级布局 + 违规检测 |
 | **字典树 Trie** | 插入、删除、查找、前缀匹配 | 树形层级布局 + 边标签可视化 |
 | **跳表 SkipList** | 插入、删除、搜索、多层索引遍历 | 扁平化多层链表布局 + 概率平衡可视化 |
 | **并查集 UnionFind** | MakeSet、Find、Union（路径压缩 + 按秩合并）、连通性查询 | 集合森林布局 + 树高/秩展示 |
 | **红黑树 RedBlackTree** | 插入、删除、查找、Fixup 着色 + 左右旋转 | 树状布局 + 红黑节点着色 + 旋转动画 |
-| **算法对比 SortCompare** | 8 种排序算法并行对比 | 多算法并行可视化 + PerformanceChart |
-| **图算法 GraphAlgorithm** | BFS、DFS、Dijkstra、拓扑排序 | SVG 可视化 + 学习模式 + 复杂度对比 |
+| **算法对比 SortCompare** | 12 种排序算法并行对比 | 多算法并行可视化 + PerformanceChart |
+| **图算法 GraphAlgorithm** | BFS、DFS、Dijkstra、拓扑排序、Bellman-Ford、Floyd-Warshall、Prim、Kruskal | SVG 可视化 + 学习模式 + 复杂度对比 |
 | **全局搜索 GlobalSearch** | Ctrl/Cmd+K 唤起、数据结构/算法/页面快速跳转 | 键盘上下导航 + Enter 选中 + 模糊匹配 |
 
 ### 1.3 关键特性
@@ -193,19 +193,19 @@ App.tsx
 
 ```
 src/
-├── __tests__/                 # 单元测试（204 个文件）
+├── __tests__/                 # 单元测试（118 个文件）
 │   ├── __snapshots__/
 │   ├── pages/                 # 17 个页面测试 + testUtils.tsx
 │   ├── visualizers/           # 14 个可视化测试 + d3MockHelper.ts
 │   └── *.test.ts(x)           # 组件/hooks/utils 测试
 ├── algorithms/
-│   ├── graph/                 # 图算法（bfs/dfs/dijkstra/topoSort）
-│   ├── sorting/               # 排序算法注册表（8 种）
+│   ├── graph/                 # 图算法（bfs/dfs/dijkstra/topoSort/bellmanFord/floydWarshall/prim/kruskal）
+│   ├── sorting/               # 排序算法注册表（12 种）
 │   ├── skipList.ts            # 跳表算法
 │   ├── unionFind.ts           # 并查集算法
 │   └── redBlackTree.ts        # 红黑树算法
 ├── assets/                    # 静态资源
-├── components/                # 34 个 React 组件 + toastStore.ts
+├── components/                # 37 个 React 组件 + toastStore.ts
 ├── configs/
 │   ├── learning/              # 37 个学习模式配置 + index.ts + types.ts
 │   └── learningPath.ts        # 学习路径配置
@@ -1173,18 +1173,18 @@ manualChunks(id) {
 
 | 层级 | 工具 | 文件数 | 说明 |
 |------|------|--------|------|
-| 单元测试 | Vitest + React Testing Library | 203 个 | 覆盖 hooks/components/utils/visualizers/pages |
-| E2E 测试 | Playwright | 8 个核心 + 4 个验证 | 跨浏览器（chromium + firefox） |
-| 质量检查 | 自定义脚本 | 1 个 | `quality-check.mjs` |
+| 单元测试 | Vitest + React Testing Library | 118 个 | 覆盖 hooks/components/utils/visualizers/pages |
+| E2E 测试 | Playwright | 2 个 `.spec.ts` + 原有自定义 runner | 跨浏览器（chromium + firefox），a11y 动态覆盖 17 页 |
+| 质量检查 | 自定义脚本 | 1 个 | `scripts/check-bundle.js` |
 
-**当前测试基线**：3480 个单元测试，0 失败，全部通过。
+**当前测试基线**：2234 个单元测试，0 失败，全部通过；Playwright 20 个 spec 全绿。
 
 ### 8.2 单元测试
 
 #### 8.2.1 测试环境配置
 
 - **环境**：jsdom
-- **Setup 文件**：`src/__tests__/setup.js`
+- **Setup 文件**：`src/__tests__/setup.ts`
 - **全局**：`globals: true`（`describe`/`it`/`expect`/`vi` 全局可用）
 - **Mock 项**：`window.matchMedia`、`requestAnimationFrame`、`SVGElement.prototype.getAttribute`、`SVGElement.prototype.transform`
 - **Coverage**：v8 provider，排除 `__tests__/`、`main.tsx`、`App.tsx`
@@ -1239,7 +1239,14 @@ expect(screen.getByText('array.title')).toBeInTheDocument()
 #### 8.3.1 执行入口
 
 ```bash
-# 前置条件：dev server 运行在 http://localhost:3000/Data-Structures-Visualized/
+# Playwright Test spec（推荐，自动启动 dev server）
+npx playwright test
+
+# 仅 a11y 扫描
+node e2e/test-a11y.js
+
+# 原有自定义 runner（需先启动 dev server）
+npm run dev &
 node e2e/run-all-tests.js
 
 # 单浏览器
@@ -1248,8 +1255,11 @@ BROWSER=firefox node e2e/test-home.js
 
 #### 8.3.2 执行策略
 
-1. **跨浏览器**：默认对 `chromium` 和 `firefox` 各跑一轮
-2. **两阶段执行**：
+1. **Playwright Test spec**：
+   - `e2e/a11y.spec.ts`：基于 `STRUCTURE_KEYS` 动态生成 17 页 axe-core 扫描
+   - `e2e/home.spec.ts`：首页加载、卡片、控制台错误
+   - 配置文件：`playwright.config.ts`，本地自动启动 dev server，CI 中只跑 chromium
+2. **原有自定义 runner**：默认对 `chromium` 和 `firefox` 各跑一轮
    - Phase 1（核心测试，并行+错峰）：`test-home.js` / `test-core.js` / `test-advanced.js` / `test-edge.js` / `test-v5-features.js`
    - Phase 2（综合测试，串行）：`test-comprehensive.js` / `test-interactions.js` / `test-persistence.js`
 3. **超时**：每个测试文件 300000ms（5 分钟）
@@ -1275,6 +1285,7 @@ BROWSER=firefox node e2e/test-home.js
 - **v5 功能**：懒加载、撤销预览悬停、分享按钮
 - **跨模块**：主题切换、i18n、键盘快捷键
 - **持久化**：localStorage 跨刷新、各 DS 的 storage key、边界清除
+- **无障碍**：axe-core 动态扫描全部 17 页，0 critical/serious violations
 
 ### 8.4 CI/CD 配置
 
@@ -1282,8 +1293,8 @@ BROWSER=firefox node e2e/test-home.js
 
 - **触发**：push/PR 到 main/master
 - **矩阵**：Node 20 + Node 22
-- **步骤**：checkout → setup-node（带 npm cache）→ `npm ci` → `npm run lint` → `npm run build` → `npm run test:run`
-- **未包含 E2E**：CI 不跑 Playwright
+- **步骤**：checkout → setup-node（带 npm cache）→ `npm ci` → `npm ls --depth=0` → `npm run lint` → `npm run typecheck` → `npm run build` → `npm run test:coverage` → 启动 dev server → Playwright a11y 测试
+- **Artifacts**：覆盖率报告、构建产物 `dist/`、E2E 报告（`playwright-report/`、`e2e/test-results.json`、`test-results/`）
 
 #### 8.4.2 部署流程（`.github/workflows/deploy.yml`）
 
@@ -1301,7 +1312,7 @@ BROWSER=firefox node e2e/test-home.js
 - **类型声明**：`src/types/*.d.ts`
 - **所有源文件为 TypeScript**（`.ts`/`.tsx`）
 - **JSX runtime**：`react-jsx`（React 19 自动 runtime）
-- **注意**：当前 `strict: false`，建议逐步收紧
+- **注意**：当前 `strict: true`（tsconfig 启用 `noImplicitAny` + `strictNullChecks` + `noUnusedLocals`）
 
 ### 9.2 React 规范
 
@@ -1526,7 +1537,7 @@ A: `useDataStructureState` 的 `loadFromStorage` 使用 `validateStoredData`（`
 | 主题颜色 | `src/utils/themeColors.ts` | 4 套调色板 |
 | 输入验证 | `src/utils/validate.ts` | XSS + 范围检查 |
 | 学习配置注册 | `src/configs/learning/index.ts` | 37 个学习模式配置 |
-| 排序算法注册 | `src/algorithms/sorting/index.ts` | 8 种排序算法 |
+| 排序算法注册 | `src/algorithms/sorting/index.ts` | 12 种排序算法 |
 | 跳表算法 | `src/algorithms/skipList.ts` | 多层链表 + 概率平衡 |
 | 并查集算法 | `src/algorithms/unionFind.ts` | 路径压缩 + 按秩合并 |
 | 红黑树算法 | `src/algorithms/redBlackTree.ts` | 插入 fixup + 旋转 + 着色 |

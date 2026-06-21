@@ -25,12 +25,12 @@ import { findIdByValue } from '../algorithms/unionFind'
 
 export default function UnionFindPage() {
   const { t } = useGlobalSettings()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const {
     data, logs, isAnimating, setIsAnimating,
     insert, remove, find, union, checkConnected, size, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useUnionFindState()
-  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  } = useUnionFindState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const [inputValueB, setInputValueB] = useState<string>('')
   const learningMode = useLearningMode('unionFind')

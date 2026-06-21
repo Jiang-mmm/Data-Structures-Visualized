@@ -29,8 +29,16 @@ let fpsDegraded = false
 let fpsDegradedSince: number | null = null
 const LOW_FPS_THRESHOLD = 20
 const LOW_FPS_DURATION = 3000
+const FRAME_STALL_THRESHOLD = 100
 
-function updateFPSDegradation(now: number, fps: number) {
+function updateFPSDegradation(now: number, fps: number, frameTime: number) {
+  if (frameTime > FRAME_STALL_THRESHOLD) {
+    if (!fpsDegraded) {
+      fpsDegraded = true
+      perfLogger.log('fps', '[FPS] Auto-degraded after frame stall', { frameTime })
+    }
+    return
+  }
   if (fps < LOW_FPS_THRESHOLD) {
     if (fpsDegradedSince === null) {
       fpsDegradedSince = now
@@ -52,7 +60,7 @@ function measureFPS() {
 
   if (now - fpsLastTime >= 1000) {
     currentFPS = fpsFrameCount
-    updateFPSDegradation(now, currentFPS)
+    updateFPSDegradation(now, currentFPS, frameTime)
     perfLogger.recordFPS(currentFPS, frameTime)
     perfLogger.log('fps', `[FPS] ${currentFPS} FPS | frame: ${frameTime.toFixed(2)}ms`, {
       fps: currentFPS,
@@ -60,6 +68,8 @@ function measureFPS() {
     })
     fpsFrameCount = 0
     fpsLastTime = now
+  } else {
+    updateFPSDegradation(now, currentFPS, frameTime)
   }
   if (fpsMonitoring) {
     requestAnimationFrame(measureFPS)
@@ -98,6 +108,11 @@ export function resetFPSDegradation() {
  * 渲染性能监控日志
  * 记录关键渲染函数的执行时间，超过 16ms (60fps) 时输出警告
  * 支持同步和异步函数，保留返回值
+ * @example
+ * ```ts
+ * const svg = measureRender('renderTree', () => renderTree(data, width, height))
+ * await measureRender('animateSort', () => animateSort(anim))
+ * ```
  */
 export function measureRender<T>(label: string, fn: () => T): T {
   const start = performance.now()
@@ -105,6 +120,9 @@ export function measureRender<T>(label: string, fn: () => T): T {
   const log = () => {
     const elapsed = performance.now() - start
     perfLogger.recordFunction(label, elapsed)
+    if (elapsed > 50) {
+      showToast({ type: 'warning', message: `${tStatic('speedControl.renderSlow')}: ${label} ${elapsed.toFixed(0)}ms` })
+    }
     if (import.meta.env.DEV) {
       if (elapsed > 16) {
         console.warn(`[Render Slow] ${label}: ${elapsed.toFixed(2)}ms (>16ms, FPS risk)`)
@@ -135,6 +153,13 @@ export function withRenderPerf<T extends (...args: any[]) => any>(
   } as T
 }
 
+/**
+ * 安全执行动画函数，捕获异常并弹出错误 toast
+ * @example
+ * ```ts
+ * await safeAnimate(() => animateInsert(anim, value), '插入')
+ * ```
+ */
 export async function safeAnimate(animationFn: () => Promise<void>, label?: string) {
   try {
     await animationFn()
@@ -182,10 +207,28 @@ export const ANIMATION_PRESETS: Record<string, AnimationPreset> = {
 }
 
 let currentPreset = 'default'
+let applyPresetAbortCallback: (() => void) | null = null
 
+export function registerApplyPresetAbortCallback(callback: () => void) {
+  applyPresetAbortCallback = callback
+}
+
+export function unregisterApplyPresetAbortCallback() {
+  applyPresetAbortCallback = null
+}
+
+/**
+ * 应用动画预设，切换速度、缓动和跳过动画标志；会先中断当前动画
+ * @example
+ * ```ts
+ * applyPreset('gentle') // 速度 0.5x，柔和缓动
+ * applyPreset('instant') // 跳过动画
+ * ```
+ */
 export function applyPreset(presetKey: string) {
   const preset = ANIMATION_PRESETS[presetKey]
   if (!preset) return
+  applyPresetAbortCallback?.()
   currentPreset = presetKey
   speedMultiplier = preset.speed
   currentEasing = preset.easing
@@ -246,8 +289,19 @@ export interface Animation {
   resolve: () => void
   reject: (err: Error) => void
   _pendingTimers?: ReturnType<typeof setTimeout>[]
+  _pendingResolvers?: (() => void)[]
 }
 
+/**
+ * 创建一个可中止的动画句柄，包含 promise、abort、isAborted 等方法
+ * @example
+ * ```ts
+ * const anim = createAnimation()
+ * await wait(300, anim)
+ * // 中途需要中断时
+ * anim.abort()
+ * ```
+ */
 export function createAnimation(): Animation {
   let aborted = false
   let resolvePromise: (() => void) | null = null
@@ -258,17 +312,33 @@ export function createAnimation(): Animation {
     rejectPromise = reject
   })
 
-  const abort = () => {
-    if (aborted) return
-    aborted = true
-    resolvePromise?.()
+  const anim: Animation = {
+    promise,
+    abort: () => {
+      if (aborted) return
+      aborted = true
+      for (const tid of anim._pendingTimers ?? []) clearTimeout(tid)
+      anim._pendingTimers = []
+      for (const resolve of anim._pendingResolvers ?? []) resolve()
+      anim._pendingResolvers = []
+      resolvePromise?.()
+    },
+    isAborted: () => aborted,
+    resolve: () => resolvePromise?.(),
+    reject: (err) => rejectPromise?.(err),
   }
 
-  const isAborted = () => aborted
-
-  return { promise, abort, isAborted, resolve: () => resolvePromise?.(), reject: (err) => rejectPromise?.(err) }
+  return anim
 }
 
+/**
+ * 根据当前速度倍率、FPS 状态与数据量计算实际动画时长（ms）
+ * @example
+ * ```ts
+ * duration(500)          // 基础 500ms，按当前速度倍率折算
+ * duration(500, 30)      // 大数据量触发性能因子，时长进一步缩短
+ * ```
+ */
 export function duration(baseMs: number, dataLength = 0) {
   if (skipAnimationFlag || isFPSDegraded()) return 0
   const perfFactor = getPerformanceFactor(dataLength)
@@ -276,6 +346,15 @@ export function duration(baseMs: number, dataLength = 0) {
   return (baseMs * perfFactor * fpsFactor) / speedMultiplier
 }
 
+/**
+ * 等待指定基础时长，支持动画中止与全局速度倍率
+ * @example
+ * ```ts
+ * const anim = createAnimation()
+ * await wait(300, anim)
+ * anim.abort() // 等待会立即结束
+ * ```
+ */
 export async function wait(baseMs: number, anim?: Animation) {
   if (anim?.isAborted?.()) return
   await new Promise<void>((resolve) => {
@@ -283,13 +362,8 @@ export async function wait(baseMs: number, anim?: Animation) {
     if (anim) {
       if (!anim._pendingTimers) anim._pendingTimers = []
       anim._pendingTimers.push(id)
-      const origAbort = anim.abort
-      anim.abort = () => {
-        for (const tid of anim._pendingTimers!) clearTimeout(tid)
-        anim._pendingTimers = []
-        resolve()
-        origAbort?.()
-      }
+      if (!anim._pendingResolvers) anim._pendingResolvers = []
+      anim._pendingResolvers.push(resolve)
     }
   })
 }

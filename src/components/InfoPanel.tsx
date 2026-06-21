@@ -30,22 +30,20 @@ function InfoPanel({ logs, learningMode, isAnimating, onJumpToStep }: InfoPanelP
   const { t } = useGlobalSettings()
   const [activeTab, setActiveTab] = useState<TabKey>('log')
   const [mobileExpanded, setMobileExpanded] = useState(false)
+  const [highlightedLogId, setHighlightedLogId] = useState<string | null>(null)
   const lastLogLengthRef = useRef(logs.length)
 
-  // 自动跳转：最新日志携带 codeStepId 时切换到学习模式 tab
+  // 自动高亮：最新日志携带 codeStepId 时高亮对应日志项并显示徽标，不再强制跳转
   useEffect(() => {
     if (logs.length === 0 || logs.length === lastLogLengthRef.current) return
     lastLogLengthRef.current = logs.length
     const latestLog = logs[logs.length - 1]
-    if (latestLog?.codeStepId && onJumpToStep) {
-      const idx = learningMode.steps.findIndex(s => s.id === latestLog.codeStepId)
-      if (idx >= 0) {
-        setActiveTab('learning')
-        learningMode.goToStep(idx)
-        setMobileExpanded(true)
-      }
+    if (latestLog?.codeStepId) {
+      setHighlightedLogId(`${logs.length - 1}-${latestLog.codeStepId}`)
+      const timer = setTimeout(() => setHighlightedLogId(null), 3000)
+      return () => clearTimeout(timer)
     }
-  }, [logs, learningMode.steps, learningMode.goToStep, onJumpToStep])
+  }, [logs])
 
   const handleJumpToStep = useCallback((stepId: string): void => {
     if (onJumpToStep) onJumpToStep(stepId)
@@ -73,42 +71,55 @@ function InfoPanel({ logs, learningMode, isAnimating, onJumpToStep }: InfoPanelP
             onTabSwitch={handleTabSwitch}
             logCount={logs.length}
             hasLearningSteps={learningMode.hasSteps}
+            logPanelId="info-panel-log"
+            learningPanelId="info-panel-learning"
           />
         </div>
         <div className="flex-1 overflow-y-auto scrollbar-thin">
-          {activeTab === 'log' ? (
-            <LogPanel logs={logs} variant="embedded" onJumpToStep={handleJumpToStep} />
-          ) : (
-            <div className="p-3">
-              {learningMode.hasSteps ? (
-                <StepExplainer
-                  step={learningMode.currentStep}
-                  currentStepIndex={learningMode.currentStepIndex}
-                  totalSteps={learningMode.totalSteps}
-                  progress={learningMode.progress}
-                  onNext={learningMode.nextStep}
-                  onPrev={learningMode.prevStep}
-                  onGoToStep={learningMode.goToStep}
-                  onReset={learningMode.reset}
-                  isAnimating={isAnimating}
-                />
-              ) : (
-                <div className="text-center text-ink-light dark:text-dark-ink-light text-sm py-8">
-                  {t('infoPanel.learningEmpty')}
-                </div>
-              )}
+          <div
+            id="info-panel-log"
+            role="tabpanel"
+            aria-labelledby="info-panel-log-tab"
+            hidden={activeTab !== 'log'}
+          >
+            <LogPanel
+              logs={logs}
+              variant="embedded"
+              onJumpToStep={handleJumpToStep}
+              highlightedLogId={highlightedLogId}
+            />
+          </div>
+          {learningMode.hasSteps && (
+            <div
+              id="info-panel-learning"
+              role="tabpanel"
+              aria-labelledby="info-panel-learning-tab"
+              hidden={activeTab !== 'learning'}
+              className="p-3"
+            >
+              <StepExplainer
+                step={learningMode.currentStep}
+                currentStepIndex={learningMode.currentStepIndex}
+                totalSteps={learningMode.totalSteps}
+                progress={learningMode.progress}
+                onNext={learningMode.nextStep}
+                onPrev={learningMode.prevStep}
+                onGoToStep={learningMode.goToStep}
+                onReset={learningMode.reset}
+                isAnimating={isAnimating}
+              />
             </div>
           )}
         </div>
       </aside>
 
-      {/* 移动端：底部抽屉 */}
-      <div className="lg:hidden">
+      {/* 移动端：作为 flex 子项占满主区 */}
+      <div className={`lg:hidden flex flex-col ${mobileExpanded ? 'flex-1 min-h-0' : ''}`}>
         {/* 折叠态：状态栏 */}
         {!mobileExpanded && (
           <button
             onClick={() => setMobileExpanded(true)}
-            className="fixed bottom-0 left-0 right-0 z-30 bg-surface dark:bg-dark-surface border-t-2 border-ink dark:border-dark-border px-4 py-2 flex items-center justify-between shadow-button dark:shadow-button-dark"
+            className="w-full bg-surface dark:bg-dark-surface border-t-2 border-ink dark:border-dark-border px-4 py-2 flex items-center justify-between shadow-button dark:shadow-button-dark"
             aria-label={t('infoPanel.openDrawer')}
           >
             <div className="flex items-center gap-2 min-w-0">
@@ -128,56 +139,66 @@ function InfoPanel({ logs, learningMode, isAnimating, onJumpToStep }: InfoPanelP
           </button>
         )}
 
-        {/* 展开态：抽屉 */}
+        {/* 展开态：flex-1 占满主区，底部按钮固定 */}
         {mobileExpanded && (
-          <>
-            <div
-              className="fixed inset-0 bg-black/20 z-40"
-              onClick={() => setMobileExpanded(false)}
-            />
-            <div className="fixed bottom-0 left-0 right-0 z-50 h-[60vh] bg-surface dark:bg-dark-surface border-t-2 border-ink dark:border-dark-border flex flex-col shadow-2xl animate-slide-up">
-              <div className="flex items-center justify-between border-b-2 border-ink dark:border-dark-border px-3 py-2">
-                <InfoPanelTabButtons
-                  activeTab={activeTab}
-                  onTabSwitch={handleTabSwitch}
-                  logCount={logs.length}
-                  hasLearningSteps={learningMode.hasSteps}
-                />
-                <button
-                  onClick={() => setMobileExpanded(false)}
-                  className="w-8 h-8 flex items-center justify-center border-2 border-ink dark:border-dark-border hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper transition-colors font-bold shrink-0"
-                  aria-label={t('infoPanel.closeDrawer')}
-                >
-                  ▼
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto scrollbar-thin">
-                {activeTab === 'log' ? (
-                  <LogPanel logs={logs} variant="embedded" onJumpToStep={handleJumpToStep} />
-                ) : (
-                  <div className="p-3">
-                    {learningMode.hasSteps ? (
-                      <StepExplainer
-                        step={learningMode.currentStep}
-                        currentStepIndex={learningMode.currentStepIndex}
-                        totalSteps={learningMode.totalSteps}
-                        progress={learningMode.progress}
-                        onNext={learningMode.nextStep}
-                        onPrev={learningMode.prevStep}
-                        onGoToStep={learningMode.goToStep}
-                        onReset={learningMode.reset}
-                        isAnimating={isAnimating}
-                      />
-                    ) : (
-                      <div className="text-center text-ink-light dark:text-dark-ink-light text-sm py-8">
-                        {t('infoPanel.learningEmpty')}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+          <div className="flex-1 flex flex-col min-h-0 bg-surface dark:bg-dark-surface border-t-2 border-ink dark:border-dark-border animate-slide-up">
+            <div className="flex items-center justify-between border-b-2 border-ink dark:border-dark-border px-3 py-2">
+              <InfoPanelTabButtons
+                activeTab={activeTab}
+                onTabSwitch={handleTabSwitch}
+                logCount={logs.length}
+                hasLearningSteps={learningMode.hasSteps}
+                logPanelId="info-panel-log-mobile"
+                learningPanelId="info-panel-learning-mobile"
+              />
             </div>
-          </>
+            <div className="flex-1 overflow-y-auto scrollbar-thin">
+              <div
+                id="info-panel-log-mobile"
+                role="tabpanel"
+                aria-labelledby="info-panel-log-mobile-tab"
+                hidden={activeTab !== 'log'}
+              >
+                <LogPanel
+                  logs={logs}
+                  variant="embedded"
+                  onJumpToStep={handleJumpToStep}
+                  highlightedLogId={highlightedLogId}
+                />
+              </div>
+              {learningMode.hasSteps && (
+                <div
+                  id="info-panel-learning-mobile"
+                  role="tabpanel"
+                  aria-labelledby="info-panel-learning-mobile-tab"
+                  hidden={activeTab !== 'learning'}
+                  className="p-3"
+                >
+                  <StepExplainer
+                    step={learningMode.currentStep}
+                    currentStepIndex={learningMode.currentStepIndex}
+                    totalSteps={learningMode.totalSteps}
+                    progress={learningMode.progress}
+                    onNext={learningMode.nextStep}
+                    onPrev={learningMode.prevStep}
+                    onGoToStep={learningMode.goToStep}
+                    onReset={learningMode.reset}
+                    isAnimating={isAnimating}
+                  />
+                </div>
+              )}
+            </div>
+            <div className="border-t-2 border-ink dark:border-dark-border p-2 flex justify-end bg-surface dark:bg-dark-surface">
+              <button
+                onClick={() => setMobileExpanded(false)}
+                className="px-3 py-2 flex items-center gap-1.5 border-2 border-ink dark:border-dark-border hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper transition-colors text-xs font-bold"
+                aria-label={t('infoPanel.closeDrawer')}
+              >
+                <span>▼</span>
+                <span>{t('common.close')}</span>
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </>
@@ -189,15 +210,27 @@ interface InfoPanelTabButtonsProps {
   onTabSwitch: (tab: TabKey) => void
   logCount: number
   hasLearningSteps: boolean
+  logPanelId: string
+  learningPanelId: string
 }
 
-function InfoPanelTabButtons({ activeTab, onTabSwitch, logCount, hasLearningSteps }: InfoPanelTabButtonsProps) {
+function InfoPanelTabButtons({
+  activeTab,
+  onTabSwitch,
+  logCount,
+  hasLearningSteps,
+  logPanelId,
+  learningPanelId,
+}: InfoPanelTabButtonsProps) {
   const { t } = useGlobalSettings()
   return (
-    <div className="flex gap-1">
+    <div role="tablist" aria-label={t('infoPanel.tabs')} className="flex gap-1">
       <button
+        role="tab"
+        aria-selected={activeTab === 'log'}
+        aria-controls={logPanelId}
+        id={`${logPanelId}-tab`}
         onClick={() => onTabSwitch('log')}
-        aria-pressed={activeTab === 'log'}
         className={`px-3 py-1.5 text-xs font-bold border-2 border-ink dark:border-dark-border transition-all duration-200
           ${activeTab === 'log'
             ? 'bg-accent-blue text-paper border-accent-blue shadow-button dark:shadow-button-dark'
@@ -209,8 +242,11 @@ function InfoPanelTabButtons({ activeTab, onTabSwitch, logCount, hasLearningStep
       </button>
       {hasLearningSteps && (
         <button
+          role="tab"
+          aria-selected={activeTab === 'learning'}
+          aria-controls={learningPanelId}
+          id={`${learningPanelId}-tab`}
           onClick={() => onTabSwitch('learning')}
-          aria-pressed={activeTab === 'learning'}
           className={`px-3 py-1.5 text-xs font-bold border-2 border-ink dark:border-dark-border transition-all duration-200
             ${activeTab === 'learning'
               ? 'bg-accent-blue text-paper border-accent-blue shadow-button dark:shadow-button-dark'

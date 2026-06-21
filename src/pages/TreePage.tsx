@@ -26,8 +26,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function TreePage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, insert, preorder, inorder, postorder, levelorder, search, deleteNode, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, nodeCount } = useTreeState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, insert, preorder, inorder, postorder, levelorder, search, deleteNode, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, nodeCount } = useTreeState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
   const [edgeStyle, setEdgeStyle] = useState<EdgeStyle>(() => {
@@ -130,9 +130,9 @@ export default function TreePage() {
   }, [learningMode.steps, learningMode.goToStep])
 
   const handleReset = useCallback((): void => {
-    clearTreePositions()
+    if (svgRef.current) clearTreePositions(svgRef.current)
     reset()
-  }, [reset])
+  }, [reset, svgRef])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">

@@ -26,8 +26,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function ArrayPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, insert, remove, search, searchAll, binarySearch, randomize, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useArrayState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, insert, remove, search, searchAll, binarySearch, randomize, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useArrayState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const [inputIndex, setInputIndex] = useState<string>('')
   const learningMode = useLearningMode('array')

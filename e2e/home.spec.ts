@@ -4,7 +4,7 @@
  * 此文件是从 e2e/test-home.js 迁移到 Playwright Test 框架的示例。
  * 迁移批准后，所有 e2e/*.js 文件将按此模式迁移。
  */
-import { test, expect } from '@playwright/test'
+import { test, expect } from 'playwright/test'
 
 test.describe('首页导航', () => {
   test('页面应正确加载并显示标题', async ({ page }) => {

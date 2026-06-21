@@ -54,10 +54,11 @@ export interface LogEntry {
 
 export interface DataStructureStateOptions {
   storageKey?: string
+  abortAnimation?: () => void
 }
 
 export function useDataStructureState<T>(initialData: T, options: DataStructureStateOptions = {}) {
-  const { storageKey } = options
+  const { storageKey, abortAnimation } = options
 
   const [effectiveInitial] = useState<T>(() => {
     const storedData = storageKey ? loadFromStorage<T>(storageKey) : null
@@ -152,18 +153,34 @@ export function useDataStructureState<T>(initialData: T, options: DataStructureS
   }, [resetHistory, initialData, storageKey])
 
   const handleUndo = useCallback(() => {
-    if (isAnimating || !canUndo()) return
+    if (!canUndo()) return
+    if (isAnimating) {
+      abortAnimation?.()
+      setIsAnimatingRaw(false)
+      if (animTimeoutRef.current) {
+        clearTimeout(animTimeoutRef.current)
+        animTimeoutRef.current = null
+      }
+    }
     undo()
     addLog('info', tStatic('shortcuts.undo'))
     showToast({ type: 'info', message: tStatic('toast.undo') })
-  }, [undo, canUndo, isAnimating, addLog])
+  }, [undo, canUndo, isAnimating, abortAnimation, addLog])
 
   const handleRedo = useCallback(() => {
-    if (isAnimating || !canRedo()) return
+    if (!canRedo()) return
+    if (isAnimating) {
+      abortAnimation?.()
+      setIsAnimatingRaw(false)
+      if (animTimeoutRef.current) {
+        clearTimeout(animTimeoutRef.current)
+        animTimeoutRef.current = null
+      }
+    }
     redo()
     addLog('info', tStatic('shortcuts.redo'))
     showToast({ type: 'info', message: tStatic('toast.redo') })
-  }, [redo, canRedo, isAnimating, addLog])
+  }, [redo, canRedo, isAnimating, abortAnimation, addLog])
 
   const clearLogs = useCallback(() => {
     setLogs([])

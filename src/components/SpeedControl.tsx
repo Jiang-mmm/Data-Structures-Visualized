@@ -49,6 +49,7 @@ function SpeedControl() {
           onClick={() => setShowPresets(!showPresets)}
           aria-label={t('speedControl.presetDefault')}
           aria-expanded={showPresets}
+          aria-keyshortcuts="Alt+P"
           className="flex items-center gap-1.5 px-2.5 py-1 font-mono text-xs border-2 border-ink/30 dark:border-dark-border bg-surface dark:bg-dark-surface text-ink-light dark:text-dark-ink-light hover:bg-accent-blue/10 hover:border-accent-blue hover:text-accent-blue transition-all duration-200"
         >
           <span>{ANIMATION_PRESETS[currentPreset]?.icon}</span>

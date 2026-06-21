@@ -26,8 +26,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function QueuePage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, enqueue, dequeue, front, clear, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, size } = useQueueState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, enqueue, dequeue, front, clear, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, size } = useQueueState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('queue')
   useSharedData({ dataType: 'queue', loadData, validator: Array.isArray })

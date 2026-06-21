@@ -26,8 +26,9 @@ const INITIAL_DATA: GraphData = {
   nodes: INITIAL_NODES.map(n => ({ ...n })),
   links: INITIAL_LINKS.map(l => ({ ...l, source: String(l.source), target: String(l.target) })),
 }
+const MODULE = () => tStatic('graph.title')
 
-export function useGraphState() {
+export function useGraphState(abortAnimation?: () => void) {
   const nodeCounterRef = useRef(0)
 
   function nextNodeId(existing: GraphNode[]): string {
@@ -42,7 +43,7 @@ export function useGraphState() {
     data: graphData, logs, isAnimating, setIsAnimating,
     push: pushGraph, addLog, reset: resetDataStructure, loadData: loadGraphData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<GraphData>(INITIAL_DATA, { storageKey: 'graph' })
+  } = useDataStructureState<GraphData>(INITIAL_DATA, { storageKey: 'graph', abortAnimation })
 
   const nodes = Array.isArray(graphData.nodes) ? graphData.nodes : INITIAL_DATA.nodes
   const links = Array.isArray(graphData.links) ? graphData.links : INITIAL_DATA.links
@@ -66,7 +67,7 @@ export function useGraphState() {
 
   const addEdge = useCallback((sourceId: string, targetId: string, weight?: number): boolean => {
     if (sourceId === targetId) {
-      showToast({ type: 'error', message: tStatic('hooks.graphSelfLoop') })
+      showToast({ type: 'error', message: tStatic('hooks.graphSelfLoop'), module: MODULE(), operation: tStatic('graph.addEdge') })
       return false
     }
     const exists = links.some(l => {

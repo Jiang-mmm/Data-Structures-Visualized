@@ -12,7 +12,6 @@
 docs/
 ├── README.md                                          # 本文件 - 文档导航
 ├── PRD.md                                             # 活跃 - 产品需求文档
-├── iteration-plan-v11.md                              # 活跃 - 最新迭代计划（v11.0.1）
 ├── superpowers/                                       # 活跃 - 设计规范与实施计划
 │   ├── specs/                                         # 设计规范
 │   └── plans/                                         # 实施计划
@@ -53,7 +52,6 @@ docs/
 | 文档 | 版本 | 最后更新 | 用途 |
 |------|------|----------|------|
 | [PRD.md](./PRD.md) | v12.0 | 2026-06-20 | 产品需求文档 |
-| [iteration-plan-v11.md](./iteration-plan-v11.md) | v11.0.1 | 2026-06-19 | 当前活跃迭代计划 |
 
 ### superpowers/ 设计规范与实施计划
 
@@ -97,6 +95,7 @@ docs/
 | [optimization-history.md](./archive/optimization-history.md) | 优化建议 + 开发实施计划 | ✅ 已落地 |
 | [issue-and-ui-fixes.md](./archive/issue-and-ui-fixes.md) | 测试问题报告 + UI 重构设计 | ✅ 问题全部修复 |
 | [referenced-planning.md](./archive/referenced-planning.md) | 借鉴计划 + 功能拓展 + 视觉审查 | ✅ P1 项已实施 |
+| [iteration-plan-v11.md](./archive/iteration-plan-v11.md) | v11.0.1 深度优化实施计划 | ✅ 已完成，内容已合并到 CHANGELOG/WORKLOG |
 | [e2e-migration-plan.md](./archive/e2e-migration-plan.md) | E2E 框架迁移评估 | ⏳ 评估完成，未执行 |
 | [trae-glm-prompts.md](./archive/trae-glm-prompts.md) | Trae GLM 专属提示词 | ✅ 已完成历史使命 |
 

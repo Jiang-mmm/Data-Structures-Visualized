@@ -11,10 +11,11 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    setupFiles: ['./src/__tests__/setup.js'],
+    setupFiles: ['./src/__tests__/setup.ts'],
     globals: true,
     exclude: [
       '.agents/**',
+      '.claude/**',
       'node_modules/**',
       'e2e/**',
     ],

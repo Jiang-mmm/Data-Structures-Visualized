@@ -12,7 +12,7 @@
  * 注意: 此文件为迁移起点，当前项目仍使用自定义 runner。
  * 迁移批准后，将逐步迁移 e2e/*.js 测试文件到 *.spec.ts 格式。
  */
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from 'playwright/test'
 
 const BASE_URL = 'http://localhost:3000/Data-Structures-Visualized/'
 

@@ -26,14 +26,14 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function AvlTreePage() {
   const { t } = useGlobalSettings()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const {
     data, logs, isAnimating, setIsAnimating,
     insert, deleteNode, search,
     preorder, inorder, postorder, levelorder,
     getFlattened, nodeCount,
     reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useAvlTreeState()
-  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  } = useAvlTreeState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
   const learningMode = useLearningMode('avlTree')

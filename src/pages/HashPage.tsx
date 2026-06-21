@@ -24,8 +24,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function HashPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, insert, remove, search, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, entryCount, bucketCount, hashFn } = useHashState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, insert, remove, search, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, entryCount, bucketCount, hashFn } = useHashState(abortAnimation)
   const [keyValue, setKeyValue] = useState<string>('')
   const [valueInput, setValueInput] = useState<string>('')
   const learningMode = useLearningMode('hash')

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { showToast, dismissToast } from '../components/toastStore'
+import { showToast, dismissToast, formatErrorMessage } from '../components/toastStore'
 
 describe('toastStore', () => {
   beforeEach(() => {
@@ -35,6 +35,19 @@ describe('toastStore', () => {
 
     it('应该支持自定义 duration', () => {
       const { cleanup } = showToast({ type: 'info', message: 'custom', duration: 5000 })
+      cleanup()
+    })
+
+    it('错误 toast 应该显示模块和操作前缀', () => {
+      expect(formatErrorMessage('输入无效', '数组', '插入')).toBe('[数组 / 插入] 输入无效')
+    })
+
+    it('错误 toast 仅模块时应该正确格式化', () => {
+      expect(formatErrorMessage('越界', '栈')).toBe('[栈] 越界')
+    })
+
+    it('非错误 toast 不应该添加前缀', () => {
+      const { cleanup } = showToast({ type: 'success', message: '成功', module: '数组', operation: '插入' })
       cleanup()
     })
   })

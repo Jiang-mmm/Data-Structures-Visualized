@@ -29,7 +29,9 @@ export function useKeyboard(shortcuts: ShortcutMap, enabled: boolean = true): vo
       const needsCtrl = parts.includes('ctrl') || parts.includes('cmd')
       const needsShift = parts.includes('shift')
 
+      // 输入框聚焦时跳过非 Ctrl 快捷键；Ctrl+Z/Y 等撤销/重做快捷键也跳过，避免与浏览器原生行为冲突
       if (isInput && !needsCtrl) continue
+      if (isInput && needsCtrl && (key === 'z' || key === 'y')) continue
 
       if (key === comboKey && isCtrl === needsCtrl && isShift === needsShift) {
         e.preventDefault()

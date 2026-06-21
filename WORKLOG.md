@@ -2,6 +2,91 @@
 
 ---
 
+## 2026-06-21 | v13 Phase C 文档同步 + Phase D 测试/CI 升级完成
+
+### 文档同步
+
+按实施真源文档完成 8 份项目文档同步：
+
+| 文档 | 更新内容 |
+|------|----------|
+| `PROJECT_STATUS.md` | 版本升级 rc2；Phase C/D 完成；新增验证基线 |
+| `TODO.md` | 版本与状态更新；路径一全部完成 |
+| `WORKLOG.md` | 新增本记录 |
+| `PROJECT_SUMMARY.md` | 版本、Phase 状态、验证数据同步 |
+| `CHANGELOG.md` | 补充 Phase C/D 变更条目 |
+| `README.md` | 版本与功能状态同步 |
+| `ARCHITECTURE.md` | 版本与 Phase 状态同步 |
+| `CODE_WIKI.md` | 版本、测试体系、CI 流程同步 |
+| `package.json` | version `13.0.0-rc2` |
+
+### Phase D 关键变更
+
+| 领域 | 文件 | 内容 |
+|------|------|------|
+| E2E Playwright spec | `e2e/a11y.spec.ts` | 基于 `STRUCTURE_KEYS` 动态生成 17 页 axe-core 扫描 |
+| E2E Playwright spec | `e2e/home.spec.ts` | 首页加载/卡片/控制台错误 3 个用例 |
+| a11y runner | `e2e/test-a11y.js` | 委托 `npx playwright test a11y.spec.ts`；CI 中 `--project=chromium` |
+| E2E JSON 报告 | `e2e/run-all-tests.js` | 输出 `e2e/test-results.json` 统一协议 |
+| 单测 setup | `src/__tests__/setup.ts` | 替代 `setup.js`，TypeScript 化 |
+| D3 mock | `src/__tests__/visualizers/d3MockHelper.ts` | 调用记录 + 链式 forceSimulation mock |
+| 可视化 snapshot | `src/__tests__/visualizers/arrayVisualizer.snapshot.test.ts` | jsdom 下 SVG 结构快照 |
+| CI | `.github/workflows/ci.yml` | a11y 测试、覆盖率/构建产物/E2E 报告 artifact 上传 |
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2234 passed（118 文件） |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过 |
+| Playwright spec | 20 passed（a11y 17 页 + home 3 用例） |
+| a11y 扫描 | 17 页 0 critical/serious violations |
+
+### Git
+
+- 分支：`feature/v13-code-audit`
+- 状态：50+ 个文件改动待统一 commit（Phase B/C/D 合并提交）
+
+---
+
+## 2026-06-21 | v13 Phase B 体验与工程优化完成
+
+### 修复范围
+
+按 [TODO.md](./TODO.md) Phase B 计划，完成 ANIM-1~5 / PERF-1~5 / VIZ-1~5 / BUG-1~7 / A11Y-1~6 / MOB-1~6 / FB-1~6 等问题修复。
+
+| 问题域 | 关键文件 | 修复内容 |
+|--------|----------|----------|
+| 动画引擎 | `src/utils/animationEngine.ts` + `src/hooks/useVisualizer.ts` | FPS 降级（>100ms 立即触发）、动画 abort、wait 清理、applyPreset 中断、RAF ID 提 ref、graph simulation cleanup |
+| 渲染一致性 | `src/visualizers/treeVisualizer.ts` / `graphVisualizer.ts` / `unionFindVisualizer.ts` / `avlTreeVisualizer.ts` / `trieVisualizer.ts` / `arrayVisualizer.ts` / `stackVisualizer.ts` | positionStore 绑定 SVG、NODE_RADIUS 收敛常量、defs 去重、findRootId 缓存、栈宽度自适应 |
+| a11y | `src/components/InfoPanel.tsx` / `LogPanel.tsx` / `SpeedControl.tsx` / `UndoRedoBar.tsx` + visualizers | 日志高亮替代自动跳转、ARIA tablist/tab/aria-controls、树/图 ↑↓ 父/子导航、焦点环、边 aria-label、aria-keyshortcuts |
+| 移动端/反馈 | `src/components/Sidebar.tsx` / `InfoPanel.tsx` / `src/hooks/useKeyboard.ts` / `src/utils/toastStore.ts` / `src/hooks/useHistory.ts` | 左缘右滑打开、触控 ≥44px、移动端 flex-1 抽屉、输入框跳过 Ctrl+Z/Y、错误 toast 模块/操作前缀、undo/redo 先 abort |
+
+### 新增/更新测试
+
+- `src/__tests__/toastStore.test.ts`：错误 toast 模块/操作前缀格式化
+- `src/__tests__/useKeyboard.test.ts`：输入框中 Ctrl+Z/Y 跳过
+- `src/__tests__/visualizers/stackVisualizer.test.ts`：响应式矩形宽度
+- `src/__tests__/InfoPanel.test.tsx`、`animationEngine.test.ts`、`useVisualizer.test.ts` 等适配 Phase B 改动
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 3506 passed（204 文件） |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过 |
+
+### Git
+
+- 分支：`feature/v13-code-audit`
+- 状态：46 个文件改动未提交（待 Phase C/D 完成后统一 commit）
+
+---
+
 ## 2026-06-21 | v13 Phase A 紧急修复完成（安全 + 数据完整性）
 
 ### 修复范围

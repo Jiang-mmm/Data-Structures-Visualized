@@ -134,8 +134,12 @@ export default function Sidebar() {
   const handleTouchEnd = useCallback((e: TouchEvent) => {
     if (!swipeRef.current.isSwiping) return
     const deltaX = e.changedTouches[0].clientX - swipeRef.current.startX
-    if (deltaX < -60) {
-      setMobileOpen(false)
+    const deltaY = e.changedTouches[0].clientY - swipeRef.current.startY
+    // 水平滑动且主要在 X 轴方向才响应
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX < -60) {
+        setMobileOpen(false)
+      }
     }
     swipeRef.current.isSwiping = false
   }, [])
@@ -150,6 +154,36 @@ export default function Sidebar() {
       el.removeEventListener('touchend', handleTouchEnd)
     }
   }, [isMobile, handleTouchStart, handleTouchEnd])
+
+  // 屏幕左缘 24px 内右滑打开侧边栏
+  const openSwipeRef = useRef<{ startX: number; startY: number; isSwiping: boolean }>({ startX: 0, startY: 0, isSwiping: false })
+  const handleOpenTouchStart = useCallback((e: TouchEvent) => {
+    if (mobileOpen) return
+    if (e.touches[0].clientX > 24) return
+    openSwipeRef.current.startX = e.touches[0].clientX
+    openSwipeRef.current.startY = e.touches[0].clientY
+    openSwipeRef.current.isSwiping = true
+  }, [mobileOpen])
+
+  const handleOpenTouchEnd = useCallback((e: TouchEvent) => {
+    if (!openSwipeRef.current.isSwiping) return
+    const deltaX = e.changedTouches[0].clientX - openSwipeRef.current.startX
+    const deltaY = e.changedTouches[0].clientY - openSwipeRef.current.startY
+    if (Math.abs(deltaX) > Math.abs(deltaY) && deltaX > 60) {
+      setMobileOpen(true)
+    }
+    openSwipeRef.current.isSwiping = false
+  }, [])
+
+  useEffect(() => {
+    if (!isMobile) return
+    document.addEventListener('touchstart', handleOpenTouchStart, { passive: true })
+    document.addEventListener('touchend', handleOpenTouchEnd, { passive: true })
+    return () => {
+      document.removeEventListener('touchstart', handleOpenTouchStart)
+      document.removeEventListener('touchend', handleOpenTouchEnd)
+    }
+  }, [isMobile, handleOpenTouchStart, handleOpenTouchEnd])
 
   const prevPathname = useRef<string>(location.pathname)
   useEffect(() => {
@@ -237,7 +271,7 @@ export default function Sidebar() {
           <button
             onClick={() => setMobileOpen(false)}
             aria-label={t('common.close')}
-            className="w-9 h-9 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper hover:bg-accent-blue hover:text-paper transition-colors text-sm font-bold touch-manipulation focus-ring"
+            className="w-11 h-11 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper hover:bg-accent-blue hover:text-paper transition-colors text-sm font-bold touch-manipulation focus-ring"
           >
             ✕
           </button>
@@ -247,7 +281,7 @@ export default function Sidebar() {
             aria-label={collapsed ? t('sidebar.openMenu') : t('sidebar.collapseMenu')}
             aria-expanded={!collapsed}
             className={`
-              w-7 h-7 flex items-center justify-center
+              w-11 h-11 flex items-center justify-center
               border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper
               hover:bg-accent-blue hover:text-paper dark:hover:bg-accent-blue dark:hover:text-paper
               transition-colors text-xs font-bold focus-ring
@@ -365,7 +399,7 @@ export default function Sidebar() {
       {isMobile && (
         <button
           onClick={() => setMobileOpen(true)}
-          className="fixed top-3 left-3 z-50 w-10 h-10 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface shadow-button dark:shadow-button-dark hover:bg-accent-blue hover:text-paper transition-colors text-lg font-bold md:hidden"
+          className="fixed top-3 left-3 z-50 w-11 h-11 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface shadow-button dark:shadow-button-dark hover:bg-accent-blue hover:text-paper transition-colors text-lg font-bold md:hidden"
           aria-label={t('sidebar.openMenu')}
         >
           ☰

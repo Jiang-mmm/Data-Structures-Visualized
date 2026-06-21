@@ -24,7 +24,8 @@
 | [optimization-history.md](./optimization-history.md) | `optimization-proposal.md` + `development-implementation-plan.md` | 优化建议与开发实施计划 | 建议已落地实施 |
 | [issue-and-ui-fixes.md](./issue-and-ui-fixes.md) | `test-issue-report.md` + `ui-redesign-phase1-design.md` | 测试问题报告与 UI 重构设计 | 问题已全部修复 |
 | [referenced-planning.md](./referenced-planning.md) | `借鉴计划-数据结构学习助手2.md` + `功能拓展计划-修订版.md` + `项目视觉设计审查报告.md` | 借鉴对比、功能拓展规划、视觉设计审查 | 已整合到 v9-v12 实施 |
-| [e2e-migration-plan.md](./e2e-migration-plan.md) | `e2e-migration-plan.md` | E2E 测试框架迁移评估 | 评估完成，状态保留 |
+| [iteration-plan-v11.md](./iteration-plan-v11.md) | `docs/iteration-plan-v11.md` | v11.0.1 深度优化实施计划 | 已完成，内容已合并到 CHANGELOG/WORKLOG |
+| [e2e-migration-plan.md](./e2e-migration-plan.md) | `e2e-migration-plan.md` | E2E 框架迁移评估 | 评估完成，状态保留 |
 | [trae-glm-prompts.md](./trae-glm-prompts.md) | `Trae GLM 专属｜数据结构可视化项目深度审查&落地优化方案提示词（最终顶配版）.md` | Trae GLM 专属提示词 | 历史提示词归档 |
 
 ---
@@ -58,7 +59,7 @@
 | 优化建议落地 | `ARCHITECTURE.md` (核心设计决策) + `CHANGELOG.md` (v9.0/v10.0/v11.0 优化记录) |
 | 测试问题修复 | `CHANGELOG.md` (v8.1 动画挂起修复) + `CLAUDE.md` (动画约束章节) |
 | 视觉设计审查 | `CLAUDE.md` (Conventions 章节) + `ARCHITECTURE.md` (代码风格规范) |
-| 功能拓展规划 | `TODO.md` (待办任务表) + `iteration-plan-v11.md` (v11 实施计划) |
+| 功能拓展规划 | `TODO.md` (待办任务表) + `docs/archive/iteration-plan-v11.md` (v11 实施计划，归档) |
 | v13 修复路线 | `TODO.md` (v13 阶段表) + `docs/audit-2026-06-20/audit-merged.md` |
 
 ---

@@ -47,10 +47,11 @@ function purgeSVG(svg: SVGSVGElement) {
   container.interrupt()
 
   const allNodes = svg.querySelectorAll('*')
+  const d3InternalKeys = new Set(['__data__', '__zoom', '__brush', '__transition', '__event', '__on'])
   allNodes.forEach(node => {
     const keys = Object.keys(node)
     keys.forEach(key => {
-      if (key.startsWith('__')) {
+      if (d3InternalKeys.has(key)) {
         delete (node as any)[key]
       }
     })

@@ -1,9 +1,10 @@
 import { exec } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, writeFileSync } from 'fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const JSON_OUTPUT_FILE = path.join(__dirname, 'test-results.json');
 
 const coreTestFiles = [
   'test-home.js',
@@ -76,8 +77,8 @@ function runTest(file, browser) {
         status: failed === 0 && !error ? 'PASS' : 'FAIL',
         passed,
         failed,
-        output,
-        errOutput,
+        output: output.slice(-2000),
+        errOutput: errOutput.slice(-1000),
       });
     });
 
@@ -101,6 +102,7 @@ async function runTestsSequential(files, browser) {
 }
 
 const browsers = ['chromium', 'firefox'];
+const browserReports = [];
 let grandTotalPassed = 0;
 let grandTotalFailed = 0;
 
@@ -156,6 +158,15 @@ for (const browser of browsers) {
     console.log(`${icon} ${r.file}: ${r.passed} passed, ${r.failed} failed`);
   });
 
+  browserReports.push({
+    browser,
+    elapsedSeconds: parseFloat(elapsed),
+    totalPassed,
+    totalFailed,
+    passRate: parseFloat(((totalPassed / (totalPassed + totalFailed)) * 100).toFixed(1)),
+    results: allResults.map(({ file, status, passed, failed }) => ({ file, status, passed, failed })),
+  });
+
   grandTotalPassed += totalPassed;
   grandTotalFailed += totalFailed;
 }
@@ -170,6 +181,22 @@ console.log(`总测试用例: ${grandTotalPassed + grandTotalFailed}`);
 console.log(`通过: ${grandTotalPassed}`);
 console.log(`失败: ${grandTotalFailed}`);
 console.log(`通过率: ${((grandTotalPassed / (grandTotalPassed + grandTotalFailed)) * 100).toFixed(1)}%`);
+
+const jsonReport = {
+  version: '1.0.0',
+  generatedAt: new Date().toISOString(),
+  totalPassed: grandTotalPassed,
+  totalFailed: grandTotalFailed,
+  passRate: parseFloat(((grandTotalPassed / (grandTotalPassed + grandTotalFailed)) * 100).toFixed(1)),
+  browsers: browserReports,
+};
+
+try {
+  writeFileSync(JSON_OUTPUT_FILE, JSON.stringify(jsonReport, null, 2), 'utf-8');
+  console.log(`\nJSON 协议报告已保存: ${JSON_OUTPUT_FILE}`);
+} catch (err) {
+  console.error('写入 JSON 报告失败:', err.message);
+}
 
 if (grandTotalFailed > 0) {
   console.log(`\n⚠️  部分测试失败，请检查上述错误信息`);

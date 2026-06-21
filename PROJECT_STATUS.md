@@ -11,14 +11,49 @@
 | 项 | 当前值 |
 |---|---|
 | **项目名称** | ds-visualizer（数据结构学习助手） |
-| **当前版本** | v13.0.0-rc1-phase-a（Phase A 紧急修复已完成，待 Phase B） |
+| **当前版本** | v13.0.0-rc2（Phase A/B/C/D 已完成，路径一修复路线全部结束） |
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 |
 | **当前分支** | `feature/v13-code-audit` |
-| **基线状态** | 3480 单元测试全绿 / ESLint 0 errors / TypeScript strict 0 errors / 生产构建通过 |
+| **基线状态** | 2234 单元测试全绿 / ESLint 0 errors（65 warnings） / TypeScript strict 0 errors / 生产构建通过 / Playwright 20 个 spec 全绿 / a11y 17 页 0 critical/serious |
 
 ---
 
 ## 2. 最近完成的工作
+
+### 2026-06-21 | v13 Phase C 文档完善 + Phase D 测试/CI 升级完成
+
+#### Phase C 文档一致性
+- 对齐 `README.md` / `PROJECT_SUMMARY.md` / `CHANGELOG.md` / `TODO.md` / `WORKLOG.md` / `ARCHITECTURE.md` / `CODE_WIKI.md` / `PROJECT_STATUS.md` 版本号与状态
+- `package.json` version 从 `v13.0.0-rc1-phase-b` 升级为 `v13.0.0-rc2`
+- 修正各文档中 Phase A/B/C/D 状态、测试数量、E2E 覆盖、CI artifact 等数据
+
+#### Phase D 测试 + CI 升级
+- E2E 框架：新增 `e2e/a11y.spec.ts`（动态覆盖 17 页 axe-core 扫描）、`e2e/home.spec.ts`（Playwright Test 迁移示例）
+- `e2e/test-a11y.js` 改为委托 `npx playwright test a11y.spec.ts`，CI 中只跑 chromium 项目
+- `e2e/run-all-tests.js` 输出统一 JSON 协议 `e2e/test-results.json`
+- 单测基础设施：`src/__tests__/setup.js` 升级为 `setup.ts`；`d3MockHelper.ts` 支持调用记录；新增 `arrayVisualizer.snapshot.test.ts`
+- CI 增强：`.github/workflows/ci.yml` 增加 Playwright a11y 测试、覆盖率 artifact、构建产物 artifact、E2E 报告 artifact
+
+#### 验证
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2234 passed（118 文件） |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过（index 64.61KB / vendor-react 231.35KB / vendor-d3 52.54KB） |
+| Playwright spec | 20 passed（a11y 17 页 + home 3 用例） |
+| a11y 扫描 | 17 页 0 critical/serious violations |
+
+---
+
+### 2026-06-21 | v13 Phase B 体验与工程优化完成
+- 动画引擎：FPS 降级（>100ms 帧阻塞立即触发）、动画 abort、wait 清理、applyPreset 中断当前动画；`useVisualizer` RAF ID 提 ref，cleanup 清理 graph simulation
+- Visualizer 渲染一致性：`treeVisualizer` positionStore 绑定 SVG、`graphVisualizer` NODE_RADIUS 收敛常量、defs 去重、并查集 findRootId 缓存、栈宽度自适应
+- a11y 与键盘导航：InfoPanel 日志高亮替代自动跳转、ARIA tablist/tab/aria-controls、树/图 ↑↓ 父/子导航、节点焦点环、边 aria-label、快捷键 aria-keyshortcuts
+- 移动端与教学反馈：Sidebar 左缘右滑打开 + 触控按钮 ≥44px、InfoPanel 移动端 flex-1 抽屉、输入框跳过 Ctrl+Z/Y、错误 toast 显示模块/操作、undo/redo 先 abort
+- 新增/更新测试：`toastStore.test.ts`、`useKeyboard.test.ts`、`stackVisualizer.test.ts`、`InfoPanel.test.tsx`、`animationEngine.test.ts`、`useVisualizer.test.ts` 等
+- 验证：3506 tests passed（204 文件） / lint 0 errors（65 warnings） / typecheck / build 全通过
+- Git：46 个文件改动未提交（待 Phase C/D 完成后统一 commit）
 
 ### 2026-06-21 | v13 Phase A 紧急修复完成（安全 + 数据完整性）
 - 完成 `src/utils/schema.ts` 统一 schema 校验（递归深度限制 `MAX_STORAGE_DEPTH = 10`），集成到 `useDataStructureState.loadFromStorage`
@@ -59,9 +94,9 @@
 | Phase | 主题 | 预计工时 | 状态 |
 |-------|------|----------|------|
 | **A** | 紧急修复（安全 + 数据完整性） | 1~2 天 | ✅ 已完成（commit `0a544a9`） |
-| **B** | 体验 + 工程优化（性能 + 渲染 + a11y） | 3~5 天 | ⏳ 待启动 |
-| **C** | 文档完善（一致性 + API 文档） | 1~2 天 | ⏳ 待启动 |
-| **D** | 测试 + CI 升级（E2E 框架 + 覆盖率可视化） | 2~3 天 | ⏳ 待启动 |
+| **B** | 体验 + 工程优化（性能 + 渲染 + a11y） | 3~5 天 | ✅ 已完成（lint 0 errors / build 通过） |
+| **C** | 文档完善（一致性 + API 文档） | 1~2 天 | ✅ 已完成（8 份文档同步） |
+| **D** | 测试 + CI 升级（E2E 框架 + 覆盖率可视化） | 2~3 天 | ✅ 已完成（Playwright 20 spec / a11y 17 页 / CI artifacts） |
 
 ### v13 Top10 优先问题（详见 `docs/audit-2026-06-20/audit-merged.md`）
 

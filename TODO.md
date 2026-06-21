@@ -1,10 +1,10 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** v13.0.0-rc1-phase-a
+> **版本:** v13.0.0-rc2
 > **更新日期:** 2026-06-21
-> **状态:** v12.0 已部署；v13 Phase A（安全 + 数据完整性）已完成；Phase B/C/D 与测验系统等后续功能待启动
-> **v13 起点:** 2026-06-20 完成全面代码体检（56 条独立问题），4 阶段修复路线已就位；Phase A 已完成（commit `0a544a9`）
-> **详细迭代计划:** [docs/iteration-plan-v11.md](./docs/iteration-plan-v11.md)（最新），v10/v11/v12 迭代记录见 WORKLOG.md
+> **状态:** v12.0 已部署；v13 路径一（Phase A/B/C/D）全部完成，项目达到 rc2 可发布状态；后续进入路径三（学习体验增强）或发布准备
+> **v13 起点:** 2026-06-20 完成全面代码体检（56 条独立问题），4 阶段修复路线已就位；Phase A 已完成（commit `0a544a9`），Phase B/C/D 已完成（文档同步 + Playwright E2E + CI 增强）
+> **详细迭代计划:** v11 计划已归档至 [docs/archive/iteration-plan-v11.md](./docs/archive/iteration-plan-v11.md)；v12/v13 计划见 [docs/superpowers/plans/](./docs/superpowers/plans/)，v10/v11/v12 迭代记录见 WORKLOG.md
 > **v13 体检报告:** [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md)
 
 ---
@@ -13,10 +13,10 @@
 
 | Phase | 主题 | 包含问题 | 预计工时 | 验证方式 |
 |-------|------|----------|----------|----------|
-| **A** | 紧急修复（安全+数据完整性） | S-01/S-02/S-03/E-01/E-04、A-01、A-05 | 1~2 天 | ✅ 已完成（commit 0a544a9）：3484 tests / lint 0 errors / typecheck / build 通过 |
-| **B** | 体验+工程优化（性能+渲染+a11y） | P-01~P-04、ANIM-1~5、PERF-1~5、VIZ-1~5、BUG-1~7、A11Y-1~6、MOB-1~6、FB-1~6 | 3~5 天 | 单元测试 100% 覆盖改动函数；E2E 跑 a11y + core + comprehensive；axe-core 零违规 |
-| **C** | 文档完善（一致性+API 文档） | D-01~D-07、E-02、E-07、E-09、E-10 | 1~2 天 | 文档自检脚本通过；CONTRIBUTING + API docs 在线可读 |
-| **D** | 测试+CI 升级（e2e 框架+覆盖率可视化） | T-01~T-08、E-03、E-05、E-06、E-08 | 2~3 天 | Playwright Test 框架跑通；CI artifacts 上传；E2E 时间 < 30 分钟 |
+| **A** | 紧急修复（安全+数据完整性） | S-01/S-02/S-03/E-01/E-04、A-01、A-05 | 1~2 天 | ✅ 已完成（commit 0a544a9）：3494 tests / lint 0 errors / typecheck / build 通过 |
+| **B** | 体验+工程优化（性能+渲染+a11y） | P-01~P-04、ANIM-1~5、PERF-1~5、VIZ-1~5、BUG-1~7、A11Y-1~6、MOB-1~6、FB-1~6 | 3~5 天 | ✅ 已完成：lint 0 errors（65 warnings） / typecheck / build 通过 |
+| **C** | 文档完善（一致性+API 文档） | D-01~D-07、E-02、E-07、E-09、E-10 | 1~2 天 | ✅ 已完成：8 份文档同步 / package.json version 升级 rc2 |
+| **D** | 测试+CI 升级（e2e 框架+覆盖率可视化） | T-01~T-08、E-03、E-05、E-06、E-08 | 2~3 天 | ✅ 已完成：Playwright 20 spec / a11y 17 页 / CI artifacts / setup.ts / snapshot |
 
 **总预计工时**: 7~12 天（单人）
 
@@ -56,7 +56,7 @@
 | # | 任务 | 优先级 | 状态 | 说明 |
 |---|------|--------|------|------|
 | v12-Q1 | 单元测试 | P0 | ✅ | 3480 tests passed（203 文件），较 v11 增加 391 个新测试 |
-| v12-Q2 | ESLint | P0 | ✅ | 0 errors / 66 warnings（全部既有模式） |
+| v12-Q2 | ESLint | P0 | ✅ | 0 errors / 66 warnings（全部既有模式，Phase B 后 65 warnings） |
 | v12-Q3 | TypeScript strict | P0 | ✅ | 0 错误 |
 | v12-Q4 | 生产构建 | P0 | ✅ | 成功，Bundle size check passed（index 63.40KB / vendor-react 231.35KB / vendor-d3 52.54KB） |
 
@@ -353,6 +353,7 @@
 | 大数据量性能 | P2 | ✅ 已解决 | 100+ 节点帧率下降 | v10 U1 通过 performanceConfig + 跳动画 + transform/opacity 优化解决 |
 | 本地打开异常 | P0 | ✅ 已解决 | file:// 下资源路径与路由失效 | v11.0.1 通过 HashRouter + 相对 base 路径修复 |
 | 文档缺口 | P3 | ⏳ 部分解决 | onboarding 体验 | README/ARCHITECTURE/CODE_WIKI/TODO 已同步；仍缺 CONTRIBUTING.md、API 文档 |
+| lint warnings 清理 | P3 | ⏳ 待处理 | 代码规范 | v13 Phase B 后剩余 65 个 warnings：react-hooks/set-state-in-effect 6 处（InfoPanel/NetworkStatus/OperationGroup/Sidebar/SpeedControl/StepExplainer，已降级为 warn 的既有模式）；react-hooks/exhaustive-deps 59 处（页面 useCallback 缺 `t`/`learningMode` 依赖、Visualizer/useVisualizer/svgRef 依赖等）。修复需重构依赖数组或拆分 effect，风险高于收益，移至后续阶段 |
 
 ---
 

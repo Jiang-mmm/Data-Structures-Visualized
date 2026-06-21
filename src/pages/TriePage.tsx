@@ -23,8 +23,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function TriePage() {
   const { t } = useGlobalSettings()
-  const { logs, isAnimating, setIsAnimating, insert, remove, search, searchPrefix, getFlattened, wordCount, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useTrieState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { logs, isAnimating, setIsAnimating, insert, remove, search, searchPrefix, getFlattened, wordCount, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useTrieState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('trie')
   useSharedData({ dataType: 'trie', loadData, validator: (d): d is unknown => !!(d && typeof d === 'object' && !Array.isArray(d)) })

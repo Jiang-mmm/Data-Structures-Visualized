@@ -21,22 +21,24 @@ export type {
   SkipListSearchStep,
 } from '../algorithms/skipList'
 
-export function useSkipListState() {
+const MODULE = () => tStatic('skipList.title')
+
+export function useSkipListState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<SkipListData>(buildInitialSkipList(), { storageKey: 'skip-list' })
+  } = useDataStructureState<SkipListData>(buildInitialSkipList(), { storageKey: 'skip-list', abortAnimation })
 
   const insert = useCallback((value: number): void => {
     if (typeof value !== 'number' || !Number.isFinite(value)) {
-      showToast({ type: 'error', message: tStatic('errors.inputRequired') })
+      showToast({ type: 'error', message: tStatic('errors.inputRequired'), module: MODULE(), operation: tStatic('skipList.insert') })
       addLog('error', tStatic('hooks.skipListInputRequired'))
       return
     }
     const num = Math.floor(value)
     if (num < 1 || num > 99) {
-      showToast({ type: 'error', message: tStatic('errors.invalidRange') })
+      showToast({ type: 'error', message: tStatic('errors.invalidRange'), module: MODULE(), operation: tStatic('skipList.insert') })
       addLog('error', tStatic('hooks.skipListLogInsertError').replace('{value}', String(num)))
       return
     }
@@ -59,7 +61,7 @@ export function useSkipListState() {
 
   const remove = useCallback((value: number): void => {
     if (typeof value !== 'number' || !Number.isFinite(value)) {
-      showToast({ type: 'error', message: tStatic('errors.inputRequired') })
+      showToast({ type: 'error', message: tStatic('errors.inputRequired'), module: MODULE(), operation: tStatic('skipList.delete') })
       return
     }
     const num = Math.floor(value)

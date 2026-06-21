@@ -4,6 +4,34 @@
 
 ---
 
+## [v13.0.0-rc2] - 2026-06-21
+
+### Phase C — 文档完善
+- 同步 `README.md` / `PROJECT_SUMMARY.md` / `CHANGELOG.md` / `TODO.md` / `WORKLOG.md` / `ARCHITECTURE.md` / `CODE_WIKI.md` / `PROJECT_STATUS.md` 版本号与 Phase 状态
+- `package.json` version 从 `v13.0.0-rc1-phase-b` 升级为 `v13.0.0-rc2`
+
+### Phase D — 测试 + CI 升级
+- 新增 `e2e/a11y.spec.ts`：基于 `STRUCTURE_KEYS` 动态覆盖 17 页 axe-core WCAG 2 AA 扫描
+- 新增 `e2e/home.spec.ts`：首页加载、卡片展示、控制台错误 3 个 Playwright Test 用例
+- `e2e/test-a11y.js` 改为委托 `npx playwright test a11y.spec.ts`；CI 中只跑 chromium 项目
+- `e2e/run-all-tests.js` 输出统一 JSON 协议 `e2e/test-results.json`
+- `src/__tests__/setup.js` 升级为 `setup.ts`
+- `src/__tests__/visualizers/d3MockHelper.ts` 增强调用记录与链式 forceSimulation mock
+- 新增 `src/__tests__/visualizers/arrayVisualizer.snapshot.test.ts` SVG 结构快照测试
+- `.github/workflows/ci.yml` 增加 Playwright a11y 测试、覆盖率 artifact、构建产物 artifact、E2E 报告 artifact
+
+### Verification
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2234 passed（118 文件） |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过 |
+| Playwright spec | 20 passed（a11y 17 页 + home 3 用例） |
+| a11y 扫描 | 17 页 0 critical/serious violations |
+
+---
+
 ## [v13.0.0-rc1] - 2026-06-21
 
 ### Meta
@@ -39,6 +67,20 @@
 - TypeScript strict：0 错误
 - 生产构建：成功，bundle 预算通过
 - Git commit：`0a544a9`
+
+### Experience & Engineering（Phase B，2026-06-21）
+- `src/utils/animationEngine.ts` + `src/hooks/useVisualizer.ts`：FPS 降级（>100ms 帧阻塞立即触发）、动画 abort、wait 清理、applyPreset 中断当前动画、RAF ID 提 ref、graph simulation cleanup
+- `src/visualizers/treeVisualizer.ts` / `graphVisualizer.ts` / `unionFindVisualizer.ts` / `avlTreeVisualizer.ts` / `trieVisualizer.ts` / `arrayVisualizer.ts` / `stackVisualizer.ts`：树 positionStore 绑定 SVG、图 NODE_RADIUS 收敛常量、defs 去重、并查集 findRootId 缓存、栈宽度自适应
+- `src/components/InfoPanel.tsx` / `LogPanel.tsx` / `SpeedControl.tsx` / `UndoRedoBar.tsx` + 4 个 visualizer：日志高亮替代自动跳转、ARIA tablist/tab/aria-controls、树/图 ↑↓ 父/子导航、节点焦点环、边 aria-label、快捷键 aria-keyshortcuts
+- `src/components/Sidebar.tsx` / `InfoPanel.tsx` / `src/hooks/useKeyboard.ts` / `src/utils/toastStore.ts` / `src/hooks/useHistory.ts`：左缘右滑打开侧边栏、触控按钮 ≥44px、InfoPanel 移动端 flex-1 抽屉、输入框跳过 Ctrl+Z/Y、错误 toast 显示模块/操作、undo/redo 先 abort
+- 测试：`toastStore.test.ts`、`useKeyboard.test.ts`、`stackVisualizer.test.ts`、`InfoPanel.test.tsx`、`animationEngine.test.ts`、`useVisualizer.test.ts` 等更新
+
+### Verification
+- 单元测试：3506 passed（204 文件）
+- ESLint：0 errors / 65 warnings（既有模式）
+- TypeScript strict：0 错误
+- 生产构建：成功，bundle 预算通过
+- Git：46 个文件改动待 Phase C/D 完成后统一 commit
 
 ---
 

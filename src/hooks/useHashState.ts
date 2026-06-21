@@ -16,22 +16,23 @@ const INITIAL_DATA: HashEntry[] = [
   { key: 42, value: 'Charlie' },
   { key: 19, value: 'Diana' },
 ]
+const MODULE = () => tStatic('hash.title')
 
 function hashFn(key: number): number {
   return key % BUCKET_COUNT
 }
 
-export function useHashState() {
+export function useHashState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<HashEntry[]>(INITIAL_DATA, { storageKey: 'hash' })
+  } = useDataStructureState<HashEntry[]>(INITIAL_DATA, { storageKey: 'hash', abortAnimation })
 
   const insert = useCallback((key: string | number, value: string): boolean => {
     const { valid, value: safeKey } = validateNumericInput(key)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('errors.invalidRange').replace('{min}', '1').replace('{max}', '99') })
+      showToast({ type: 'error', message: tStatic('errors.invalidRange').replace('{min}', '1').replace('{max}', '99'), module: MODULE(), operation: tStatic('hash.insert') })
       addLog('error', tStatic('hooks.hashKeyInvalid'))
       return false
     }
@@ -56,7 +57,7 @@ export function useHashState() {
   const remove = useCallback((key: string | number): boolean => {
     const { valid, value: safeKey } = validateNumericInput(key)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('errors.invalidRange').replace('{min}', '1').replace('{max}', '99') })
+      showToast({ type: 'error', message: tStatic('errors.invalidRange').replace('{min}', '1').replace('{max}', '99'), module: MODULE(), operation: tStatic('hash.remove') })
       return false
     }
 

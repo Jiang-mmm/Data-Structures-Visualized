@@ -33,8 +33,8 @@ const VARIANT_MAP: Record<string, string> = {
 
 export default function SortPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, stats, progress, randomize, reset, loadData, stop, runAlgorithm, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useSortState()
-  const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, stats, progress, randomize, reset, loadData, stop, runAlgorithm, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useSortState(abortAnimation)
   useSharedData({ dataType: 'sort', loadData, validator: Array.isArray })
   usePageTracker('sort')
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('bubble')

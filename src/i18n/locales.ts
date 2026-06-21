@@ -333,6 +333,8 @@ export interface Locale {
     closeDrawer: string
     openDrawer: string
     recent: string
+    tabs: string
+    stepBadge: string
   }
   errorBoundary: {
     title: string
@@ -795,6 +797,7 @@ export interface Locale {
     presetDramatic: string
     presetInstant: string
     animationError: string
+    renderSlow: string
   }
   contentTier: {
     title: string
@@ -1258,6 +1261,8 @@ export const zh: Locale = {
     closeDrawer: '收起面板',
     openDrawer: '展开面板',
     recent: '最近',
+    tabs: '信息面板标签',
+    stepBadge: '对应学习步骤',
   },
   errorBoundary: {
     title: '组件异常',
@@ -1637,6 +1642,7 @@ export const zh: Locale = {
     presetDramatic: '戏剧',
     presetInstant: '瞬时',
     animationError: '动画异常',
+    renderSlow: '渲染较慢',
   },
   contentTier: {
     title: '知识分层',
@@ -2143,6 +2149,8 @@ export const en: Locale = {
     closeDrawer: 'Collapse panel',
     openDrawer: 'Expand panel',
     recent: 'Recent',
+    tabs: 'Info panel tabs',
+    stepBadge: 'Step matches',
   },
   errorBoundary: {
     title: 'Component Error',
@@ -2522,6 +2530,7 @@ export const en: Locale = {
     presetDramatic: 'Dramatic',
     presetInstant: 'Instant',
     animationError: 'Animation error',
+    renderSlow: 'Slow render',
   },
   contentTier: {
     title: 'Knowledge Tiers',

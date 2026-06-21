@@ -210,6 +210,14 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
     posMap[pos.id] = pos
   }
 
+  const parentMap = new Map<string, string>()
+  const childrenMap = new Map<string, string[]>()
+  for (const edge of edges) {
+    parentMap.set(edge.to, edge.from)
+    if (!childrenMap.has(edge.from)) childrenMap.set(edge.from, [])
+    childrenMap.get(edge.from)!.push(edge.to)
+  }
+
   // ---- 边：直线（与 graph 模块风格一致）----
   for (const edge of edges) {
     const fromPos = posMap[edge.from]
@@ -268,23 +276,45 @@ export function renderTrie(svg: SVGSVGElement, data: TrieFlattened, options: Tri
       .on('focus', function(this: SVGGElement) {
         if (!this?.querySelector) return
         select(this).select('.trie-node-circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+        select(this)
+          .style('outline', '3px solid var(--color-accent-amber)')
+          .style('outline-offset', '2px')
       })
       .on('blur', function(this: SVGGElement) {
         if (!this?.querySelector) return
         select(this).select('.trie-node-circle').attr('stroke', stroke).attr('stroke-width', strokeWidth)
+        select(this).style('outline', 'none')
       })
-      .on('keydown', function(this: SVGGElement, event: KeyboardEvent) {
+      .on('keydown', function(this: SVGGElement, event: KeyboardEvent, d: TriePosition) {
         if (!event?.key) return
-        const allNodes = Array.from(container.selectAll('.trie-node').nodes())
-        const idx = allNodes.indexOf(this)
-        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+        const nodeMap = new Map<string, SVGGElement>()
+        container.selectAll('.trie-node').each(function(this: SVGGElement, n: TriePosition) {
+          nodeMap.set(n.id, this)
+        })
+        const parentId = parentMap.get(d.id)
+        const children = childrenMap.get(d.id) || []
+        let targetId: string | null = null
+        if (event.key === 'ArrowUp') {
+          targetId = parentId || null
+        } else if (event.key === 'ArrowDown') {
+          targetId = children[0] || null
+        } else if (event.key === 'ArrowLeft') {
+          if (parentId) {
+            const siblings = childrenMap.get(parentId) || []
+            const idx = siblings.indexOf(d.id)
+            targetId = idx > 0 ? siblings[idx - 1] : siblings[siblings.length - 1]
+          }
+        } else if (event.key === 'ArrowRight') {
+          if (parentId) {
+            const siblings = childrenMap.get(parentId) || []
+            const idx = siblings.indexOf(d.id)
+            targetId = idx < siblings.length - 1 ? siblings[idx + 1] : siblings[0]
+          }
+        }
+        if (targetId) {
           event.preventDefault()
-          const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
-          next?.focus()
-        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-          event.preventDefault()
-          const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
-          prev?.focus()
+          const target = nodeMap.get(targetId)
+          target?.focus()
         }
       })
 

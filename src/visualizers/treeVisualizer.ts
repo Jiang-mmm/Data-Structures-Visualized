@@ -19,8 +19,6 @@ interface TreeOptions {
   edgeStyle?: EdgeStyle
 }
 
-let currentEdgeStyle: EdgeStyle = 'straight'
-
 interface TreeNodeData {
   value: number
   level: number
@@ -36,18 +34,31 @@ interface StoredPosition {
   y: number
 }
 
-const positionStore = new Map<number, StoredPosition>()
+const positionStore = new Map<SVGSVGElement, Map<number, StoredPosition>>()
 
-export function clearTreePositions() {
-  positionStore.clear()
+function getStoreForSvg(svg: SVGSVGElement): Map<number, StoredPosition> {
+  let store = positionStore.get(svg)
+  if (!store) {
+    store = new Map<number, StoredPosition>()
+    positionStore.set(svg, store)
+  }
+  return store
 }
 
-function getStoredPosition(dataIndex: number): StoredPosition | null {
-  return positionStore.get(dataIndex) || null
+export function clearTreePositions(svg?: SVGSVGElement) {
+  if (svg) {
+    positionStore.delete(svg)
+  } else {
+    positionStore.clear()
+  }
 }
 
-function setStoredPosition(dataIndex: number, x: number, y: number) {
-  positionStore.set(dataIndex, { x, y })
+function getStoredPosition(svg: SVGSVGElement, dataIndex: number): StoredPosition | null {
+  return getStoreForSvg(svg).get(dataIndex) || null
+}
+
+function setStoredPosition(svg: SVGSVGElement, dataIndex: number, x: number, y: number) {
+  getStoreForSvg(svg).set(dataIndex, { x, y })
 }
 
 function curvedPath(x1: number, y1: number, x2: number, y2: number): string {
@@ -144,29 +155,32 @@ function calculateDefaultPosition(node: TreeNodeData, width: number, height?: nu
   }
 }
 
-function getNodePosition(node: TreeNodeData, width: number, height?: number) {
-  const stored = getStoredPosition(node.dataIndex)
+function getNodePosition(svg: SVGSVGElement, node: TreeNodeData, width: number, height?: number) {
+  const stored = getStoredPosition(svg, node.dataIndex)
   if (stored && !isNaN(stored.x) && !isNaN(stored.y)) return { x: stored.x, y: stored.y }
   return calculateDefaultPosition(node, width, height)
 }
 
-function dragBehavior() {
+function dragBehavior(edgeStyle: EdgeStyle = 'straight') {
   function dragstarted(this: SVGGElement) {
     select(this).raise()
   }
 
   function dragged(this: SVGGElement, event: { x: number; y: number }, d: TreeNodeData) {
-    setStoredPosition(d.dataIndex, event.x, event.y)
+    const svg = this.ownerSVGElement
+    if (!svg) return
+    setStoredPosition(svg, d.dataIndex, event.x, event.y)
 
     const g = select(this)
     g.attr('transform', `translate(${event.x}, ${event.y})`)
 
-    const svg = select(this.parentNode as SVGSVGElement)
-    updateLines(svg)
+    updateLines(select(svg), edgeStyle)
   }
 
-  function dragended(_event: { x: number; y: number }, d: TreeNodeData) {
-    setStoredPosition(d.dataIndex, _event.x, _event.y)
+  function dragended(this: SVGGElement, _event: { x: number; y: number }, d: TreeNodeData) {
+    const svg = this.ownerSVGElement
+    if (!svg) return
+    setStoredPosition(svg, d.dataIndex, _event.x, _event.y)
   }
 
   return d3Drag()
@@ -175,7 +189,7 @@ function dragBehavior() {
     .on('end', dragended)
 }
 
-function updateLines(container: ReturnType<typeof select>) {
+function updateLines(container: ReturnType<typeof select>, edgeStyle: EdgeStyle = 'straight') {
   const isDark = detectDarkMode()
   const C = getColors(isDark)
   const nodeGroups = container.selectAll('g.tree-node')
@@ -210,7 +224,7 @@ function updateLines(container: ReturnType<typeof select>) {
 
     const x1 = px, y1 = py + NODE_RADIUS
     const x2 = cx, y2 = cy - NODE_RADIUS
-    drawEdge(container, x1, y1, x2, y2, C, currentEdgeStyle, 'g.tree-node', parentIndex, child.dataIndex)
+    drawEdge(container, x1, y1, x2, y2, C, edgeStyle, 'g.tree-node', parentIndex, child.dataIndex)
   })
 }
 
@@ -240,7 +254,6 @@ function resetNodeAndEdgeColors(container: ReturnType<typeof select>, C: ReturnT
 export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOptions = {} as TreeOptions) {
   return measureRender('renderTree', () => {
     const { width, height, isDark = detectDarkMode(), edgeStyle = 'straight' } = options
-    currentEdgeStyle = edgeStyle
     const C = getColors(isDark)
     const container = select(svg)
 
@@ -256,14 +269,15 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
     }
 
     // 清理已删除节点的过期位置记录
-    for (const key of positionStore.keys()) {
-      if (key >= data.length) positionStore.delete(key)
+    const svgStore = getStoreForSvg(svg)
+    for (const key of svgStore.keys()) {
+      if (key >= data.length) svgStore.delete(key)
     }
 
     const nodes = getTreeLayout(data)
 
     nodes.forEach((node) => {
-      const pos = getNodePosition(node, width, height)
+      const pos = getNodePosition(svg, node, width, height)
       node.x = pos.x
       node.y = pos.y
     })
@@ -314,26 +328,42 @@ export function renderTree(svg: SVGSVGElement, data: number[], options: TreeOpti
       .on('focus', function(this: SVGGElement) {
         if (!this?.querySelector) return
         select(this).select('circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+        select(this)
+          .style('outline', '3px solid var(--color-accent-amber)')
+          .style('outline-offset', '2px')
       })
       .on('blur', function(this: SVGGElement) {
         if (!this?.querySelector) return
         select(this).select('circle').attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
+        select(this).style('outline', 'none')
       })
-      .on('keydown', function(this: SVGGElement, event: KeyboardEvent) {
+      .on('keydown', function(this: SVGGElement, event: KeyboardEvent, d: TreeNodeData) {
         if (!event?.key) return
-        const allNodes = Array.from(container.selectAll('g.tree-node').nodes())
-        const idx = allNodes.indexOf(this)
-        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+        const nodeMap = new Map<number, SVGGElement>()
+        container.selectAll('g.tree-node').each(function(this: SVGGElement, n: TreeNodeData) {
+          nodeMap.set(n.dataIndex, this)
+        })
+        let targetIndex: number | null = null
+        if (event.key === 'ArrowUp') {
+          targetIndex = d.parentIndex
+        } else if (event.key === 'ArrowDown') {
+          targetIndex = 2 * d.dataIndex + 1
+        } else if (event.key === 'ArrowLeft') {
+          if (d.dataIndex > 0 && d.dataIndex % 2 === 1) {
+            targetIndex = d.dataIndex - 1
+          }
+        } else if (event.key === 'ArrowRight') {
+          if (d.dataIndex > 0 && d.dataIndex % 2 === 0) {
+            targetIndex = d.dataIndex + 1
+          }
+        }
+        if (targetIndex !== null && targetIndex >= 0) {
           event.preventDefault()
-          const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
-          next?.focus()
-        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-          event.preventDefault()
-          const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
-          prev?.focus()
+          const target = nodeMap.get(targetIndex)
+          target?.focus()
         }
       })
-      .call(dragBehavior())
+      .call(dragBehavior(edgeStyle))
 
     nodeGroups.append('circle').attr('r', NODE_RADIUS)
       .attr('fill', (d: TreeNodeData) => {
@@ -414,7 +444,7 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
   const newNode = nodes.find(n => n.dataIndex === insertIndex)
   if (!newNode) return
 
-  const pos = getNodePosition(newNode, width, height)
+  const pos = getNodePosition(svg, newNode, width, height)
   const x = pos.x
   const y = pos.y
 
@@ -466,7 +496,7 @@ export async function animateInsertNode(svg: SVGSVGElement, value: number, data:
 
   const newGroup = container.append('g').attr('class', 'tree-node')
     .attr('transform', `translate(${x}, ${y - 50}) scale(0.3)`).attr('opacity', 0)
-    .call(dragBehavior())
+    .call(dragBehavior(edgeStyle))
 
   newGroup.append('circle').attr('r', NODE_RADIUS)
     .attr('fill', C.nodeVisited).attr('stroke', C.nodeVisitedStroke).attr('stroke-width', 2)
