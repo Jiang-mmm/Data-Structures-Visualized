@@ -151,4 +151,81 @@ describe('KeyboardHelp', () => {
       expect(closeBtn).toBeTruthy()
     })
   })
+
+  describe('快捷键搜索', () => {
+    it('面板打开时应显示搜索框', () => {
+      renderKeyboardHelp('/array')
+      fireEvent.keyDown(window, { key: '?' })
+      expect(screen.getByPlaceholderText('shortcuts.searchPlaceholder')).toBeTruthy()
+    })
+
+    it('无搜索时显示当前页面快捷键标签', () => {
+      renderKeyboardHelp('/array')
+      fireEvent.keyDown(window, { key: '?' })
+      expect(screen.getByText('shortcuts.currentPage')).toBeTruthy()
+    })
+
+    it('搜索时应显示全部快捷键标签', () => {
+      renderKeyboardHelp('/array')
+      fireEvent.keyDown(window, { key: '?' })
+      fireEvent.change(screen.getByPlaceholderText('shortcuts.searchPlaceholder'), { target: { value: 'undo' } })
+      expect(screen.getByText('shortcuts.allShortcuts')).toBeTruthy()
+    })
+
+    it('输入 "undo" 应找到 Ctrl + Z 快捷键', () => {
+      renderKeyboardHelp('/sort')
+      fireEvent.keyDown(window, { key: '?' })
+      // /sort 页面默认不显示 undo
+      expect(screen.queryByText('Ctrl + Z')).toBeNull()
+      fireEvent.change(screen.getByPlaceholderText('shortcuts.searchPlaceholder'), { target: { value: 'undo' } })
+      expect(screen.getByText('Ctrl + Z')).toBeTruthy()
+    })
+
+    it('输入按键组合 "ctrl" 应匹配所有 Ctrl 组合快捷键', () => {
+      renderKeyboardHelp('/sort')
+      fireEvent.keyDown(window, { key: '?' })
+      fireEvent.change(screen.getByPlaceholderText('shortcuts.searchPlaceholder'), { target: { value: 'ctrl' } })
+      expect(screen.getByText('Ctrl + Z')).toBeTruthy()
+      expect(screen.getByText('Ctrl + Shift + Z')).toBeTruthy()
+    })
+
+    it('输入中文描述应匹配对应快捷键', () => {
+      renderKeyboardHelp('/sort')
+      fireEvent.keyDown(window, { key: '?' })
+      // t() 在 mock 中返回 key 本身，所以用 key 作为搜索词
+      fireEvent.change(screen.getByPlaceholderText('shortcuts.searchPlaceholder'), { target: { value: 'shortcuts.undo' } })
+      expect(screen.getByText('Ctrl + Z')).toBeTruthy()
+    })
+
+    it('无匹配结果时应显示提示', () => {
+      renderKeyboardHelp('/array')
+      fireEvent.keyDown(window, { key: '?' })
+      fireEvent.change(screen.getByPlaceholderText('shortcuts.searchPlaceholder'), { target: { value: 'xyznomatch' } })
+      expect(screen.getByText('shortcuts.noResults')).toBeTruthy()
+    })
+
+    it('清空搜索框应恢复显示当前页面快捷键', () => {
+      renderKeyboardHelp('/sort')
+      fireEvent.keyDown(window, { key: '?' })
+      const input = screen.getByPlaceholderText('shortcuts.searchPlaceholder') as HTMLInputElement
+      fireEvent.change(input, { target: { value: 'undo' } })
+      expect(screen.getByText('Ctrl + Z')).toBeTruthy()
+      fireEvent.change(input, { target: { value: '' } })
+      expect(screen.queryByText('Ctrl + Z')).toBeNull()
+      expect(screen.getByText('shortcuts.currentPage')).toBeTruthy()
+    })
+
+    it('关闭面板时应清空搜索词', () => {
+      renderKeyboardHelp('/array')
+      fireEvent.keyDown(window, { key: '?' })
+      const input = screen.getByPlaceholderText('shortcuts.searchPlaceholder') as HTMLInputElement
+      fireEvent.change(input, { target: { value: 'undo' } })
+      fireEvent.click(screen.getByText('✕'))
+      // 重新打开
+      fireEvent.keyDown(window, { key: '?' })
+      const newInput = screen.getByPlaceholderText('shortcuts.searchPlaceholder') as HTMLInputElement
+      expect(newInput.value).toBe('')
+      expect(screen.getByText('shortcuts.currentPage')).toBeTruthy()
+    })
+  })
 })

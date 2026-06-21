@@ -20,27 +20,53 @@ const PAGE_SHORTCUTS: Record<string, string[]> = {
 interface Shortcut {
   key: string
   descKey: string
+  name: string
 }
 
 const SHORTCUT_MAP: Record<string, Shortcut> = {
-  undo: { key: 'Ctrl + Z', descKey: 'shortcuts.undo' },
-  redo: { key: 'Ctrl + Shift + Z', descKey: 'shortcuts.redo' },
-  reset: { key: 'R', descKey: 'shortcuts.reset' },
-  pause: { key: 'Space', descKey: 'shortcuts.pause' },
-  help: { key: '?', descKey: 'shortcuts.toggleHelp' },
+  undo: { key: 'Ctrl + Z', descKey: 'shortcuts.undo', name: 'undo' },
+  redo: { key: 'Ctrl + Shift + Z', descKey: 'shortcuts.redo', name: 'redo' },
+  reset: { key: 'R', descKey: 'shortcuts.reset', name: 'reset' },
+  pause: { key: 'Space', descKey: 'shortcuts.pause', name: 'pause' },
+  help: { key: '?', descKey: 'shortcuts.toggleHelp', name: 'help' },
 }
+
+// 所有快捷键（搜索时使用）
+const ALL_SHORTCUT_NAMES = Object.keys(SHORTCUT_MAP)
 
 export default function KeyboardHelp() {
   const [visible, setVisible] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const { t } = useGlobalSettings()
   const location = useLocation()
   const dialogRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
 
-  const shortcuts = useMemo(() => {
+  const currentPageShortcuts = useMemo(() => {
     const pageKeys = PAGE_SHORTCUTS[location.pathname] || ['reset', 'help']
     return pageKeys.map(k => SHORTCUT_MAP[k])
   }, [location.pathname])
+
+  // 搜索结果：在所有快捷键中模糊匹配
+  const displayedShortcuts = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    if (!query) return currentPageShortcuts
+
+    return ALL_SHORTCUT_NAMES
+      .map(name => SHORTCUT_MAP[name])
+      .filter(s => {
+        // 匹配快捷键名称（如 "undo"）、按键（如 "Ctrl + Z"）、描述文案
+        const desc = t(s.descKey).toLowerCase()
+        return (
+          s.name.toLowerCase().includes(query) ||
+          s.key.toLowerCase().includes(query) ||
+          desc.includes(query)
+        )
+      })
+  }, [searchQuery, currentPageShortcuts, t])
+
+  const isSearching = searchQuery.trim().length > 0
 
   // First-visit hint for keyboard shortcuts
   useEffect(() => {
@@ -59,6 +85,7 @@ export default function KeyboardHelp() {
 
   const close = useCallback(() => {
     setVisible(false)
+    setSearchQuery('')
     previousFocusRef.current?.focus()
   }, [])
 
@@ -82,6 +109,13 @@ export default function KeyboardHelp() {
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
   }, [close])
+
+  // 面板打开时自动聚焦搜索框
+  useEffect(() => {
+    if (visible && searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }, [visible])
 
   useEffect(() => {
     if (!visible || !dialogRef.current) return
@@ -141,14 +175,34 @@ export default function KeyboardHelp() {
             ✕
           </button>
         </div>
-        <div className="space-y-2.5">
-          {shortcuts.map((s) => (
-            <div key={s.key} className="flex items-center justify-between py-2.5 px-3 border border-border/50 dark:border-dark-border/50 hover:bg-muted/50 dark:hover:bg-dark-muted/30 transition-colors">
-              <kbd className="px-2.5 py-1 bg-surface dark:bg-dark-surface border-2 border-ink/20 dark:border-dark-border text-xs font-mono font-bold text-ink dark:text-dark-ink shadow-[1px_1px_0px_rgba(26,26,46,0.1)]">{s.key}</kbd>
-              <span className="text-sm text-ink-light dark:text-dark-ink-light">{t(s.descKey)}</span>
-            </div>
-          ))}
+        <div className="mb-4">
+          <input
+            ref={searchInputRef}
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t('shortcuts.searchPlaceholder')}
+            className="w-full px-3 py-2 text-sm border-2 border-ink/20 dark:border-dark-border bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink placeholder:text-ink-light/50 dark:placeholder:text-dark-ink-light/50 focus:outline-none focus:border-accent-blue transition-colors"
+            aria-label={t('shortcuts.searchPlaceholder')}
+          />
         </div>
+        <div className="text-xs text-ink-light/70 dark:text-dark-ink-light/70 mb-2 px-1">
+          {isSearching ? t('shortcuts.allShortcuts') : t('shortcuts.currentPage')}
+        </div>
+        {displayedShortcuts.length === 0 ? (
+          <div className="py-6 text-center text-sm text-ink-light dark:text-dark-ink-light">
+            {t('shortcuts.noResults')}
+          </div>
+        ) : (
+          <div className="space-y-2.5">
+            {displayedShortcuts.map((s) => (
+              <div key={s.key} className="flex items-center justify-between py-2.5 px-3 border border-border/50 dark:border-dark-border/50 hover:bg-muted/50 dark:hover:bg-dark-muted/30 transition-colors">
+                <kbd className="px-2.5 py-1 bg-surface dark:bg-dark-surface border-2 border-ink/20 dark:border-dark-border text-xs font-mono font-bold text-ink dark:text-dark-ink shadow-[1px_1px_0px_rgba(26,26,46,0.1)]">{s.key}</kbd>
+                <span className="text-sm text-ink-light dark:text-dark-ink-light">{t(s.descKey)}</span>
+              </div>
+            ))}
+          </div>
+        )}
         <p className="mt-5 text-xs text-ink-light/50 dark:text-dark-ink-light/50 text-center">{t('shortcuts.close')}</p>
       </div>
     </div>

@@ -1,7 +1,7 @@
 # 数据结构学习助手
 
 > **版本:** v12.0
-> **更新日期:** 2026-06-20
+> **更新日期:** 2026-06-21
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 
@@ -18,7 +18,7 @@
 | **二叉树 BinaryTree** | 插入、前序/中序/后序/层序遍历、查找、删除节点 |
 | **AVL 树 AVLTree** | 插入、删除、查找、自平衡旋转可视化 |
 | **图 Graph** | 添加/删除节点和边、BFS、DFS、Dijkstra、邻接矩阵/表视图 |
-| **排序 Sorting** | 冒泡、选择、插入、快速、归并、堆、基数、桶排序（8 种算法） |
+| **排序 Sorting** | 冒泡、选择、插入、快速、归并、堆、基数、桶、计数、希尔、梳、TimSort（12 种算法） |
 | **哈希表 Hash Table** | 插入、删除、查找（取模哈希 + 链地址法） |
 | **堆 Heap** | Insert、ExtractMax、Peek（最大堆 + 违规检测） |
 | **字典树 Trie** | 插入、删除、查找、前缀匹配（边标签可视化） |
@@ -37,6 +37,8 @@
 - **Undo/Redo 支持** — 基于历史栈的状态回溯（动画期间自动禁用）
 - **撤销预览** — 悬停显示撤销/重做后的数据状态预览
 - **键盘快捷键** — Ctrl+Z 撤销、Ctrl+Shift+Z 重做、R 重置、? 帮助、左右箭头导航 Timeline、Ctrl/Cmd+K 全局搜索
+- **快捷键搜索** — 帮助面板内置搜索框，支持按名称/按键/描述模糊匹配所有快捷键
+- **移动端滑动导航** — 左右滑动切换数据结构页面，自动忽略交互元素和可视化区域
 - **输入验证** — 数值范围 1~99，索引边界检查，非法输入 Toast 提示
 - **导入/导出** — 数据持久化，支持 JSON/CSV 格式导入导出，含版本校验
 - **数据持久化** — 15 种数据结构自动保存/恢复，页面刷新后数据不丢失（localStorage）
@@ -58,13 +60,14 @@
 - **响应式布局** — 适配不同屏幕尺寸，侧边栏可折叠，移动端触控优化
 - **性能监控面板** — FPS/内存实时显示，帧率自适应动画降级
 - **网络离线检测** — 离线状态实时提示
-- **单元测试覆盖** — 3480 tests（203 个测试文件），核心逻辑覆盖率 > 80%
+- **单元测试覆盖** — 2225 tests（117 个测试文件），核心逻辑覆盖率 > 80%
 - **E2E 测试覆盖** — 12 文件 317 用例，Chromium + Firefox 双浏览器，Playwright 自动化
 - **无障碍（a11y）** — axe-core WCAG 2 AA 零 violations，全局焦点可见性
 - **错误边界恢复** — ErrorBoundary 异常 UI + safeAnimate 统一错误恢复
 - **路由懒加载** — React.lazy + Suspense，主 bundle ~56 KB（gzip），25+ 个独立 chunk
 - **TypeScript 严格模式** — 100% TypeScript 覆盖，strict 模式（noImplicitAny + strictNullChecks + noUnused）
 - **CI/CD** — GitHub Actions 自动 lint + typecheck + build + coverage + E2E，Playwright 浏览器缓存
+- **PWA 离线支持** — Service Worker 预缓存 46 个资源，所有页面离线可访问
 
 ## 快速开始
 
@@ -252,6 +255,15 @@ src/
 - 开发规范与新增数据结构流程
 
 ## 修复记录
+
+### v8.0 迭代 (2026-06-21)
+
+- **E2E 加固（Phase A）** — Firefox 浏览器支持修复，a11y 测试纳入 runner，persistence 测试耗时优化
+- **CI/CD 完善（Phase B）** — Playwright 浏览器缓存、覆盖率收集、独立 typecheck 脚本
+- **TypeScript 严格化（Phase C）** — 逐步启用 noUnusedLocals/noUnusedParameters → noImplicitAny → strictNullChecks → strict 全量严格模式
+- **功能扩展（Phase D）** — 新增 4 种图算法（Bellman-Ford/Floyd-Warshall/Prim/Kruskal）+ 3 种排序算法（TimSort/ShellSort/CombSort）+ 双向链表页面 + SortComparePage 学习模式
+- **体验优化（Phase E）** — PWA 离线验证（46 资源预缓存）、大数据量动画跳过阈值、移动端左右滑动导航、快捷键面板搜索功能
+- **文档发布（Phase F）** — README 更新、CHANGELOG 创建、版本号同步、截图目录瘦身
 
 ### v12.0 (2026-06-20)
 

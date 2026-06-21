@@ -4,6 +4,38 @@
 
 ---
 
+## [v8.0 迭代完成] - 2026-06-21
+
+### Phase D：功能扩展
+- **新增 4 种图算法:** Bellman-Ford（单源最短路径，支持负权边）、Floyd-Warshall（全源最短路径）、Prim（最小生成树）、Kruskal（最小生成树），注册至 `src/algorithms/graph/index.ts`，GraphAlgorithmPage 算法选择器更新
+- **新增 3 种排序算法:** TimSort（混合排序）、ShellSort（希尔排序，Knuth 间隔序列）、CombSort（梳排序，收缩因子 1.3），注册至 `src/algorithms/sorting/index.ts`，SortPage 和 SortComparePage 自动识别
+- **双向链表页面:** LinkedListPage 添加单向/双向切换按钮，复用 `doublyLinkedList.config.ts` 学习配置
+- **SortComparePage 学习模式:** 集成 `useLearningMode('bubble')`，InfoPanel 学习 Tab 提供算法对比内容
+
+### Phase E：体验与性能优化
+- **PWA 离线验证:** Service Worker 预缓存 46 个资源（17 个页面 chunks + vendor + i18n + learning-configs + HTML/CSS/icons），所有页面离线可访问，字体 runtime caching 配置
+- **大数据量可视化优化:** `LARGE_DATA_THRESHOLDS` 配置（array=50, graph=20, tree=30, heap=30 等），所有 visualizers（tree/graph/heap/avl/hash/linkedList/stack/queue/array）使用 `shouldSkipAnimation`/`getLargeDataThreshold` 在大数据量时跳过动画
+- **移动端滑动导航:** 新增 `useSwipeNavigation` hook，左右滑动切换数据结构页面（80px 阈值，垂直滑动保护，忽略交互元素/SVG/Sidebar），10 个测试用例
+- **快捷键搜索:** KeyboardHelp 面板新增搜索框，支持按名称/按键/描述模糊匹配所有快捷键，无结果显示提示，关闭时清空搜索词，9 个新测试用例
+
+### Phase F：文档与发布
+- **README.md 更新:** 修正排序算法数量（8→12）、测试数量（3480→2225）、新增快捷键搜索/滑动导航/PWA 离线支持特性、添加 v8.0 迭代修复记录
+- **CHANGELOG.md:** 补充 v8.0 迭代 Phase D-F 变更记录
+- **版本号同步:** package.json v12.0.0，Sidebar 显示版本一致
+
+### 质量指标
+
+| 指标 | 结果 |
+|------|------|
+| 单元测试 | 2225 tests passed（117 文件，较 Phase E 前新增 19 个） |
+| ESLint | 0 errors / 66 warnings（既有代码模式） |
+| TypeScript strict | 0 错误 |
+| Build | 成功（1.03s） |
+| PWA 预缓存 | 46 entries（1140.77 KiB） |
+| Bundle 预算 | 符合（index 63.40KB / vendor-react 231.35KB / vendor-d3 52.54KB） |
+
+---
+
 ## [v12.0.0] - 2026-06-20
 
 ### 新增

@@ -5,6 +5,7 @@ import PerformanceMonitor from './PerformanceMonitor'
 import NetworkStatus from './NetworkStatus'
 import { GlobalSearch } from './GlobalSearch'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { useSwipeNavigation } from '../hooks/useSwipeNavigation'
 
 interface LayoutProps {
   children: ReactNode
@@ -13,6 +14,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const { t } = useGlobalSettings()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  useSwipeNavigation()
 
   // Ctrl/Cmd + K 快捷键切换全局搜索
   useEffect(() => {

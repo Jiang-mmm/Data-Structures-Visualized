@@ -214,6 +214,7 @@ export default function Sidebar() {
   const sidebarContent = (
     <aside
       ref={sidebarElRef}
+      data-sidebar
       className={`
         ${isMobile ? 'sidebar' : ''}
         ${isMobile && mobileOpen ? 'open' : ''}
