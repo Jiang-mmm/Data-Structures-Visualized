@@ -1,29 +1,44 @@
-# 数据结构学习助手 - 功能测试问题报告
+# 问题报告与 UI 重构设计归档
 
-**测试日期**: 2026-06-17
-**测试环境**: Windows + Microsoft Edge (Chromium) + localhost:3008
-**测试范围**: 全部 13 个子页面（首页 + 12 个数据结构模块）
-**测试方法**: 自动化浏览器测试 (agent-browser) + 手动交互验证
+> **整理日期:** 2026-06-21
+> **来源文档:**
+> - `docs/test-issue-report.md` (2026-06-17)
+> - `docs/ui-redesign-phase1-design.md` (2026-06-16)
+> **状态:** 所有问题已全部修复，UI 重构已实施完成
 
 ---
 
-## 测试摘要
+## 目录
+
+1. [原始测试摘要](#原始测试摘要)
+2. [P0 严重问题（已修复）](#p0-严重问题已修复)
+3. [P1 高优先级问题（已修复）](#p1-高优先级问题已修复)
+4. [P2 中优先级问题（已修复）](#p2-中优先级问题已修复)
+5. [P3 低优先级问题（已加入 TODO）](#p3-低优先级问题已加入-todo)
+6. [UI 重构 Phase 1 设计与实施](#ui-重构-phase-1-设计与实施)
+7. [测试通过页面清单](#测试通过页面清单)
+8. [问题修复总览](#问题修复总览)
+
+---
+
+## 原始测试摘要
 
 | 指标 | 数值 |
 |------|------|
-| 测试页面总数 | 13 |
-| 通过页面数 | 9 |
-| 存在问题页面数 | 3 (Hash, Heap, Trie) |
-| 发现问题总数 | 7 |
-| 严重问题 (P0) | 2 |
-| 高优先级问题 (P1) | 2 |
-| 中优先级问题 (P2) | 2 |
-| 低优先级问题 (P3) | 1 |
+| **测试日期** | 2026-06-17 |
+| **测试环境** | Windows + Microsoft Edge (Chromium) + localhost:3008 |
+| **测试范围** | 全部 13 个子页面（首页 + 12 个数据结构模块） |
+| **测试方法** | 自动化浏览器测试 (agent-browser) + 手动交互验证 |
+| **测试页面总数** | 13 |
+| **通过页面数** | 9 |
+| **存在问题页面数** | 3 (Hash, Heap, Trie) |
+| **发现问题总数** | 7 |
+| **严重问题 (P0)** | 2 |
+| **高优先级问题 (P1)** | 2 |
+| **中优先级问题 (P2)** | 2 |
+| **低优先级问题 (P3)** | 1 |
 
----
-
-## 问题严重程度分级
-
+### 严重程度分级
 - **P0 (Critical)**: 核心功能完全不可用，阻塞用户操作
 - **P1 (High)**: 重要功能异常，严重影响用户体验
 - **P2 (Medium)**: 功能可用但体验受损，需优化
@@ -31,7 +46,7 @@
 
 ---
 
-## P0 严重问题
+## P0 严重问题（已修复）
 
 ### ISSUE-001: 哈希表插入动画挂起，数据不更新
 
@@ -65,9 +80,15 @@
 `animateInsertHash` 函数中的 `transitionEnd` Promise 在链式 D3 过渡被中断时永远不 resolve。当 `Visualizer` 组件因 `dimensions` 变化而重新渲染时，`renderHash` 调用 `container.selectAll('*').interrupt()` 中断了正在运行的过渡，但链式过渡的第二个过渡既不触发 'end' 也不触发 'interrupt' 事件，导致 Promise 永久挂起。
 
 **相关代码**:
-- [hashVisualizer.ts#L199-L274](file:///d:/VibeCoding/数据结构学习助手3/src/visualizers/hashVisualizer.ts#L199-L274) - `animateInsertHash` 函数
-- [animationEngine.ts#L270-L274](file:///d:/VibeCoding/数据结构学习助手3/src/utils/animationEngine.ts#L270-L274) - `transitionEnd` 函数
-- [HashPage.tsx#L48-L69](file:///d:/VibeCoding/数据结构学习助手3/src/pages/HashPage.tsx#L48-L69) - `handleInsert` 函数
+- `src/visualizers/hashVisualizer.ts#L199-L274` - `animateInsertHash` 函数
+- `src/utils/animationEngine.ts#L270-L274` - `transitionEnd` 函数
+- `src/pages/HashPage.tsx#L48-L69` - `handleInsert` 函数
+
+**修复状态**: ✅ 已修复（v8.1.0）
+- 实施 `transitionEnd` 超时保护（3000ms 兜底）
+- 重构链式过渡为顺序独立过渡
+- 修复 Visualizer dimensions 依赖问题
+- 详见 [optimization-history.md](./optimization-history.md) 第 1 轮
 
 ---
 
@@ -101,12 +122,16 @@
 与 ISSUE-001 相同。`animateInsertHeap` 使用 `transitionEnd` 等待链式过渡完成，但过渡被重新渲染中断后 Promise 永不 resolve。
 
 **相关代码**:
-- [heapVisualizer.ts#L181-L221](file:///d:/VibeCoding/数据结构学习助手3/src/visualizers/heapVisualizer.ts#L181-L221) - `animateInsertHeap` 函数
-- [HeapPage.tsx#L48-L65](file:///d:/VibeCoding/数据结构学习助手3/src/pages/HeapPage.tsx#L48-L65) - `handleInsert` 函数
+- `src/visualizers/heapVisualizer.ts#L181-L221` - `animateInsertHeap` 函数
+- `src/pages/HeapPage.tsx#L48-L65` - `handleInsert` 函数
+
+**修复状态**: ✅ 已修复（v8.1.0）
+- 与 ISSUE-001 同步修复
+- 重构 `animateInsertHeap` 链式过渡
 
 ---
 
-## P1 高优先级问题
+## P1 高优先级问题（已修复）
 
 ### ISSUE-003: 字典树插入动画挂起，数据不更新
 
@@ -132,6 +157,10 @@
 **根因分析**:
 与 ISSUE-001 相同。`transitionEnd` Promise 在链式过渡被中断时永不 resolve。
 
+**修复状态**: ✅ 已修复（v8.1.0）
+- 重构 `animateInsertTrie` 链式过渡
+- 与 ISSUE-001/002 同步修复
+
 ---
 
 ### ISSUE-004: 动画期间数据更新顺序错误
@@ -154,12 +183,17 @@ insert(key, value)  // 数据在动画之后更新
 设计模式问题。动画应该在数据更新后运行，或者应该采用"先更新数据，再播放动画"的模式。
 
 **相关代码**:
-- [HashPage.tsx#L60-L61](file:///d:/VibeCoding/数据结构学习助手3/src/pages/HashPage.tsx#L60-L61)
-- [HeapPage.tsx#L57-L58](file:///d:/VibeCoding/数据结构学习助手3/src/pages/HeapPage.tsx#L57-L58)
+- `src/pages/HashPage.tsx#L60-L61`
+- `src/pages/HeapPage.tsx#L57-L58`
+
+**修复状态**: ✅ 已修复（v8.1.0）
+- 调整为"先更新数据，再播放动画"模式
+- 使用 `requestAnimationFrame` 等待 React commit + 浏览器 paint
+- 详见 [optimization-history.md](./optimization-history.md) 第 2 轮 2.1
 
 ---
 
-## P2 中优先级问题
+## P2 中优先级问题（已修复）
 
 ### ISSUE-005: Visualizer 组件在动画期间可能触发重新渲染
 
@@ -175,8 +209,14 @@ insert(key, value)  // 数据在动画之后更新
 `dimensions` 对象在 `useVisualizer` hook 中可能被重新创建，导致引用变化，触发 `useEffect`。
 
 **相关代码**:
-- [Visualizer.tsx#L134-L149](file:///d:/VibeCoding/数据结构学习助手3/src/components/Visualizer.tsx#L134-L149)
-- [useVisualizer.ts](file:///d:/VibeCoding/数据结构学习助手3/src/hooks/useVisualizer.ts)
+- `src/components/Visualizer.tsx#L134-L149`
+- `src/hooks/useVisualizer.ts`
+
+**修复状态**: ✅ 已修复（v8.1.0）
+- 通过 `useRef` 缓存 `dimensions` 引用
+- 从 `useEffect` 依赖数组中移除 `dimensions`
+- 减少 90%+ 的不必要重新渲染
+- 详见 [optimization-history.md](./optimization-history.md) 第 1 轮 1.2
 
 ---
 
@@ -191,7 +231,7 @@ insert(key, value)  // 数据在动画之后更新
 `transitionEnd` 函数仅监听 'end' 和 'interrupt' 事件，没有超时保护机制。如果链式过渡的第一个过渡被中断，第二个过渡可能既不触发 'end' 也不触发 'interrupt'，导致 Promise 永久挂起。
 
 **相关代码**:
-- [animationEngine.ts#L270-L274](file:///d:/VibeCoding/数据结构学习助手3/src/utils/animationEngine.ts#L270-L274)
+- `src/utils/animationEngine.ts#L270-L274`
 
 ```typescript
 export function transitionEnd(transition: any): Promise<void> {
@@ -201,9 +241,15 @@ export function transitionEnd(transition: any): Promise<void> {
 }
 ```
 
+**修复状态**: ✅ 已修复（v8.1.0）
+- 添加 3000ms 超时兜底机制
+- 使用 `resolved` 标志防止多次 resolve
+- `clearTimeout` 避免定时器泄漏
+- 详见 [optimization-history.md](./optimization-history.md) 第 1 轮 1.1
+
 ---
 
-## P3 低优先级问题
+## P3 低优先级问题（已加入 TODO）
 
 ### ISSUE-007: 排序完成后撤销/重做按钮被禁用
 
@@ -218,11 +264,59 @@ export function transitionEnd(transition: any): Promise<void> {
 **证据截图**:
 - `dogfood-output/screenshots/12e-sort-bubble-complete.png` - 排序完成后撤销/重做禁用
 
+**修复状态**: ⏳ 已加入 `TODO.md` Phase E 任务 E5
+- 优化建议见 [optimization-history.md](./optimization-history.md) 第 3 轮 3.1
+- v13 启动时优先处理
+
 ---
 
-## 测试通过的页面
+## UI 重构 Phase 1 设计与实施
 
-以下页面功能正常，未发现明显问题：
+> **设计日期**: 2026-06-16
+> **状态**: ✅ 已实施完成（v8.0 阶段）
+> **设计目标**: 压缩非核心 UI 区域，最大化可视化画布占比，减少视觉杂乱
+
+### 范围
+
+#### 1.1 PageHeader 精简
+- ✅ 移除标题左侧冗余图标（与侧边栏重复）
+- ✅ 压缩 padding：`py-3.5 sm:py-5` → `py-2 sm:py-3`
+- ✅ 副标题字号保持 `text-xs`，但增加与标题的间距
+- ✅ 标题区整体更紧凑
+
+#### 1.2 OperationBar padding 压缩
+- ✅ `py-2.5 sm:py-3.5` → `py-1.5 sm:py-2.5`
+- ✅ 保持操作按钮最小触摸目标 44px
+
+#### 1.3 侧边栏底部控件重构
+- ✅ 移除版本号展示（V{version}）
+- ✅ 主题色板改为弹出面板（点击按钮触发 popover），不再常驻展开
+- ✅ 折叠态底部只保留语言+深色模式按钮
+- ✅ 减少底部区域高度约 60px
+
+#### 1.4 网格线默认隐藏
+- ✅ `showGrid` 默认值从 `true` 改为 `false`
+- ✅ 用户可通过按钮手动开启，偏好持久化到 localStorage
+
+#### 1.5 已有 Grid Key 迁移
+- ✅ localStorage key `ds-visualizer-show-grid` 已有值的用户不受影响（显式存储过值）
+- ✅ 未存储过的用户默认变为隐藏网格
+
+### 不在范围内
+- 右侧学习面板（Phase 4） → 已在 v9.0 实施（InfoPanel 组件）
+- 色彩语义体系（Phase 2） → 已在 v10.0 实施（主题感知）
+- 交互反馈（Phase 3） → 已在 v11.0 实施
+- 模块专项优化（Phase 5） → 已在 v12.0 实施
+
+### 测试策略验证
+- ✅ 现有 2548 个测试未破坏（v8.0 阶段）
+- ✅ 后续增长到 3480 测试（v12.0 阶段）
+
+---
+
+## 测试通过页面清单
+
+以下页面在 2026-06-17 测试中功能正常，未发现明显问题：
 
 | 页面 | 测试操作 | 结果 |
 |------|----------|------|
@@ -239,7 +333,7 @@ export function transitionEnd(transition: any): Promise<void> {
 
 ---
 
-## 性能观察
+## 性能观察（2026-06-17 测试）
 
 ### 渲染性能
 - 所有页面的 D3 渲染时间均在 0.1ms - 1.9ms 范围内，性能良好
@@ -247,10 +341,10 @@ export function transitionEnd(transition: any): Promise<void> {
 - 无内存泄漏迹象
 
 ### 动画性能
-- 二叉树遍历动画: 流畅，无卡顿
-- 图算法动画: 流畅，无卡顿
-- 排序动画: 流畅，无卡顿
-- 哈希/堆/字典树插入动画: **严重卡顿/挂起** (ISSUE-001/002/003)
+- ✅ 二叉树遍历动画: 流畅，无卡顿
+- ✅ 图算法动画: 流畅，无卡顿
+- ✅ 排序动画: 流畅，无卡顿
+- ✅ 哈希/堆/字典树插入动画: 修复后流畅，无卡顿
 
 ### 响应式表现
 - 页面在不同窗口尺寸下布局正常
@@ -259,10 +353,40 @@ export function transitionEnd(transition: any): Promise<void> {
 
 ---
 
-## 建议优先修复顺序
+## 问题修复总览
 
-1. **ISSUE-006** (修复 `transitionEnd` 添加超时保护) - 根因修复，影响范围最广
-2. **ISSUE-005** (防止动画期间重新渲染) - 根因修复，防止过渡被中断
-3. **ISSUE-001/002/003** (哈希/堆/字典树插入) - 修复后自动解决
-4. **ISSUE-004** (数据更新顺序) - 架构优化，提升动画效果
-5. **ISSUE-007** (排序撤销) - 体验优化，低优先级
+### 按修复版本
+
+| 版本 | 修复问题 | 详细 |
+|------|----------|------|
+| v8.0.0 | UI 重构 Phase 1 全部实施 | 见上方"UI 重构 Phase 1 设计与实施" |
+| v8.1.0 | ISSUE-001/002/003/004/005/006 | [optimization-history.md](./optimization-history.md) 第 1-2 轮 |
+| 待办 | ISSUE-007 | TODO.md Phase E 任务 E5 |
+
+### 按问题严重程度
+
+| 严重度 | 数量 | 全部修复？ |
+|--------|------|------------|
+| P0 | 2 | ✅ 全部修复（v8.1.0） |
+| P1 | 2 | ✅ 全部修复（v8.1.0） |
+| P2 | 2 | ✅ 全部修复（v8.1.0） |
+| P3 | 1 | ⏳ 加入 TODO，v13 启动优先处理 |
+
+### 验证结果
+
+| 验证项 | 实际达成 |
+|--------|----------|
+| 哈希表插入 | ✅ 2 秒内完成 |
+| 堆插入 | ✅ 2 秒内完成 |
+| 字典树插入 | ✅ 2 秒内完成 |
+| 二叉树遍历 | ✅ 动画正常 |
+| 排序算法 | ✅ 动画正常 |
+| 图算法 | ✅ 动画正常 |
+| 单元测试 | ✅ 100% 通过（3480 个，v12.0 阶段） |
+| ESLint | ✅ 0 错误 |
+| TypeScript | ✅ 0 错误 |
+| 生产构建 | ✅ 成功 |
+
+---
+
+> **保留理由**：本文档完整保留 2026-06-17 测试发现的问题清单、UI 重构 Phase 1 设计，作为项目历史参考。当前活跃迭代计划见 `docs/iteration-plan-v11.md`，v13 全面代码体检见 [docs/audit-2026-06-20/audit-merged.md](../../audit-2026-06-20/audit-merged.md)。
