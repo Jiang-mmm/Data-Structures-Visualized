@@ -3,6 +3,7 @@ import Sidebar from './Sidebar'
 import KeyboardHelp from './KeyboardHelp'
 import PerformanceMonitor from './PerformanceMonitor'
 import NetworkStatus from './NetworkStatus'
+import ReloadPrompt from './ReloadPrompt'
 import { GlobalSearch } from './GlobalSearch'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
@@ -39,6 +40,7 @@ export default function Layout({ children }: LayoutProps) {
       <PerformanceMonitor />
       <NetworkStatus />
       <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      <ReloadPrompt />
     </div>
   )
 }

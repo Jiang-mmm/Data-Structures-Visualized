@@ -912,6 +912,11 @@ export interface Locale {
     categoryLearning: string
     categoryHistory: string
   }
+  pwa: {
+    updateAvailable: string
+    reload: string
+    close: string
+  }
 }
 
 interface ContentTierStructure {
@@ -1893,6 +1898,11 @@ export const zh: Locale = {
     categoryLearning: '学习步骤',
     categoryHistory: '历史',
   },
+  pwa: {
+    updateAvailable: '有新版本可用',
+    reload: '刷新',
+    close: '关闭',
+  },
 }
 
 export const en: Locale = {
@@ -2862,5 +2872,10 @@ export const en: Locale = {
     categoryPage: 'Page',
     categoryLearning: 'Learning Step',
     categoryHistory: 'History',
+  },
+  pwa: {
+    updateAvailable: 'Update available',
+    reload: 'Reload',
+    close: 'Close',
   },
 }

@@ -9,6 +9,14 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
+  resolve: {
+    alias: [
+      {
+        find: /^virtual:pwa-register\/react$/,
+        replacement: '/src/__mocks__/virtualPwaRegister.ts',
+      },
+    ],
+  },
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/__tests__/setup.ts'],

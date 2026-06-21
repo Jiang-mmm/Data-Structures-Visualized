@@ -24,7 +24,24 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
-        runtimeCaching: [],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.loli\.net\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'loli-fonts-css',
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 60 },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/gstatic\.loli\.net\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'loli-fonts-files',
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 60 },
+            },
+          },
+        ],
       },
       manifest: {
         name: '数据结构学习助手',
