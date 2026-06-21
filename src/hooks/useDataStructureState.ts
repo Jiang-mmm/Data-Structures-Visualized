@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { showToast } from '../components/toastStore'
 import { useHistory } from './useHistory'
 import { tStatic } from '../i18n/useI18n'
+import { validateStoredData } from '../utils/schema'
 
 const STORAGE_PREFIX = 'ds-visualizer-data-'
 const MAX_LOGS = 100
@@ -11,40 +12,18 @@ function getStorageKey(key: string): string {
   return `${STORAGE_PREFIX}${key}`
 }
 
-function isValidStoredData(data: unknown): boolean {
-  if (data === null || data === undefined) return false
-  if (Array.isArray(data)) {
-    if (data.length === 0) return false
-    return data.every(item => {
-      if (typeof item === 'number') return Number.isFinite(item)
-      if (typeof item === 'object' && item !== null) return true
-      return false
-    })
-  }
-  if (typeof data === 'object') {
-    const obj = data as Record<string, unknown>
-    const keys = Object.keys(obj)
-    if (keys.length === 0) return false
-    // 验证对象值是安全的 JSON 类原生类型/对象/数组
-    return keys.every(k => {
-      const v = obj[k]
-      if (v === null || v === undefined || typeof v === 'boolean' || typeof v === 'string') return true
-      if (typeof v === 'number') return Number.isFinite(v)
-      if (typeof v === 'object') return true
-      return false
-    })
-  }
-  return false
-}
-
 function loadFromStorage<T>(key: string): T | null {
+  const fullKey = getStorageKey(key)
   try {
-    const stored = localStorage.getItem(getStorageKey(key))
+    const stored = localStorage.getItem(fullKey)
     if (stored) {
       const parsed = JSON.parse(stored) as T
-      if (isValidStoredData(parsed)) return parsed
+      if (validateStoredData(parsed).valid) return parsed
+      // 数据无效或过期，清除本地副本以避免重复失败
+      localStorage.removeItem(fullKey)
     }
   } catch {
+    localStorage.removeItem(fullKey)
     return null
   }
   return null
@@ -108,7 +87,10 @@ export function useDataStructureState<T>(initialData: T, options: DataStructureS
   // 防抖 localStorage 写入以避免过多 I/O
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const dataRef = useRef(data)
-  dataRef.current = data
+
+  useEffect(() => {
+    dataRef.current = data
+  }, [data])
 
   useEffect(() => {
     if (!storageKey || data === null) return
