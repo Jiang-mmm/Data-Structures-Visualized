@@ -580,6 +580,9 @@ export interface Locale {
     reset: string
     pause: string
     toggleHelp: string
+    searchPlaceholder: string
+    searchNoResults: string
+    allShortcuts: string
   }
   page: {
     operations: string
@@ -1321,6 +1324,9 @@ export const zh: Locale = {
     reset: '重置数据结构',
     pause: '暂停动画',
     toggleHelp: '显示/隐藏快捷键帮助',
+    searchPlaceholder: '搜索快捷键...',
+    searchNoResults: '无匹配结果',
+    allShortcuts: '全部快捷键',
   },
   page: {
     operations: '操作',
@@ -2300,6 +2306,9 @@ export const en: Locale = {
     reset: 'Reset data structure',
     pause: 'Pause animation',
     toggleHelp: 'Show/hide shortcut help',
+    searchPlaceholder: 'Search shortcuts...',
+    searchNoResults: 'No matching shortcuts',
+    allShortcuts: 'All shortcuts',
   },
   page: {
     operations: 'Operations',
