@@ -23,6 +23,7 @@ import { doublyLinkedListConfig } from './doublyLinkedList.config'
 import { treeConfig } from './tree.config'
 import { avlTreeConfig } from './avlTree.config'
 import { redBlackTreeConfig } from './redBlackTree.config'
+import { bTreeConfig } from './bTree.config'
 import { hashConfig } from './hash.config'
 import { arrayConfig } from './array.config'
 import { stackConfig } from './stack.config'
@@ -63,6 +64,7 @@ export const learningConfigs = {
   tree: treeConfig,
   avlTree: avlTreeConfig,
   redBlackTree: redBlackTreeConfig,
+  bTree: bTreeConfig,
   hash: hashConfig,
   array: arrayConfig,
   stack: stackConfig,

@@ -90,6 +90,16 @@ export interface Locale {
     colorRed: string
     colorBlack: string
   }
+  bTree: {
+    title: string
+    subtitle: string
+    insert: string
+    search: string
+    inorder: string
+    nodeTitle: string
+    leaf: string
+    internal: string
+  }
   graph: {
     title: string
     subtitle: string
@@ -220,6 +230,7 @@ export interface Locale {
     tree: string
     avlTree: string
     redBlackTree: string
+    bTree: string
     graph: string
     sort: string
     hash: string
@@ -262,6 +273,7 @@ export interface Locale {
     emptyTreeShort: string
     emptyAvlShort: string
     emptyRedBlackTreeShort: string
+    emptyBTreeShort: string
     emptyGraphShort: string
     emptyHashShort: string
     emptyHeapShort: string
@@ -283,6 +295,8 @@ export interface Locale {
     emptyAvlDesc: string
     emptyRedBlackTree: string
     emptyRedBlackTreeDesc: string
+    emptyBTree: string
+    emptyBTreeDesc: string
     emptyGraph: string
     emptyGraphDesc: string
     emptyHash: string
@@ -522,6 +536,7 @@ export interface Locale {
     treeLabel: string
     avlTreeLabel: string
     redBlackTreeLabel: string
+    bTreeLabel: string
     graphLabel: string
     sortLabel: string
     hashLabel: string
@@ -728,6 +743,13 @@ export interface Locale {
     redBlackTreeLogSearchFound: string
     redBlackTreeLogSearchNotFound: string
     redBlackTreeLogInorder: string
+    bTreeLogInsert: string
+    bTreeInsertSuccess: string
+    bTreeInsertDuplicate: string
+    bTreeLogInsertDuplicate: string
+    bTreeLogSearchFound: string
+    bTreeLogSearchNotFound: string
+    bTreeLogInorder: string
     graphLogAddNode: string
     graphNodeAdded: string
     graphSelfLoop: string
@@ -959,6 +981,16 @@ export const zh: Locale = {
     colorRed: '红色',
     colorBlack: '黑色',
   },
+  bTree: {
+    title: 'B 树',
+    subtitle: '多路搜索树 · 节点分裂 · O(log n) 保证',
+    insert: '插入',
+    search: '查找',
+    inorder: '中序',
+    nodeTitle: 'keys: {keys}\nkey 数量: {count}\n类型: {type}',
+    leaf: '叶子节点',
+    internal: '内部节点',
+  },
   graph: {
     title: '图',
     subtitle: '网络结构 · BFS / DFS · 最短路径',
@@ -1089,6 +1121,7 @@ export const zh: Locale = {
     tree: '二叉树',
     avlTree: 'AVL 树',
     redBlackTree: '红黑树',
+    bTree: 'B 树',
     graph: '图',
     sort: '排序',
     hash: '哈希表',
@@ -1131,6 +1164,7 @@ export const zh: Locale = {
     emptyTreeShort: '空二叉树',
     emptyAvlShort: '空 AVL 树 · 请插入节点',
     emptyRedBlackTreeShort: '空红黑树 · 请插入节点',
+    emptyBTreeShort: '空 B 树 · 请插入节点',
     emptyGraphShort: '空图 · 请添加节点',
     emptyHashShort: '空哈希表 · 请插入键值对',
     emptyHeapShort: '空堆 · 请插入元素',
@@ -1152,6 +1186,8 @@ export const zh: Locale = {
     emptyAvlDesc: '点击插入按钮添加节点',
     emptyRedBlackTree: '红黑树为空',
     emptyRedBlackTreeDesc: '点击插入按钮添加节点',
+    emptyBTree: 'B 树为空',
+    emptyBTreeDesc: '点击插入按钮添加节点',
     emptyGraph: '图为空',
     emptyGraphDesc: '点击添加节点按钮创建图',
     emptyHash: '哈希表为空',
@@ -1196,6 +1232,7 @@ export const zh: Locale = {
     treeLabel: '二叉树可视化',
     avlTreeLabel: 'AVL 树可视化',
     redBlackTreeLabel: '红黑树可视化',
+    bTreeLabel: 'B 树可视化',
     graphLabel: '图可视化',
     sortLabel: '排序可视化',
     hashLabel: '哈希表可视化',
@@ -1597,6 +1634,13 @@ export const zh: Locale = {
     redBlackTreeLogSearchFound: 'search({value}) → 找到，深度: {depth}',
     redBlackTreeLogSearchNotFound: 'search({value}) → 未找到',
     redBlackTreeLogInorder: '中序遍历（有序）: [{data}]',
+    bTreeLogInsert: 'insert({value}) → 插入并按需分裂，节点数: {count}',
+    bTreeInsertSuccess: '插入节点 {value}（已分裂平衡）',
+    bTreeInsertDuplicate: '节点 {value} 已存在，不重复插入',
+    bTreeLogInsertDuplicate: 'insert({value}) → 值已存在，跳过',
+    bTreeLogSearchFound: 'search({value}) → 找到，深度: {depth}',
+    bTreeLogSearchNotFound: 'search({value}) → 未找到',
+    bTreeLogInorder: '中序遍历（有序）: [{data}]',
     graphLogAddNode: 'addNode("{id}") → 节点数: {count}',
     graphNodeAdded: '添加节点 {id}',
     graphSelfLoop: '不能连接自身',
@@ -1871,6 +1915,16 @@ export const en: Locale = {
     colorRed: 'Red',
     colorBlack: 'Black',
   },
+  bTree: {
+    title: 'B-Tree',
+    subtitle: 'Multi-way Search Tree · Node Splitting · O(log n) Guaranteed',
+    insert: 'Insert',
+    search: 'Search',
+    inorder: 'Inorder',
+    nodeTitle: 'keys: {keys}\nkey count: {count}\ntype: {type}',
+    leaf: 'Leaf node',
+    internal: 'Internal node',
+  },
   graph: {
     title: 'Graph',
     subtitle: 'Network Structure · Traversal Algorithms · Shortest Path',
@@ -2001,6 +2055,7 @@ export const en: Locale = {
     tree: 'Binary Tree',
     avlTree: 'AVL Tree',
     redBlackTree: 'Red-Black Tree',
+    bTree: 'B-Tree',
     graph: 'Graph',
     sort: 'Sorting',
     hash: 'Hash Table',
@@ -2043,6 +2098,7 @@ export const en: Locale = {
     emptyTreeShort: 'Empty Tree',
     emptyAvlShort: 'Empty AVL Tree · Insert nodes',
     emptyRedBlackTreeShort: 'Empty Red-Black Tree · Insert nodes',
+    emptyBTreeShort: 'Empty B-Tree · Insert nodes',
     emptyGraphShort: 'Empty Graph · Add nodes',
     emptyHashShort: 'Empty Hash · Insert key-value pairs',
     emptyHeapShort: 'Empty Heap · Insert elements',
@@ -2064,6 +2120,8 @@ export const en: Locale = {
     emptyAvlDesc: 'Click insert to add nodes',
     emptyRedBlackTree: 'Red-Black tree is empty',
     emptyRedBlackTreeDesc: 'Click insert to add nodes',
+    emptyBTree: 'B-Tree is empty',
+    emptyBTreeDesc: 'Click insert to add nodes',
     emptyGraph: 'Graph is empty',
     emptyGraphDesc: 'Click add node to create the graph',
     emptyHash: 'Hash table is empty',
@@ -2108,6 +2166,7 @@ export const en: Locale = {
     treeLabel: 'Binary tree visualization',
     avlTreeLabel: 'AVL tree visualization',
     redBlackTreeLabel: 'Red-Black tree visualization',
+    bTreeLabel: 'B-Tree visualization',
     graphLabel: 'Graph visualization',
     sortLabel: 'Sorting visualization',
     hashLabel: 'Hash table visualization',
@@ -2509,6 +2568,13 @@ export const en: Locale = {
     redBlackTreeLogSearchFound: 'search({value}) → found, depth: {depth}',
     redBlackTreeLogSearchNotFound: 'search({value}) → not found',
     redBlackTreeLogInorder: 'Inorder (sorted): [{data}]',
+    bTreeLogInsert: 'insert({value}) → inserted and split if needed, nodes: {count}',
+    bTreeInsertSuccess: 'Inserted node {value} (split balanced)',
+    bTreeInsertDuplicate: 'Node {value} already exists, skipping',
+    bTreeLogInsertDuplicate: 'insert({value}) → duplicate, skipped',
+    bTreeLogSearchFound: 'search({value}) → found, depth: {depth}',
+    bTreeLogSearchNotFound: 'search({value}) → not found',
+    bTreeLogInorder: 'Inorder (sorted): [{data}]',
     graphLogAddNode: 'addNode("{id}") → nodes: {count}',
     graphNodeAdded: 'Added node {id}',
     graphSelfLoop: 'Cannot connect to self',

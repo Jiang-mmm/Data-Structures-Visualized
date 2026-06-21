@@ -29,6 +29,7 @@ const ALGORITHM_KEY_TO_PATH: Record<string, string> = {
   heapStructure: '/heap',
   avlTree: '/avl-tree',
   redBlackTree: '/red-black-tree',
+  bTree: '/b-tree',
   skipList: '/skip-list',
   unionFind: '/union-find',
   graph: '/graph',

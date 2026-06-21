@@ -250,6 +250,77 @@ export interface AvlTreeState extends DataStructureState<AvlNode | null> {
   nodeCount: number;
 }
 
+/**
+ * B 树类型定义
+ *
+ * 数据表示：递归对象（BTreeNode），keys 数组 + children 数组
+ * 阶数（order）默认为 3（2-3 树）：
+ * - 每个节点最多 order 个子节点，order-1 个 key
+ * - 非根非叶节点最少 ⌈order/2⌉ 个子节点
+ */
+
+/** B 树节点（递归对象表示） */
+export interface BTreeNode {
+  /** 节点存储的键值数组（有序） */
+  keys: number[];
+  /** 子节点数组（长度为 keys.length + 1，叶子节点为空数组） */
+  children: BTreeNode[];
+  /** 是否为叶子节点 */
+  leaf: boolean;
+}
+
+/** 扁平化节点（供可视化器使用） */
+export interface BTreeFlattenedNode {
+  /** 节点唯一标识（基于层序遍历顺序） */
+  id: string;
+  /** 节点键值数组 */
+  keys: number[];
+  /** 子节点 id 数组 */
+  childrenIds: string[];
+  /** 父节点 id（根节点为空字符串） */
+  parent: string;
+  /** 节点所在深度（根为 0） */
+  depth: number;
+  /** 是否为叶子节点 */
+  leaf: boolean;
+  /** x 坐标占位（由可视化器填充） */
+  x: number;
+  /** y 坐标占位（由可视化器填充） */
+  y: number;
+  /** 是否高亮（供动画使用） */
+  highlighted: boolean;
+}
+
+/** 扁平化边（供可视化器使用） */
+export interface BTreeFlattenedEdge {
+  /** 起点 id（父节点） */
+  from: string;
+  /** 终点 id（子节点） */
+  to: string;
+}
+
+/** 扁平化 B 树结构（供可视化器使用） */
+export interface BTreeFlattened {
+  nodes: BTreeFlattenedNode[];
+  edges: BTreeFlattenedEdge[];
+}
+
+/** B 树状态接口（继承数据结构状态基座） */
+export interface BTreeState extends DataStructureState<BTreeNode | null> {
+  /** 插入节点（按需分裂） */
+  insert: (value: string | number) => void;
+  /** 查找节点，返回路径与是否找到 */
+  search: (value: number) => { found: boolean; path: number[][] };
+  /** 中序遍历 */
+  inorder: () => number[];
+  /** 获取扁平化结构（供可视化器） */
+  getFlattened: () => BTreeFlattened;
+  /** 节点总数 */
+  nodeCount: number;
+  /** 键值总数 */
+  keyCount: number;
+}
+
 export interface VisualizerReturn {
   containerRef: React.RefObject<HTMLDivElement>;
   svgRef: React.RefObject<SVGSVGElement>;
