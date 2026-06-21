@@ -11,7 +11,7 @@
 | 项 | 当前值 |
 |---|---|
 | **项目名称** | ds-visualizer（数据结构学习助手） |
-| **当前版本** | v13.0.0-rc1（代码体检完成，修复未启动） |
+| **当前版本** | v13.0.0-rc1-phase-a（Phase A 紧急修复已完成，待 Phase B） |
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 |
 | **当前分支** | `feature/v13-code-audit` |
 | **基线状态** | 3480 单元测试全绿 / ESLint 0 errors / TypeScript strict 0 errors / 生产构建通过 |
@@ -19,6 +19,16 @@
 ---
 
 ## 2. 最近完成的工作
+
+### 2026-06-21 | v13 Phase A 紧急修复完成（安全 + 数据完整性）
+- 完成 `src/utils/schema.ts` 统一 schema 校验（递归深度限制 `MAX_STORAGE_DEPTH = 10`），集成到 `useDataStructureState.loadFromStorage`
+- `package.json` devDependencies 版本限定从 `^` 改为 `~`，CI 新增 `npm ls --depth=0` 校验
+- `scripts/check-bundle.js` 用 `fileURLToPath` 替代 `import.meta.dirname`，兼容 Node 20+
+- `vite.config.js` 移除 `loli.net` 第三方字体代理缓存配置，消除安全风险
+- `src/hooks/useDataStructureState.ts` 渲染阶段 ref 赋值移入 `useEffect`
+- 新增 `src/__tests__/utils/schema.test.ts` 14 个 schema 专属测试
+- 验证：3494 tests passed（新增 14 个）/ lint 0 errors / typecheck / build 全通过
+- Git commit: `0a544a9`
 
 ### 2026-06-21 | 文档整理与归档体系建立
 - 将 `iteration-plan-v8/v9/v10`、`optimization-proposal`、`test-issue-report` 等 12 份过期文档合并为 6 份归档文件
@@ -48,7 +58,7 @@
 
 | Phase | 主题 | 预计工时 | 状态 |
 |-------|------|----------|------|
-| **A** | 紧急修复（安全 + 数据完整性） | 1~2 天 | ⏳ 待启动 |
+| **A** | 紧急修复（安全 + 数据完整性） | 1~2 天 | ✅ 已完成（commit `0a544a9`） |
 | **B** | 体验 + 工程优化（性能 + 渲染 + a11y） | 3~5 天 | ⏳ 待启动 |
 | **C** | 文档完善（一致性 + API 文档） | 1~2 天 | ⏳ 待启动 |
 | **D** | 测试 + CI 升级（E2E 框架 + 覆盖率可视化） | 2~3 天 | ⏳ 待启动 |

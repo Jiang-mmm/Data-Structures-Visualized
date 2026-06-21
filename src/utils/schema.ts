@@ -9,11 +9,11 @@ export const MAX_STORAGE_DEPTH = 10
 /**
  * 验证从 localStorage 或外部导入恢复的数据结构。
  * 要求：
- * - 非 null/undefined
+ * - 顶层不能为 null/undefined
  * - 数组/对象非空
  * - 数字必须为有限数
  * - 递归深度不超过 MAX_STORAGE_DEPTH
- * - 只接受 JSON 原生类型（string/number/boolean/object/array）
+ * - 只接受 JSON 原生类型（string/number/boolean/null/object/array）
  */
 export function validateStoredData(data: unknown): SchemaValidationResult {
   return validateValue(data, 0)
@@ -23,8 +23,12 @@ function validateValue(value: unknown, depth: number): SchemaValidationResult {
   if (depth > MAX_STORAGE_DEPTH) {
     return { valid: false, error: 'exceeds max depth' }
   }
-  if (value === null || value === undefined) {
-    return { valid: false, error: 'null or undefined' }
+  if (value === undefined) {
+    return { valid: false, error: 'undefined' }
+  }
+  if (value === null) {
+    // 顶层 null 不被视为有效数据结构，但允许作为嵌套值出现
+    return depth === 0 ? { valid: false, error: 'top-level null' } : { valid: true }
   }
   if (typeof value === 'number') {
     return Number.isFinite(value) ? { valid: true } : { valid: false, error: 'non-finite number' }

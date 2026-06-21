@@ -1,12 +1,12 @@
 # 数据结构学习助手 — Architecture 文档
 
-> **版本:** v12.0
-> **更新日期:** 2026-06-20
+> **版本:** v13.0.0-rc1-phase-a
+> **更新日期:** 2026-06-21
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 
 ---
 
-## 0. v13 体检方法论（2026-06-20）
+## 0. v13 体检方法论（2026-06-20）与 Phase A 进展
 
 > **来源**: [docs/superpowers/specs/2026-06-20-v13-code-audit-design.md](./docs/superpowers/specs/2026-06-20-v13-code-audit-design.md) §4
 
@@ -41,6 +41,17 @@ v13 起，每个重大版本（v14+）都应采用 **双模型互盲 + 集中仲
 - 体检在独立 feature 分支（如 `feature/vN-code-audit`）
 - 产物 1 个 commit，仅文档/审计产物，**不动业务代码**
 - 修复留到 v(N+1) Phase A 启动时按用户确认执行
+
+### Phase A 完成摘要（2026-06-21）
+
+| 修复项 | 文件 | 说明 |
+|--------|------|------|
+| 统一 schema 校验 | `src/utils/schema.ts` | 递归深度限制 `MAX_STORAGE_DEPTH = 10`，供 localStorage/import 复用 |
+| localStorage 数据清洗 | `src/hooks/useDataStructureState.ts` | 无效/过深数据自动清除并回退 `initialData` |
+| 渲染阶段 ref 修复 | `src/hooks/useDataStructureState.ts` | `dataRef.current = data` 移入 `useEffect` |
+| 依赖版本锁定 | `package.json` + `.github/workflows/ci.yml` | devDependencies 改 `~`，CI 加 `npm ls --depth=0` |
+| Node 兼容修复 | `scripts/check-bundle.js` | 用 `fileURLToPath` 替代 `import.meta.dirname` |
+| 第三方代理移除 | `vite.config.js` | 移除 `loli.net` 字体缓存规则 |
 
 ---
 

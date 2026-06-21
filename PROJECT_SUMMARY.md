@@ -1,9 +1,9 @@
 # 数据结构学习助手 v12.0 项目摘要
 
-> **更新日期:** 2026-06-20
-> **当前版本:** v12.0（已部署）
-> **项目状态:** v12 迭代已完成并部署到生产，新增跳表 / 并查集 / 红黑树 3 个数据结构 + GlobalSearch 全局搜索 + 4 个新排序算法 + 4 个新图算法；CI #46 + Deploy #44 全部成功（commit `5532edf`），GitHub Pages 已上线验证 4 个新页面 + 8 个图算法在线
-> **验证基线:** Lint 0 errors / Build 成功 / 3480 单元测试通过（203 文件） / TypeScript strict 模式 / Bundle 预算符合 / 7 个核心页面 HTTP 200 / 浏览器无 console 错误 / CI matrix Node 20 + 22 全绿 / Deploy 完成时间 ~51s
+> **更新日期:** 2026-06-21
+> **当前版本:** v13.0.0-rc1-phase-a（Phase A 已完成）
+> **项目状态:** v12 已部署；v13 Phase A 紧急修复（安全 + 数据完整性）已完成，新增统一 schema 校验、devDependencies 版本锁定、第三方字体代理移除、Node 20+ 兼容修复、渲染阶段 ref 修复；验证 3494 单元测试 / lint 0 errors / typecheck / build 全通过
+> **验证基线:** Lint 0 errors / Build 成功 / 3494 单元测试通过（204 文件） / TypeScript strict 模式 / Bundle 预算符合 / CI matrix Node 20 + 22 全绿
 
 ---
 
@@ -15,12 +15,26 @@
 
 ### v13 路线（4 阶段，7~12 天单人）
 
-| Phase | 主题 | 工时 |
-|-------|------|------|
-| A | 紧急修复（安全+数据完整性） | 1~2 天 |
-| B | 体验+工程优化（性能+渲染+a11y） | 3~5 天 |
-| C | 文档完善（一致性+API 文档） | 1~2 天 |
-| D | 测试+CI 升级（e2e 框架+覆盖率可视化） | 2~3 天 |
+| Phase | 主题 | 工时 | 状态 |
+|-------|------|------|------|
+| A | 紧急修复（安全+数据完整性） | 1~2 天 | ✅ 已完成（commit `0a544a9`） |
+| B | 体验+工程优化（性能+渲染+a11y） | 3~5 天 | ⏳ 待启动 |
+| C | 文档完善（一致性+API 文档） | 1~2 天 | ⏳ 待启动 |
+| D | 测试+CI 升级（E2E 框架+覆盖率可视化） | 2~3 天 | ⏳ 待启动 |
+
+### Phase A 完成详情（2026-06-21）
+
+| 问题 | 文件 | 修复内容 |
+|------|------|----------|
+| S-03/E-01 | `package.json` | devDependencies 版本限定从 `^` 改为 `~` |
+| E-01 | `.github/workflows/ci.yml` | 新增 `npm ls --depth=0` 依赖版本校验 |
+| E-04 | `scripts/check-bundle.js` | 用 `fileURLToPath` 替代 `import.meta.dirname` |
+| S-02 | `vite.config.js` | 移除 `loli.net` 第三方字体代理缓存配置 |
+| A-01 | `src/hooks/useDataStructureState.ts` | 渲染阶段 ref 赋值移入 `useEffect` |
+| S-01/A-05 | `src/utils/schema.ts` + `useDataStructureState.ts` | 统一 schema 校验（`MAX_STORAGE_DEPTH = 10`），无效 localStorage 自动清除 |
+
+**新增测试**: `src/__tests__/utils/schema.test.ts`（14 tests）  
+**验证**: 3494 tests / lint 0 errors / typecheck / build 全通过
 
 ### Top10 优先（详见 audit-merged.md）
 

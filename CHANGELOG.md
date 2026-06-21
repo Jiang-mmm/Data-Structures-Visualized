@@ -4,7 +4,7 @@
 
 ---
 
-## [v13.0.0-rc1] - 2026-06-20
+## [v13.0.0-rc1] - 2026-06-21
 
 ### Meta
 - 完成 v13 全面代码体检（**双模型互盲 + 集中仲裁**）
@@ -18,7 +18,27 @@
   - [合并仲裁报告（含 Top10 + v13 路线）](./docs/audit-2026-06-20/audit-merged.md)
 - **分级**：P0 致命 0 / P1 高 29 / P2 中 24 / P3 低 3
 - **路线**：v13 Phase A（紧急修复 1~2 天）→ B（体验+工程 3~5 天）→ C（文档 1~2 天）→ D（测试+CI 2~3 天）
-- **状态**：仅元数据，不含代码改动；代码修复待 v13 启动时按 Phase A→D 顺序执行
+
+### Security & Data Integrity（Phase A，2026-06-21）
+- `src/utils/schema.ts`：新增统一 schema 校验（递归深度限制 `MAX_STORAGE_DEPTH = 10`）
+- `src/hooks/useDataStructureState.ts`：
+  - `loadFromStorage` 使用 `validateStoredData` 替代原 `isValidStoredData`
+  - 无效/过深 localStorage 数据自动清除并回退到 `initialData`
+  - 渲染阶段 `dataRef.current = data` 移入 `useEffect`
+- `package.json`：devDependencies 版本限定从 `^` 改为 `~`
+- `.github/workflows/ci.yml`：新增 `npm ls --depth=0` 依赖版本校验
+- `scripts/check-bundle.js`：用 `fileURLToPath` 替代 `import.meta.dirname`，兼容 Node 20+
+- `vite.config.js`：移除 `loli.net` 第三方字体代理缓存配置
+
+### Tests
+- 新增 `src/__tests__/utils/schema.test.ts`（14 tests）覆盖 schema 边界条件
+
+### Verification
+- 单元测试：3494 passed（新增 14 个）
+- ESLint：0 errors / 65 warnings（历史遗留）
+- TypeScript strict：0 错误
+- 生产构建：成功，bundle 预算通过
+- Git commit：`0a544a9`
 
 ---
 

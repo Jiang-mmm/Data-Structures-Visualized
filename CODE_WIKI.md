@@ -1,7 +1,7 @@
 # 数据结构学习助手 — Code Wiki
 
-> **版本:** v12.0
-> **日期:** 2026-06-20
+> **版本:** v13.0.0-rc1-phase-a
+> **日期:** 2026-06-21
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **部署:** GitHub Pages（base path `/Data-Structures-Visualized/`）
 
@@ -193,7 +193,7 @@ App.tsx
 
 ```
 src/
-├── __tests__/                 # 单元测试（203 个文件）
+├── __tests__/                 # 单元测试（204 个文件）
 │   ├── __snapshots__/
 │   ├── pages/                 # 17 个页面测试 + testUtils.tsx
 │   ├── visualizers/           # 14 个可视化测试 + d3MockHelper.ts
@@ -526,6 +526,31 @@ const result = validateImportData(parsedJson, 200, -999, 999)
 if (!result.valid) {
   showToast(result.error, 'error')
   return
+}
+```
+
+### 4.2.1 schema 校验（localStorage / import 数据白名单）
+
+文件路径：`src/utils/schema.ts`
+
+| 函数/常量 | 说明 |
+|-----------|------|
+| `MAX_STORAGE_DEPTH` | 允许的最大嵌套深度，默认 `10` |
+| `validateStoredData(data)` | 验证未知数据是否为合法的 JSON-like 结构；拒绝 `undefined`、非有限数字、函数、`Date`、`Symbol`、空对象/数组、超过深度限制的嵌套 |
+
+**使用位置**：
+- `src/hooks/useDataStructureState.ts` 的 `loadFromStorage`：读取 localStorage 后立即校验，失败则清除并回退 `initialData`
+- 未来 import 恢复流程可复用同一 schema，避免 `validateImportData` 与存储校验行为分裂
+
+**示例**：
+
+```typescript
+import { validateStoredData } from '@/utils/schema'
+
+const result = validateStoredData(parsedJson)
+if (!result.valid) {
+  console.warn('Invalid stored data:', result.error)
+  // 回退到默认值或提示用户
 }
 ```
 
@@ -1412,7 +1437,7 @@ A: `useDataStructureState` 有 15 秒超时保护，超时自动解锁并 toast 
 
 **Q12: localStorage 数据损坏导致应用崩溃**
 
-A: `useDataStructureState` 的 `isValidStoredData` 会校验数据结构。各 hook 在消费数据时有额外防御（如 `useGraphState` 的 `Array.isArray(graphData.nodes)` 检查）。可手动清除 `ds-visualizer-data-*` 的 localStorage key。
+A: `useDataStructureState` 的 `loadFromStorage` 使用 `validateStoredData`（`src/utils/schema.ts`）做统一 schema 校验：递归检查 JSON-like 类型、非有限数字、空对象/数组、嵌套深度（`MAX_STORAGE_DEPTH = 10`）。校验失败会自动清除对应 key 并回退到 `initialData`。各 hook 在消费数据时还有额外防御（如 `useGraphState` 的 `Array.isArray(graphData.nodes)` 检查）。如仍有问题，可手动清除 `ds-visualizer-data-*` 的 localStorage key。
 
 ---
 

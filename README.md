@@ -1,8 +1,9 @@
 # 数据结构学习助手
 
-> **版本:** v12.0
-> **更新日期:** 2026-06-20
+> **版本:** v13.0.0-rc1-phase-a
+> **更新日期:** 2026-06-21
 > **v13 起点:** [v13 全面代码体检已完成（2026-06-20）](./docs/audit-2026-06-20/audit-merged.md) — 双模型互盲审查 56 条独立问题，4 阶段修复路线已就位
+> **v13 Phase A:** 已完成（2026-06-21）— 统一 schema 校验、devDependencies 版本锁定、移除第三方字体代理、Node 20+ 兼容修复、渲染阶段 ref 修复；3494 tests / lint 0 errors / typecheck / build 全通过
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 

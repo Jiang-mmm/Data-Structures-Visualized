@@ -2,6 +2,41 @@
 
 ---
 
+## 2026-06-21 | v13 Phase A 紧急修复完成（安全 + 数据完整性）
+
+### 修复范围
+
+按 [TODO.md](./TODO.md) Phase A 计划，完成 S-01/S-02/S-03/E-01/E-04、A-01、A-05 共 7 项修复。
+
+| 问题 | 文件 | 修复内容 |
+|------|------|----------|
+| S-03/E-01 | `package.json` | devDependencies 版本限定从 `^` 改为 `~`，防止 major 越界 |
+| E-01/E-04 | `.github/workflows/ci.yml` | 新增 `npm ls --depth=0` 依赖版本校验 |
+| E-04 | `scripts/check-bundle.js` | 用 `fileURLToPath(new URL('.', import.meta.url))` 替代 `import.meta.dirname`，兼容 Node 20+ |
+| S-02 | `vite.config.js` | 移除 `loli.net` 第三方字体代理缓存配置 |
+| A-01 | `src/hooks/useDataStructureState.ts` | 渲染阶段 `dataRef.current = data` 移入 `useEffect` |
+| S-01/A-05 | `src/utils/schema.ts` + `useDataStructureState.ts` | 新增统一 schema 校验（递归深度限制 `MAX_STORAGE_DEPTH = 10`），无效/过深 localStorage 数据自动清除并回退 initialData |
+
+### 新增测试
+
+- `src/__tests__/utils/schema.test.ts`：14 个测试覆盖空对象/数组、非有限数字、嵌套 null、深度边界、非 JSON 类型等场景
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 3494 passed（新增 14 个 schema 测试） |
+| ESLint | 0 errors / 65 warnings（历史遗留） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过 |
+
+### Git
+
+- 分支：`feature/v13-code-audit`
+- Commit：`0a544a9 fix(v13-phase-a): 安全与数据完整性紧急修复`
+
+---
+
 ## 2026-06-20 | v13 全面代码体检完成（双模型互盲 + 集中仲裁）
 
 ### 体检方法
