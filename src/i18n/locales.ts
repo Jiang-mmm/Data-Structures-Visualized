@@ -827,8 +827,14 @@ export interface Locale {
     inputAriaLabel: string
     shortcut: string
     noResults: string
+    noHistory: string
+    history: string
+    clearHistory: string
+    removeHistory: string
+    complexity: string
     categoryPage: string
     categoryLearning: string
+    categoryHistory: string
   }
 }
 
@@ -1726,8 +1732,14 @@ export const zh: Locale = {
     inputAriaLabel: '搜索输入框',
     shortcut: 'Ctrl + K',
     noResults: '无搜索结果',
+    noHistory: '无搜索历史',
+    history: '搜索历史',
+    clearHistory: '清空历史',
+    removeHistory: '删除该历史记录',
+    complexity: '复杂度',
     categoryPage: '页面',
     categoryLearning: '学习步骤',
+    categoryHistory: '历史',
   },
 }
 
@@ -2614,7 +2626,13 @@ export const en: Locale = {
     inputAriaLabel: 'Search input',
     shortcut: 'Ctrl + K',
     noResults: 'No results found',
+    noHistory: 'No search history',
+    history: 'Search History',
+    clearHistory: 'Clear history',
+    removeHistory: 'Remove this history item',
+    complexity: 'Complexity',
     categoryPage: 'Page',
     categoryLearning: 'Learning Step',
+    categoryHistory: 'History',
   },
 }

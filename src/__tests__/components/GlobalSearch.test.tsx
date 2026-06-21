@@ -45,6 +45,7 @@ function renderSearch(isOpen = true) {
 describe('GlobalSearch', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    localStorage.clear()
   })
 
   it('isOpen=false 时不渲染', () => {
@@ -58,10 +59,12 @@ describe('GlobalSearch', () => {
     expect(screen.getByLabelText('globalSearch.inputAriaLabel')).toBeInTheDocument()
   })
 
-  it('空查询时显示前 10 项', () => {
+  it('空查询时渲染页面分组', () => {
     renderSearch()
-    const options = screen.getAllByRole('option')
-    expect(options).toHaveLength(10)
+    const pageHeaders = screen.getAllByText((_, element) =>
+      element?.tagName === 'DIV' && element?.textContent?.startsWith('globalSearch.categoryPage')
+    )
+    expect(pageHeaders.length).toBeGreaterThanOrEqual(1)
   })
 
   it('输入查询后过滤结果', () => {
@@ -71,6 +74,14 @@ describe('GlobalSearch', () => {
     fireEvent.change(input, { target: { value: 'zzzznotexist' } })
     expect(screen.queryAllByRole('option')).toHaveLength(0)
     expect(screen.getByText('globalSearch.noResults')).toBeInTheDocument()
+  })
+
+  it('模糊匹配：输入 bubb 应匹配冒泡排序相关学习步骤', () => {
+    renderSearch()
+    const input = screen.getByLabelText('globalSearch.inputAriaLabel')
+    fireEvent.change(input, { target: { value: 'bubb' } })
+    const options = screen.getAllByRole('option')
+    expect(options.length).toBeGreaterThan(0)
   })
 
   it('ArrowDown 移动选中项到下一项', () => {
@@ -171,4 +182,48 @@ describe('GlobalSearch', () => {
     const newInput = screen.getByLabelText('globalSearch.inputAriaLabel') as HTMLInputElement
     expect(newInput.value).toBe('')
   })
+
+  describe('搜索历史', () => {
+    it('搜索后关闭弹窗应将查询写入历史', () => {
+      renderSearch()
+      const input = screen.getByLabelText('globalSearch.inputAriaLabel')
+      fireEvent.change(input, { target: { value: 'bubble' } })
+
+      // 通过 Escape 关闭弹窗，触发 onClose 流程并保存历史
+      fireEvent.keyDown(input, { key: 'Escape' })
+      expect(mockOnClose).toHaveBeenCalledTimes(1)
+
+      const stored = localStorage.getItem('ds-visualizer:search-history')
+      expect(stored).toContain('bubble')
+    })
+
+    it('空查询时应显示搜索历史分组', () => {
+      localStorage.setItem('ds-visualizer:search-history', JSON.stringify(['bubble', 'quick']))
+      renderSearch()
+      const historyHeaders = screen.getAllByText((_, element) =>
+        element?.tagName === 'DIV' && element?.textContent?.startsWith('globalSearch.categoryHistory')
+      )
+      expect(historyHeaders.length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('点击历史条目应回填到输入框', () => {
+      localStorage.setItem('ds-visualizer:search-history', JSON.stringify(['bubble']))
+      renderSearch()
+      const historyOption = screen.getAllByRole('option').find(el => el.textContent?.includes('bubble'))
+      expect(historyOption).toBeDefined()
+      fireEvent.click(historyOption!)
+      const input = screen.getByLabelText('globalSearch.inputAriaLabel') as HTMLInputElement
+      expect(input.value).toBe('bubble')
+    })
+
+    it('应支持清空搜索历史', () => {
+      localStorage.setItem('ds-visualizer:search-history', JSON.stringify(['bubble']))
+      renderSearch()
+      const clearBtn = screen.getByText('globalSearch.clearHistory')
+      fireEvent.click(clearBtn)
+      const stored = localStorage.getItem('ds-visualizer:search-history')
+      expect(stored).toBe('[]')
+    })
+  })
+
 })

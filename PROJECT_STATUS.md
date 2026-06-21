@@ -11,14 +11,38 @@
 | 项 | 当前值 |
 |---|---|
 | **项目名称** | ds-visualizer（数据结构学习助手） |
-| **当前版本** | v13.0.0-rc2（Phase A/B/C/D 已完成，路径一修复路线全部结束） |
+| **当前版本** | v13.0.0-rc2（Phase A/B/C/D 已完成；Path 3 H2 全局搜索增强已完成） |
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 |
-| **当前分支** | `feature/v13-code-audit` |
-| **基线状态** | 2234 单元测试全绿 / ESLint 0 errors（65 warnings） / TypeScript strict 0 errors / 生产构建通过 / Playwright 20 个 spec 全绿 / a11y 17 页 0 critical/serious |
+| **当前分支** | `feature/v13-path3-learning-enhancements` |
+| **基线状态** | 2261 单元测试全绿 / ESLint 0 errors（65 warnings） / TypeScript strict 0 errors / 生产构建通过 / Playwright 20 个 spec 全绿 / a11y 17 页 0 critical/serious |
 
 ---
 
 ## 2. 最近完成的工作
+
+### 2026-06-21 | Path 3 H2 全局搜索增强完成
+
+#### 实现内容
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| Fuzzy 匹配 | `src/utils/fuzzySearch.ts` | 新增 LCS -based 轻量模糊匹配，含连续匹配/首字符/大小写敏感加权 |
+| 搜索历史 | `src/hooks/useSearchHistory.ts` | localStorage 持久化，上限 10 条，去重，支持增删清空 |
+| 搜索索引 | `src/data/searchIndex.ts` | 扩展 `SearchItem` 类型，从学习步骤描述中提取时间/空间复杂度 |
+| 组件 UI | `src/components/GlobalSearch.tsx` | 集成 fuzzy 匹配、历史展示、复杂度过滤、page/learning/history 分类展示 |
+| i18n | `src/i18n/locales.ts` | 新增 `globalSearch` 命名空间相关键 |
+| 测试 | `src/__tests__/utils/fuzzySearch.test.ts`、`hooks/useSearchHistory.test.ts`、`data/searchIndex.test.ts`、`components/GlobalSearch.test.tsx` | 新增 27 个单元测试 |
+
+#### 验证
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2261 passed（121 文件），较 rc2 基线新增 27 个测试 |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过 |
+
+---
 
 ### 2026-06-21 | v13 Phase C 文档完善 + Phase D 测试/CI 升级完成
 

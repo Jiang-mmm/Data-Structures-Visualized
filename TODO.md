@@ -6,6 +6,26 @@
 > **v13 起点:** 2026-06-20 完成全面代码体检（56 条独立问题），4 阶段修复路线已就位；Phase A 已完成（commit `0a544a9`），Phase B/C/D 已完成（文档同步 + Playwright E2E + CI 增强）
 > **详细迭代计划:** v11 计划已归档至 [docs/archive/iteration-plan-v11.md](./docs/archive/iteration-plan-v11.md)；v12/v13 计划见 [docs/superpowers/plans/](./docs/superpowers/plans/)，v10/v11/v12 迭代记录见 WORKLOG.md
 > **v13 体检报告:** [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md)
+> **Path 3 实施真源文档:** [docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md](./docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md)
+
+---
+
+## Path 3 — 学习体验增强（v13.0.0-rc2 → rc3）
+
+| 阶段 | 主题 | 状态 | 说明 |
+|------|------|------|------|
+| **H2** | 全局搜索增强（fuzzy 匹配、搜索历史、复杂度过滤、分类展示） | ✅ 已完成 | fuzzySearch / useSearchHistory / searchIndex 扩展 / GlobalSearch UI 与测试 |
+| **H3** | SortComparePage 学习模式 | ⏳ 待启动 | 待用户确认后进入 |
+| **H1** | 测验系统 | ⏳ 待启动 | 待 H3 完成后启动 |
+
+### H2 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2261 passed（121 文件），新增 27 个测试 |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过 |
 
 ---
 

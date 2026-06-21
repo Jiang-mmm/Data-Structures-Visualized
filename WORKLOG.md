@@ -2,6 +2,45 @@
 
 ---
 
+## 2026-06-21 | Path 3 H2 全局搜索增强完成
+
+### 任务范围
+
+按 [docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md](./docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md) 完成 H2 全局搜索增强：
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| H2-1 搜索索引扩展 | `src/data/searchIndex.ts` | `SearchItem` 新增 `complexity` / `tags`，从学习步骤描述提取复杂度 |
+| H2-2 Fuzzy 匹配 | `src/utils/fuzzySearch.ts` | LCS 轻量打分，支持连续匹配奖励、首字符奖励、大小写敏感奖励 |
+| H2-3 搜索历史 | `src/hooks/useSearchHistory.ts` | localStorage 持久化，上限 10 条，去重，单个/全部清除 |
+| H2-4 复杂度过滤 | `src/components/GlobalSearch.tsx` | 顶部复杂度标签，仅过滤 learning 结果 |
+| H2-5 分类展示 | `src/components/GlobalSearch.tsx` | history / page / learning 分组，sticky header，保留键盘导航 |
+| H2-6 i18n | `src/i18n/locales.ts` | 新增历史、复杂度、分类相关键 |
+| 测试覆盖 | `src/__tests__/utils/fuzzySearch.test.ts` 等 | 新增 27 个单元测试 |
+
+### 修复记录
+
+| 问题 | 原因 | 修复 |
+|------|------|------|
+| 测试「搜索后关闭弹窗应将查询写入历史」失败 | `rerender(isOpen=false)` 不触发 `onClose`，组件不会保存历史 | 改为按 Escape 键触发 `handleClose` 流程 |
+| 测试「空查询时应显示搜索历史分组」multi-match | header 与每个历史项的 category badge 都包含同一文本 | 使用 `getAllByText` + `tagName === 'DIV'` 过滤 header |
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2261 passed（121 文件），新增 27 个测试 |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过 |
+
+### Git
+
+- 分支：`feature/v13-path3-learning-enhancements`
+- 状态：H2 改动待提交，下一步待用户确认后进入 H3
+
+---
+
 ## 2026-06-21 | v13 Phase C 文档同步 + Phase D 测试/CI 升级完成
 
 ### 文档同步
