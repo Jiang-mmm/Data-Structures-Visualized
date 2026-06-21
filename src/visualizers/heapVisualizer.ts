@@ -3,8 +3,9 @@ import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } fro
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
 import { calculateCenterStart } from '../utils/visualizerLayout'
-import { shouldSkipAnimation } from '../utils/performanceConfig'
-import { DEFAULT_NODE_RADIUS as NODE_RADIUS } from './visualizerConstants'
+
+const NODE_RADIUS = 22
+const LARGE_DATA_THRESHOLD = 30
 
 interface HeapOptions {
   width: number
@@ -179,11 +180,11 @@ export function renderHeap(svg: SVGSVGElement, data: number[], options: HeapOpti
  * @param {Object} [anim] - 动画上下文
  */
 export async function animateInsertHeap(svg: SVGSVGElement, _value: number, data: number[], anim?: Animation) {
-  if (shouldSkipAnimation('heap', data.length)) return
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   const container = select(svg)
   const defaultEase = getDefaultEasing()
 
-  // 查找新插入的节点（DOM 中最后一个堆节点）
+  // Find the newly inserted node (last heap-node in DOM)
   const allNodes = container.selectAll('.heap-node').nodes()
   if (allNodes.length === 0) return
   const newNode = select(allNodes[allNodes.length - 1] as SVGGElement)
@@ -290,7 +291,7 @@ export async function animateExtractHeap(svg: SVGSVGElement, anim?: Animation) {
 
       if (anim?.isAborted?.()) return
 
-      // 高亮左子节点
+      // Highlight left child
       if (!leftGroup.empty()) {
         // 拆分链式过渡为两段顺序 await
         const leftCircle = leftGroup.select('circle')
@@ -309,7 +310,7 @@ export async function animateExtractHeap(svg: SVGSVGElement, anim?: Animation) {
         )
       }
 
-      // 高亮右子节点（如果存在）
+      // Highlight right child if exists
       if (rightGroup && !rightGroup.empty()) {
         // 拆分链式过渡为两段顺序 await
         const rightCircle = rightGroup.select('circle')
@@ -328,7 +329,7 @@ export async function animateExtractHeap(svg: SVGSVGElement, anim?: Animation) {
         )
       }
 
-      // 移动到需要交换的子节点（模拟）
+      // Move to the child that would be swapped (simulated)
       idx = leftIdx
     }
 
@@ -357,7 +358,7 @@ export async function animatePeekHeap(svg: SVGSVGElement, anim?: Animation) {
 
   if (!rootGroup.empty()) {
     if (anim?.isAborted?.()) return
-    // peek 的弹性反弹效果
+    // Elastic bounce effect for peek
     // 拆分链式过渡为两段顺序 await
     const rootCircle = rootGroup.select('circle')
     await transitionEnd(

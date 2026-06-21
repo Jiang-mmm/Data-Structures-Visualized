@@ -3,7 +3,7 @@
 > **版本:** v13.0.0-rc2
 > **更新日期:** 2026-06-21
 > **v13 起点:** [v13 全面代码体检已完成（2026-06-20）](./docs/audit-2026-06-20/audit-merged.md) — 双模型互盲审查 56 条独立问题，4 阶段修复路线已就位
-> **v13 Phase A/B/C/D:** 已完成（2026-06-21）— 路径一修复路线全部结束；统一 schema 校验、devDependencies 版本锁定、动画引擎 FPS 降级/中断、Visualizer 渲染一致性、a11y 与键盘导航、移动端触控、文档同步、Playwright E2E 与 CI 增强；2234 tests / lint 0 errors / typecheck / build / Playwright 20 spec / a11y 17 页 0 violations 全通过
+> **v13 Phase A/B/C/D:** 已完成（2026-06-21）— 路径一修复路线全部结束；统一 schema 校验、devDependencies 版本锁定、动画引擎 FPS 降级/中断、Visualizer 渲染一致性、a11y 与键盘导航、移动端触控、文档同步、Playwright E2E 与 CI 增强；Path 3 H2 全局搜索增强（fuzzy 匹配、搜索历史、复杂度过滤、分类展示）已完成；2261 tests / lint 0 errors / typecheck / build / Playwright 20 spec / a11y 17 页 0 violations 全通过
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 
@@ -29,7 +29,7 @@
 | **红黑树 RedBlackTree** | 插入、删除、查找、Fixup 着色 + 左右旋转 |
 | **算法对比 SortCompare** | 12 种排序算法并行对比，实时进度追踪，性能图表 |
 | **图算法 GraphAlgorithm** | BFS、DFS、Dijkstra、拓扑排序、Bellman-Ford、Floyd-Warshall、Prim、Kruskal（8 种算法）+ 学习模式 |
-| **全局搜索 GlobalSearch** | Ctrl/Cmd+K 唤起，数据结构/算法/页面快速跳转，键盘导航 |
+| **全局搜索 GlobalSearch** | Ctrl/Cmd+K 唤起，fuzzy 模糊匹配、搜索历史、复杂度过滤、分类展示 |
 
 ## 关键特性
 
@@ -60,7 +60,7 @@
 - **响应式布局** — 适配不同屏幕尺寸，侧边栏可折叠，移动端触控优化
 - **性能监控面板** — FPS/内存实时显示，帧率自适应动画降级
 - **网络离线检测** — 离线状态实时提示
-- **单元测试覆盖** — 2234 tests（118 个测试文件），核心逻辑覆盖率 > 80%
+- **单元测试覆盖** — 2261 tests（121 个测试文件），核心逻辑覆盖率 > 80%
 - **E2E 测试覆盖** — 12 文件 317 用例，Chromium + Firefox 双浏览器，Playwright 自动化
 - **无障碍（a11y）** — axe-core WCAG 2 AA 零 violations，全局焦点可见性
 - **错误边界恢复** — ErrorBoundary 异常 UI + safeAnimate 统一错误恢复

@@ -1,6 +1,6 @@
 # 数据结构学习助手 — Architecture 文档
 
-> **版本:** v13.0.0-rc2
+> **版本:** v13.0.0-rc3（Path 3 H2 进行中）
 > **更新日期:** 2026-06-21
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 
@@ -67,6 +67,16 @@ v13 起，每个重大版本（v14+）都应采用 **双模型互盲 + 集中仲
 | D3 mock 增强 | `src/__tests__/visualizers/d3MockHelper.ts` | 调用记录与链式 forceSimulation |
 | Snapshot 测试 | `src/__tests__/visualizers/arrayVisualizer.snapshot.test.ts` | SVG 结构快照 |
 | CI 增强 | `.github/workflows/ci.yml` | a11y、覆盖率/构建/E2E 报告 artifact |
+
+### Path 3 H2 全局搜索增强（2026-06-21）
+
+| 模块 | 文件 | 说明 |
+|------|------|------|
+| Fuzzy 匹配 | `src/utils/fuzzySearch.ts` | LCS 轻量模糊匹配（新建） |
+| 搜索历史 | `src/hooks/useSearchHistory.ts` | localStorage 持久化 Hook（新建） |
+| 搜索索引 | `src/data/searchIndex.ts` | `SearchItem` 扩展 `complexity` / `tags` |
+| 组件 UI | `src/components/GlobalSearch.tsx` | 集成模糊匹配、历史、复杂度过滤、分类展示 |
+| i18n | `src/i18n/locales.ts` | 新增搜索历史、复杂度、分类相关键 |
 
 ---
 

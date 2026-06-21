@@ -4,6 +4,32 @@
 
 ---
 
+## [v13.0.0-rc3] - 2026-06-21
+
+### Path 3 H2 — 全局搜索增强
+- 新增 `src/utils/fuzzySearch.ts`：LCS 轻量模糊匹配，含连续匹配/首字符/大小写敏感加权
+- 新增 `src/hooks/useSearchHistory.ts`：localStorage 持久化（上限 10 条、去重），支持单个/全部清除
+- 扩展 `src/data/searchIndex.ts`：`SearchItem` 新增 `complexity` / `tags`，从学习步骤描述提取时间/空间复杂度
+- 改造 `src/components/GlobalSearch.tsx`：集成 fuzzy 匹配、搜索历史展示、复杂度过滤（O(1)/O(log n)/O(n)/O(n log n)/O(n²)）、page/learning/history 分类展示（sticky header）
+- 补充 `src/i18n/locales.ts`：新增历史、复杂度、分类相关键
+
+### Tests
+- 新增 `src/__tests__/utils/fuzzySearch.test.ts`（10 tests）
+- 新增 `src/__tests__/hooks/useSearchHistory.test.ts`（8 tests）
+- 新增 `src/__tests__/data/searchIndex.test.ts`（4 tests）
+- 更新 `src/__tests__/components/GlobalSearch.test.tsx`（18 tests，含历史/fuzzy/分类）
+
+### Verification
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2261 passed（121 文件），新增 27 个测试 |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过 |
+| Git commit | `5ccbc00` |
+
+---
+
 ## [v13.0.0-rc2] - 2026-06-21
 
 ### Phase C — 文档完善

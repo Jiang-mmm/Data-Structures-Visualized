@@ -1,6 +1,6 @@
 # 数据结构学习助手 — Code Wiki
 
-> **版本:** v13.0.0-rc2
+> **版本:** v13.0.0-rc3（Path 3 H2 完成）
 > **日期:** 2026-06-21
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **部署:** GitHub Pages（base path `/Data-Structures-Visualized/`）
@@ -50,7 +50,7 @@
 | **红黑树 RedBlackTree** | 插入、删除、查找、Fixup 着色 + 左右旋转 | 树状布局 + 红黑节点着色 + 旋转动画 |
 | **算法对比 SortCompare** | 12 种排序算法并行对比 | 多算法并行可视化 + PerformanceChart |
 | **图算法 GraphAlgorithm** | BFS、DFS、Dijkstra、拓扑排序、Bellman-Ford、Floyd-Warshall、Prim、Kruskal | SVG 可视化 + 学习模式 + 复杂度对比 |
-| **全局搜索 GlobalSearch** | Ctrl/Cmd+K 唤起、数据结构/算法/页面快速跳转 | 键盘上下导航 + Enter 选中 + 模糊匹配 |
+| **全局搜索 GlobalSearch** | Ctrl/Cmd+K 唤起、fuzzy 模糊匹配、搜索历史、复杂度过滤、page/learning/history 分类展示 |
 
 ### 1.3 关键特性
 
@@ -61,7 +61,7 @@
 - **Undo/Redo 支持** — 基于历史栈的状态回溯（最多 20 步，动画期间自动禁用）
 - **学习模式** — 37 个算法的学习步骤配置，含代码片段、复杂度、提示
 - **学习路径** — 15 个数据结构的学习顺序与依赖关系可视化
-- **全局搜索** — Ctrl/Cmd+K 快捷键唤起，支持数据结构/算法/页面快速跳转，键盘上下导航 + Enter 选中
+- **全局搜索** — Ctrl/Cmd+K 唤起，支持 fuzzy 模糊匹配、搜索历史（localStorage 持久化）、复杂度过滤、page/learning/history 分类展示，键盘上下导航 + Enter 选中
 - **多语言支持** — 中文 + 英文，自研轻量 i18n 实现
 - **多主题支持** — 明暗模式（light/dark/system）+ 4 套颜色主题
 - **PWA 支持** — 离线缓存、可安装、自动更新
@@ -193,7 +193,7 @@ App.tsx
 
 ```
 src/
-├── __tests__/                 # 单元测试（118 个文件）
+├── __tests__/                 # 单元测试（121 个文件）
 │   ├── __snapshots__/
 │   ├── pages/                 # 17 个页面测试 + testUtils.tsx
 │   ├── visualizers/           # 14 个可视化测试 + d3MockHelper.ts
@@ -211,11 +211,11 @@ src/
 │   └── learningPath.ts        # 学习路径配置
 ├── data/
 │   └── searchIndex.ts         # 全局搜索索引数据源
-├── hooks/                     # 25 个自定义 hooks
+├── hooks/                     # 27 个自定义 hooks
 ├── i18n/                      # 国际化（locales.ts + useI18n.ts）
 ├── pages/                     # 17 个页面组件
 ├── types/                     # 类型声明（hooks.d.ts + learning.d.ts）
-├── utils/                     # 11 个工具模块
+├── utils/                     # 12 个工具模块
 ├── visualizers/               # 14 个可视化器
 ├── App.tsx                    # 根组件
 ├── index.css                  # 全局样式 + Tailwind @theme
@@ -249,7 +249,7 @@ src/
 - `Layout.tsx`：整体布局骨架（Sidebar + main + 辅助组件 + GlobalSearch 挂载 + Ctrl/Cmd+K 监听）
 - `Sidebar.tsx`：左侧导航栏，16 个结构入口 + 主题切换 + 语言切换；导出 `STRUCTURE_KEYS` 供 GlobalSearch 复用
 - `PageHeader.tsx`：页面标题区
-- `GlobalSearch.tsx`：全局搜索弹窗（Ctrl/Cmd+K 唤起），键盘上下导航 + Enter 选中，数据源来自 `src/data/searchIndex.ts`
+- `GlobalSearch.tsx`：全局搜索弹窗（Ctrl/Cmd+K 唤起），fuzzy 匹配、搜索历史、复杂度过滤、分类展示，数据源来自 `src/data/searchIndex.ts`
 
 **可视化容器类**：
 - `Visualizer.tsx`：通用 SVG 容器，封装缩放/平移/网格/触摸捏合，接收 `renderFn` 渲染回调
@@ -287,7 +287,7 @@ src/
 - `KeyboardHelp.tsx`：键盘快捷键帮助
 - `ErrorBoundary.tsx`：错误边界
 
-### 3.4 Hooks 层职责（26 个 hooks）
+### 3.4 Hooks 层职责（27 个 hooks）
 
 **数据结构状态 hooks（14 个，均基于 `useDataStructureState`）**：
 - `useArrayState`、`useStackState`、`useQueueState`、`useLinkedListState`
@@ -310,6 +310,7 @@ src/
 - `useLearningProgress`：学习进度追踪
 - `useSharedData`：URL 分享数据加载（泛型函数 `useSharedData<T>`，TypeScript 从 `loadData` 自动推断类型 `T`，消除 `as any` 滥用）
 - `usePageTracker`：页面访问追踪
+- `useSearchHistory`：搜索历史（localStorage 持久化，上限 10 条，去重）
 
 ### 3.5 Visualizers 层职责（14 个可视化器）
 
@@ -363,12 +364,13 @@ src/
 - `unionFind.ts`：并查集算法（路径压缩 + 按秩合并 + 连通性查询）
 - `redBlackTree.ts`：红黑树算法（插入 + fixup + 左右旋转 + 着色，递归对象表示 + 深拷贝不可变更新）
 
-### 3.7 Utils 层职责（11 个工具模块）
+### 3.7 Utils 层职责（12 个工具模块）
 
 | 工具文件 | 职责 |
 |---------|------|
 | `animationEngine.ts` | **动画引擎核心**。全局速度倍率、5 种预设、性能模式、FPS 监控、`duration()`/`wait()`/`transition()`/`createAnimation()`/`sequence()`/`highlightElement()` 等。所有动画时长的唯一来源 |
 | `d3Imports.ts` | **D3 统一导入**。解决 Vite 预打包导致 `d3-transition` 原型补丁失效的双实例问题。导出 select/selectAll/drag/force*/ease* |
+| `fuzzySearch.ts` | **模糊搜索**。`fuzzyMatch(query, text)` 基于 LCS 轻量字符顺序匹配，支持连续匹配/首字符/大小写敏感加权评分 |
 | `validate.ts` | **输入验证**。`sanitizeInput`（XSS 过滤）、`validateNumericInput`、`getValidationError`、`validateImportData` |
 | `themeColors.ts` | **主题颜色系统**。4 套调色板 × light/dark，`getColors()`/`detectDarkMode()`/`ensureGradientDefs()`/`gradUrl()`，基于外部 store + `useSyncExternalStore` |
 | `dataExport.ts` | 数据导出/导入 JSON 文件 |
@@ -1177,7 +1179,7 @@ manualChunks(id) {
 | E2E 测试 | Playwright | 2 个 `.spec.ts` + 原有自定义 runner | 跨浏览器（chromium + firefox），a11y 动态覆盖 17 页 |
 | 质量检查 | 自定义脚本 | 1 个 | `scripts/check-bundle.js` |
 
-**当前测试基线**：2234 个单元测试，0 失败，全部通过；Playwright 20 个 spec 全绿。
+**当前测试基线**：2261 个单元测试，121 文件，0 失败，全部通过；Playwright 20 个 spec 全绿。
 
 ### 8.2 单元测试
 

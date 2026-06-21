@@ -37,14 +37,14 @@ docs/
 
 | 文档 | 版本 | 最后更新 | 用途 |
 |------|------|----------|------|
-| [README.md](../README.md) | v12.0 | 2026-06-20 | 项目说明与快速开始 |
+| [README.md](../README.md) | v13.0.0-rc3 | 2026-06-21 | 项目说明与快速开始 |
 | [CLAUDE.md](../CLAUDE.md) | v3.7 | 2026-06-20 | AI 协作规则（用户要求独立保留） |
-| [CHANGELOG.md](../CHANGELOG.md) | v13.0.0-rc1 | 2026-06-20 | 完整变更日志 |
-| [ARCHITECTURE.md](../ARCHITECTURE.md) | v12.0 | 2026-06-20 | 架构设计与技术决策 |
-| [PROJECT_SUMMARY.md](../PROJECT_SUMMARY.md) | v12.0 | 2026-06-20 | 项目总览与统计数据 |
-| [CODE_WIKI.md](../CODE_WIKI.md) | v12.0 | 2026-06-20 | 代码导航与说明 |
-| [TODO.md](../TODO.md) | v12.0 | 2026-06-20 | 待办任务清单 |
-| [WORKLOG.md](../WORKLOG.md) | 持续更新 | 2026-06-20 | 工作日志 |
+| [CHANGELOG.md](../CHANGELOG.md) | v13.0.0-rc3 | 2026-06-21 | 完整变更日志 |
+| [ARCHITECTURE.md](../ARCHITECTURE.md) | v13.0.0-rc3 | 2026-06-21 | 架构设计与技术决策 |
+| [PROJECT_SUMMARY.md](../PROJECT_SUMMARY.md) | v13.0.0-rc3 | 2026-06-21 | 项目总览与统计数据 |
+| [CODE_WIKI.md](../CODE_WIKI.md) | v13.0.0-rc3 | 2026-06-21 | 代码导航与说明 |
+| [TODO.md](../TODO.md) | v13.0.0-rc3 | 2026-06-21 | 待办任务清单 |
+| [WORKLOG.md](../WORKLOG.md) | 持续更新 | 2026-06-21 | 工作日志 |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | 活跃 | 持续更新 | 贡献指南 |
 
 ### docs/ 活跃文档
@@ -71,7 +71,8 @@ docs/
 | [2026-06-19-home-color-unification-and-avl-traversal.md](./superpowers/plans/2026-06-19-home-color-unification-and-avl-traversal.md) | 2026-06-19 | ✅ 已完成 |
 | [2026-06-19-unified-info-panel.md](./superpowers/plans/2026-06-19-unified-info-panel.md) | 2026-06-19 | ✅ 已完成 |
 | [2026-06-20-v12-advanced-data-structures-iteration-plan.md](./superpowers/plans/2026-06-20-v12-advanced-data-structures-iteration-plan.md) | 2026-06-20 | ✅ 已完成 |
-| [2026-06-20-v13-code-audit-plan.md](./superpowers/plans/2026-06-20-v13-code-audit-plan.md) | 2026-06-20 | ⏳ 启动中 |
+| [2026-06-20-v13-code-audit-plan.md](./superpowers/plans/2026-06-20-v13-code-audit-plan.md) | 2026-06-20 | ✅ 已完成（Phase A/B/C/D 全部结束） |
+| [2026-06-21-v13-phase-h-learning-enhancements.md](./superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md) | 2026-06-21 | ⏳ H2 已完成，H3/H1 待启动 |
 
 ### audit-2026-06-20/ v13 全面代码体检
 
@@ -126,7 +127,7 @@ docs/
 ### 当前版本状态
 | 文档 | 当前版本 | 上一版本 | 升级日期 |
 |------|----------|----------|----------|
-| 项目整体 | v13.0.0-rc1 | v12.0.0 | 2026-06-20 |
+| 项目整体 | v13.0.0-rc3 | v12.0.0 | 2026-06-20 |
 | iteration-plan | v11.0.1 | v10.0.0 | 2026-06-19 |
 | PRD | v12.0 | - | 2026-06-20 |
 
