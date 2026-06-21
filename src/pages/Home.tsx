@@ -28,6 +28,7 @@ export default function Home() {
     { path: '/avl-tree', name: t('avlTree.title'), en: 'AVLTree', icon: '◇', desc: t('avlTree.subtitle'), ops: [t('avlTree.insert'), t('avlTree.search'), t('avlTree.inorder')], colorIdx: 1 },
     { path: '/red-black-tree', name: t('redBlackTree.title'), en: 'RedBlackTree', icon: '◉', desc: t('redBlackTree.subtitle'), ops: [t('redBlackTree.insert'), t('redBlackTree.search'), t('redBlackTree.inorder')], colorIdx: 1 },
     { path: '/b-tree', name: t('bTree.title'), en: 'BTree', icon: '⊞', desc: t('bTree.subtitle'), ops: [t('bTree.insert'), t('bTree.search'), t('bTree.inorder')], colorIdx: 1 },
+    { path: '/segment-tree', name: t('segmentTree.title'), en: 'SegmentTree', icon: '⊟', desc: t('segmentTree.subtitle'), ops: [t('segmentTree.build'), t('segmentTree.query'), t('segmentTree.update')], colorIdx: 1 },
     { path: '/heap', name: t('heap.title'), en: 'Heap', icon: '▲', desc: t('heap.subtitle'), ops: [t('heap.insert'), t('heap.extractMax'), t('heap.peek')], colorIdx: 1 },
     { path: '/trie', name: t('trie.title'), en: 'Trie', icon: '◈', desc: t('trie.subtitle'), ops: [t('trie.insert'), t('trie.search'), t('trie.prefixSearch')], colorIdx: 1 },
     { path: '/skip-list', name: t('skipList.title'), en: 'SkipList', icon: '≡', desc: t('skipList.subtitle'), ops: [t('skipList.insert'), t('skipList.search'), t('skipList.delete')], colorIdx: 1 },

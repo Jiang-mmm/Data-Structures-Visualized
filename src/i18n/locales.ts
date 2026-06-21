@@ -100,6 +100,28 @@ export interface Locale {
     leaf: string
     internal: string
   }
+  segmentTree: {
+    title: string
+    subtitle: string
+    build: string
+    query: string
+    update: string
+    rangeStart: string
+    rangeEnd: string
+    index: string
+    value: string
+    buildPlaceholder: string
+    buildEmpty: string
+    buildInvalid: string
+    queryInvalid: string
+    queryOutOfRange: string
+    updateInvalid: string
+    updateOutOfRange: string
+    nodeTitle: string
+    leaf: string
+    internal: string
+    arrayLabel: string
+  }
   graph: {
     title: string
     subtitle: string
@@ -231,6 +253,7 @@ export interface Locale {
     avlTree: string
     redBlackTree: string
     bTree: string
+    segmentTree: string
     graph: string
     sort: string
     hash: string
@@ -297,6 +320,9 @@ export interface Locale {
     emptyRedBlackTreeDesc: string
     emptyBTree: string
     emptyBTreeDesc: string
+    emptySegmentTree: string
+    emptySegmentTreeShort: string
+    emptySegmentTreeDesc: string
     emptyGraph: string
     emptyGraphDesc: string
     emptyHash: string
@@ -537,6 +563,7 @@ export interface Locale {
     avlTreeLabel: string
     redBlackTreeLabel: string
     bTreeLabel: string
+    segmentTreeLabel: string
     graphLabel: string
     sortLabel: string
     hashLabel: string
@@ -750,6 +777,15 @@ export interface Locale {
     bTreeLogSearchFound: string
     bTreeLogSearchNotFound: string
     bTreeLogInorder: string
+    segmentTreeBuildEmpty: string
+    segmentTreeLogBuild: string
+    segmentTreeBuildSuccess: string
+    segmentTreeLogQuery: string
+    segmentTreeQueryInvalid: string
+    segmentTreeQuerySuccess: string
+    segmentTreeUpdateOutOfRange: string
+    segmentTreeLogUpdate: string
+    segmentTreeUpdateSuccess: string
     graphLogAddNode: string
     graphNodeAdded: string
     graphSelfLoop: string
@@ -991,6 +1027,28 @@ export const zh: Locale = {
     leaf: '叶子节点',
     internal: '内部节点',
   },
+  segmentTree: {
+    title: '线段树',
+    subtitle: '区间查询 · 单点更新 · O(log n)',
+    build: '构建',
+    query: '查询',
+    update: '更新',
+    rangeStart: '区间起点',
+    rangeEnd: '区间终点',
+    index: '下标',
+    value: '值',
+    buildPlaceholder: '数组 (如 1,2,3,4)',
+    buildEmpty: '请输入数组',
+    buildInvalid: '数组格式无效（1-50 个整数）',
+    queryInvalid: '请输入有效的区间',
+    queryOutOfRange: '区间超出范围',
+    updateInvalid: '请输入有效的下标和值',
+    updateOutOfRange: '下标超出范围',
+    nodeTitle: '区间: {range}\n求和: {sum}\n类型: {type}',
+    leaf: '叶子节点',
+    internal: '内部节点',
+    arrayLabel: '数组',
+  },
   graph: {
     title: '图',
     subtitle: '网络结构 · BFS / DFS · 最短路径',
@@ -1122,6 +1180,7 @@ export const zh: Locale = {
     avlTree: 'AVL 树',
     redBlackTree: '红黑树',
     bTree: 'B 树',
+    segmentTree: '线段树',
     graph: '图',
     sort: '排序',
     hash: '哈希表',
@@ -1188,6 +1247,9 @@ export const zh: Locale = {
     emptyRedBlackTreeDesc: '点击插入按钮添加节点',
     emptyBTree: 'B 树为空',
     emptyBTreeDesc: '点击插入按钮添加节点',
+    emptySegmentTree: '线段树为空',
+    emptySegmentTreeShort: '空线段树 · 请构建数组',
+    emptySegmentTreeDesc: '输入数组并点击构建按钮创建线段树',
     emptyGraph: '图为空',
     emptyGraphDesc: '点击添加节点按钮创建图',
     emptyHash: '哈希表为空',
@@ -1233,6 +1295,7 @@ export const zh: Locale = {
     avlTreeLabel: 'AVL 树可视化',
     redBlackTreeLabel: '红黑树可视化',
     bTreeLabel: 'B 树可视化',
+    segmentTreeLabel: '线段树可视化',
     graphLabel: '图可视化',
     sortLabel: '排序可视化',
     hashLabel: '哈希表可视化',
@@ -1641,6 +1704,15 @@ export const zh: Locale = {
     bTreeLogSearchFound: 'search({value}) → 找到，深度: {depth}',
     bTreeLogSearchNotFound: 'search({value}) → 未找到',
     bTreeLogInorder: '中序遍历（有序）: [{data}]',
+    segmentTreeBuildEmpty: '请先输入数组',
+    segmentTreeLogBuild: 'build([{data}]) → 节点数: {count}',
+    segmentTreeBuildSuccess: '构建线段树（{count} 个节点）',
+    segmentTreeLogQuery: 'query({start}, {end}) → 区间和: {sum}',
+    segmentTreeQueryInvalid: '请输入有效的区间',
+    segmentTreeQuerySuccess: '区间 [{start}, {end}] 的和为 {sum}',
+    segmentTreeUpdateOutOfRange: '下标超出范围',
+    segmentTreeLogUpdate: 'update({index}, {value}) → 节点数: {count}',
+    segmentTreeUpdateSuccess: '更新下标 {index} 为 {value}',
     graphLogAddNode: 'addNode("{id}") → 节点数: {count}',
     graphNodeAdded: '添加节点 {id}',
     graphSelfLoop: '不能连接自身',
@@ -1925,6 +1997,28 @@ export const en: Locale = {
     leaf: 'Leaf node',
     internal: 'Internal node',
   },
+  segmentTree: {
+    title: 'Segment Tree',
+    subtitle: 'Range Query · Point Update · O(log n)',
+    build: 'Build',
+    query: 'Query',
+    update: 'Update',
+    rangeStart: 'Range Start',
+    rangeEnd: 'Range End',
+    index: 'Index',
+    value: 'Value',
+    buildPlaceholder: 'Array (e.g. 1,2,3,4)',
+    buildEmpty: 'Please enter an array',
+    buildInvalid: 'Invalid array format (1-50 integers)',
+    queryInvalid: 'Please enter a valid range',
+    queryOutOfRange: 'Range out of bounds',
+    updateInvalid: 'Please enter a valid index and value',
+    updateOutOfRange: 'Index out of bounds',
+    nodeTitle: 'Range: {range}\nSum: {sum}\nType: {type}',
+    leaf: 'Leaf node',
+    internal: 'Internal node',
+    arrayLabel: 'Array',
+  },
   graph: {
     title: 'Graph',
     subtitle: 'Network Structure · Traversal Algorithms · Shortest Path',
@@ -2056,6 +2150,7 @@ export const en: Locale = {
     avlTree: 'AVL Tree',
     redBlackTree: 'Red-Black Tree',
     bTree: 'B-Tree',
+    segmentTree: 'Segment Tree',
     graph: 'Graph',
     sort: 'Sorting',
     hash: 'Hash Table',
@@ -2122,6 +2217,9 @@ export const en: Locale = {
     emptyRedBlackTreeDesc: 'Click insert to add nodes',
     emptyBTree: 'B-Tree is empty',
     emptyBTreeDesc: 'Click insert to add nodes',
+    emptySegmentTree: 'Segment Tree is empty',
+    emptySegmentTreeShort: 'Empty Segment Tree · Please build',
+    emptySegmentTreeDesc: 'Enter an array and click build to create the segment tree',
     emptyGraph: 'Graph is empty',
     emptyGraphDesc: 'Click add node to create the graph',
     emptyHash: 'Hash table is empty',
@@ -2167,6 +2265,7 @@ export const en: Locale = {
     avlTreeLabel: 'AVL tree visualization',
     redBlackTreeLabel: 'Red-Black tree visualization',
     bTreeLabel: 'B-Tree visualization',
+    segmentTreeLabel: 'Segment Tree visualization',
     graphLabel: 'Graph visualization',
     sortLabel: 'Sorting visualization',
     hashLabel: 'Hash table visualization',
@@ -2575,6 +2674,15 @@ export const en: Locale = {
     bTreeLogSearchFound: 'search({value}) → found, depth: {depth}',
     bTreeLogSearchNotFound: 'search({value}) → not found',
     bTreeLogInorder: 'Inorder (sorted): [{data}]',
+    segmentTreeBuildEmpty: 'Please enter an array first',
+    segmentTreeLogBuild: 'build([{data}]) → nodes: {count}',
+    segmentTreeBuildSuccess: 'Built segment tree ({count} nodes)',
+    segmentTreeLogQuery: 'query({start}, {end}) → sum: {sum}',
+    segmentTreeQueryInvalid: 'Please enter a valid range',
+    segmentTreeQuerySuccess: 'Sum of range [{start}, {end}] is {sum}',
+    segmentTreeUpdateOutOfRange: 'Index out of bounds',
+    segmentTreeLogUpdate: 'update({index}, {value}) → nodes: {count}',
+    segmentTreeUpdateSuccess: 'Updated index {index} to {value}',
     graphLogAddNode: 'addNode("{id}") → nodes: {count}',
     graphNodeAdded: 'Added node {id}',
     graphSelfLoop: 'Cannot connect to self',

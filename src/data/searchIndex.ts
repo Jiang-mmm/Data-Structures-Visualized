@@ -30,6 +30,7 @@ const ALGORITHM_KEY_TO_PATH: Record<string, string> = {
   avlTree: '/avl-tree',
   redBlackTree: '/red-black-tree',
   bTree: '/b-tree',
+  segmentTree: '/segment-tree',
   skipList: '/skip-list',
   unionFind: '/union-find',
   graph: '/graph',

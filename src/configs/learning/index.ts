@@ -24,6 +24,7 @@ import { treeConfig } from './tree.config'
 import { avlTreeConfig } from './avlTree.config'
 import { redBlackTreeConfig } from './redBlackTree.config'
 import { bTreeConfig } from './bTree.config'
+import { segmentTreeConfig } from './segmentTree.config'
 import { hashConfig } from './hash.config'
 import { arrayConfig } from './array.config'
 import { stackConfig } from './stack.config'
@@ -65,6 +66,7 @@ export const learningConfigs = {
   avlTree: avlTreeConfig,
   redBlackTree: redBlackTreeConfig,
   bTree: bTreeConfig,
+  segmentTree: segmentTreeConfig,
   hash: hashConfig,
   array: arrayConfig,
   stack: stackConfig,

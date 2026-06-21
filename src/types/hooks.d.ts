@@ -321,6 +321,83 @@ export interface BTreeState extends DataStructureState<BTreeNode | null> {
   keyCount: number;
 }
 
+/**
+ * 线段树类型定义
+ *
+ * 数据表示：递归对象（SegmentTreeNode），每个节点存储区间边界、sum 值和左右子节点
+ * 状态层存储原始数组（number[]），线段树从数组派生
+ */
+
+/** 线段树节点（递归对象表示） */
+export interface SegmentTreeNode {
+  /** 区间左端点（闭区间） */
+  start: number;
+  /** 区间右端点（闭区间） */
+  end: number;
+  /** 区间内元素之和 */
+  sum: number;
+  /** 左子节点（叶子节点为 null） */
+  left: SegmentTreeNode | null;
+  /** 右子节点（叶子节点为 null） */
+  right: SegmentTreeNode | null;
+}
+
+/** 扁平化节点（供可视化器使用） */
+export interface SegmentTreeFlattenedNode {
+  /** 节点唯一标识（基于层序遍历顺序） */
+  id: string;
+  /** 区间左端点 */
+  start: number;
+  /** 区间右端点 */
+  end: number;
+  /** 区间求和值 */
+  sum: number;
+  /** 子节点 id 数组 */
+  childrenIds: string[];
+  /** 父节点 id（根节点为空字符串） */
+  parent: string;
+  /** 节点所在层级（根为 0） */
+  level: number;
+  /** 是否为叶子节点 */
+  isLeaf: boolean;
+  /** x 坐标占位（由可视化器填充） */
+  x: number;
+  /** y 坐标占位（由可视化器填充） */
+  y: number;
+  /** 是否高亮（供动画使用） */
+  highlighted: boolean;
+}
+
+/** 扁平化边（供可视化器使用） */
+export interface SegmentTreeFlattenedEdge {
+  /** 起点 id（父节点） */
+  from: string;
+  /** 终点 id（子节点） */
+  to: string;
+}
+
+/** 扁平化线段树结构（供可视化器使用） */
+export interface SegmentTreeFlattened {
+  nodes: SegmentTreeFlattenedNode[];
+  edges: SegmentTreeFlattenedEdge[];
+  /** 原始数组（供可视化器展示底层数据） */
+  originalArray: number[];
+}
+
+/** 线段树状态接口（继承数据结构状态基座） */
+export interface SegmentTreeState extends DataStructureState<number[]> {
+  /** 从数组构建线段树 */
+  build: (arr: number[]) => void;
+  /** 区间查询，返回求和结果与访问路径 */
+  query: (start: number, end: number) => { sum: number; path: { start: number; end: number; sum: number }[] };
+  /** 单点更新 */
+  update: (index: number, value: number) => void;
+  /** 获取扁平化结构（供可视化器） */
+  getFlattened: () => SegmentTreeFlattened;
+  /** 节点总数 */
+  nodeCount: number;
+}
+
 export interface VisualizerReturn {
   containerRef: React.RefObject<HTMLDivElement>;
   svgRef: React.RefObject<SVGSVGElement>;

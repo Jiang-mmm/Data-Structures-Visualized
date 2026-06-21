@@ -18,6 +18,7 @@ const TriePage = lazy(() => import('./pages/TriePage'))
 const AvlTreePage = lazy(() => import('./pages/AvlTreePage'))
 const RedBlackTreePage = lazy(() => import('./pages/RedBlackTreePage'))
 const BTreePage = lazy(() => import('./pages/BTreePage'))
+const SegmentTreePage = lazy(() => import('./pages/SegmentTreePage'))
 const SkipListPage = lazy(() => import('./pages/SkipListPage'))
 const UnionFindPage = lazy(() => import('./pages/UnionFindPage'))
 const SortComparePage = lazy(() => import('./pages/SortComparePage'))
@@ -63,6 +64,7 @@ function App() {
               <Route path="/avl-tree" element={<AvlTreePage />} />
               <Route path="/red-black-tree" element={<RedBlackTreePage />} />
               <Route path="/b-tree" element={<BTreePage />} />
+              <Route path="/segment-tree" element={<SegmentTreePage />} />
               <Route path="/skip-list" element={<SkipListPage />} />
               <Route path="/union-find" element={<UnionFindPage />} />
               <Route path="/compare" element={<SortComparePage />} />
