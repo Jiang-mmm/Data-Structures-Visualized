@@ -1,6 +1,6 @@
 # 数据结构学习助手 — Code Wiki
 
-> **版本:** v13.0.0 GA（Path 3 H2/H3/H1 全部完成，学习体验闭环）
+> **版本:** v14.0.0 GA（D1 图算法测试 + G1 B-Tree + G2 Segment Tree + G3 双向链表 + F2 算法接入指南全部完成）
 > **日期:** 2026-06-22
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **部署:** GitHub Pages（base path `/Data-Structures-Visualized/`）

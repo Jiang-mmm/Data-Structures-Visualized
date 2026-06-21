@@ -11,14 +11,75 @@
 | 项 | 当前值 |
 |---|---|
 | **项目名称** | ds-visualizer（数据结构学习助手） |
-| **当前版本** | v13.0.0 GA（Path 3 H2/H3/H1 全部完成，学习体验闭环） |
+| **当前版本** | v14.0.0 GA（D1 图算法测试 + G1 B-Tree + G2 Segment Tree + G3 双向链表 + F2 算法接入指南全部完成） |
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 |
 | **当前分支** | `feature/v13-path3-learning-enhancements` |
-| **基线状态** | 2280 单元测试全绿 / ESLint 0 errors（65 warnings） / 生产构建通过 / Playwright 20 个 spec 全绿 / a11y 17 页 0 critical/serious |
+| **基线状态** | 2526 单元测试全绿 / ESLint 0 errors（67 warnings） / 生产构建通过 / 17 种数据结构 / 40 个学习配置 |
 
 ---
 
 ## 2. 最近完成的工作
+
+### 2026-06-22 | v14.0.0 GA — 内容扩张完成
+
+#### D1 — 图算法测试补齐
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 测试 | `src/__tests__/algorithms/graph/graphAlgorithms.test.ts` | 46 个测试覆盖 Bellman-Ford（10）、Floyd-Warshall（10）、Prim（10）、Kruskal（11）、注册（5） |
+
+#### G1 — B-Tree 数据结构
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 算法 | `src/algorithms/bTree.ts` | 多路搜索树，insert + split、search、inorder、validate |
+| Hook | `src/hooks/useBTreeState.ts` | 状态管理 + localStorage + undo/redo |
+| 可视化器 | `src/visualizers/bTreeVisualizer.ts` | D3 多路树可视化 |
+| 页面 | `src/pages/BTreePage.tsx` | 插入/搜索/中序/重置 |
+| 学习配置 | `src/configs/learning/bTree.config.ts` | 7 步学习配置 |
+| 类型 | `src/types/hooks.d.ts` | BTreeNode / BTreeFlattenedNode / BTreeFlattened / BTreeState |
+| i18n | `src/i18n/locales.ts` | btree 命名空间（24 键，中英文） |
+| 路由/侧边栏/首页 | `App.tsx` / `Sidebar.tsx` / `Home.tsx` | `/b-tree` 路由 + 入口 |
+| 测试 | 4 个测试文件 | 97 个测试（algorithm 41 + hook 30 + visualizer 16 + page 10） |
+
+#### G2 — Segment Tree 数据结构
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 算法 | `src/algorithms/segmentTree.ts` | build / query（区间求和）/ update（点更新） |
+| Hook | `src/hooks/useSegmentTreeState.ts` | 状态管理 + localStorage + undo/redo |
+| 可视化器 | `src/visualizers/segmentTreeVisualizer.ts` | D3 树形可视化 |
+| 页面 | `src/pages/SegmentTreePage.tsx` | build/query/update/reset |
+| 学习配置 | `src/configs/learning/segmentTree.config.ts` | 7 步学习配置 |
+| 类型 | `src/types/hooks.d.ts` | SegmentTreeNode / SegmentTreeFlattened 等 |
+| i18n | `src/i18n/locales.ts` | segmentTree 命名空间（24 键） |
+| 路由/侧边栏/首页 | `App.tsx` / `Sidebar.tsx` / `Home.tsx` | `/segment-tree` 路由 + 入口 |
+| 测试 | 4 个测试文件 | 104 个测试（algorithm 45 + hook 29 + visualizer 20 + page 10） |
+
+#### G3 — 双向链表模式测试
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 测试 | `src/__tests__/pages/LinkedListPage.test.tsx` | 4 个测试覆盖切换按钮可见性、切换到双向、切回单向、动画期间禁用 |
+
+#### F2 — 算法接入指南
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 文档 | `docs/ALGORITHM_INTEGRATION_GUIDE.md` | 7 章节覆盖排序/图算法/数据结构接入、学习配置、可视化器、测试、i18n + checklist |
+
+#### 验证
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2526 passed（132 文件），较 v13 GA 新增 246 个测试 |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| 数据结构总数 | 17（原 15 + B-Tree + Segment Tree） |
+| 学习配置总数 | 40（原 38 + bTree + segmentTree） |
+| Git commits | D1 `d63a07c` / G1 `3d0acca` / G2 `cc6905f` / G3 `0a64d91` / F2 `10c1ad5` |
+
+---
 
 ### 2026-06-22 | v13.0.0 GA — Path 3 H3 + H1 完成
 

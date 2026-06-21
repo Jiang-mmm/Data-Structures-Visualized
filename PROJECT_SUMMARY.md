@@ -1,9 +1,9 @@
-# 数据结构学习助手 v13.0 项目摘要
+# 数据结构学习助手 v14.0 项目摘要
 
 > **更新日期:** 2026-06-22
-> **当前版本:** v13.0.0 GA（Path 3 H2/H3/H1 全部完成，学习体验闭环）
-> **项目状态:** v12 已部署；v13 路径一（Phase A/B/C/D）全部完成；路径三学习体验增强（H2 全局搜索 + H3 SortCompare 学习模式 + H1 测验系统）全部完成，达到 GA 可发布状态
-> **验证基线:** Lint 0 errors / Build 成功 / 2280 单元测试通过（123 文件） / Bundle 预算符合 / Playwright 20 spec 全绿 / a11y 17 页 0 critical/serious / CI matrix Node 20 + 22 全绿
+> **当前版本:** v14.0.0 GA（D1 图算法测试 + G1 B-Tree + G2 Segment Tree + G3 双向链表 + F2 算法接入指南全部完成）
+> **项目状态:** v13 GA 已完成（Path 3 学习体验闭环）；v14 GA 已完成（内容扩张：图算法测试 + B-Tree + Segment Tree + 双向链表测试 + 算法接入指南）
+> **验证基线:** Lint 0 errors / Build 成功 / 2526 单元测试通过（132 文件） / Bundle 预算符合 / 17 种数据结构 / 40 个学习配置
 
 ---
 

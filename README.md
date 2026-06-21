@@ -1,9 +1,9 @@
 # 数据结构学习助手
 
-> **版本:** v13.0.0 GA
+> **版本:** v14.0.0 GA
 > **更新日期:** 2026-06-22
-> **v13 起点:** [v13 全面代码体检已完成（2026-06-20）](./docs/audit-2026-06-20/audit-merged.md) — 双模型互盲审查 56 条独立问题，4 阶段修复路线已就位
-> **v13 GA:** 已完成（2026-06-22）— 路径一修复路线全部结束；Path 3 学习体验闭环（H2 全局搜索增强 + H3 SortComparePage 学习模式 + H1 测验系统）全部完成；2280 tests / lint 0 errors / typecheck / build / Playwright 20 spec / a11y 17 页 0 violations 全通过
+> **v14 起点:** v13 GA 基础上完成内容扩张 — D1 图算法测试补齐 + G1 B-Tree + G2 Segment Tree + G3 双向链表模式 + F2 算法接入指南
+> **v13 GA:** 已完成（2026-06-22）— 路径一修复路线全部结束；Path 3 学习体验闭环（H2 全局搜索增强 + H3 SortComparePage 学习模式 + H1 测验系统）全部完成
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 
@@ -27,6 +27,8 @@
 | **跳表 SkipList** | 插入、删除、搜索、多层索引遍历（概率平衡可视化） |
 | **并查集 UnionFind** | MakeSet、Find、Union（路径压缩 + 按秩合并）、连通性查询 |
 | **红黑树 RedBlackTree** | 插入、删除、查找、Fixup 着色 + 左右旋转 |
+| **B 树 BTree** | 多路搜索树，插入 + 节点分裂、查找、中序遍历 |
+| **线段树 SegmentTree** | 区间求和查询、点更新、build 构建 |
 | **算法对比 SortCompare** | 12 种排序算法并行对比，实时进度追踪，性能图表 |
 | **图算法 GraphAlgorithm** | BFS、DFS、Dijkstra、拓扑排序、Bellman-Ford、Floyd-Warshall、Prim、Kruskal（8 种算法）+ 学习模式 |
 | **全局搜索 GlobalSearch** | Ctrl/Cmd+K 唤起，fuzzy 模糊匹配、搜索历史、复杂度过滤、分类展示 |
@@ -41,7 +43,7 @@
 - **键盘快捷键** — Ctrl+Z 撤销、Ctrl+Shift+Z 重做、R 重置、? 帮助、左右箭头导航 Timeline、Ctrl/Cmd+K 全局搜索
 - **输入验证** — 数值范围 1~99，索引边界检查，非法输入 Toast 提示
 - **导入/导出** — 数据持久化，支持 JSON/CSV 格式导入导出，含版本校验
-- **数据持久化** — 15 种数据结构自动保存/恢复，页面刷新后数据不丢失（localStorage）
+- **数据持久化** — 17 种数据结构自动保存/恢复，页面刷新后数据不丢失（localStorage）
 - **分享功能** — Base64 编码数据到 URL，一键复制分享链接
 - **国际化（i18n）** — 中英文切换，轻量级翻译系统，无第三方依赖
 - **全局搜索** — Ctrl/Cmd+K 快捷键唤起，支持数据结构/算法/页面快速跳转，键盘上下导航 + Enter 选中

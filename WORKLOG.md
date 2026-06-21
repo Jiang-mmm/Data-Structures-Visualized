@@ -2,6 +2,93 @@
 
 ---
 
+## 2026-06-22 | v14.0.0 GA — 内容扩张完成
+
+### 任务范围
+
+按 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第二阶段完成 v14 内容扩张，共 5 个子阶段。
+
+#### D1 — 图算法测试补齐
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| D1-1 测试编写 | `src/__tests__/algorithms/graph/graphAlgorithms.test.ts` | 46 个测试覆盖 Bellman-Ford（10）、Floyd-Warshall（10）、Prim（10）、Kruskal（11）、注册（5） |
+
+注：4 个图算法（Bellman-Ford / Floyd-Warshall / Prim / Kruskal）此前已实现但缺测试，本次仅补齐测试。
+
+#### G1 — B-Tree 数据结构
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| G1-1 算法 | `src/algorithms/bTree.ts` | 多路搜索树，insert + split、search、inorder、validate |
+| G1-2 Hook | `src/hooks/useBTreeState.ts` | 状态管理 + localStorage + undo/redo |
+| G1-3 可视化器 | `src/visualizers/bTreeVisualizer.ts` | D3 多路树可视化 |
+| G1-4 页面 | `src/pages/BTreePage.tsx` | 插入/搜索/中序/重置 |
+| G1-5 学习配置 | `src/configs/learning/bTree.config.ts` | 7 步学习配置 |
+| G1-6 类型 | `src/types/hooks.d.ts` | BTreeNode / BTreeFlattenedNode / BTreeFlattened / BTreeState |
+| G1-7 i18n | `src/i18n/locales.ts` | btree 命名空间（24 键，中英文） |
+| G1-8 路由/侧边栏/首页 | `App.tsx` / `Sidebar.tsx` / `Home.tsx` | `/b-tree` 路由 + 入口 |
+| G1-9 配置注册 | `src/configs/learning/index.ts` | 注册 `bTree`（38 → 39） |
+| G1-10 搜索索引 | `src/data/searchIndex.ts` | 搜索入口 |
+| G1-11 测试 | 4 个测试文件 | 97 个测试（algorithm 41 + hook 30 + visualizer 16 + page 10） |
+
+#### G2 — Segment Tree 数据结构
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| G2-1 算法 | `src/algorithms/segmentTree.ts` | build / query（区间求和）/ update（点更新） |
+| G2-2 Hook | `src/hooks/useSegmentTreeState.ts` | 状态管理 + localStorage + undo/redo |
+| G2-3 可视化器 | `src/visualizers/segmentTreeVisualizer.ts` | D3 树形可视化 |
+| G2-4 页面 | `src/pages/SegmentTreePage.tsx` | build/query/update/reset |
+| G2-5 学习配置 | `src/configs/learning/segmentTree.config.ts` | 7 步学习配置 |
+| G2-6 类型 | `src/types/hooks.d.ts` | SegmentTreeNode / SegmentTreeFlattened 等 |
+| G2-7 i18n | `src/i18n/locales.ts` | segmentTree 命名空间（24 键） |
+| G2-8 路由/侧边栏/首页 | `App.tsx` / `Sidebar.tsx` / `Home.tsx` | `/segment-tree` 路由 + 入口 |
+| G2-9 配置注册 | `src/configs/learning/index.ts` | 注册 `segmentTree`（39 → 40） |
+| G2-10 搜索索引 | `src/data/searchIndex.ts` | 搜索入口 |
+| G2-11 测试 | 4 个测试文件 | 104 个测试（algorithm 45 + hook 29 + visualizer 20 + page 10） |
+
+#### G3 — 双向链表模式测试
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| G3-1 测试 | `src/__tests__/pages/LinkedListPage.test.tsx` | 4 个测试覆盖切换按钮可见性、切换到双向、切回单向、动画期间禁用 |
+
+注：LinkedListPage 此前已支持 `isDoublyMode` 切换，本次仅补齐测试。
+
+#### F2 — 算法接入指南
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| F2-1 文档 | `docs/ALGORITHM_INTEGRATION_GUIDE.md` | 7 章节覆盖排序/图算法/数据结构接入、学习配置、可视化器、测试、i18n + checklist |
+
+### 修复记录
+
+| 问题 | 原因 | 修复 |
+|------|------|------|
+| B-Tree 根节点分裂逻辑错误 | 原 code 在 order=3 时预分裂根节点，产生无效空右子节点 | 改为"先插入，再判断溢出分裂"策略 |
+| B-Tree splitChild 未使用参数 | ESLint `no-unused-vars` 报错 | 重命名 `maxKeys` 为 `_maxKeys`（匹配 `varsIgnorePattern: '^_'`） |
+| SegmentTree.array `readonly` 修饰符 | `build()` 需要重新赋值 array，但 `readonly` 禁止赋值 | 移除 `readonly` 修饰符 |
+| 测试 `@/` 别名无法解析 | vitest.config.js 未配置 `resolve.alias` | 改用相对路径 `../../../algorithms/graph/...` |
+| `newLearningConfigs.test.ts` 配置总数断言失败 | 新增 bTree + segmentTree 后总数从 38 变为 40 | 更新断言 38 → 40 |
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2526 passed（132 文件），较 v13 GA 新增 246 个测试 |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| 数据结构总数 | 17（原 15 + B-Tree + Segment Tree） |
+| 学习配置总数 | 40（原 38 + bTree + segmentTree） |
+| Git commits | D1 `d63a07c` / G1 `3d0acca` / G2 `cc6905f` / G3 `0a64d91` / F2 `10c1ad5` |
+
+### 里程碑
+
+v14.0.0 GA — 内容扩张完成（图算法测试补齐 + B-Tree + Segment Tree + 双向链表测试 + 算法接入指南）
+
+---
+
 ## 2026-06-22 | v13.0.0 GA — Path 3 H3 + H1 完成
 
 ### 任务范围

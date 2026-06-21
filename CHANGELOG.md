@@ -4,6 +4,72 @@
 
 ---
 
+## [v14.0.0 GA] - 2026-06-22
+
+### D1 — 图算法测试补齐
+- 新增 `src/__tests__/algorithms/graph/graphAlgorithms.test.ts`：46 个测试覆盖 Bellman-Ford（10）、Floyd-Warshall（10）、Prim（10）、Kruskal（11）、注册（5）
+- 4 个图算法（Bellman-Ford / Floyd-Warshall / Prim / Kruskal）此前已实现但缺测试，本次补齐
+
+### G1 — B-Tree 数据结构完整实现
+- 新增 `src/algorithms/bTree.ts`：多路搜索树，insert + split、search、inorder、validate
+- 新增 `src/hooks/useBTreeState.ts`：状态管理 + localStorage + undo/redo
+- 新增 `src/visualizers/bTreeVisualizer.ts`：D3 多路树可视化
+- 新增 `src/pages/BTreePage.tsx`：插入/搜索/中序/重置页面
+- 新增 `src/configs/learning/bTree.config.ts`：7 步学习配置
+- 更新 `src/types/hooks.d.ts`：BTreeNode / BTreeFlattenedNode / BTreeFlattened / BTreeState 接口
+- 更新 `src/i18n/locales.ts`：btree 命名空间（24 键，中英文）
+- 更新 `src/App.tsx` / `Sidebar.tsx` / `Home.tsx`：`/b-tree` 路由 + 侧边栏 + 首页卡片
+- 更新 `src/configs/learning/index.ts`：注册 `bTree` 配置（38 → 39）
+- 更新 `src/data/searchIndex.ts`：搜索入口
+- 修复 B-Tree 根节点分裂逻辑：改为"先插入，再判断溢出分裂"策略
+
+### G1 Tests
+- 新增 `src/__tests__/algorithms/bTree.test.ts`（41 tests）
+- 新增 `src/__tests__/hooks/useBTreeState.test.ts`（30 tests）
+- 新增 `src/__tests__/visualizers/bTreeVisualizer.test.ts`（16 tests）
+- 新增 `src/__tests__/pages/BTreePage.test.tsx`（10 tests）
+
+### G2 — Segment Tree 数据结构完整实现
+- 新增 `src/algorithms/segmentTree.ts`：build / query（区间求和）/ update（点更新）
+- 新增 `src/hooks/useSegmentTreeState.ts`：状态管理 + localStorage + undo/redo
+- 新增 `src/visualizers/segmentTreeVisualizer.ts`：D3 树形可视化
+- 新增 `src/pages/SegmentTreePage.tsx`：build/query/update/reset 页面
+- 新增 `src/configs/learning/segmentTree.config.ts`：7 步学习配置
+- 更新 `src/types/hooks.d.ts`：SegmentTreeNode / SegmentTreeFlattened 等接口
+- 更新 `src/i18n/locales.ts`：segmentTree 命名空间（24 键）
+- 更新 `src/App.tsx` / `Sidebar.tsx` / `Home.tsx`：`/segment-tree` 路由 + 入口
+- 更新 `src/configs/learning/index.ts`：注册 `segmentTree` 配置（39 → 40）
+- 更新 `src/data/searchIndex.ts`：搜索入口
+- 修复 `SegmentTree.array` 属性 `readonly` 修饰符（build 需要重新赋值）
+
+### G2 Tests
+- 新增 `src/__tests__/algorithms/segmentTree.test.ts`（45 tests）
+- 新增 `src/__tests__/hooks/useSegmentTreeState.test.ts`（29 tests）
+- 新增 `src/__tests__/visualizers/segmentTreeVisualizer.test.ts`（20 tests）
+- 新增 `src/__tests__/pages/SegmentTreePage.test.tsx`（10 tests）
+
+### G3 — 双向链表模式测试
+- 更新 `src/__tests__/pages/LinkedListPage.test.tsx`：新增 4 个测试覆盖切换按钮可见性、切换到双向、切回单向、动画期间禁用
+- 注：LinkedListPage 此前已支持 `isDoublyMode` 切换，本次仅补齐测试
+
+### F2 — 算法接入指南
+- 新增 `docs/ALGORITHM_INTEGRATION_GUIDE.md`：7 章节覆盖排序算法接入、图算法接入、数据结构接入（8 步）、学习配置编写、可视化器编写、测试编写、i18n 国际化 + checklist
+
+### Verification
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2526 passed（132 文件），较 v13 GA 新增 246 个测试 |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| 数据结构总数 | 17（原 15 + B-Tree + Segment Tree） |
+| 学习配置总数 | 40（原 38 + bTree + segmentTree） |
+| Git commits | D1 `d63a07c` / G1 `3d0acca` / G2 `cc6905f` / G3 `0a64d91` / F2 `10c1ad5` |
+
+### 里程碑
+v14.0.0 GA — 内容扩张完成（图算法测试补齐 + B-Tree + Segment Tree + 双向链表测试 + 算法接入指南）
+
+---
+
 ## [v13.0.0 GA] - 2026-06-22
 
 ### Path 3 H3 — SortComparePage 学习模式

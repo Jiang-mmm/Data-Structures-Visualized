@@ -1,17 +1,57 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** v13.0.0 GA
+> **版本:** v14.0.0 GA
 > **更新日期:** 2026-06-22
-> **状态:** v12.0 已部署；v13.0.0 GA 完成（Path 3 H2/H3/H1 全部完成，学习体验闭环）；下一步进入 v14 内容扩张
-> **v13 起点:** 2026-06-20 完成全面代码体检（56 条独立问题），4 阶段修复路线已就位；Phase A 已完成（commit `0a544a9`），Phase B/C/D 已完成（文档同步 + Playwright E2E + CI 增强）
-> **详细迭代计划:** v11 计划已归档至 [docs/archive/iteration-plan-v11.md](./docs/archive/iteration-plan-v11.md)；v12/v13 计划见 [docs/superpowers/plans/](./docs/superpowers/plans/)，v10/v11/v12 迭代记录见 WORKLOG.md
+> **状态:** v14.0.0 GA 完成（D1 图算法测试 + G1 B-Tree + G2 Segment Tree + G3 双向链表 + F2 算法接入指南）；下一步进入 v15 体验打磨
+> **v13 GA:** 已完成（2026-06-22）— Path 3 学习体验闭环（H2/H3/H1 全部完成）
+> **详细迭代计划:** v11 计划已归档至 [docs/archive/iteration-plan-v11.md](./docs/archive/iteration-plan-v11.md)；v12/v13/v14 计划见 [docs/superpowers/plans/](./docs/superpowers/plans/)，v10/v11/v12 迭代记录见 WORKLOG.md
 > **v13 体检报告:** [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md)
 > **Path 3 实施真源文档:** [docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md](./docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md)
 > **长线路线图:** [docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md)
 
 ---
 
-## Path 3 — 学习体验增强（v13.0.0-rc2 → GA）
+## v14 内容扩张（已完成）
+
+| 阶段 | 主题 | 状态 | 说明 |
+|------|------|------|------|
+| **D1** | 图算法补齐（4 个） | ✅ 已完成 | Bellman-Ford / Floyd-Warshall / Prim / Kruskal 测试补齐（46 tests，commit `d63a07c`） |
+| **G1** | B-Tree | ✅ 已完成 | 多路搜索树完整实现（97 tests，commit `3d0acca`） |
+| **G2** | Segment Tree | ✅ 已完成 | 区间查询 + 更新完整实现（104 tests，commit `cc6905f`） |
+| **G3** | doublyLinkedList 模式 | ✅ 已完成 | LinkedListPage 双向模式测试补齐（4 tests，commit `0a64d91`） |
+| **F2** | 文档完善 | ✅ 已完成 | 算法接入指南（commit `10c1ad5`） |
+
+### v14.0.0 GA 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2526 passed（132 文件） |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| 数据结构总数 | 17（原 15 + B-Tree + Segment Tree） |
+| 学习配置总数 | 40（原 38 + bTree + segmentTree） |
+
+---
+
+## 下一阶段：v15 体验打磨
+
+详见 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第三阶段。
+
+| 阶段 | 主题 | 说明 |
+|------|------|------|
+| **E1** | PWA 离线 | Service Worker + Web App Manifest |
+| **E2** | 大数据可视化 | 虚拟化 + 增量渲染 |
+| **E3** | 移动端手势 | 滑动、双指缩放、长按 |
+| **E4** | KeyboardHelp 模糊搜索 | 复用 fuzzySearch |
+| **U2** | 响应式操作面板 | 移动端折叠 |
+| **U3** | 跨页面布局一致性 | 统一 PageHeader 间距 |
+| **U4** | SVG 图标系统 | 替换 emoji |
+| **U5** | 条件禁用按钮原因 | aria-describedby + tooltip |
+| **ISSUE-007** | 排序撤销 | undoBlock 优化 |
+
+---
+
+## Path 3 — 学习体验增强（v13.0.0-rc2 → GA，已完成）
 
 | 阶段 | 主题 | 状态 | 说明 |
 |------|------|------|------|
@@ -26,20 +66,6 @@
 | 单元测试 | 2280 passed（123 文件） |
 | ESLint | 0 errors / 65 warnings（既有模式） |
 | 生产构建 | 成功，bundle 预算通过 |
-
----
-
-## 下一阶段：v14 内容扩张
-
-详见 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第二阶段。
-
-| 阶段 | 主题 | 说明 |
-|------|------|------|
-| **D1** | 图算法补齐（4 个） | Bellman-Ford / Floyd-Warshall / Prim / Kruskal |
-| **G1** | B-Tree | 多路搜索树 |
-| **G2** | Segment Tree | 区间查询 + 更新 |
-| **G3** | doublyLinkedList 页面 | 复用 useLinkedListState |
-| **F2** | 文档完善 | CHANGELOG / CONTRIBUTING / 算法接入指南 |
 
 ---
 
