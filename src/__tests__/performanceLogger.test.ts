@@ -81,10 +81,12 @@ describe('performanceLogger', () => {
     })
 
     it('超过 100ms 应该记录警告', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       const logSpy = vi.spyOn(perfLogger, 'log')
       perfLogger.recordFunction('slowFunc', 150)
       expect(logSpy).toHaveBeenCalledWith('warning', expect.stringContaining('slowFunc'), expect.any(Object))
       logSpy.mockRestore()
+      warnSpy.mockRestore()
     })
 
     it('低于 100ms 不应该记录警告', () => {
@@ -165,11 +167,13 @@ describe('performanceLogger', () => {
 
   describe('getLogEntries', () => {
     it('应该返回日志条目', () => {
+      const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
       perfLogger.log('render', 'test message')
       const entries = perfLogger.getLogEntries()
       expect(entries.length).toBe(1)
       expect(entries[0].type).toBe('render')
       expect(entries[0].message).toBe('test message')
+      logSpy.mockRestore()
     })
   })
 

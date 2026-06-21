@@ -153,14 +153,16 @@ describe('useTreeState', () => {
   describe('preorder 操作', () => {
     it('应该返回前序遍历索引数组', () => {
       const { result } = renderHook(() => useTreeState())
-      const indices = result.current.preorder()
+      let indices: number[] = []
+      act(() => { indices = result.current.preorder() })
       expect(Array.isArray(indices)).toBe(true)
       expect(indices.length).toBe(7)
     })
 
     it('前序遍历应该先访问根节点', () => {
       const { result } = renderHook(() => useTreeState())
-      const indices = result.current.preorder()
+      let indices: number[] = []
+      act(() => { indices = result.current.preorder() })
       expect(indices[0]).toBe(0)
     })
   })
@@ -168,14 +170,16 @@ describe('useTreeState', () => {
   describe('inorder 操作', () => {
     it('应该返回中序遍历索引数组', () => {
       const { result } = renderHook(() => useTreeState())
-      const indices = result.current.inorder()
+      let indices: number[] = []
+      act(() => { indices = result.current.inorder() })
       expect(Array.isArray(indices)).toBe(true)
       expect(indices.length).toBe(7)
     })
 
     it('中序遍历 BST 应该得到排序结果', () => {
       const { result } = renderHook(() => useTreeState())
-      const indices = result.current.inorder()
+      let indices: number[] = []
+      act(() => { indices = result.current.inorder() })
       const values = indices.map(i => result.current.data[i])
       expect(values).toEqual([20, 30, 40, 50, 60, 70, 80])
     })
@@ -184,14 +188,16 @@ describe('useTreeState', () => {
   describe('postorder 操作', () => {
     it('应该返回后序遍历索引数组', () => {
       const { result } = renderHook(() => useTreeState())
-      const indices = result.current.postorder()
+      let indices: number[] = []
+      act(() => { indices = result.current.postorder() })
       expect(Array.isArray(indices)).toBe(true)
       expect(indices.length).toBe(7)
     })
 
     it('后序遍历应该最后访问根节点', () => {
       const { result } = renderHook(() => useTreeState())
-      const indices = result.current.postorder()
+      let indices: number[] = []
+      act(() => { indices = result.current.postorder() })
       expect(indices[indices.length - 1]).toBe(0)
     })
   })
@@ -199,14 +205,16 @@ describe('useTreeState', () => {
   describe('levelorder 操作', () => {
     it('应该返回层序遍历索引数组', () => {
       const { result } = renderHook(() => useTreeState())
-      const indices = result.current.levelorder()
+      let indices: number[] = []
+      act(() => { indices = result.current.levelorder() })
       expect(Array.isArray(indices)).toBe(true)
       expect(indices.length).toBe(7)
     })
 
     it('层序遍历应该先访问根节点', () => {
       const { result } = renderHook(() => useTreeState())
-      const indices = result.current.levelorder()
+      let indices: number[] = []
+      act(() => { indices = result.current.levelorder() })
       expect(indices[0]).toBe(0)
     })
   })

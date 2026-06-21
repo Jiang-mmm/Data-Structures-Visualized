@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen, fireEvent, waitFor } from '@testing-library/react'
+import { screen, fireEvent, waitFor, act } from '@testing-library/react'
 import TreePage from '../../pages/TreePage'
 import { renderWithRouter, mockUseGlobalSettings, mockUseVisualizer, createMockHistory } from './testUtils'
 
@@ -146,8 +146,9 @@ describe('TreePage', () => {
     renderWithRouter(<TreePage />)
 
     fireEvent.click(screen.getByText(/common\.more/))
+    await act(async () => { await vi.advanceTimersByTimeAsync(300) })
     fireEvent.click(screen.getByText('tree.postorder'))
-    await vi.advanceTimersByTimeAsync(1500)
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500) })
     expect(mockState.postorder).toHaveBeenCalled()
     vi.useRealTimers()
   })
@@ -159,8 +160,9 @@ describe('TreePage', () => {
     renderWithRouter(<TreePage />)
 
     fireEvent.click(screen.getByText(/common\.more/))
+    await act(async () => { await vi.advanceTimersByTimeAsync(300) })
     fireEvent.click(screen.getByText('tree.levelorder'))
-    await vi.advanceTimersByTimeAsync(1500)
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500) })
     expect(mockState.levelorder).toHaveBeenCalled()
     vi.useRealTimers()
   })

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import ShareButton from '../components/ShareButton'
 
 vi.mock('../hooks/useGlobalSettings', () => ({
@@ -57,16 +57,20 @@ describe('ShareButton', () => {
   })
 
   describe('分享功能', () => {
-    it('点击应该调用 encodeData', () => {
+    it('点击应该调用 encodeData', async () => {
       render(<ShareButton data={[1, 2, 3]} dataType="array" />)
-      fireEvent.click(screen.getByRole('button'))
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button'))
+      })
       expect(mockEncodeData).toHaveBeenCalledWith([1, 2, 3])
     })
 
-    it('encodeData 失败时显示错误 toast', () => {
+    it('encodeData 失败时显示错误 toast', async () => {
       mockEncodeData.mockReturnValue(null)
       render(<ShareButton data={[1, 2, 3]} dataType="array" />)
-      fireEvent.click(screen.getByRole('button'))
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button'))
+      })
       expect(mockShowToast).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'error', message: 'share.generateFailed' })
       )
@@ -74,8 +78,10 @@ describe('ShareButton', () => {
 
     it('成功复制时显示成功 toast', async () => {
       render(<ShareButton data={[1, 2, 3]} dataType="array" />)
-      fireEvent.click(screen.getByRole('button'))
-      await vi.waitFor(() => {
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button'))
+      })
+      await waitFor(() => {
         expect(mockShowToast).toHaveBeenCalledWith(
           expect.objectContaining({ type: 'success', message: 'share.copied' })
         )
@@ -89,8 +95,10 @@ describe('ShareButton', () => {
         configurable: true,
       })
       render(<ShareButton data={[1, 2, 3]} dataType="array" />)
-      fireEvent.click(screen.getByRole('button'))
-      await vi.waitFor(() => {
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button'))
+      })
+      await waitFor(() => {
         expect(mockShowToast).toHaveBeenCalledWith(
           expect.objectContaining({ type: 'warning', message: 'share.copyManually' })
         )

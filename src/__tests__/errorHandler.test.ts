@@ -9,6 +9,7 @@ vi.mock('../components/toastStore', () => ({
 describe('errorHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.spyOn(console, 'error').mockImplementation(() => {})
   })
 
   describe('handleOperationError', () => {

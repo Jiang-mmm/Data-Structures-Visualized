@@ -121,7 +121,8 @@ describe('useUnionFindState', () => {
       const { result } = renderHook(() => useUnionFindState())
       act(() => { result.current.remove(2) })
       // 1 和 3 应仍连通
-      const connected = result.current.checkConnected(1, 3)
+      let connected = false
+      act(() => { connected = result.current.checkConnected(1, 3) })
       expect(connected).toBe(true)
     })
   })
@@ -129,14 +130,16 @@ describe('useUnionFindState', () => {
   describe('find 操作', () => {
     it('应返回已存在节点的查找结果', () => {
       const { result } = renderHook(() => useUnionFindState())
-      const res = result.current.find(1)
+      let res = { rootId: '', path: [] as string[] }
+      act(() => { res = result.current.find(1) })
       expect(res.rootId).toBeDefined()
       expect(res.rootId).not.toBe('')
     })
 
     it('查找不存在的节点应返回空结果', () => {
       const { result } = renderHook(() => useUnionFindState())
-      const res = result.current.find(99)
+      let res = { rootId: 'x', path: ['x'] as string[] }
+      act(() => { res = result.current.find(99) })
       expect(res.rootId).toBe('')
       expect(res.path).toEqual([])
     })
@@ -149,7 +152,8 @@ describe('useUnionFindState', () => {
 
     it('查找应返回路径数组', () => {
       const { result } = renderHook(() => useUnionFindState())
-      const res = result.current.find(3)
+      let res = { rootId: '', path: [] as string[] }
+      act(() => { res = result.current.find(3) })
       expect(Array.isArray(res.path)).toBe(true)
     })
   })
@@ -185,24 +189,32 @@ describe('useUnionFindState', () => {
     it('合并后两节点应连通', () => {
       const { result } = renderHook(() => useUnionFindState())
       act(() => { result.current.union(1, 4) })
-      expect(result.current.checkConnected(1, 4)).toBe(true)
+      let connected = false
+      act(() => { connected = result.current.checkConnected(1, 4) })
+      expect(connected).toBe(true)
     })
   })
 
   describe('checkConnected 操作', () => {
     it('同集合节点应返回 true', () => {
       const { result } = renderHook(() => useUnionFindState())
-      expect(result.current.checkConnected(1, 2)).toBe(true)
+      let connected = false
+      act(() => { connected = result.current.checkConnected(1, 2) })
+      expect(connected).toBe(true)
     })
 
     it('不同集合节点应返回 false', () => {
       const { result } = renderHook(() => useUnionFindState())
-      expect(result.current.checkConnected(1, 4)).toBe(false)
+      let connected = true
+      act(() => { connected = result.current.checkConnected(1, 4) })
+      expect(connected).toBe(false)
     })
 
     it('不存在的节点应返回 false', () => {
       const { result } = renderHook(() => useUnionFindState())
-      expect(result.current.checkConnected(1, 99)).toBe(false)
+      let connected = true
+      act(() => { connected = result.current.checkConnected(1, 99) })
+      expect(connected).toBe(false)
     })
 
     it('连通性查询后应添加日志', () => {

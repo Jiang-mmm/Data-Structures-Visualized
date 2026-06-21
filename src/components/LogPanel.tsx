@@ -109,6 +109,13 @@ function StandaloneLogPanel({ logs, onJumpToStep, t }: {
 
   const toggleCollapsed = useCallback(() => setCollapsed(c => !c), [])
 
+  const handleHeaderKeyDown = (e: React.KeyboardEvent<HTMLDivElement>): void => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      toggleCollapsed()
+    }
+  }
+
   const filteredLogs = filter === 'all' ? logs : logs.filter(log => log.type === filter)
 
   useEffect(() => {
@@ -131,9 +138,12 @@ function StandaloneLogPanel({ logs, onJumpToStep, t }: {
       className="bg-ink dark:bg-slate text-paper dark:text-dark-ink flex flex-col log-panel transition-all duration-200"
       style={collapsed ? { maxHeight: 40 } : { maxHeight: 208 }}
     >
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={toggleCollapsed}
-        className="flex items-center justify-between px-4 py-2 bg-ink/90 dark:bg-dark-muted border-b-2 border-ink/30 dark:border-dark-border/30 w-full text-left hover:bg-ink/80 dark:hover:bg-dark-muted/80 transition-colors"
+        onKeyDown={handleHeaderKeyDown}
+        className="flex items-center justify-between px-4 py-2 bg-ink/90 dark:bg-dark-muted border-b-2 border-ink/30 dark:border-dark-border/30 w-full text-left hover:bg-ink/80 dark:hover:bg-dark-muted/80 transition-colors cursor-pointer"
         aria-expanded={!collapsed}
         aria-label={t('logPanel.title')}
       >
@@ -173,7 +183,7 @@ function StandaloneLogPanel({ logs, onJumpToStep, t }: {
             </button>
           )}
         </div>
-      </button>
+      </div>
       {!collapsed && (
         <div
           ref={scrollRef}
