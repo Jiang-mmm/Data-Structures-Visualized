@@ -127,7 +127,7 @@ export default function AvlTreePage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">

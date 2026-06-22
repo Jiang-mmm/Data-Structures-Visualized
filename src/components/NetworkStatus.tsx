@@ -3,29 +3,26 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 
 function NetworkStatus() {
   const { t } = useGlobalSettings()
-  const [showOffline, setShowOffline] = useState<boolean>(false)
+  // 初始状态直接读取 navigator.onLine，避免在 effect 中调用 setState
+  const [showOffline, setShowOffline] = useState<boolean>(() => typeof navigator !== 'undefined' && !navigator.onLine)
   const [showReconnected, setShowReconnected] = useState<boolean>(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    const handleOnline = () => {
+    const handleOnline = (): void => {
       setShowOffline(false)
       setShowReconnected(true)
       if (timerRef.current) clearTimeout(timerRef.current)
       timerRef.current = setTimeout(() => setShowReconnected(false), 3000)
     }
 
-    const handleOffline = () => {
+    const handleOffline = (): void => {
       setShowOffline(true)
       setShowReconnected(false)
     }
 
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
-
-    if (!navigator.onLine) {
-      setShowOffline(true)
-    }
 
     return () => {
       window.removeEventListener('online', handleOnline)

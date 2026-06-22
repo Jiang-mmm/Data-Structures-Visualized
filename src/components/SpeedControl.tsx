@@ -24,15 +24,15 @@ function SpeedControl() {
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!showPresets) { setFocusedIndex(-1); return }
+    if (!showPresets) return
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setShowPresets(false)
+      if (e.key === 'Escape') { setShowPresets(false); setFocusedIndex(-1) }
       if (e.key === 'ArrowDown') { e.preventDefault(); setFocusedIndex(i => Math.min(i + 1, PRESET_KEYS.length - 1)) }
       if (e.key === 'ArrowUp') { e.preventDefault(); setFocusedIndex(i => Math.max(i - 1, 0)) }
-      if (e.key === 'Enter' && focusedIndex >= 0) { applyPreset(PRESET_KEYS[focusedIndex]); setShowPresets(false) }
+      if (e.key === 'Enter' && focusedIndex >= 0) { applyPreset(PRESET_KEYS[focusedIndex]); setShowPresets(false); setFocusedIndex(-1) }
     }
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setShowPresets(false)
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) { setShowPresets(false); setFocusedIndex(-1) }
     }
     document.addEventListener('keydown', handleKeyDown)
     document.addEventListener('mousedown', handleClickOutside)
@@ -62,7 +62,7 @@ function SpeedControl() {
               return (
                 <button
                   key={key}
-                  onClick={() => { applyPreset(key); setShowPresets(false) }}
+                  onClick={() => { applyPreset(key); setShowPresets(false); setFocusedIndex(-1) }}
                   aria-current={currentPreset === key ? 'true' : undefined}
                   className={`flex items-center gap-2 w-full px-3 py-2.5 text-xs font-mono text-left transition-all duration-150
                     ${currentPreset === key

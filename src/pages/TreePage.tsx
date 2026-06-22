@@ -62,7 +62,7 @@ export default function TreePage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, data, dimensions, insert, setIsAnimating, getAnimationContext, svgRef, setInputValue])
+  }, [isAnimating, inputValue, data, dimensions, edgeStyle, insert, setIsAnimating, getAnimationContext, svgRef, setInputValue, t])
 
   const handleTraversal = useCallback(async (fn: () => number[]): Promise<void> => {
     if (isAnimating) return
@@ -97,7 +97,7 @@ export default function TreePage() {
     try { if (svgRef.current) await animateSearch(svgRef.current, path, found, data, dimensions, anim) }
     catch (error) { handleAnimationError(error, t('tree.search')) }
     finally { setIsAnimating(false) }
-  }, [isAnimating, searchValue, data, dimensions, search, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, searchValue, data, dimensions, search, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleDelete = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -116,7 +116,7 @@ export default function TreePage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, data, dimensions, deleteNode, setIsAnimating, getAnimationContext, svgRef, setInputValue])
+  }, [isAnimating, inputValue, data, dimensions, deleteNode, setIsAnimating, getAnimationContext, svgRef, setInputValue, t])
 
   const handleStop = useCallback((): void => {
     abortAnimation()
@@ -128,7 +128,7 @@ export default function TreePage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleReset = useCallback((): void => {
     if (svgRef.current) clearTreePositions(svgRef.current)

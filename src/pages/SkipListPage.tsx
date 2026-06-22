@@ -55,7 +55,7 @@ export default function SkipListPage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleInsert = useCallback(async () => {
     if (isAnimating) return
@@ -97,7 +97,7 @@ export default function SkipListPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, remove, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, inputValue, remove, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleSearch = useCallback(async () => {
     if (isAnimating) return
@@ -115,7 +115,7 @@ export default function SkipListPage() {
     } finally {
       setIsAnimating(false)
     }
-  }, [isAnimating, inputValue, search, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, inputValue, search, setIsAnimating, getAnimationContext, svgRef, t])
 
   const isEmpty = size() === 0
 

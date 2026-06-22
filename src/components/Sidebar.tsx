@@ -192,13 +192,14 @@ export default function Sidebar() {
     }
   }, [isMobile, handleOpenTouchStart, handleOpenTouchEnd])
 
-  const prevPathname = useRef<string>(location.pathname)
-  useEffect(() => {
-    if (prevPathname.current !== location.pathname) {
-      prevPathname.current = location.pathname
-      if (isMobile) setMobileOpen(false)
+  // 派生 state：pathname 变化时自动关闭移动端菜单（避免导航后菜单仍然展开）
+  const [prevPathname, setPrevPathname] = useState<string>(location.pathname)
+  if (prevPathname !== location.pathname) {
+    setPrevPathname(location.pathname)
+    if (isMobile) {
+      setMobileOpen(false)
     }
-  }, [location.pathname, isMobile])
+  }
 
   useEffect(() => {
     if (!mobileOpen) return

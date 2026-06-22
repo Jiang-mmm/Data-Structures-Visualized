@@ -48,7 +48,9 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
   // 缓存 dimensions 引用，避免 ResizeObserver 触发的尺寸变化作为 useEffect 依赖
   // 导致动画进行中 Visualizer 重渲染（selectAll('*').interrupt()）打断 D3 过渡
   const dimensionsRef = useRef(dimensions)
-  dimensionsRef.current = dimensions
+  useEffect(() => {
+    dimensionsRef.current = dimensions
+  }, [dimensions])
 
   // 移动端手势：左滑/右滑回调（不传 onPinch，缩放仍由上方原生 touch 处理）
   const handleSwipeHorizontal = useCallback((deltaX: number) => {

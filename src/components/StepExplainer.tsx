@@ -58,13 +58,18 @@ function StepExplainer({
     }
   }, [])
 
+  // 派生 state：当 isAnimating 变为 true 或到达最后一步时，自动停止 autoPlay
+  if (autoPlay && (isAnimating || currentStepIndex >= totalSteps - 1)) {
+    setAutoPlay(false)
+  }
+
   useEffect(() => {
-    if (!autoPlay || isAnimating) {
-      stopAutoPlay()
-      return
-    }
-    if (currentStepIndex >= totalSteps - 1) {
-      stopAutoPlay()
+    if (!autoPlay) {
+      // autoPlay 被关闭时清理 timer
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
       return
     }
     timerRef.current = setTimeout(() => {
@@ -73,7 +78,7 @@ function StepExplainer({
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [autoPlay, currentStepIndex, totalSteps, isAnimating, playSpeed, onNext, stopAutoPlay])
+  }, [autoPlay, currentStepIndex, totalSteps, playSpeed, onNext])
 
   useEffect(() => {
     return () => {

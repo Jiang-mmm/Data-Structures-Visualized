@@ -50,6 +50,7 @@ export function useVisualizer() {
     updateDimensions()
     const el = containerRef.current
     if (!el) return
+    const svg = svgRef.current
 
     registerApplyPresetAbortCallback(abortAnimation)
 
@@ -73,9 +74,9 @@ export function useVisualizer() {
       observer.disconnect()
       abortAnimation()
       unregisterApplyPresetAbortCallback()
-      if (svgRef.current) clearGraphSimulation(svgRef.current)
+      if (svg) clearGraphSimulation(svg)
     }
-  }, [updateDimensions, abortAnimation])
+  }, [updateDimensions, abortAnimation, svgRef])
 
   const getAnimationContext = useCallback((): Animation => {
     if (animRef.current) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, memo, useCallback } from 'react'
+import { useState, useEffect, memo, useCallback } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import LogPanel from './LogPanel'
 import StepExplainer from './StepExplainer'
@@ -37,19 +37,23 @@ function InfoPanel({ logs, learningMode, isAnimating, onJumpToStep, algorithmKey
   const [activeTab, setActiveTab] = useState<TabKey>('log')
   const [mobileExpanded, setMobileExpanded] = useState(false)
   const [highlightedLogId, setHighlightedLogId] = useState<string | null>(null)
-  const lastLogLengthRef = useRef(logs.length)
+  const [lastLogLength, setLastLogLength] = useState<number>(logs.length)
 
-  // 自动高亮：最新日志携带 codeStepId 时高亮对应日志项并显示徽标，不再强制跳转
-  useEffect(() => {
-    if (logs.length === 0 || logs.length === lastLogLengthRef.current) return
-    lastLogLengthRef.current = logs.length
+  // 派生 state：当 logs 增长且最新日志带 codeStepId 时立即标记为待高亮
+  if (lastLogLength !== logs.length) {
+    setLastLogLength(logs.length)
     const latestLog = logs[logs.length - 1]
     if (latestLog?.codeStepId) {
       setHighlightedLogId(`${logs.length - 1}-${latestLog.codeStepId}`)
-      const timer = setTimeout(() => setHighlightedLogId(null), 3000)
-      return () => clearTimeout(timer)
     }
-  }, [logs])
+  }
+
+  // 单独 effect：3s 后自动清除高亮
+  useEffect(() => {
+    if (highlightedLogId === null) return
+    const timer = setTimeout(() => setHighlightedLogId(null), 3000)
+    return () => clearTimeout(timer)
+  }, [highlightedLogId])
 
   const handleJumpToStep = useCallback((stepId: string): void => {
     if (onJumpToStep) onJumpToStep(stepId)

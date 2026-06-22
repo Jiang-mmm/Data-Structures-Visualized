@@ -48,7 +48,7 @@ export default function HeapPage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleInsert = useCallback(async () => {
     if (isAnimating) return
@@ -86,7 +86,7 @@ export default function HeapPage() {
     } finally {
       setIsAnimating(false)
     }
-  }, [isAnimating, data.length, extractMax, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, data.length, extractMax, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handlePeek = useCallback(async () => {
     if (isAnimating || data.length === 0) return
@@ -100,7 +100,7 @@ export default function HeapPage() {
     } finally {
       setIsAnimating(false)
     }
-  }, [isAnimating, data.length, peek, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, data.length, peek, setIsAnimating, getAnimationContext, svgRef, t])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">

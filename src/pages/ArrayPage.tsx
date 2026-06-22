@@ -63,7 +63,7 @@ export default function ArrayPage() {
       return null
     }
     return index
-  }, [inputIndex, data.length])
+  }, [inputIndex, data.length, t])
 
   const handleStop = useCallback((): void => {
     abortAnimation()
@@ -75,7 +75,7 @@ export default function ArrayPage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleInsert = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -98,7 +98,7 @@ export default function ArrayPage() {
     }
     setInputValue('')
     setInputIndex('')
-  }, [isAnimating, validateInputs, validateIndexInput, inputValue, setIsAnimating, getAnimationContext, svgRef, data, dimensions, insert, setInputValue, setInputIndex])
+  }, [isAnimating, validateInputs, validateIndexInput, inputValue, setIsAnimating, getAnimationContext, svgRef, data, dimensions, insert, setInputValue, setInputIndex, t])
 
   const handleDelete = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -116,7 +116,7 @@ export default function ArrayPage() {
       setIsAnimating(false)
     }
     setInputIndex('')
-  }, [isAnimating, validateIndexInput, setIsAnimating, getAnimationContext, svgRef, data, dimensions, remove, setInputIndex])
+  }, [isAnimating, validateIndexInput, setIsAnimating, getAnimationContext, svgRef, data, dimensions, remove, setInputIndex, t])
 
   const handleSearch = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -134,7 +134,7 @@ export default function ArrayPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, search, svgRef, data, dimensions, setInputValue])
+  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, search, svgRef, data, dimensions, setInputValue, t])
 
   const handleSearchAll = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -152,7 +152,7 @@ export default function ArrayPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, searchAll, svgRef, data, dimensions, setInputValue])
+  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, searchAll, svgRef, data, dimensions, setInputValue, t])
 
   const handleBinarySearch = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -175,7 +175,7 @@ export default function ArrayPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, binarySearch, svgRef, data, dimensions, setInputValue])
+  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, binarySearch, svgRef, data, dimensions, setInputValue, t])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">

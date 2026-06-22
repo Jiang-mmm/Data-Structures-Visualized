@@ -49,7 +49,7 @@ export default function StackPage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handlePush = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -68,7 +68,7 @@ export default function StackPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, data, dimensions, push, setIsAnimating, getAnimationContext, svgRef, setInputValue])
+  }, [isAnimating, inputValue, data, dimensions, push, setIsAnimating, getAnimationContext, svgRef, setInputValue, t])
 
   const handlePop = useCallback(async (): Promise<void> => {
     if (isAnimating || data.length === 0) return
@@ -77,7 +77,7 @@ export default function StackPage() {
     try { if (svgRef.current) await animatePop(svgRef.current, data, dimensions, anim); pop() }
     catch (error) { handleAnimationError(error, t('stack.pop')) }
     finally { setIsAnimating(false) }
-  }, [isAnimating, data, dimensions, pop, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, data, dimensions, pop, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handlePeek = useCallback(async (): Promise<void> => {
     if (isAnimating || data.length === 0) return
@@ -86,7 +86,7 @@ export default function StackPage() {
     try { if (svgRef.current) await animatePeek(svgRef.current, data, dimensions, anim); peek() }
     catch (error) { handleAnimationError(error, t('stack.peek')) }
     finally { setIsAnimating(false) }
-  }, [isAnimating, data, dimensions, peek, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, data, dimensions, peek, setIsAnimating, getAnimationContext, svgRef, t])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">

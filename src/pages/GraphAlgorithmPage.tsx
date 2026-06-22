@@ -53,8 +53,9 @@ export default function GraphAlgorithmPage() {
   const hasRunRef = useRef(false)
 
   useEffect(() => {
-    return () => { clearGraphSimulation(svgRef.current) }
-  }, [])
+    const svg = svgRef.current
+    return () => { if (svg) clearGraphSimulation(svg) }
+  }, [svgRef])
   
   const addLog = useCallback((type: string, message: string) => {
     const time = new Date().toLocaleTimeString(undefined, { hour12: false })
@@ -137,14 +138,14 @@ export default function GraphAlgorithmPage() {
     }
 
     setIsAnimating(false)
-  }, [isAnimating, selectedAlgorithm, startNode, nodes, links, addLog, getAnimationContext, svgRef, dimensions])
-  
+  }, [isAnimating, selectedAlgorithm, startNode, nodes, links, addLog, getAnimationContext, svgRef, dimensions, t])
+
   const reset = useCallback(() => {
     hasRunRef.current = false
     setLogs([])
     if (svgRef.current) renderGraph(svgRef.current, nodes, links, dimensions)
     showToast({ type: 'info', message: t('errors.graphResetDone') })
-  }, [nodes, links, dimensions, svgRef])
+  }, [nodes, links, dimensions, svgRef, t])
 
   const handleExportCSV = useCallback(() => {
     const algo = graphAlgorithms.find(a => a.key === selectedAlgorithm)
