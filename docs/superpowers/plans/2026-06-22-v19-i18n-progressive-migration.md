@@ -1,8 +1,9 @@
 # v19 i18n 渐进迁移（i18n Progressive Migration）
 
 > **目标**: 在不破坏现有 50+ 命名空间的前提下，将 `src/i18n/locales.ts`（单文件 6310 行）拆分为 `locales/{zh,en}/` 目录结构（**D2=C**），并按"模块级渐进"方式将所有 UI 硬编码中文字符串纳入 i18n 系统（**D1=B**）。
-> **状态**: 🟢 M0 + M1 + M2 + M3 已完成（2026-06-22）；M4+ 待启动
+> **状态**: 🟢 M0 + M1 + M2 + M3 已完成（2026-06-22）；M4+ 计划已交付，待拍板启动
 > **M3 范围**：types.ts 追加 `AssertSameKeys` 深度递归类型断言（任意嵌套深度的 zh/en 镜像检查）+ 自定义 ESLint 规则 `no-hardcoded-chinese-in-jsx`（minLength/allowList 配置，作用于 `src/{pages,components,visualizers,layouts}/**` warn 级）+ 45 项测试（types 20 + eslint 21 + 与 M2 合并 95 项）。
+> **M4 范围**：详细计划见 [docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md](./2026-06-22-v19-m4-pages-migration.md)（385 行 13 章节，3 子阶段 M4-1/M4-2/M4-3 + Q1-Q4 拍板点 + 完整文件迁移清单 + 测试更新矩阵 + 6 维度回滚预案）。
 > **基线**: v17.0.0 GA（merge `b991566`）+ v18 封存清理（merge `37478cf`，main HEAD）
 > **关联**: 继承 v18 i18n 封存决策（D1=B / D2=C / D3=B / D4=B / D5=C）
 
@@ -250,7 +251,7 @@ src/i18n/
 | **M1** | 硬编码中文清单 + 5 份管理清单 | 0.5d | M0 | ✅ 已完成 2026-06-22 |
 | **M2** | i18n 基础设施（`locales/{zh,en}/` 目录 + integrity.ts + 测试 8→50+） | 2d | M1 | ✅ 已完成 2026-06-22 |
 | **M3** | TypeScript 强约束（types.ts + AssertSameKeys 编译检查 + ESLint 规则） | 1.5d | M2 | ✅ 已完成 2026-06-22 |
-| **M4** | 页面级渐进迁移（17 pages，~2500 字符串） | 5d | M3 | ⏳ |
+| **M4** | 页面级渐进迁移（17 pages，~2500 字符串） | 5d | M3 | 📝 计划已交付 2026-06-22 |
 | **M5** | 组件级渐进迁移（16+ components，~1500 字符串） | 3d | M3 | ⏳ |
 | **M6** | 工具类迁移（5 utils，~500 字符串） | 1d | M3 | ⏳ |
 | **M7** | 学习配置迁移（40 configs，~10000 字符串） | 7d | M3 | ⏳ |

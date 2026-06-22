@@ -36,7 +36,7 @@
 
 > **2026-06-22 v18 计划封存备注**: v18 i18n 全量替换计划（11 阶段 / ~30 天）已由用户决定封存；M0 决策 D1=B（UI + learning config）/ D2=C（按语言拆 `locales/{zh,en}/`）/ D3=B（AI + 人工校对）/ D4=简化（逐步提交 + 立即生效）/ D5=C（namespace + flat keys）保留为项目记忆。后续如需重启，可基于本决策摘要 + v18 分支 commit `774025a` 的历史快照 `docs/superpowers/plans/2026-06-22-v18-i18n-full-replacement.md`（646 行）启动。 |
 >
-> **2026-06-22 v19 进度备注**: v19 i18n 渐进迁移 M0 8 项决策已拍板（D1=B / D2=C / D3=B / D4=B / D5=C + D6=B / D7=B / D8=A）；M1 硬编码字符串调研清单已交付（17,500 字符 v19 范围）；**M2 基础设施已完成**（目录骨架 + integrity.ts + pseudoLocale.ts + 测试 16→54）。详细见 [docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md](./docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md)。M3+ 待启动。 |
+> **2026-06-22 v19 进度备注**: v19 i18n 渐进迁移 M0 8 项决策已拍板（D1=B / D2=C / D3=B / D4=B / D5=C + D6=B / D7=B / D8=A）；M1 硬编码字符串调研清单已交付（17,500 字符 v19 范围）；M2 基础设施已完成（目录骨架 + integrity.ts + pseudoLocale.ts + 测试 16→54）；M3 TypeScript 强约束已完成（`AssertSameKeys` 深度递归编译时断言 + `no-hardcoded-chinese-in-jsx` 自定义 ESLint 规则 + 45 项测试）；**M4 实施真源文档已交付**（[docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md](./docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md)，385 行 13 章节，3 子阶段 M4-1/M4-2/M4-3 + Q1-Q4 拍板点 + 完整文件迁移清单 + 测试更新矩阵 + 6 维度回滚预案）。M4-1 启动前需用户拍板 4 个决策点。 |
 
 ---
 
