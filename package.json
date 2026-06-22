@@ -15,6 +15,10 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "node scripts/run-e2e.mjs",
+    "test:e2e:run": "playwright test e2e --reporter=line",
+    "test:e2e:list": "playwright test e2e --list",
+    "test:e2e:firefox": "BROWSER=firefox node scripts/run-e2e.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
