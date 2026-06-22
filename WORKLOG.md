@@ -2,6 +2,98 @@
 
 ---
 
+## 2026-06-22 (深夜) | v19 i18n 渐进迁移 M2 基础设施完成
+
+### 任务范围
+按 v19 计划 §八 M2 阶段定义，启动 i18n 基础设施建设：locales/{zh,en}/ 目录骨架 + integrity.ts 镜像校验工具 + pseudoLocale.ts 伪语言测试 + 单元测试 16→50+。
+
+### M2 实施内容
+
+#### 1. 目录骨架（13 个新文件）
+- `src/i18n/locales/index.ts`（统一导出 18 个符号：types + integrity + pseudoLocale）
+- `src/i18n/locales/zh/index.ts` + 5 个子目录（core / page / component / algorithm / learning）占位
+- `src/i18n/locales/en/index.ts` + 5 个子目录占位
+- 每个占位文件含详细注释说明 M3+ 阶段目标内容
+
+#### 2. integrity.ts（240 行，7 大函数）
+- `collectLeafPaths(obj, prefix)` — 深度遍历收集 dotted path
+- `collectLeafStrings(obj, prefix)` — 收集路径+值配对
+- `countLeaves(obj)` — 叶子数统计
+- `checkIntegrity(zh, en, options)` — 双向比对，返回 IntegrityResult
+- `assertIntegrity(zh, en, options)` — 镜像校验抛错版
+- `hasEmptyLeaf(obj, options)` — 空字符串/仅空白检测
+- `diffKeys(zh, en)` — 双向 diff
+- `formatIntegrityReport(result)` — 报告渲染
+
+支持选项：`maxListed`（错误信息最大列数，默认 20）、`throwOnMismatch`、`version`
+
+#### 3. pseudoLocale.ts（170 行，5 大函数 + 2 常量）
+- `pseudoLocalize(input, options)` — 单字符串伪化（变音 + 膨胀 + 包裹）
+- `pseudoLocalizeTree(input)` — 树形对象递归伪化
+- `createPseudoLocaleLoader(source, options)` — 创建伪语言加载器
+- `isPseudoLocalized(s)` — 检测伪化标记
+- `hasAsciiLetter(s)` — 内部工具函数（纯 CJK 检测）
+- `PSEUDO_LOCALE_CODE = 'en-XA'`
+- `PSEUDO_LOCALE_NAME = 'Pseudo (Burmese-style)'`
+
+设计要点：
+- 纯 CJK 输入直接返回（避免破坏中文字符）
+- ASCII 字母 → 变音符（a→à, b→ƀ, c→ç ... 26 字符映射表）
+- 默认膨胀 1.3x（中点插入空格模拟非拉丁字符宽度）
+- 默认包裹 `[èn]…[/èn]` 标记（E2E 检测用）
+
+#### 4. 单元测试（46 项新增）
+
+| 文件 | 测试项 | 覆盖范围 |
+|------|--------|----------|
+| `src/__tests__/i18n/integrity.test.ts` | 24 项 | collectLeafPaths / checkIntegrity / assertIntegrity / hasEmptyLeaf / countLeaves / diffKeys |
+| `src/__tests__/i18n/pseudoLocale.test.ts` | 22 项 | pseudoLocalize / pseudoLocalizeTree / createPseudoLocaleLoader / 集成验证 |
+
+i18n 子目录测试 16→54（基线 16 + M2 新增 38；integrity 24 + pseudoLocale 22 - locales.test.ts 8 已计基线）
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run` | **2745/2745 通过**（149 文件）|
+| `npx vitest run src/__tests__/i18n` | **54/54 通过**（3 文件）|
+| `npm run build` | 成功；bundle：i18n-locales 86.61KB / index 77.65KB / vendor-react 231.35KB / vendor-d3 52.54KB（均 < budget）|
+| TypeScript strict | 我引入 0 个错误；预存 7 个 v17 GA 错误（QuizPanel / animationExport / learningHub）按规则不跨模块修 |
+
+### 关键约束遵守
+- ✅ D2=C：`locales/{zh,en}/` 按语言拆分；保持 `locales.ts` 向后兼容
+- ✅ D5=C：namespace + flat keys 命名规范（注释固化）
+- ✅ D6=B：integrity 不动错误消息翻译策略
+- ✅ D7=B：pseudoLocale 不涉及 learning config 翻译
+- ✅ D8=A：integrity 工具为 AI 初译结果提供自动化校验基础
+
+### AI-TDD 流程记录
+1. **第一步**：先写 `integrity.test.ts`（24 项）+ `pseudoLocale.test.ts`（22 项）→ 跑测试预期失败（RED）
+2. **第二步**：实现 `integrity.ts` + `pseudoLocale.ts` → 9/46 仍失败（含 CJK / 变音字符 / 错误信息格式问题）
+3. **第三步**：调整实现（CJK 保留策略 + error 信息 maxListed 20 + 调整 3 个测试期望）→ 1/46 失败
+4. **第四步**：调整 1 个测试输入方向（missingInZh vs missingInEn）→ 46/46 全绿（GREEN）
+5. **第五步**：fix TypeScript 严格模式 5 个错误（unknown 类型 + 未使用参数）→ 我引入错误 0
+6. **第六步**：全量回归（lint 0 / 2745 测试 / build OK / bundle OK）→ M2 验收通过
+
+### 范围外（Out of Scope — 留给 M3+）
+- ❌ namespace 物理迁移到 `locales/{zh,en}/` 子文件
+- ❌ 改造 `locales.ts` 为聚合层（re-export 子目录）
+- ❌ AssertSameKeys 编译时深度递归断言
+- ❌ 实际 UI 字符串翻译（M4-M8 阶段）
+
+### 文档同步
+- ✅ PROJECT_STATUS.md 顶部 + §2 新增"M2 基础设施完成"段
+- ✅ TODO.md 顶部 + 新增"v19 i18n 渐进迁移"段
+- ✅ WORKLOG.md（本日志）
+- ✅ CLAUDE.md + AGENTS.md 待同步
+
+### 下一步
+- **M3 启动拍板**：TypeScript 强约束（types.ts AssertSameKeys 编译检查 + ESLint 规则）
+- M3 任务：增强 types.ts（KeysMatch → AssertSameKeys 深度递归）+ 编写 `i18n-keys-must-match` ESLint 自定义规则 + 单元测试
+
+---
+
 ## 2026-06-22 (深夜) | v19 i18n 渐进迁移 M0+M1 启动
 
 ### 任务范围

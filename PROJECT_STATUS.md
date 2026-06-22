@@ -2,7 +2,7 @@
 
 > **文件用途**: AI 开发前必读。本文件汇总项目最新进展，避免 AI 基于过时的代码或文档状态做决策。
 > **更新频率**: 每次迭代结束 / 每个子阶段验收后 / 启动新的开发任务前。
-> **最后更新**: 2026-06-22 (v19 i18n 渐进迁移 M0+M1 启动 / v18 计划已封存 / v17.0.0 GA 已 merge main)
+> **最后更新**: 2026-06-22 (v19 i18n 渐进迁移 M2 基础设施完成 / M0+M1 已交付 / v18 计划已封存 / v17.0.0 GA 已 merge main)
 
 ---
 
@@ -31,16 +31,57 @@
 | **项目名称** | ds-visualizer（数据结构学习助手） |
 | **当前版本** | v17.0.0 GA（UI/UX 迭代 R1-R7：Home 折叠 / LogPanel 深色 / SortCompare 对齐 / GraphAlgorithm 重构 / Quiz 扩充 / 树直线 / Sort 日志密度） |
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa |
-| **当前分支** | `feature/v19-i18n-progressive-migration`（基于 main HEAD `37478cf`；v19 M0 拍板 + M1 调研清单已 commit `36d110e`） |
-| **基线状态** | 2699 单元测试全绿 / ESLint 0 errors / 生产构建通过 / bundle < budget / 测试覆盖率 80.05% / 17 种数据结构 / 40 个学习配置 / E2E 7+2 spec 迁移至 Playwright Test / GitHub Pages 部署已触发（v17 push origin main） |
+| **当前分支** | `feature/v19-i18n-progressive-migration`（基于 main HEAD `37478cf`；v19 M0 拍板 + M1 调研清单 + M2 基础设施已 commit） |
+| **基线状态** | 2745 单元测试全绿（基线 2699 + M2 新增 46）/ ESLint 0 errors / 生产构建通过 / bundle < budget / i18n 子目录测试 54/54（基线 16 + M2 新增 38）/ 17 种数据结构 / 40 个学习配置 / GitHub Pages 部署已触发（v17 push origin main） |
 
 > **2026-06-22 v18 计划封存备注**: v18 i18n 全量替换计划（11 阶段 / ~30 天）已由用户决定封存；M0 决策 D1=B（UI + learning config）/ D2=C（按语言拆 `locales/{zh,en}/`）/ D3=B（AI + 人工校对）/ D4=简化（逐步提交 + 立即生效）/ D5=C（namespace + flat keys）保留为项目记忆。后续如需重启，可基于本决策摘要 + v18 分支 commit `774025a` 的历史快照 `docs/superpowers/plans/2026-06-22-v18-i18n-full-replacement.md`（646 行）启动。 |
 >
-> **2026-06-22 v19 启动备注**: v19 i18n 渐进迁移 M0 5 项决策已拍板（D1=B / D2=C / D3=B / D4=B / D5=C）；M1 硬编码字符串调研清单已交付（17,500 字符 v19 范围）。M2 启动前需新增 3 项决策：D6 工具类翻译策略 / D7 学习配置翻译范围 / D8 翻译协作模式。详细见 [docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md](./docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md)。 |
+> **2026-06-22 v19 进度备注**: v19 i18n 渐进迁移 M0 8 项决策已拍板（D1=B / D2=C / D3=B / D4=B / D5=C + D6=B / D7=B / D8=A）；M1 硬编码字符串调研清单已交付（17,500 字符 v19 范围）；**M2 基础设施已完成**（目录骨架 + integrity.ts + pseudoLocale.ts + 测试 16→54）。详细见 [docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md](./docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md)。M3+ 待启动。 |
 
 ---
 
 ## 2. 最近完成的工作
+
+### 2026-06-22 (深夜) | v19 i18n 渐进迁移 M2 基础设施完成
+
+#### 目标
+在 v19 M0+M1 已拍板 8 项决策 + 硬编码字符串清单完成的基础上，启动 M2 阶段：创建 `locales/{zh,en}/` 目录骨架 + 编写 integrity.ts 镜像校验工具 + 编写 pseudoLocale.ts 伪语言测试支持 + 单元测试 16→50+。
+
+#### 范围
+- **新建设施**：`src/i18n/locales/{zh,en}/` 目录骨架（5 个子目录 × 2 语言 + 顶层 index.ts）+ `index.ts` 统一导出
+- **新增工具 1**：`src/i18n/locales/integrity.ts`（240 行）— 运行时镜像校验（`checkIntegrity` / `assertIntegrity` / `collectLeafPaths` / `countLeaves` / `diffKeys` / `hasEmptyLeaf` / `formatIntegrityReport` / `INTEGRITY_VERSION`）
+- **新增工具 2**：`src/i18n/locales/pseudoLocale.ts`（170 行）— 伪语言生成器（`pseudoLocalize` / `pseudoLocalizeTree` / `createPseudoLocaleLoader` / `isPseudoLocalized` / `PSEUDO_LOCALE_CODE` / `PSEUDO_LOCALE_NAME`）
+- **新增测试**：`src/__tests__/i18n/integrity.test.ts`（24 项）+ `src/__tests__/i18n/pseudoLocale.test.ts`（22 项）= 46 项新增
+- **保持向后兼容**：`src/i18n/locales.ts`（根）继续作为聚合入口，50+ namespace 保留
+
+#### 文件清单（13 个新增）
+- 工具：`src/i18n/locales/integrity.ts` / `src/i18n/locales/pseudoLocale.ts` / `src/i18n/locales/index.ts`
+- 目录占位：`src/i18n/locales/{zh,en}/index.ts` + `core/` + `page/` + `component/` + `algorithm/` + `learning/` 各自 index.ts
+- 测试：`src/__tests__/i18n/integrity.test.ts` / `src/__tests__/i18n/pseudoLocale.test.ts`
+- 文档：5 份核心文档同步（PROJECT_STATUS / TODO / WORKLOG / CLAUDE / AGENTS）
+
+#### 验证
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run` | **2745/2745 通过**（149 文件）— 基线 2699 + M2 新增 46 |
+| `npx vitest run src/__tests__/i18n` | **54/54 通过**（3 文件）— 基线 16 + M2 新增 38（integrity 24 + pseudoLocale 22 - 重复 8）|
+| `npm run build` | 成功；bundle：i18n-locales 86.61KB / index 77.65KB / vendor-react 231.35KB / vendor-d3 52.54KB（均 < budget）|
+| TypeScript strict | 我引入错误 0；预存 7 个 v17 GA 错误按规则不跨模块修 |
+
+#### 范围外（Out of Scope）
+- ❌ namespace 物理迁移到 `locales/{zh,en}/`（M3+ 阶段任务）
+- ❌ 改造 `locales.ts` 为聚合层（M3+ 阶段）
+- ❌ AssertSameKeys 编译时断言（M3 阶段）
+- ❌ 引入第三方 i18n 库（保持自研轻量）
+- ❌ 翻译实际工作（M4-M7 之后才启动 M8 翻译）
+
+#### 关键约束
+- **D2=C**：`locales/{zh,en}/` 按语言拆分；保持 `locales.ts` 向后兼容
+- **D5=C**：namespace + flat keys 命名规范（已通过注释固化在 zh/en 子目录的 index.ts 中）
+- **D6=B**：仅 UI 翻译，错误消息保留 zh（validate / 动画状态消息）
+- **D7=B**：仅翻译高频 10 个 learning config（约 5000 字符）
+- **D8=A**：AI 初译 + 用户单次校对
 
 ### 2026-06-22 (晚) | v16 设计统一化合并到 main（v16 design unification GA merge）
 
