@@ -11,14 +11,107 @@
 | 项 | 当前值 |
 |---|---|
 | **项目名称** | ds-visualizer（数据结构学习助手） |
-| **当前版本** | v14.0.0 GA（D1 图算法测试 + G1 B-Tree + G2 Segment Tree + G3 双向链表 + F2 算法接入指南全部完成） |
+| **当前版本** | v15.0.0 GA（E1 PWA + E2 大数据 + E3 手势 + E4 KeyboardHelp 搜索 + U2 响应式面板 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞） |
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 |
 | **当前分支** | `feature/v13-path3-learning-enhancements` |
-| **基线状态** | 2526 单元测试全绿 / ESLint 0 errors（67 warnings） / 生产构建通过 / 17 种数据结构 / 40 个学习配置 |
+| **基线状态** | 2590 单元测试全绿 / ESLint 0 errors（67 warnings） / 生产构建通过 / 17 种数据结构 / 40 个学习配置 |
 
 ---
 
 ## 2. 最近完成的工作
+
+### 2026-06-22 | v15.0.0 GA — 体验打磨完成
+
+#### E1 — PWA 离线增强
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 组件 | `src/components/ReloadPrompt.tsx` | PWA 新版本提示（useRegisterSW + Neo-Brutalist + a11y） |
+| 配置 | `vite.config.js` | Google Fonts runtime caching（CacheFirst, 60 天） |
+| 集成 | `src/components/Layout.tsx` | 渲染 ReloadPrompt |
+| 类型 | `src/types/pwa.d.ts` | virtual:pwa-register/react 类型声明 |
+| i18n | `src/i18n/locales.ts` | pwa 命名空间（3 键） |
+| 测试 | `ReloadPrompt.test.tsx` | 4 个测试 |
+
+#### E2 — 大数据可视化
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 组件 | `src/components/PerformanceIndicator.tsx` | 性能模式徽章 |
+| 工具 | `src/utils/performanceConfig.ts` | 新增 isLargeData 辅助函数 |
+| 可视化器 | `arrayVisualizer.ts` / `sortVisualizer.ts` | 大数据简化渲染（跳过渐变/阴影/标签） |
+| 页面 | `ArrayPage.tsx` / `SortPage.tsx` | 集成浮动徽章 |
+| i18n | `src/i18n/locales.ts` | performance 命名空间（2 键） |
+| 测试 | 4 个测试文件 | 15 个新测试 |
+
+#### E3 — 移动端手势
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| Hook | `src/hooks/useGestures.ts` | 5 种手势（pinch/swipeH/swipeV/longPress/tap） |
+| 集成 | `src/components/Visualizer.tsx` | onSwipeLeft/onSwipeRight 可选 props |
+| 测试 | `useGestures.test.ts` | 9 个测试 |
+
+#### E4 — KeyboardHelp 模糊搜索
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 组件 | `src/components/KeyboardHelp.tsx` | fuzzyMatchAny 跨页面搜索 + 三态渲染 |
+| i18n | `src/i18n/locales.ts` | shortcuts 命名空间新增 3 键 |
+| 测试 | `KeyboardHelp.test.tsx` | 5 个新测试（共 20 tests） |
+
+#### U2 — 响应式操作面板
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 组件 | `src/components/OperationBar.tsx` | 移动端横向滚动 + collapsibleOnMobile 折叠模式 |
+| i18n | `src/i18n/locales.ts` | page 命名空间新增 expand/collapse |
+| 测试 | `OperationBar.test.tsx` | 5 个新测试（共 43 tests） |
+
+#### U3 — 跨页面布局一致性
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 修复 | `src/pages/GraphAlgorithmPage.tsx` | 3 处布局偏差（h-full→min-h-dvh、添加 min-h-0、添加 relative） |
+| 测试 | `layoutConsistency.test.tsx` | 8 个布局测试 |
+
+#### U4 — SVG 图标系统
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 组件 | `src/components/Icon.tsx` | 8 个 stroke-based SVG 图标（Feather/Lucide 风格） |
+| 替换 | 6 个文件 | KeyboardHelp/GlobalSearch/Sidebar/Home/SortComparePage/QuizPanel emoji→Icon |
+| 测试 | `Icon.test.tsx` | 5 个测试 |
+
+#### U5 — 条件禁用按钮原因
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 组件 | `src/components/OperationBar.tsx` | disabledReason prop + useId + aria-describedby + sr-only |
+| CSS | `src/index.css` | sr-only 工具类 |
+| 页面 | ArrayPage/StackPage/SortPage | 示例接入 disabledReason |
+| i18n | `src/i18n/locales.ts` | page.animating / page.disabled |
+| 测试 | `OperationBar.test.tsx` | 4 个新测试（共 47 tests） |
+
+#### ISSUE-007 — 排序撤销阻塞
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| Hook | `src/hooks/useHistory.ts` | undoBlock 机制（ref-based，不触发重渲染） |
+| 透传 | `src/hooks/useDataStructureState.ts` | 透传 setUndoBlock |
+| 使用 | `src/hooks/useSortState.ts` | 排序过程中 setUndoBlock(true)，finally 解除 |
+| 测试 | `useHistory.test.ts` / `useSortState.test.ts` | 6 个新测试 |
+
+#### 验证
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2590 passed（137 文件），较 v14 GA 新增 64 个测试 |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| Git commits | E1 `ba39cd7` / E2 `d7952b7` / E3 `be4e59d` / E4 `66d282c` / U2 `594cd9f` / U3 `11b298b` / U4 `6518050` / U5 `1146d47` / ISSUE-007 `5355ea2` |
+
+---
 
 ### 2026-06-22 | v14.0.0 GA — 内容扩张完成
 

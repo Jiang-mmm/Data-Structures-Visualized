@@ -4,6 +4,74 @@
 
 ---
 
+## [v15.0.0 GA] - 2026-06-22
+
+### E1 — PWA 离线增强
+- 新增 `src/components/ReloadPrompt.tsx`：PWA 新版本提示组件（useRegisterSW + Neo-Brutalist + a11y）
+- 更新 `vite.config.js`：Google Fonts runtime caching（CacheFirst, 60 天）
+- 更新 `src/components/Layout.tsx`：渲染 ReloadPrompt
+- 新增 `src/types/pwa.d.ts`：virtual:pwa-register/react 类型声明
+- 更新 `src/i18n/locales.ts`：pwa 命名空间（3 键）
+- 新增 `src/__tests__/components/ReloadPrompt.test.tsx`（4 tests）
+
+### E2 — 大数据可视化
+- 新增 `src/components/PerformanceIndicator.tsx`：性能模式徽章
+- 更新 `src/utils/performanceConfig.ts`：新增 isLargeData 辅助函数
+- 更新 `src/visualizers/arrayVisualizer.ts` / `sortVisualizer.ts`：大数据简化渲染（跳过渐变/阴影/标签）
+- 更新 `src/pages/ArrayPage.tsx` / `SortPage.tsx`：集成浮动徽章
+- 更新 `src/i18n/locales.ts`：performance 命名空间（2 键）
+- 新增 15 个测试（performanceConfig 5 + PerformanceIndicator 5 + arrayVisualizer 2 + sortVisualizer 3）
+
+### E3 — 移动端手势
+- 新增 `src/hooks/useGestures.ts`：5 种手势（pinch/swipeH/swipeV/longPress/tap，ref-based 避免 stale closure）
+- 更新 `src/components/Visualizer.tsx`：onSwipeLeft/onSwipeRight 可选 props
+- 新增 `src/__tests__/hooks/useGestures.test.ts`（9 tests）
+
+### E4 — KeyboardHelp 模糊搜索
+- 更新 `src/components/KeyboardHelp.tsx`：fuzzyMatchAny 跨页面搜索 + 三态渲染（默认/无结果/搜索结果）
+- 更新 `src/i18n/locales.ts`：shortcuts 命名空间新增 3 键（searchPlaceholder/searchNoResults/allShortcuts）
+- 更新 `src/__tests__/KeyboardHelp.test.tsx`：5 个新测试（共 20 tests）
+
+### U2 — 响应式操作面板
+- 更新 `src/components/OperationBar.tsx`：移动端横向滚动 + collapsibleOnMobile 折叠模式
+- 更新 `src/i18n/locales.ts`：page 命名空间新增 expand/collapse
+- 更新 `src/__tests__/OperationBar.test.tsx`：5 个新测试（共 43 tests）
+
+### U3 — 跨页面布局一致性
+- 更新 `src/pages/GraphAlgorithmPage.tsx`：3 处布局偏差修复（h-full→min-h-dvh、添加 min-h-0、添加 relative）
+- 新增 `src/__tests__/pages/layoutConsistency.test.tsx`（8 tests）
+
+### U4 — SVG 图标系统
+- 新增 `src/components/Icon.tsx`：8 个 stroke-based SVG 图标（Feather/Lucide 风格）
+- 更新 6 个文件：KeyboardHelp/GlobalSearch/Sidebar/Home/SortComparePage/QuizPanel emoji→Icon
+- 新增 `src/__tests__/components/Icon.test.tsx`（5 tests）
+
+### U5 — 条件禁用按钮原因
+- 更新 `src/components/OperationBar.tsx`：disabledReason prop + useId + aria-describedby + sr-only
+- 更新 `src/index.css`：sr-only 工具类
+- 更新 ArrayPage/StackPage/SortPage：示例接入 disabledReason
+- 更新 `src/i18n/locales.ts`：page.animating / page.disabled
+- 更新 `src/__tests__/OperationBar.test.tsx`：4 个新测试（共 47 tests）
+
+### ISSUE-007 — 排序撤销阻塞
+- 更新 `src/hooks/useHistory.ts`：undoBlock 机制（ref-based，不触发重渲染）
+- 更新 `src/hooks/useDataStructureState.ts`：透传 setUndoBlock
+- 更新 `src/hooks/useSortState.ts`：排序过程中 setUndoBlock(true)，finally 解除
+- 更新 `src/__tests__/useHistory.test.ts` / `useSortState.test.ts`：6 个新测试
+
+### Verification
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2590 passed（137 文件），较 v14 GA 新增 64 个测试 |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| Git commits | E1 `ba39cd7` / E2 `d7952b7` / E3 `be4e59d` / E4 `66d282c` / U2 `594cd9f` / U3 `11b298b` / U4 `6518050` / U5 `1146d47` / ISSUE-007 `5355ea2` |
+
+### 里程碑
+v15.0.0 GA — 体验打磨完成（PWA + 大数据 + 手势 + 搜索 + 响应式 + 布局 + 图标 + a11y + 撤销阻塞）
+
+---
+
 ## [v14.0.0 GA] - 2026-06-22
 
 ### D1 — 图算法测试补齐

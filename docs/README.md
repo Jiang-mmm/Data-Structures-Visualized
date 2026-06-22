@@ -1,6 +1,6 @@
 # 文档目录（docs/）
 
-> **整理日期:** 2026-06-22（v14.0.0 GA）
+> **整理日期:** 2026-06-22（v15.0.0 GA）
 > **目的:** 提供项目所有文档的统一入口，明确活跃文档与归档文档的导航规则。
 > **配套根目录文档:** README.md, CLAUDE.md, CHANGELOG.md, ARCHITECTURE.md, PROJECT_SUMMARY.md, CODE_WIKI.md, TODO.md, WORKLOG.md, CONTRIBUTING.md
 

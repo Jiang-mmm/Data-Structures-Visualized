@@ -1,8 +1,8 @@
 # 数据结构学习助手 — Architecture 文档
 
-> **版本:** v14.0.0 GA（D1 图算法测试 + G1 B-Tree + G2 Segment Tree + G3 双向链表 + F2 算法接入指南全部完成）
+> **版本:** v15.0.0 GA（E1 PWA + E2 大数据性能 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞 全部完成）
 > **更新日期:** 2026-06-22
-> **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
+> **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa
 
 ---
 

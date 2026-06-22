@@ -2,6 +2,119 @@
 
 ---
 
+## 2026-06-22 | v15.0.0 GA — 体验增强完成
+
+### 任务范围
+
+按 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第三阶段完成 v15 体验增强，共 9 个子任务（4 体验 + 4 一致性 + 1 修复）。
+
+#### E1 — PWA 离线增强
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| E1-1 更新提示 | `src/components/ReloadPrompt.tsx` | `useRegisterSW` + Neo-Brutalist 通知卡片 + a11y |
+| E1-2 类型声明 | `src/types/pwa.d.ts` | `virtual:pwa-register/react` 模块声明 |
+| E1-3 测试 mock | `src/__mocks__/virtualPwaRegister.ts` + `vitest.config.js` | resolve.alias 解决虚拟模块解析 |
+| E1-4 字体缓存 | `vite.config.js` | Google Fonts 2 条 CacheFirst 规则（60 天） |
+| E1-5 集成 | `src/components/Layout.tsx` | 挂载 ReloadPrompt |
+| E1-6 i18n | `src/i18n/locales.ts` | pwa 命名空间（3 键） |
+| E1-7 测试 | `src/__tests__/components/ReloadPrompt.test.tsx` | 4 个测试 |
+
+#### E2 — 大数据可视化性能
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| E2-1 性能检测 | `src/utils/performanceConfig.ts` | 新增 `isLargeData()` 导出 |
+| E2-2 性能徽章 | `src/components/PerformanceIndicator.tsx` | memo + role="status" + aria-live="polite" |
+| E2-3 数组简化渲染 | `src/visualizers/arrayVisualizer.ts` | >100 跳过渐变/阴影/标签 |
+| E2-4 排序简化渲染 | `src/visualizers/sortVisualizer.ts` | `renderSortBars` + `renderSortBarsImmediate` 分支 |
+| E2-5 页面集成 | `src/pages/ArrayPage.tsx` / `SortPage.tsx` | 浮动 PerformanceIndicator 徽章 |
+| E2-6 i18n | `src/i18n/locales.ts` | performance 命名空间（2 键） |
+| E2-7 测试 | 4 个测试文件 | 15 个新测试 |
+
+#### E3 — 移动端手势
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| E3-1 手势 Hook | `src/hooks/useGestures.ts` | 5 种手势（pinch/swipeH/swipeV/longPress/tap），ref-based 避免闭包陷阱 |
+| E3-2 Visualizer 集成 | `src/components/Visualizer.tsx` | 新增 `onSwipeLeft` / `onSwipeRight` props |
+| E3-3 测试 | `src/__tests__/hooks/useGestures.test.ts` | 9 个测试 |
+
+#### E4 — KeyboardHelp 模糊搜索
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| E4-1 跨页面搜索 | `src/components/KeyboardHelp.tsx` | `fuzzyMatchAny` + `PAGE_NAMES` 映射 + 三态渲染 |
+| E4-2 i18n | `src/i18n/locales.ts` | shortcuts 命名空间 +3 键 |
+| E4-3 测试 | `src/__tests__/KeyboardHelp.test.tsx` | 5 个新测试（共 20） |
+
+#### U2 — 响应式操作面板
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| U2-1 移动端横向滚动 | `src/components/OperationBar.tsx` | `overflow-x-auto scrollbar-thin flex-nowrap` |
+| U2-2 折叠模式 | `src/components/OperationBar.tsx` | `collapsibleOnMobile` prop + 切换按钮 |
+| U2-3 i18n | `src/i18n/locales.ts` | page.expand/collapse |
+| U2-4 测试 | `src/__tests__/OperationBar.test.tsx` | 5 个新测试（共 43） |
+
+#### U3 — 跨页面布局一致性
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| U3-1 GraphAlgorithmPage 修复 | `src/pages/GraphAlgorithmPage.tsx` | 3 处修复：`h-full`→`min-h-dvh`、`min-h-0`、`relative` |
+| U3-2 测试 | `src/__tests__/pages/layoutConsistency.test.tsx` | 8 个测试（PageHeader + ArrayPage 根布局） |
+
+#### U4 — SVG 图标系统
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| U4-1 Icon 组件 | `src/components/Icon.tsx` | 8 个 stroke-based 图标（keyboard/close/check/search/play/chevronDown/chevronRight/chevronLeft），24x24 viewBox，`memo()` 后置声明 |
+| U4-2 emoji 替换 | KeyboardHelp / GlobalSearch / Sidebar / Home / SortComparePage / QuizPanel | 6 个文件将 emoji 替换为 Icon 组件 |
+| U4-3 测试 | `src/__tests__/components/Icon.test.tsx` | 5 个测试 |
+| U4-4 测试修复 | `src/__tests__/KeyboardHelp.test.tsx` | `getByText('✕')` → `getByRole('button', { name: /common\.close/ })` |
+
+#### U5 — 条件禁用按钮原因
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| U5-1 disabledReason prop | `src/components/OperationBar.tsx` | `useId()` + `aria-describedby` + sr-only span |
+| U5-2 sr-only 工具类 | `src/index.css` | `.sr-only` utility |
+| U5-3 i18n | `src/i18n/locales.ts` | page.animating / page.disabled |
+| U5-4 页面接入 | `ArrayPage.tsx` / `StackPage.tsx` / `SortPage.tsx` | 示例性接入 disabledReason |
+| U5-5 测试 | `src/__tests__/OperationBar.test.tsx` | 4 个新测试（共 47） |
+
+#### ISSUE-007 — 排序撤销阻塞
+
+| 子任务 | 文件 | 说明 |
+|--------|------|------|
+| ISSUE-007-1 undoBlock 机制 | `src/hooks/useHistory.ts` | `undoBlockedRef` + `setUndoBlock` 回调，`undo`/`redo`/`canUndo`/`canRedo` 检查阻塞 |
+| ISSUE-007-2 透传 | `src/hooks/useDataStructureState.ts` | 透传 `setUndoBlock` |
+| ISSUE-007-3 排序接入 | `src/hooks/useSortState.ts` | 排序前 `setUndoBlock(true)`，finally 中 `setUndoBlock(false)` |
+| ISSUE-007-4 测试 | `useHistory.test.ts`（5）+ `useSortState.test.ts`（1） | 6 个新测试 |
+
+### 修复记录
+
+| 问题 | 原因 | 修复 |
+|------|------|------|
+| vitest 无法解析 `virtual:pwa-register/react` | Vite import-analysis 在 `vi.mock` 拦截前失败 | `vitest.config.js` 添加 `resolve.alias` 指向 mock 文件 |
+| KeyboardHelp 测试 `getByText('✕')` 失败 | emoji `✕` 被 SVG Icon 替换，文本查询不再匹配 | 改用 `getByRole('button', { name: /common\.close/ })` |
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2590 passed（137 文件），较 v14 GA 新增 64 个测试 |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过 |
+| Git commits | E1 `ba39cd7` / E2 `d7952b7` / E3 `be4e59d` / E4 `66d282c` / U2 `594cd9f` / U3 `11b298b` / U4 `6518050` / U5 `1146d47` / ISSUE-007 `5355ea2` |
+
+### 里程碑
+
+v15.0.0 GA — 体验增强完成（PWA + 大数据性能 + 手势 + 模糊搜索 + 响应式 + 布局一致性 + SVG 图标 + 禁用原因 + 排序撤销阻塞）
+
+---
+
 ## 2026-06-22 | v14.0.0 GA — 内容扩张完成
 
 ### 任务范围

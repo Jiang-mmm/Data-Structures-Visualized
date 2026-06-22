@@ -1,13 +1,51 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** v14.0.0 GA
+> **版本:** v15.0.0 GA
 > **更新日期:** 2026-06-22
-> **状态:** v14.0.0 GA 完成（D1 图算法测试 + G1 B-Tree + G2 Segment Tree + G3 双向链表 + F2 算法接入指南）；下一步进入 v15 体验打磨
-> **v13 GA:** 已完成（2026-06-22）— Path 3 学习体验闭环（H2/H3/H1 全部完成）
-> **详细迭代计划:** v11 计划已归档至 [docs/archive/iteration-plan-v11.md](./docs/archive/iteration-plan-v11.md)；v12/v13/v14 计划见 [docs/superpowers/plans/](./docs/superpowers/plans/)，v10/v11/v12 迭代记录见 WORKLOG.md
+> **状态:** v15.0.0 GA 完成（E1-E4 体验 + U2-U5 UI + ISSUE-007）；下一步进入 v16+ 工程化
+> **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1/G1/G2/G3/F2）
+> **详细迭代计划:** v11 计划已归档至 [docs/archive/iteration-plan-v11.md](./docs/archive/iteration-plan-v11.md)；v12/v13/v14/v15 计划见 [docs/superpowers/plans/](./docs/superpowers/plans/)，v10/v11/v12 迭代记录见 WORKLOG.md
 > **v13 体检报告:** [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md)
 > **Path 3 实施真源文档:** [docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md](./docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md)
 > **长线路线图:** [docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md)
+
+---
+
+## v15 体验打磨（已完成）
+
+| 阶段 | 主题 | 状态 | 说明 |
+|------|------|------|------|
+| **E1** | PWA 离线 | ✅ 已完成 | ReloadPrompt + Google Fonts caching（commit `ba39cd7`） |
+| **E2** | 大数据可视化 | ✅ 已完成 | PerformanceIndicator + 简化渲染（commit `d7952b7`） |
+| **E3** | 移动端手势 | ✅ 已完成 | useGestures hook（5 种手势，commit `be4e59d`） |
+| **E4** | KeyboardHelp 模糊搜索 | ✅ 已完成 | fuzzyMatchAny 跨页面搜索（commit `66d282c`） |
+| **U2** | 响应式操作面板 | ✅ 已完成 | 移动端横向滚动 + collapsibleOnMobile（commit `594cd9f`） |
+| **U3** | 跨页面布局一致性 | ✅ 已完成 | GraphAlgorithmPage 修复 + 布局测试（commit `11b298b`） |
+| **U4** | SVG 图标系统 | ✅ 已完成 | Icon 组件 + 6 文件 emoji 替换（commit `6518050`） |
+| **U5** | 条件禁用按钮原因 | ✅ 已完成 | disabledReason + aria-describedby（commit `1146d47`） |
+| **ISSUE-007** | 排序撤销 | ✅ 已完成 | undoBlock 机制（commit `5355ea2`） |
+
+### v15.0.0 GA 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2590 passed（137 文件） |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+
+---
+
+## 下一阶段：v16+ 工程化
+
+详见 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第四阶段。
+
+| 阶段 | 主题 | 说明 |
+|------|------|------|
+| **ENG-1** | Playwright 迁移 | E2E 测试全面迁移到 Playwright |
+| **ENG-2** | 覆盖率 >80% | 单元测试覆盖率提升 |
+| **ENG-3** | lint 警告清理 | 67 个 warnings 清零 |
+| **ENH-1** | 导出增强 | GIF/MP4 动画导出 |
+| **ENH-2** | i18n 完善 | 补齐缺失翻译 |
 
 ---
 

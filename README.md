@@ -1,9 +1,9 @@
 # 数据结构学习助手
 
-> **版本:** v14.0.0 GA
+> **版本:** v15.0.0 GA
 > **更新日期:** 2026-06-22
-> **v14 起点:** v13 GA 基础上完成内容扩张 — D1 图算法测试补齐 + G1 B-Tree + G2 Segment Tree + G3 双向链表模式 + F2 算法接入指南
-> **v13 GA:** 已完成（2026-06-22）— 路径一修复路线全部结束；Path 3 学习体验闭环（H2 全局搜索增强 + H3 SortComparePage 学习模式 + H1 测验系统）全部完成
+> **v15 起点:** v14 GA 基础上完成体验打磨 — E1 PWA 离线 + E2 大数据可视化 + E3 移动端手势 + E4 KeyboardHelp 模糊搜索 + U2 响应式操作面板 + U3 跨页面布局一致性 + U4 SVG 图标系统 + U5 条件禁用按钮原因 + ISSUE-007 排序撤销阻塞
+> **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1 图算法测试 + G1 B-Tree + G2 Segment Tree + G3 双向链表 + F2 算法接入指南）
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 
