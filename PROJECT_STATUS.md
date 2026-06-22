@@ -16,7 +16,11 @@
 
 **2026-06-22 规则同步** — `.trae/rules/project_rules.md` 新增第 16 节「设计参考与文档同步」、第 17 节「规则版本与变更记录」；`CLAUDE.md` / `AGENTS.md`（Trellis 区块外）已同步引用。
 
-**2026-06-22 v16 设计统一化计划上线** — 新增实施真源文档 [docs/superpowers/plans/2026-06-22-design-unification-v16.md](docs/superpowers/plans/2026-06-22-design-unification-v16.md)；对应 [长线路线图](docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第四阶段"设计与品牌统一"；主参考 Linear + Vercel + Raycast；6 阶段 / 26 原子步骤 / 6 里程碑；当前状态 ⏳ Phase A 待启动。
+**2026-06-22 v16 设计统一化计划已落地 M1-M6** — Phase A（DESIGN.md + v16 tokens）✅ / Phase B（6 组件）✅ / Phase C（命令面板）✅ / Phase D（17 页面一致性）✅ / Phase E（17 visualizer 深色模式）✅ / Phase F（lint+test+build+docs 同步）✅；详见 [v16 设计统一化计划](./docs/superpowers/plans/2026-06-22-design-unification-v16.md)。
+
+> ⚠️ **2026-06-22 校准**：v16.0.0 GA（工程深化 + 功能增强）已由另一 AI 提交（commit `879f04e`），故"v16 设计统一化"实际为长线路线图第四阶段，与 v16.0.0 GA 并存；新基线 = v16.0.0 GA（2699 测试 / 0 lint warnings / 80.05% 覆盖率）。
+
+> ⚠️ **2026-06-22 安全发现**：`design-md/` 资料夹**当前未被 `.gitignore` 收录**（`git status` 显示为 untracked），与 rule 16.1 隐含假设冲突。建议在启动 Phase A 前由用户决定：① 显式添加 `design-md/` 至 `.gitignore`（推荐）；或 ② 显式接受其纳入版本控制。
 
 ---
 
@@ -421,27 +425,55 @@ v15 GA 基础上完成工程深化（ENG-1/2/3）与功能增强（ENH-1/2），
 
 ## 3. 当前活跃任务 / 下一步方向
 
-### v13 修复路线（按 Phase A→D 顺序执行）
+### v16 设计统一化（⏳ 待启动 — 长线路线图第四阶段）
 
-| Phase | 主题 | 预计工时 | 状态 |
-|-------|------|----------|------|
-| **A** | 紧急修复（安全 + 数据完整性） | 1~2 天 | ✅ 已完成（commit `0a544a9`） |
-| **B** | 体验 + 工程优化（性能 + 渲染 + a11y） | 3~5 天 | ✅ 已完成（lint 0 errors / build 通过） |
-| **C** | 文档完善（一致性 + API 文档） | 1~2 天 | ✅ 已完成（8 份文档同步） |
-| **D** | 测试 + CI 升级（E2E 框架 + 覆盖率可视化） | 2~3 天 | ✅ 已完成（Playwright 20 spec / a11y 17 页 / CI artifacts） |
+| 维度 | 内容 |
+|------|------|
+| **计划文档** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](docs/superpowers/plans/2026-06-22-design-unification-v16.md) |
+| **设计推荐** | [docs/数据结构学习助手-设计推荐.md](docs/数据结构学习助手-设计推荐.md) |
+| **基线** | v16.0.0 GA（commit `879f04e`） |
+| **路线对齐** | 长线路线图 v13→v16 第四阶段"设计与品牌统一" |
+| **主参考** | Linear + Vercel + Raycast（命令面板） |
+| **核心产出** | 项目根 `DESIGN.md`（设计真源） |
+| **状态** | ⏳ Phase A 待启动 |
+| **前置条件** | ① 用户授权读取 `design-md/`（rule 16.1）；② 用户确认主参考品牌；③ 用户决定 `design-md/` 是否纳入 `.gitignore` |
 
-### v13 Top10 优先问题（详见 `docs/audit-2026-06-20/audit-merged.md`）
+---
 
-1. devDependencies 版本越界（`package.json`）
-2. `isValidStoredData` 不递归深度 + `loadFromStorage` 用 `JSON.parse as T`
-3. useVisualizer rafId 闭包错乱 + animationEngine 模块单例 + wait() 闭包链
-4. `treeVisualizer` `positionStore` 全局单例
-5. `useDataStructureState` 渲染阶段写 ref
-6. `react-hooks/set-state-in-effect` 永久降级 warn
-7. `vite.config.js` 配 `loli.net` 注释写 google fonts
-8. InfoPanel 自动跳转 + LogPanel aria-live 双重轰炸
-9. 树/图键盘 ↑↓ 行为错误 + AVL/UnionFind 节点不可 tab
-10. undo/redo/applyPreset 不打断正在跑的动画
+### v16.0.0 GA — 工程深化与功能增强（✅ 已完成 2026-06-22，commit `879f04e`）
+
+| 子任务 | 主题 | 状态 | 关键产出 |
+|--------|------|------|----------|
+| **ENG-1** | Playwright 迁移 | ✅ | 7 个 `test-*.js` → `*.spec.ts`；`scripts/run-e2e.mjs`（commit `23913a7`） |
+| **ENG-2** | 覆盖率 >80% | ✅ | statements 77.92% → **80.05%**（+62 tests，commit `7da029b`） |
+| **ENG-3** | lint 归零 | ✅ | 67 → 0（react-hooks 补全 + 6 个 pre-existing 修复，commit `6d32435` / `0fb5a2f`） |
+| **ENH-1** | 动画导出 | ✅ | WebM/GIF/帧序列 ZIP；SortPage 集成（commit `8a81ff8`） |
+| **ENH-2** | i18n 完善 | ✅ | 125 键术语表；`AlgorithmGlossaryCard`（commit `99b5b0e`） |
+
+**基线指标**：2699 单元测试 / 0 ESLint / 80.05% 覆盖 / bundle 全 < budget / E2E 3 spec 全绿（chromium + firefox）
+
+---
+
+### v13 / v14 / v15 路线（✅ 全部完成，已结案归档）
+
+| 阶段 | 主题 | 状态 |
+|------|------|------|
+| **v13 Phase A-D** | 紧急修复 + 体验 + 文档 + 测试 CI 升级 | ✅ 已完成（commit `0a544a9` + 后续 7 commits） |
+| **v14** | 内容扩张（D1/G1/G2/G3/F2） | ✅ 已完成 |
+| **v15 E1-E4 / U2-U5 / ISSUE-007** | 体验打磨 | ✅ 已完成（9 commits） |
+
+### v13 Top10 优先问题（结案 — 详见 `docs/audit-2026-06-20/audit-merged.md`）
+
+1. devDependencies 版本越界（`package.json`）— ✅ ENG-3 修
+2. `isValidStoredData` 不递归深度 + `loadFromStorage` 用 `JSON.parse as T` — ✅ Phase A 修
+3. useVisualizer rafId 闭包错乱 + animationEngine 模块单例 + wait() 闭包链 — ✅ Phase B 修
+4. `treeVisualizer` `positionStore` 全局单例 — ✅ Phase B 修
+5. `useDataStructureState` 渲染阶段写 ref — ✅ Phase A 修
+6. `react-hooks/set-state-in-effect` 永久降级 warn — ✅ ENG-3 修（67→0）
+7. `vite.config.js` 配 `loli.net` 注释写 google fonts — ✅ Phase A 修
+8. InfoPanel 自动跳转 + LogPanel aria-live 双重轰炸 — ✅ Phase B 修
+9. 树/图键盘 ↑↓ 行为错误 + AVL/UnionFind 节点不可 tab — ✅ Phase B 修
+10. undo/redo/applyPreset 不打断正在跑的动画 — ✅ Phase B 修
 
 ---
 
@@ -449,8 +481,9 @@ v15 GA 基础上完成工程深化（ENG-1/2/3）与功能增强（ENH-1/2），
 
 - **禁止修改的文件**: `CLAUDE.md`、根目录核心文档（README/CHANGELOG/ARCHITECTURE/PROJECT_SUMMARY/CODE_WIKI/TODO/WORKLOG/CONTRIBUTING）作为独立文件保留，不合并。
 - **必须遵循的工作流**: `UNDERSTAND → PLAN → EXECUTE → VERIFY`
-- **当前代码基线**: 所有 v13 修复必须基于 `feature/v13-code-audit` 分支，不要直接在 `main` 修改。
+- **当前代码基线**: v16.0.0 GA（commit `879f04e`，分支 `feature/v13-path3-learning-enhancements`）；任何 v16 设计统一化工作**必须**新建独立 feature 分支（如 `feature/v16-design-unification`），不要直接在 main 或当前分支修改。
 - **验证红线**: 任何代码改动后必须运行 `npm run lint`、`npm run typecheck`、`npm run test:run`、`npm run build`。
+- **`design-md/` 追踪策略**（2026-06-22 发现）：当前未纳入 `.gitignore`，`git status` 显示 untracked。在启动 v16 设计统一化 Phase A 前**必须**先决定：① 添加至 `.gitignore`（推荐，rule 16.1 隐含要求）；或 ② 显式接受其纳入版本控制。
 
 ---
 
@@ -459,11 +492,13 @@ v15 GA 基础上完成工程深化（ENG-1/2/3）与功能增强（ENH-1/2），
 | 文档 | 用途 |
 |---|---|
 | [CLAUDE.md](./CLAUDE.md) | AI 协作规则与技术约束 |
-| [TODO.md](./TODO.md) | 当前待办与 v13 修复路线 |
+| [TODO.md](./TODO.md) | 当前待办与 v16 设计统一化计划 |
 | [WORKLOG.md](./WORKLOG.md) | 每日工作记录 |
 | [CHANGELOG.md](./CHANGELOG.md) | 版本变更历史 |
-| [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md) | v13 代码体检完整报告 |
-| [docs/superpowers/plans/2026-06-20-v13-code-audit-plan.md](./docs/superpowers/plans/2026-06-20-v13-code-audit-plan.md) | v13 实施计划 |
+| [docs/数据结构学习助手-设计推荐.md](./docs/数据结构学习助手-设计推荐.md) | 设计推荐报告（v16 设计统一化输入） |
+| [docs/superpowers/plans/2026-06-22-design-unification-v16.md](./docs/superpowers/plans/2026-06-22-design-unification-v16.md) | v16 设计统一化实施真源 |
+| [docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) | 长线路线图 |
+| [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md) | v13 代码体检完整报告（已结案） |
 | [docs/README.md](./docs/README.md) | docs/ 目录导航 |
 
 ---

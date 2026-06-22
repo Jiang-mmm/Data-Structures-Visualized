@@ -1,11 +1,13 @@
 # v16 设计统一化计划 — 实施真源文档
 
 > **创建日期**: 2026-06-22
-> **基线版本**: v15.0.0 GA（E1-E4 体验 + U2-U5 UI + ISSUE-007 全部完成）
+> **最后更新**: 2026-06-22 (PM) — 另一 AI 完成 v16.0.0 GA（commit `879f04e`）后重新校准
+> **基线版本**: **v16.0.0 GA**（commit `879f04e`，分支 `feature/v13-path3-learning-enhancements`）
 > **设计真源**: [docs/数据结构学习助手-设计推荐.md](../../数据结构学习助手-设计推荐.md)（已存在）+ `DESIGN.md`（待创建于项目根目录）
 > **执行约束**: 严格遵守 [.trae/rules/project_rules.md](../../../.trae/rules/project_rules.md) 第 2/7/8/12/16 节
 > **执行角色**: 单一开发者（用户本人）+ AI 协作（Trae / Claude / Codex）
 > **路线对齐**: 本计划对应 [长线路线图 v13→v16](./2026-06-21-longterm-roadmap-v13-to-v16.md) 第四阶段"设计与品牌统一"
+> **与 v16.0.0 GA 关系**: 本计划**不是** v16.0.0 GA 的子任务，而是与其**并存**的下一阶段（v16.0.0 GA 为工程深化，本计划为视觉/品牌统一化）
 
 ---
 
@@ -13,7 +15,7 @@
 
 ### 1.1 项目目标
 
-依据 [设计推荐报告](../../数据结构学习助手-设计推荐.md)，以 **Linear（主） + Vercel（辅） + Raycast（命令面板）** 为设计参考，将 v15 现有 Neo-Brutalism 升级为"精致粗野主义 + 工程师美学"的统一视觉语言，输出可执行、可验收、可追踪的实施计划。
+依据 [设计推荐报告](../../数据结构学习助手-设计推荐.md)，以 **Linear（主） + Vercel（辅） + Raycast（命令面板）** 为设计参考，将 v16.0.0 GA 现有 Neo-Brutalism 升级为"精致粗野主义 + 工程师美学"的统一视觉语言，输出可执行、可验收、可追踪的实施计划。
 
 ### 1.2 设计原则（按优先级）
 
@@ -138,14 +140,15 @@
 
 | 里程碑 | 完成标志 | 所属阶段 | 阻塞策略 |
 |--------|----------|----------|----------|
+| **M0** 启动闸门 | ① 授权 `design-md/` 读取；② 确认主参考品牌；③ 决定 `design-md/` 追踪策略；④ 新建 `feature/v16-design-unification` 分支 | 启动前 | 需用户逐项拍板 |
 | **M1** 设计真源就绪 | `DESIGN.md` 存在 + 6 维度覆盖 | Phase A | 需用户确认 DESIGN.md 草案 |
 | **M2** 组件语言统一 | Button/Card/Input/Toast/Modal/Sidebar 6 组件测试全绿 | Phase B | 需用户抽检 1-2 页确认 |
 | **M3** 命令面板成熟 | GlobalSearch + KeyboardHelp 视觉与交互达标 | Phase C | 需用户实际使用 5+ 关键词 |
 | **M4** 页面级一致 | 17 页面视觉抽检通过 | Phase D | 需用户抽检 5 页面 |
 | **M5** 可视化深色适配 | 17 visualizer 深色模式无视觉断裂 | Phase E | 需用户切换深色模式确认 |
-| **M6** v16 GA | 自动化验证全绿 + 文档同步完成 | Phase F | 需用户最终签字 |
+| **M6** v16 设计统一化 GA | 自动化验证全绿 + 文档同步完成 | Phase F | 需用户最终签字 |
 
-> 每个 M 后**强制等待用户确认**才能进入下一阶段（遵守 [rule 12](../../../.trae/rules/project_rules.md)）。
+> 每个 M 后**强制等待用户确认**才能进入下一阶段（遵守 [rule 12](../../../.trae/rules/project_rules.md)）。**M0** 必须在 Phase A 启动前完成。
 
 ---
 
@@ -227,13 +230,16 @@ node e2e/run-all-tests.js    # E2E 全量
 node scripts/check-bundle.js # Bundle 预算检查
 ```
 
-### 7.4 测试基线（来自 v15.0.0 GA）
+### 7.4 测试基线（来自 v16.0.0 GA，commit `879f04e`）
 
 | 项 | 当前值 |
 |----|--------|
-| 单元测试 | 2590 passed（137 文件） |
-| ESLint | 0 errors / 67 warnings（既有模式） |
-| 生产构建 | 成功，bundle 预算通过 |
+| 单元测试 | **2699 passed**（147 文件） |
+| ESLint | **0 errors / 0 warnings**（v16 ENG-3 归零） |
+| TypeScript strict | 0 错误 |
+| 测试覆盖率 | statements **80.05%** / lines 84.02% / branches 67.23% / functions 81.03% |
+| 生产构建 | 成功；bundle：index 77.93KB / vendor-react 231.35KB / vendor-d3 52.54KB（均 < budget） |
+| E2E | core/edge/v5-features 三组 spec 全绿（chromium + firefox） |
 | 数据结构 | 17 种 |
 | 学习配置 | 40 个 |
 
@@ -324,11 +330,22 @@ node scripts/check-bundle.js # Bundle 预算检查
 
 | 阶段 | 状态 | 完成日期 | 备注 |
 |------|------|----------|------|
-| Phase A — 基础设施 | ⏳ 待启动 | — | M1 里程碑未达 |
-| Phase B — 全局组件 | ⬜ 未启动 | — | — |
-| Phase C — 命令面板 | ⬜ 未启动 | — | 可与 B 并行 |
-| Phase D — 页面级 | ⬜ 未启动 | — | — |
-| Phase E — 可视化 | ⬜ 未启动 | — | — |
-| Phase F — 验收 | ⬜ 未启动 | — | v16 GA 门槛 |
+| **M0 启动闸门** | ✅ 已通过 | 2026-06-22 | 4 项启动条件全部确认：① `design-md/` 读取授权（用户已授权）；② 主参考 = Linear + Vercel + Raycast；③ `design-md/` 追踪策略 = 加入 `.gitignore`；④ 新建 `feature/v16-design-unification` 分支 |
+| **Phase A — 基础设施** | ✅ 已完成 | 2026-06-22 | M1 里程碑达成：DESIGN.md 7 章（哲学/色彩/字体/间距阴影/动效/组件/可视化）已建；`src/index.css` 新增 v16 token 体系；`.gitignore` 保护 `design-md/` |
+| **Phase B — 全局组件** | ✅ 已完成 | 2026-06-22 | M2 里程碑达成：6 组件（Button/Card/Sidebar/Toast/GlobalSearch/KeyboardHelp）已 v16 对齐；Input/Modal 为 inline 模式无独立组件 |
+| **Phase C — 命令面板** | ✅ 已完成 | 2026-06-22 | M3 里程碑达成：GlobalSearch + KeyboardHelp 容器改用 `command-palette` class；3 个 `<kbd>` 元素改用 v16 `kbd` utility |
+| **Phase D — 页面级** | ✅ 已完成 | 2026-06-22 | M4 里程碑达成：18 个页面全部使用 `<PageHeader>`；layoutConsistency 测试覆盖 |
+| **Phase E — 可视化** | ✅ 已完成 | 2026-06-22 | M5 里程碑达成：17 visualizer 通过 `getColors()` 接入深色模式（`themeColors.ts` 已维护 light/dark 双调色板） |
+| **Phase F — 验收** | ✅ 已完成 | 2026-06-22 | M6 v16 GA 达成：测试 2699/2699、ESLint 0 errors、`npm run build` 通过、Bundle check 通过；修复 Phase A 引入的 `@theme` 块内嵌选择器违规（移出 `@theme` 块）；typecheck 4 错误为既有 `animationExport.ts` 问题（commit `8a81ff8`，与本计划正交） |
+
+### 校准记录
+
+| 日期 | 事件 | 影响 |
+|------|------|------|
+| 2026-06-22 (AM) | 计划创建（基于 v15.0.0 GA 基线） | 初版 6 阶段 / 26 原子步骤 |
+| 2026-06-22 (PM) | 另一 AI 完成 v16.0.0 GA（commit `879f04e`）后重新校准 | 基线更新为 v16.0.0 GA；测试基线 2699 / 0 lint / 80.05% 覆盖；新增 M0 启动闸门 + `design-md/` 追踪策略决策项 |
+| 2026-06-22 (晚) | 用户授权读取 `design-md/` + 创建 DESIGN.md；Phase A 启动 | DESIGN.md 落地；v16 tokens 写入 `index.css`；`design-md/` 加入 `.gitignore` |
+| 2026-06-22 (晚) | Phase A 引入构建回归：`@theme` 块内嵌 `html.dark &` 违反 Tailwind v4 约束 | 已修复：v16 viz tokens 深色变体移出 `@theme` 块改为顶层 `html.dark {}` |
+| 2026-06-22 (晚) | Phase B-F 一次性推进（现有组件已 v16 对齐，聚焦 v16 utility 接入） | 2699/2699 测试全绿；lint 0 errors；build 通过；bundle check 通过；M1-M6 全部达成 |
 
 > 本文档为**实施真源**（per Single Source of Truth 原则），任何临时变更必须先写回此文档，再动手改代码。

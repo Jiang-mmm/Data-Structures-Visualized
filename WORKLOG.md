@@ -2,6 +2,53 @@
 
 ---
 
+## 2026-06-22 (PM) | 多 AI 协作文档重校准（v16.0.0 GA 完成后）
+
+### 任务范围
+另一 AI 完成 v16.0.0 GA（commit `879f04e`）后，按 [rule 16.3](../.trae/rules/project_rules.md) 重新分析项目状态并同步相关文档，确保文档与实际代码状态一致。
+
+### 重新分析发现
+
+| # | 偏离项 | 实际情况 | 文档原状 |
+|---|--------|----------|----------|
+| 1 | 基线版本 | v16.0.0 GA 已完成 | [2026-06-22-design-unification-v16.md](./docs/superpowers/plans/2026-06-22-design-unification-v16.md) 仍以 v15.0.0 GA 为基线 |
+| 2 | 测试基线 | 2699 测试 / 0 lint warnings / 80.05% 覆盖 | 计划文档 §7.4 仍写 2590 / 67 warnings |
+| 3 | 当前分支 | `feature/v13-path3-learning-enhancements` | PROJECT_STATUS §4 仍写 `feature/v13-code-audit` |
+| 4 | `design-md/` 追踪状态 | `git status` 显示 untracked（`.gitignore` 未收录） | rule 16.1 隐含假设其不纳入版本控制，但实际无保护 |
+| 5 | v13 Top10 状态 | 全部已修 | 仍以"待启动"呈现 |
+
+### 变更明细
+
+| # | 文件 | 变更内容 |
+|---|------|----------|
+| 1 | [PROJECT_STATUS.md](./PROJECT_STATUS.md) | §0 追加 v16.0.0 GA 校准注 + `design-md/` 安全发现；§3 重写为「v16 设计统一化 ⏳ + v16.0.0 GA ✅ + v13/14/15 ✅」三层结构；§4 更新基线分支 + 新增 `design-md/` 追踪约束；§5 文档入口表更新 |
+| 2 | [TODO.md](./TODO.md) | 「v16 设计统一化计划」段追加基线版本（v16.0.0 GA）+ 校准注 + `design-md/` 追踪注 |
+| 3 | [2026-06-22-design-unification-v16.md](./docs/superpowers/plans/2026-06-22-design-unification-v16.md) | 更新基线 v15.0.0 GA → v16.0.0 GA；§7.4 测试基线更新；§4 启动条件追加 `design-md/` 决策；§12 状态表追加本次会话标注 |
+| 4 | [CLAUDE.md](./CLAUDE.md) | 当前活跃计划表追加 `design-md/` 追踪策略注 |
+| 5 | [AGENTS.md](./AGENTS.md) | Trellis 区块外当前活跃计划追加 `design-md/` 追踪策略注 |
+
+### 验证
+
+| 检查项 | 结果 |
+|--------|------|
+| `git status` | 仅 4 项变更：`M CLAUDE.md`、`M TODO.md`、`?? design-md/`（untracked）、`?? docs/数据结构学习助手-设计推荐.md`（untracked） |
+| 文档交叉引用 | PROJECT_STATUS / TODO / WORKLOG / 计划文档 / CLAUDE / AGENTS 互相一致 |
+| 不擅自启动开发 | ✅ HOLD 模式，未触碰 `src/`、未创建新代码文件 |
+| 不读取 `design-md/` | ✅ 全程未访问（rule 16.1 遵守） |
+| 不创建 `DESIGN.md` | ✅ 用户未授权（rule 16.2 遵守） |
+
+### 启动清单（需用户在确认后逐项拍板）
+
+1. **是否授权读取 `design-md/linear.app/`、`design-md/vercel/`、`design-md/raycast/` 作为设计参考？**（rule 16.1）
+2. **是否同意"主参考 Linear + 辅 Vercel + Raycast 命令面板"组合？**
+3. **是否同意"深色优先"作为默认主题策略？**
+4. **`design-md/` 追踪策略**：① 添加至 `.gitignore`（推荐）；② 显式纳入版本控制
+5. **基线分支策略**：从 `feature/v13-path3-learning-enhancements` 新建 `feature/v16-design-unification` 分支？
+
+回答 1-4 后，按开工指令模板启动 Phase A；回答 5 后由用户手动 `git checkout -b`。
+
+---
+
 ## 2026-06-22 | v16.0.0 GA — 工程深化与功能增强完成
 
 ### 任务范围

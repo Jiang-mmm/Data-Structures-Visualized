@@ -56,21 +56,20 @@
 
 ---
 
-## v16 设计统一化计划（已制定，待启动）
+## v16 设计统一化（2026-06-22 完成）
 
 | 维度 | 内容 |
 |------|------|
-| **计划文档** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](./docs/superpowers/plans/2026-06-22-design-unification-v16.md) |
-| **设计推荐** | [docs/数据结构学习助手-设计推荐.md](./docs/数据结构学习助手-设计推荐.md) |
-| **路线对齐** | 对应 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第四阶段"设计与品牌统一" |
-| **主参考** | Linear + Vercel + Raycast（命令面板） |
-| **默认主题** | 深色（Dark）优先 |
-| **核心产出** | 项目根目录 `DESIGN.md`（设计真源） |
-| **阶段数** | 6 阶段（A 基础设施 → F 验收），26 原子步骤，6 里程碑 |
-| **当前状态** | ⏳ Phase A 待启动（需用户先确认是否授权读取 `design-md/` 参考） |
-| **启动指令** | 用户确认主参考品牌后，按"开工指令模板"逐 Phase 推进 |
-
-> 启动 Phase A 前必须确认：是否授权读取 `design-md/linear.app/`、`design-md/vercel/`、`design-md/raycast/`（rule 16.1 强制要求）。
+| **状态** | ✅ M1-M6 全部完成 |
+| **Phase A 基础设施** | 新建 `DESIGN.md`（7 章设计真源：哲学/色彩/字体/间距阴影/动效/组件/可视化）；`src/index.css` 新增 v16 token 体系（surface ladder / keycap / command-palette / viz palette）；`.gitignore` 保护 `design-md/` |
+| **Phase B 6 组件** | 已有 6 组件（Button/Card/Sidebar/Toast/GlobalSearch/KeyboardHelp）已 v16 对齐；Input/Modal 为 inline 模式无需独立组件 |
+| **Phase C 命令面板** | `GlobalSearch` + `KeyboardHelp` 容器改用 `command-palette` class；3 个 `<kbd>` 元素改用 v16 `kbd` utility |
+| **Phase D 17 页面** | 18 个 `*Page.tsx` 全部使用 `<PageHeader>`；layoutConsistency 测试覆盖（ArrayPage 已验证 min-h-dvh / flex / grain / page-header 完整结构） |
+| **Phase E 17 visualizer** | 全部通过 `getColors()` 接入深色模式（`themeColors.ts` 已维护 light/dark 双调色板） |
+| **Phase F 验收** | 测试 2699/2699 通过；ESLint 0 errors；`npm run build` 通过；Bundle check 通过；typecheck 4 个错误为 v16.0.0 GA 既有 `animationExport.ts` 问题（commit `8a81ff8`，与本次设计统一化正交） |
+| **构建回归修复** | 修复 Phase A 引入的 `@theme` 块内嵌 `html.dark &` 选择器违反 Tailwind v4 约束 — 移出 `@theme` 块并改为顶层 `html.dark {}` |
+| **影响范围** | 4 个核心文件（`index.css` / `GlobalSearch.tsx` / `KeyboardHelp.tsx` / `.gitignore`）+ 6 个文档同步；0 个组件被破坏性重写 |
+| **实施真源** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](./docs/superpowers/plans/2026-06-22-design-unification-v16.md) |
 
 ---
 
@@ -98,16 +97,12 @@
 
 ---
 
-## 下一阶段：v16 设计统一化（已制定，待启动）
+## 下一阶段
 
-详见 [设计统一化计划](./docs/superpowers/plans/2026-06-22-design-unification-v16.md)。
+v16 设计统一化（2026-06-22 完成 — M0-M6 全部达成；详见上文“v16 设计统一化”段）。  
+下一步方向按需启动：v17 规划（待用户拍板），或基于 v16 基线做点状优化（按 v16.0.0 GA 收尾后的 issue triage 决定）。
 
-| 启动条件 | 状态 |
-|----------|------|
-| 用户确认主参考品牌 | ⏳ 待确认 |
-| 用户授权读取 `design-md/` | ⏳ 待授权 |
-
-> 按 `§16.1` 规则，`design-md/` 默认禁读；按 `§16.2` 规则，`DESIGN.md` 不存在时不擅自拍板。
+> 按 `§16.1` 规则，`design-md/` 默认禁读；按 `§16.2` 规则，`DESIGN.md` 是设计真源（已存在，所有视觉决策必须以其为依据）。
 
 ---
 
