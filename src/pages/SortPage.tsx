@@ -4,6 +4,7 @@ import OperationBar, { OperationButton } from '../components/OperationBar'
 import OperationGroup from '../components/OperationGroup'
 import UndoPreviewButton from '../components/UndoPreviewButton'
 import ShareButton from '../components/ShareButton'
+import AnimationExportButton from '../components/AnimationExportButton'
 import Visualizer from '../components/Visualizer'
 import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
@@ -98,6 +99,12 @@ export default function SortPage() {
           }
         }} />
         <ShareButton data={data} dataType="sort" disabled={isAnimating} />
+        <AnimationExportButton
+          svgRef={svgRef}
+          width={dimensions.width}
+          height={dimensions.height}
+          disabled={isAnimating || data.length === 0}
+        />
         <OperationButton variant="secondary" onClick={reset}>{t('common.reset')}</OperationButton>
         <OperationButton variant="primary" onClick={randomize}>{t('sort.randomize')}</OperationButton>
       </PageHeader>
