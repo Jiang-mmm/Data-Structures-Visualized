@@ -2,6 +2,7 @@ import { useState, useCallback, memo } from 'react'
 import type { QuizQuestion } from '../types/learning'
 import { useQuizProgress } from '../hooks/useQuizProgress'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import Icon from './Icon'
 
 interface QuizPanelProps {
   /** 算法标识，用于 localStorage 持久化 */
@@ -72,8 +73,8 @@ function QuizPanelBase({ algorithmKey, questions }: QuizPanelProps) {
             {t('quiz.question')} {progress.currentIndex + 1}{t('quiz.of')}{questions.length}
           </span>
           {hasAnswered && (
-            <span className={`text-xs font-bold ${existingAnswer.isCorrect ? 'text-accent-emerald' : 'text-accent-rose'}`}>
-              {existingAnswer.isCorrect ? `✓ ${t('quiz.correct')}` : `✗ ${t('quiz.incorrect')}`}
+            <span className={`text-xs font-bold flex items-center gap-1 ${existingAnswer.isCorrect ? 'text-accent-emerald' : 'text-accent-rose'}`}>
+              {existingAnswer.isCorrect ? <><Icon name="check" size={14} /> {t('quiz.correct')}</> : `✗ ${t('quiz.incorrect')}`}
             </span>
           )}
         </div>
@@ -109,7 +110,7 @@ function QuizPanelBase({ algorithmKey, questions }: QuizPanelProps) {
                   {String.fromCharCode(65 + index)}.
                 </span>
                 <span className="text-ink dark:text-dark-ink">{option}</span>
-                {showResult && isCorrect && <span className="text-accent-emerald ml-2">✓</span>}
+                {showResult && isCorrect && <span className="text-accent-emerald ml-2 inline-flex"><Icon name="check" size={14} /></span>}
                 {showResult && isSelected && !isCorrect && <span className="text-accent-rose ml-2">✗</span>}
               </button>
             )

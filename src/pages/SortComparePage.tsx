@@ -5,6 +5,7 @@ import InfoPanel from '../components/InfoPanel'
 import Timeline from '../components/Timeline'
 import SpeedControl from '../components/SpeedControl'
 import PerformanceChart from '../components/PerformanceChart'
+import Icon from '../components/Icon'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { useLearningMode } from '../hooks/useLearningMode'
 import { createAnimation } from '../utils/animationEngine'
@@ -85,7 +86,7 @@ function ComparePanel({ algoKey, algorithm, data, svgRef, onDimensions, result }
           <span className="font-bold text-xs text-ink dark:text-dark-ink">{algorithm.nameKey ? t(algorithm.nameKey) : algorithm.name}</span>
           <span className="font-mono text-[10px] text-accent-blue ml-auto">{algorithm.timeComplexity}</span>
           <span className="font-mono text-[10px] text-accent-amber">{algorithm.spaceComplexity}</span>
-          {result?.done && !result?.error && <span className="text-accent-emerald text-xs">✓</span>}
+          {result?.done && !result?.error && <span className="text-accent-emerald"><Icon name="check" size={12} /></span>}
           {result?.error && <span className="text-accent-rose text-xs">✗</span>}
         </div>
         <div className="font-mono text-[10px] text-ink-light">
@@ -336,8 +337,8 @@ export default function SortComparePage() {
           </div>
         )}
         <OperationInfo>
-          <span className="font-mono text-xs text-ink-light">
-            {allDone ? `✓ ${t('page.done')}` : isRunning ? t('page.running') : `${selectedAlgos.length} ${t('page.selected')}`}
+          <span className="font-mono text-xs text-ink-light flex items-center gap-1">
+            {allDone ? <><Icon name="check" size={12} /> {t('page.done')}</> : isRunning ? t('page.running') : `${selectedAlgos.length} ${t('page.selected')}`}
           </span>
         </OperationInfo>
       </OperationBar>
@@ -372,7 +373,7 @@ export default function SortComparePage() {
                   <span className="mx-0.5 opacity-40">|</span>
                   <span className="text-accent-amber">{algo.spaceComplexity}</span>
                 </div>
-                {result?.done && !result?.error && <div className="text-accent-emerald text-[10px]">✓</div>}
+                {result?.done && !result?.error && <div className="text-accent-emerald flex justify-center"><Icon name="check" size={12} /></div>}
                 {result?.error && <div className="text-accent-rose text-[10px]">✗</div>}
               </div>
             )

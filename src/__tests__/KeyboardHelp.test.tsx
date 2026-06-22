@@ -87,7 +87,7 @@ describe('KeyboardHelp', () => {
     it('点击关闭按钮应该隐藏面板', () => {
       const { container } = renderKeyboardHelp()
       fireEvent.keyDown(window, { key: '?' })
-      fireEvent.click(screen.getByText('✕'))
+      fireEvent.click(screen.getByRole('button', { name: /common\.close/ }))
       expect(container.querySelector('.fixed')).toBeNull()
     })
   })

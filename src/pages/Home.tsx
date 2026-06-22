@@ -5,6 +5,7 @@ import LearningPath from '../components/LearningPath'
 import ProgressOverview from '../components/ProgressOverview'
 import LearningRecommendations from '../components/LearningRecommendations'
 import Card, { type CardAccent } from '../components/Card'
+import Icon from '../components/Icon'
 
 const ACCENT_COLORS = [
   { accent: 'blue' as CardAccent, badge: 'bg-card-group-linear/10 text-card-group-linear', iconBg: 'bg-card-group-linear/10', hoverText: 'group-hover:text-card-group-linear' },
@@ -67,7 +68,7 @@ export default function Home() {
                   <span className="text-5xl font-black text-paper drop-shadow-lg">DS</span>
                 </div>
                 <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-accent-blue border-2 border-ink dark:border-dark-border flex items-center justify-center text-xs font-bold text-paper shadow-button dark:shadow-button-dark">
-                  ✓
+                  <Icon name="check" size={14} />
                 </div>
               </div>
             </div>

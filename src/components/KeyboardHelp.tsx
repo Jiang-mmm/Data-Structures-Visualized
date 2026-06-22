@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { showToast } from './toastStore'
 import { fuzzyMatchAny } from '../utils/fuzzySearch'
+import Icon from './Icon'
 
 const PAGE_SHORTCUTS: Record<string, string[]> = {
   '/array': ['undo', 'redo', 'reset', 'help'],
@@ -181,7 +182,7 @@ export default function KeyboardHelp() {
       <div ref={dialogRef} className="bg-surface dark:bg-dark-surface border-2 border-ink dark:border-dark-border shadow-card dark:shadow-card-dark p-7 max-w-sm w-full mx-4 animate-pop" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-5">
           <h3 className="text-lg font-bold text-ink dark:text-dark-ink flex items-center gap-2">
-            <span className="w-8 h-8 bg-accent-blue flex items-center justify-center text-paper text-sm shadow-button dark:shadow-button-dark">⌨</span>
+            <span className="w-8 h-8 bg-accent-blue flex items-center justify-center text-paper text-sm shadow-button dark:shadow-button-dark"><Icon name="keyboard" size={14} /></span>
             {t('shortcuts.title')}
           </h3>
           <button
@@ -189,7 +190,7 @@ export default function KeyboardHelp() {
             className="w-8 h-8 flex items-center justify-center border-2 border-ink/20 dark:border-dark-border text-ink-light dark:text-dark-ink-light hover:bg-accent-blue hover:text-paper hover:border-accent-blue transition-all duration-200"
             aria-label={t('common.close')}
           >
-            ✕
+            <Icon name="close" size={14} />
           </button>
         </div>
         {/* 搜索框 */}
@@ -209,7 +210,7 @@ export default function KeyboardHelp() {
               className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-xs text-ink-light dark:text-dark-ink-light hover:text-ink dark:hover:text-dark-ink"
               aria-label={t('common.clear')}
             >
-              ✕
+              <Icon name="close" size={14} />
             </button>
           )}
         </div>

@@ -5,6 +5,7 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { useSearchHistory } from '../hooks/useSearchHistory'
 import { buildSearchIndex, type SearchItem } from '../data/searchIndex'
 import { fuzzyMatchAny } from '../utils/fuzzySearch'
+import Icon from './Icon'
 
 interface GlobalSearchProps {
   isOpen: boolean
@@ -204,7 +205,7 @@ export const GlobalSearch = memo(function GlobalSearch({ isOpen, onClose }: Glob
       <div className="bg-surface dark:bg-dark-surface border-2 border-ink dark:border-dark-border shadow-hard-lg dark:shadow-card-dark max-w-2xl w-full animate-pop">
         {/* 搜索输入区 */}
         <div className="flex items-center gap-3 px-4 py-3 border-b-2 border-ink dark:border-dark-border">
-          <span className="text-ink-light dark:text-dark-ink-light text-lg flex-shrink-0">🔍</span>
+          <span className="text-ink-light dark:text-dark-ink-light flex-shrink-0"><Icon name="search" size={18} /></span>
           <input
             ref={inputRef}
             type="text"
@@ -356,7 +357,7 @@ const SearchResultItem = memo(function SearchResultItem({
           aria-label={t('globalSearch.removeHistory')}
           className="text-xs text-ink-light dark:text-dark-ink-light hover:text-accent-red px-1.5 py-0.5"
         >
-          ✕
+          <Icon name="close" size={14} />
         </button>
       )}
 

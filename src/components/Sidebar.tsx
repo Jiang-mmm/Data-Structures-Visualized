@@ -5,6 +5,7 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { useColorTheme } from '../hooks/useColorTheme'
 import { initThemeColors } from '../utils/themeColors'
 import { showToast } from './toastStore'
+import Icon from './Icon'
 
 interface StructureItem {
   path: string
@@ -279,7 +280,7 @@ export default function Sidebar() {
             aria-label={t('common.close')}
             className="w-11 h-11 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper hover:bg-accent-blue hover:text-paper transition-colors text-sm font-bold touch-manipulation focus-ring"
           >
-            ✕
+            <Icon name="close" size={14} />
           </button>
         ) : (
           <button
