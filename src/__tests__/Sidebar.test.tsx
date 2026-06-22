@@ -32,12 +32,9 @@ vi.mock('../utils/themeColors', () => ({
   subscribeTheme: vi.fn().mockReturnValue(() => {}),
 }))
 
+const mockUseColorTheme = vi.fn()
 vi.mock('../hooks/useColorTheme', () => ({
-  useColorTheme: vi.fn().mockReturnValue({
-    theme: 'default',
-    setTheme: vi.fn(),
-    themes: [],
-  }),
+  useColorTheme: () => mockUseColorTheme(),
 }))
 
 function renderSidebar() {
@@ -51,6 +48,11 @@ function renderSidebar() {
 describe('Sidebar', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockUseColorTheme.mockReturnValue({
+      theme: 'default',
+      setTheme: vi.fn(),
+      themes: [],
+    })
   })
 
   describe('基础渲染', () => {
@@ -151,6 +153,44 @@ describe('Sidebar', () => {
       renderSidebar()
       const langButton = screen.getByLabelText(/langTooltip/)
       expect(langButton.className).toContain('focus-ring')
+    })
+  })
+
+  describe('主题色板弹出层', () => {
+    beforeEach(() => {
+      mockUseColorTheme.mockReturnValue({
+        theme: 'default',
+        setTheme: vi.fn(),
+        themes: [
+          { key: 'default', name: 'Default' },
+          { key: 'warm', name: 'Warm' },
+        ],
+      })
+    })
+
+    it('点击主题按钮应展开 popover', () => {
+      renderSidebar()
+      const themeBtn = screen.getByLabelText('sidebar.themeTooltip')
+      expect(themeBtn).toHaveAttribute('aria-expanded', 'false')
+      fireEvent.click(themeBtn)
+      expect(themeBtn).toHaveAttribute('aria-expanded', 'true')
+    })
+
+    it('点击其他主题应调用 setTheme', () => {
+      const setTheme = vi.fn()
+      mockUseColorTheme.mockReturnValue({
+        theme: 'default',
+        setTheme,
+        themes: [
+          { key: 'default', name: 'Default' },
+          { key: 'warm', name: 'Warm' },
+        ],
+      })
+      renderSidebar()
+      fireEvent.click(screen.getByLabelText('sidebar.themeTooltip'))
+      const warmBtn = screen.getByTitle('Warm')
+      fireEvent.click(warmBtn)
+      expect(setTheme).toHaveBeenCalledWith('warm')
     })
   })
 })
