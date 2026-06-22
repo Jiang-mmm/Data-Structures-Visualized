@@ -70,7 +70,9 @@ describe('Home', () => {
   })
 
   it('renders the algorithm glossary card', () => {
+    // v17 R1：学习中心默认折叠；点击展开按钮后才能看到 glossary card
     renderWithRouter(<Home />)
+    fireEvent.click(screen.getByRole('button', { name: /home\.learningHub/ }))
     expect(screen.getByTestId('algorithm-glossary-card')).toBeInTheDocument()
     expect(screen.getByText('complexity.glossaryTitle')).toBeInTheDocument()
   })

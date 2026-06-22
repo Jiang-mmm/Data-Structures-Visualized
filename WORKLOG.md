@@ -2,6 +2,53 @@
 
 ---
 
+## 2026-06-22 (晚) | v17.0.0 GA — UI/UX 迭代完成（待合并 main）
+
+### 任务范围
+基于浏览器截图（1440p）发现 7 项 UI/UX 问题（首页冗余 4 区块堆叠 / LogPanel 深色配色不协调 / SortCompare 布局错乱 / GraphAlgorithm 复杂度对比位置不当 / 测验题库容量不足且顺序固定 / 树连接线用曲线 / Sort 日志深度不足），制定并实施 v17 计划，全部完成并通过 Playwright 7/7 验收。
+
+### 7 项优化落地
+
+| # | 问题 | 解决方案 | 关键文件 |
+|---|------|----------|----------|
+| **R1** | 首页首屏需 1.8 屏看完 | 4 辅助区块折叠为「学习中心」可展开面板（默认收起）| `Home.tsx` |
+| **R2** | LogPanel 深色模式配色不协调 | typeConfig 4 类型 dark: 变体（oper / info / error / code）| `LogPanel.tsx` |
+| **R3** | SortCompare PerformanceChart 与 InfoPanel 对齐混乱 | 移入主内容列 wrapper + onCompare/onSwap 写 code 日志 | `SortComparePage.tsx` |
+| **R4** | GraphAlgorithm 复杂度对比在主内容列底部 | 移至右侧 InfoPanel 同级区（上下布局）| `GraphAlgorithmPage.tsx` + `InfoPanel.tsx` |
+| **R5** | 测验 3 题 + 顺序固定 | 5 核心 config 扩充至 5-8 题；QuizPanel Fisher-Yates 随机 | 5 config + `QuizPanel.tsx` |
+| **R6** | 树连接线用曲线 | 4 个 visualizer 改 `<line>` 直线（B/AVL/RB/Segment）| 4 个 visualizer |
+| **R7** | Sort 日志仅 2 条 | onCompare/onSwap callback 内每步 addLog('code', ...)，>50 元素按 5 步降频 | `SortComparePage.tsx` |
+
+### 实施文件（25 个）
+- **代码（13）**：Home.tsx / LogPanel.tsx / InfoPanel.tsx / QuizPanel.tsx / SortComparePage.tsx / GraphAlgorithmPage.tsx / 4 个 tree visualizer / 5 个 learning config / locales.ts
+- **测试（7）**：QuizPanel.test.tsx / Home.test.tsx / 4 个 tree visualizer test / 2 snapshot
+- **文档（5）**：PROJECT_STATUS.md / TODO.md / WORKLOG.md / CLAUDE.md / AGENTS.md + v17 计划文档（new）
+- **未跟踪文档（1）**：`docs/数据结构学习助手-设计推荐.md`（v16 设计推荐原始输入，与 v17 正交）
+
+### 验证
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors |
+| `npm run test:run` | **2699/2699 通过**（147 文件） |
+| `npm run build` | 成功；Bundle size check passed |
+| Playwright 浏览器验收 | **7/7 PASS**（1440p 截图 + DOM 断言） |
+| R1 toggle 折叠 | ✓ |
+| R2 5 distinct dark accent | ✓ |
+| R3 PerformanceChart 在主内容列 | ✓ |
+| R4 ComplexityChart 与 InfoPanel 同 X 轴（left=1040 vs 1042）| ✓ |
+| R5 QuizPanel 8 radios / 2 groups | ✓ |
+| R6 4 trees all use `<line>` | ✓ |
+| R7 48 log entries from sort run | ✓ |
+
+### 待办
+- ⏳ 合并 `feature/v17-ui-ux-iterations` → main（建议 `--no-ff` 保留历史）
+
+### 实施真源
+[docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md](./docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md)
+
+---
+
 ## 2026-06-22 (PM) | 多 AI 协作文档重校准（v16.0.0 GA 完成后）
 
 ### 任务范围

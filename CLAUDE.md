@@ -24,7 +24,8 @@ This file provides guidance to MiMo Code (claude.ai/code) when working with code
 
 | 计划 | 路径 | 状态 | 启动条件 |
 |------|------|------|----------|
-| **v16 设计统一化** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](docs/superpowers/plans/2026-06-22-design-unification-v16.md) | ⏳ M0 启动闸门待用户拍板 | 基线 v16.0.0 GA（commit `879f04e`）；需 M0 4 项决策：① `design-md/` 读取授权；② 主参考确认；③ `design-md/` 追踪策略；④ 新建 `feature/v16-design-unification` 分支 |
+| **v17 UI/UX 迭代** | [docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md](docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md) | ✅ 已完成（待合并 main） | 基线 v16.0.0 GA（merge `b8d0b03`）；R1-R7 全部通过浏览器验收（1440p 截图 + DOM 断言）|
+| **v16 设计统一化** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](docs/superpowers/plans/2026-06-22-design-unification-v16.md) | ✅ 已完成 | M0-M6 全部完成（merge `b8d0b03`） |
 | **v15.x ENH-2 i18n 完善** | [docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md](docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md) | ✅ 已完成 | 新增 `complexity` + `algorithms` 命名空间 + `useAlgorithmGlossary` + `AlgorithmGlossaryCard`（Home 集成）|
 
 > ⚠️ **`design-md/` 追踪策略**（2026-06-22 发现）：该资料夹当前**未**被 `.gitignore` 收录（`git status` 显示 untracked），与 rule 16.1 隐含假设冲突。**禁止**在未拍板前 commit、stash、或引用其内容。

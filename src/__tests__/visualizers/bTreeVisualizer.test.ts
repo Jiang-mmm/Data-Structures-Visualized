@@ -94,7 +94,7 @@ describe('bTreeVisualizer', () => {
 
     it('应渲染边元素', () => {
       renderBTree(svg, makeData(), {})
-      const edges = svg.querySelectorAll('path.btree-edge')
+      const edges = svg.querySelectorAll('line.btree-edge')
       expect(edges.length).toBe(2)
     })
 
