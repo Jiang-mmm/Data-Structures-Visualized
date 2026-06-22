@@ -12,6 +12,20 @@ This file provides guidance to MiMo Code (claude.ai/code) when working with code
 4. 若状态文档与代码冲突，**以 `PROJECT_STATUS.md` 和 `TODO.md` 为准**。
 5. 历史参考请访问 `docs/archive/`，**禁止**将归档文档作为当前开发决策依据。
 
+## 项目级强制规则（必须遵守）
+
+> 完整规则在 `.trae/rules/project_rules.md`（Agent 宪法），本节为执行速查。
+
+1. **`design-md/` 默认禁读** — 收录各品牌设计资料，**仅在用户显式指示**下才允许读取；Glob / Grep / SearchCodebase 调用前必须显式排除该目录。
+2. **设计规范的唯一真源是 `DESIGN.md`** — 视觉/交互决策**必须**以项目根目录的 `DESIGN.md`（若存在）为依据；冲突实现视为越权；DESIGN.md 不存在时，**不擅自拍板**，向用户确认。
+3. **每次任务完成必须同步所有相关文档** — 含 `PROJECT_STATUS.md` / `TODO.md` / `WORKLOG.md` / `README.md` / `ARCHITECTURE.md` / `CODE_WIKI.md` / `docs/superpowers/{specs,plans}/*` / `CLAUDE.md` / `AGENTS.md` 等；**汇报完成前**完成更新；用户明确豁免需标注 `DOCS: SKIPPED (user override)`。
+
+## 当前活跃计划（2026-06-22）
+
+| 计划 | 路径 | 状态 | 启动条件 |
+|------|------|------|----------|
+| **v16 设计统一化** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](docs/superpowers/plans/2026-06-22-design-unification-v16.md) | ⏳ Phase A 待启动 | 用户先确认主参考品牌与是否授权读取 `design-md/` |
+
 ## Project Overview
 
 **ds-visualizer** (数据结构学习助手) — a Chinese-language educational web app for university students to learn data structures through interactive D3.js SVG animations. React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4. Deployed to GitHub Pages at base path `/Data-Structures-Visualized/`.

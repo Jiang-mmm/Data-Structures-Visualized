@@ -11,6 +11,36 @@
 
 ---
 
+## 正在进行的规则同步（2026-06-22）
+
+| 任务 | 状态 | 说明 |
+|------|------|------|
+| **`design-md/` 默认禁读** | ✅ 已落地 | `.trae/rules/project_rules.md` §16.1；`CLAUDE.md` / `AGENTS.md` / `PROJECT_STATUS.md` 已引用 |
+| **`DESIGN.md` 设计真源约束** | ✅ 已落地 | `.trae/rules/project_rules.md` §16.2；冲突实现视为越权 |
+| **任务收尾强制文档同步** | ✅ 已落地 | `.trae/rules/project_rules.md` §16.3；本 TODO.md 即按该规则同步更新 |
+
+**后续执行要求**：每次任务完成前必须完成相关文档同步；用户豁免需标注 `DOCS: SKIPPED (user override)`。
+
+---
+
+## v16 设计统一化计划（已制定，待启动）
+
+| 维度 | 内容 |
+|------|------|
+| **计划文档** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](./docs/superpowers/plans/2026-06-22-design-unification-v16.md) |
+| **设计推荐** | [docs/数据结构学习助手-设计推荐.md](./docs/数据结构学习助手-设计推荐.md) |
+| **路线对齐** | 对应 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第四阶段"设计与品牌统一" |
+| **主参考** | Linear + Vercel + Raycast（命令面板） |
+| **默认主题** | 深色（Dark）优先 |
+| **核心产出** | 项目根目录 `DESIGN.md`（设计真源） |
+| **阶段数** | 6 阶段（A 基础设施 → F 验收），26 原子步骤，6 里程碑 |
+| **当前状态** | ⏳ Phase A 待启动（需用户先确认是否授权读取 `design-md/` 参考） |
+| **启动指令** | 用户确认主参考品牌后，按"开工指令模板"逐 Phase 推进 |
+
+> 启动 Phase A 前必须确认：是否授权读取 `design-md/linear.app/`、`design-md/vercel/`、`design-md/raycast/`（rule 16.1 强制要求）。
+
+---
+
 ## v15 体验打磨（已完成）
 
 | 阶段 | 主题 | 状态 | 说明 |

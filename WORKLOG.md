@@ -2,6 +2,78 @@
 
 ---
 
+## 2026-06-22 | v16 设计统一化计划文档上线
+
+### 任务范围
+
+基于 [设计推荐报告](./docs/数据结构学习助手-设计推荐.md) 制定 v16 设计统一化实施真源文档，作为长线路线图第四阶段"设计与品牌统一"的具体落地计划。
+
+### 产出
+
+| 文档 | 路径 | 内容 |
+|------|------|------|
+| **实施真源** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](./docs/superpowers/plans/2026-06-22-design-unification-v16.md) | 6 阶段 / 26 原子步骤 / 6 里程碑；主参考 Linear + Vercel + Raycast；核心产出为项目根 `DESIGN.md` |
+
+### 计划结构
+
+| 阶段 | 主题 | 关键产出 | 里程碑 |
+|------|------|----------|--------|
+| **Phase A** | 基础设施 | `DESIGN.md` + 色彩/字体/间距/动效 token 文档化 | M1 设计真源就绪 |
+| **Phase B** | 全局组件 | Button/Card/Input/Toast/Modal/Sidebar 对齐 | M2 组件语言统一 |
+| **Phase C** | 命令面板 | GlobalSearch / KeyboardHelp / 搜索历史（Raycast 风） | M3 命令面板成熟 |
+| **Phase D** | 页面级 | Home / PageHeader / InfoPanel / 17 数据结构页统一 | M4 页面级一致 |
+| **Phase E** | 可视化 | 17 visualizer 深色模式配色 | M5 深色适配 |
+| **Phase F** | 验收 | Lint / Test / Build / a11y / 文档同步 | M6 v16 GA |
+
+### 关键约束
+
+- 主参考未授权前不读取 `design-md/`（rule 16.1）。
+- 每个 Phase 完成后强制等待用户确认（rule 12）。
+- 不做范围（Out of Scope）已在计划 §九 明确列出 10 条。
+
+### 关联变更
+
+- `TODO.md` — 顶部新增「v16 设计统一化计划（已制定，待启动）」段落
+- `PROJECT_STATUS.md` — §0 追加 v16 计划上线标注
+- `CLAUDE.md` / `AGENTS.md` — 补充计划路径引用
+
+### 影响
+
+- 零代码变更；纯计划文档。
+- 启动 Phase A 前需用户先确认主参考品牌与是否授权读取 `design-md/`。
+
+---
+
+## 2026-06-22 | 规则同步：设计参考 + 文档同步强制化
+
+### 任务范围
+
+按用户要求，将三条新规写入所有项目相关文档，作为后续所有 AI 工具必须遵守的硬约束。
+
+### 变更明细
+
+| # | 文件 | 内容 |
+|---|------|------|
+| 1 | `.trae/rules/project_rules.md` | 新增第 16 节「设计参考与文档同步（项目级强制规则）」：16.1 `design-md/` 默认禁读、16.2 `DESIGN.md` 为设计真源、16.3 任务收尾强制文档同步清单 |
+| 2 | `.trae/rules/project_rules.md` | 新增第 17 节「规则版本与变更记录」：规则变更流程（先 plan → 确认 → 编辑 → 同步文档） |
+| 3 | `CLAUDE.md` | 新增「项目级强制规则」速查小节，三条规则摘要 + 指向 project_rules.md |
+| 4 | `AGENTS.md` | Trellis 区块外新增「项目级强制规则（适用于所有 AI 工具）」速查小节 |
+| 5 | `PROJECT_STATUS.md` | 顶部新增「0. 项目级强制规则」小节，含 2026-06-22 规则同步标注 |
+| 6 | `TODO.md` | 顶部「正在进行的规则同步」段落登记本次变更（见 TODO.md） |
+
+### 规则摘要
+
+1. **`design-md/` 默认禁读** — 仅在用户显式指示时读取对应子目录；所有检索类工具调用前显式排除。
+2. **设计真源是 `DESIGN.md`** — 视觉/交互决策必须以 `DESIGN.md`（若存在）为依据；冲突实现视为越权；`DESIGN.md` 不存在时不擅自拍板。
+3. **任务收尾强制同步全部相关文档** — `PROJECT_STATUS.md` / `TODO.md` / `WORKLOG.md` / `README.md` / `ARCHITECTURE.md` / `CODE_WIKI.md` / `docs/superpowers/{specs,plans}/*` / `CLAUDE.md` / `AGENTS.md` 等按需触达；汇报完成前完成。
+
+### 影响
+
+- 零代码变更，纯文档同步；不影响 build / lint / test / 任何运行时行为。
+- 后续所有 AI 任务（包括本次规则同步本身）必须遵守新规。
+
+---
+
 ## 2026-06-22 | v15.0.0 GA — 体验增强完成
 
 ### 任务范围

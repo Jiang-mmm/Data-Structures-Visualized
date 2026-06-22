@@ -19,3 +19,15 @@ If you're using Codex or another agent-capable tool, additional project-scoped h
 Managed by Trellis. Edits outside this block are preserved; edits inside may be overwritten by a future `trellis update`.
 
 <!-- TRELLIS:END -->
+
+## 项目级强制规则（适用于所有 AI 工具）
+
+> 完整规则在 `.trae/rules/project_rules.md`（Agent 宪法），本节为执行速查。任何 AI 工具（Claude / Codex / Trellis / 其他）都必须遵守。
+
+1. **`design-md/` 默认禁读** — 收录各品牌设计资料，**仅在用户显式指示**下才允许读取对应子目录；所有文件检索类工具调用前必须显式排除 `design-md/`。
+2. **设计规范的唯一真源是 `DESIGN.md`** — 视觉/交互决策**必须**以项目根目录的 `DESIGN.md`（若存在）为依据；冲突实现视为越权；`DESIGN.md` 不存在时**不擅自拍板**，向用户确认。
+3. **每次任务完成必须同步所有相关文档** — 含 `PROJECT_STATUS.md` / `TODO.md` / `WORKLOG.md` / `README.md` / `ARCHITECTURE.md` / `CODE_WIKI.md` / `docs/superpowers/{specs,plans}/*` / `CLAUDE.md` / `AGENTS.md` 等；**汇报完成前**完成更新；用户明确豁免需标注 `DOCS: SKIPPED (user override)`。
+
+## 当前活跃计划（2026-06-22）
+
+- **v16 设计统一化**：[`docs/superpowers/plans/2026-06-22-design-unification-v16.md`](docs/superpowers/plans/2026-06-22-design-unification-v16.md) — Phase A 待启动（需用户确认主参考品牌与 `design-md/` 读取授权）。

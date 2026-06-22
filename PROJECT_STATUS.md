@@ -6,6 +6,20 @@
 
 ---
 
+## 0. 项目级强制规则（所有 AI 必须遵守）
+
+> 完整规则在 `.trae/rules/project_rules.md` 第 16 节，本节为执行速查。
+
+1. **`design-md/` 默认禁读** — 收录各品牌设计资料，仅在用户显式指示下读取对应子目录；Glob / Grep / SearchCodebase 须显式排除。
+2. **设计规范唯一真源是 `DESIGN.md`** — 视觉/交互决策必须以项目根 `DESIGN.md`（若存在）为依据；冲突实现视为越权；`DESIGN.md` 不存在时不擅自拍板。
+3. **任务收尾强制文档同步** — 每次完成任何任务，必须同步 `PROJECT_STATUS.md` / `TODO.md` / `WORKLOG.md` / `README.md` / `ARCHITECTURE.md` / `CODE_WIKI.md` / `docs/superpowers/{specs,plans}/*` / `CLAUDE.md` / `AGENTS.md` 等相关文档，**汇报完成前**完成更新。
+
+**2026-06-22 规则同步** — `.trae/rules/project_rules.md` 新增第 16 节「设计参考与文档同步」、第 17 节「规则版本与变更记录」；`CLAUDE.md` / `AGENTS.md`（Trellis 区块外）已同步引用。
+
+**2026-06-22 v16 设计统一化计划上线** — 新增实施真源文档 [docs/superpowers/plans/2026-06-22-design-unification-v16.md](docs/superpowers/plans/2026-06-22-design-unification-v16.md)；对应 [长线路线图](docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第四阶段"设计与品牌统一"；主参考 Linear + Vercel + Raycast；6 阶段 / 26 原子步骤 / 6 里程碑；当前状态 ⏳ Phase A 待启动。
+
+---
+
 ## 1. 项目概览
 
 | 项 | 当前值 |
