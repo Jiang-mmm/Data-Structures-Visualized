@@ -511,8 +511,8 @@ git reset --hard a196116  # M3 完成点
 - [x] M0-M3 已 commit（`a196116`）
 - [x] v19 计划文档已发布
 - [x] 实施真源文档已生成（本文件）
-- [ ] **Q1-Q4 决策点已由用户拍板**
-- [ ] feature 分支已创建：`git checkout -b feature/v19-m4-pages-migration`
+- [x] **Q1-Q4 决策点已由用户拍板**（4 项全 A，2026-06-22 深夜）
+- [ ] feature 分支已创建：`git checkout -b feature/v19-m4-pages-migration`（**待 M4-1 启动指令**）
 
 ### 10.2 M4 整体验收
 
