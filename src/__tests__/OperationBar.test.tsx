@@ -313,3 +313,73 @@ describe('OperationInfo', () => {
     expect(info.className).toContain('ml-auto')
   })
 })
+
+describe('collapsibleOnMobile 响应式折叠', () => {
+  it('应渲染子元素', () => {
+    render(
+      <OperationBar collapsibleOnMobile>
+        <span>测试内容</span>
+      </OperationBar>
+    )
+    expect(screen.getByText('测试内容')).toBeInTheDocument()
+  })
+
+  it('collapsibleOnMobile 为 true 时应显示移动端切换按钮', () => {
+    const { container } = render(
+      <OperationBar collapsibleOnMobile>
+        <span>内容</span>
+      </OperationBar>
+    )
+    const toggleButton = container.querySelector('button[aria-controls="operation-bar-content"]')
+    expect(toggleButton).toBeInTheDocument()
+  })
+
+  it('点击切换按钮应展开/收起内容', () => {
+    const { container } = render(
+      <OperationBar collapsibleOnMobile>
+        <span>内容</span>
+      </OperationBar>
+    )
+    const toggleButton = container.querySelector('button[aria-controls="operation-bar-content"]') as HTMLButtonElement
+    const contentDiv = container.querySelector('#operation-bar-content') as HTMLElement
+
+    // 默认收起
+    expect(contentDiv.className).toContain('hidden')
+
+    // 点击展开
+    fireEvent.click(toggleButton)
+    expect(contentDiv.className).not.toContain('hidden')
+
+    // 再次点击收起
+    fireEvent.click(toggleButton)
+    expect(contentDiv.className).toContain('hidden')
+  })
+
+  it('切换按钮应有正确的 aria-expanded 属性', () => {
+    const { container } = render(
+      <OperationBar collapsibleOnMobile>
+        <span>内容</span>
+      </OperationBar>
+    )
+    const toggleButton = container.querySelector('button[aria-controls="operation-bar-content"]') as HTMLButtonElement
+
+    // 默认收起，aria-expanded 为 false
+    expect(toggleButton).toHaveAttribute('aria-expanded', 'false')
+
+    // 点击展开，aria-expanded 为 true
+    fireEvent.click(toggleButton)
+    expect(toggleButton).toHaveAttribute('aria-expanded', 'true')
+  })
+
+  it('收起时子元素应不可见', () => {
+    const { container } = render(
+      <OperationBar collapsibleOnMobile>
+        <span>隐藏内容</span>
+      </OperationBar>
+    )
+    const contentDiv = container.querySelector('#operation-bar-content') as HTMLElement
+
+    // 默认收起，内容容器有 hidden 类
+    expect(contentDiv.className).toContain('hidden')
+  })
+})

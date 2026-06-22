@@ -1,4 +1,4 @@
-import { memo, type ReactNode, type ButtonHTMLAttributes } from 'react'
+import { memo, useState, type ReactNode, type ButtonHTMLAttributes } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import Button, { type ButtonVariant } from './Button'
 
@@ -6,6 +6,7 @@ interface OperationBarProps {
   label?: string
   children: ReactNode
   className?: string
+  collapsibleOnMobile?: boolean
 }
 
 interface OperationButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -36,8 +37,13 @@ interface OperationInfoProps {
   children: ReactNode
 }
 
-function OperationBar({ children, className = '' }: OperationBarProps) {
+function OperationBar({ children, className = '', collapsibleOnMobile = false }: OperationBarProps) {
   const { t } = useGlobalSettings()
+  // 移动端默认收起，节省垂直空间
+  const [isCollapsed, setIsCollapsed] = useState(true)
+  const contentId = 'operation-bar-content'
+  const isContentHidden = collapsibleOnMobile && isCollapsed
+
   return (
     <div
       role="toolbar"
@@ -45,11 +51,45 @@ function OperationBar({ children, className = '' }: OperationBarProps) {
       className={`
         bg-muted dark:bg-dark-muted border-b border-ink/30 dark:border-dark-border/40
         px-3 sm:px-6 py-1.5 sm:py-2.5
-        operation-bar operation-bar-scroll-hint
+        operation-bar
         ${className}
       `}
     >
-      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-h-[44px]">
+      {collapsibleOnMobile && (
+        <button
+          type="button"
+          onClick={() => setIsCollapsed(prev => !prev)}
+          aria-expanded={!isCollapsed}
+          aria-controls={contentId}
+          title={isCollapsed ? t('page.expand') : t('page.collapse')}
+          className={`
+            sm:hidden mb-1.5
+            font-mono text-xs font-bold px-2 py-1 min-h-[44px]
+            touch-manipulation select-none
+            border-2 border-ink/30 dark:border-dark-border/40
+            shadow-button dark:shadow-button-dark
+            bg-transparent
+            hover:bg-ink hover:text-paper dark:hover:bg-dark-ink dark:hover:text-dark-paper
+            hover:-translate-y-0.5 hover:shadow-button-hover dark:hover:shadow-button-dark-hover
+            active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
+            transition-all duration-200
+            inline-flex items-center gap-1
+          `}
+        >
+          <span aria-hidden="true">{isCollapsed ? '▸' : '▾'}</span>
+          <span>{t('page.operations')}</span>
+        </button>
+      )}
+      <div
+        id={collapsibleOnMobile ? contentId : undefined}
+        className={`
+          items-center gap-1.5 min-h-[44px]
+          overflow-x-auto scrollbar-thin flex-nowrap
+          sm:flex-wrap sm:overflow-x-visible sm:gap-2
+          operation-bar-scroll-hint
+          ${isContentHidden ? 'hidden sm:flex' : 'flex'}
+        `}
+      >
         {children}
       </div>
     </div>

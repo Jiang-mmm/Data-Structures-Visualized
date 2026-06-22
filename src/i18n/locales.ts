@@ -586,6 +586,8 @@ export interface Locale {
   }
   page: {
     operations: string
+    expand: string
+    collapse: string
     selected: string
     running: string
     done: string
@@ -1330,6 +1332,8 @@ export const zh: Locale = {
   },
   page: {
     operations: '操作',
+    expand: '展开',
+    collapse: '收起',
     selected: '个已选',
     running: '运行中...',
     done: '全部完成',
@@ -2312,6 +2316,8 @@ export const en: Locale = {
   },
   page: {
     operations: 'Operations',
+    expand: 'Expand',
+    collapse: 'Collapse',
     selected: 'selected',
     running: 'Running...',
     done: 'All Done',
