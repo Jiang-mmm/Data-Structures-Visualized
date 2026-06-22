@@ -2,7 +2,7 @@
 
 > **文件用途**: AI 开发前必读。本文件汇总项目最新进展，避免 AI 基于过时的代码或文档状态做决策。
 > **更新频率**: 每次迭代结束 / 每个子阶段验收后 / 启动新的开发任务前。
-> **最后更新**: 2026-06-22 (v19 i18n 渐进迁移 M3 TypeScript 强约束完成 / M0+M1+M2 已交付 / v18 计划已封存 / v17.0.0 GA 已 merge main)
+> **最后更新**: 2026-06-22 深夜（v19 i18n 渐进迁移 M4-1 收尾 / M0+M1+M2+M3 已交付 / v18 计划已封存 / v17.0.0 GA 已 merge main）
 
 ---
 
@@ -31,16 +31,71 @@
 | **项目名称** | ds-visualizer（数据结构学习助手） |
 | **当前版本** | v17.0.0 GA（UI/UX 迭代 R1-R7：Home 折叠 / LogPanel 深色 / SortCompare 对齐 / GraphAlgorithm 重构 / Quiz 扩充 / 树直线 / Sort 日志密度） |
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa |
-| **当前分支** | `feature/v19-i18n-progressive-migration`（基于 main HEAD `37478cf`；v19 M0 拍板 + M1 调研清单 + M2 基础设施 + M3 TypeScript 强约束已 commit） |
+| **当前分支** | `feature/v19-m4-pages-migration`（基于 main HEAD `b991566`；v19 M4-1 已收尾，待 M4-2/3 走向拍板）|
 | **基线状态** | 2790 单元测试全绿（基线 2699 + M2 新增 46 + M3 新增 45）/ ESLint 0 errors / 生产构建通过 / bundle < budget / i18n 子目录测试 99/99（基线 16 + M2 38 + M3 45）/ 自定义 ESLint 规则 no-hardcoded-chinese-in-jsx 已注册（warn 级，作用于 pages/components/visualizers）/ AssertSameKeys 深度镜像编译时断言已上线 |
 
 > **2026-06-22 v18 计划封存备注**: v18 i18n 全量替换计划（11 阶段 / ~30 天）已由用户决定封存；M0 决策 D1=B（UI + learning config）/ D2=C（按语言拆 `locales/{zh,en}/`）/ D3=B（AI + 人工校对）/ D4=简化（逐步提交 + 立即生效）/ D5=C（namespace + flat keys）保留为项目记忆。后续如需重启，可基于本决策摘要 + v18 分支 commit `774025a` 的历史快照 `docs/superpowers/plans/2026-06-22-v18-i18n-full-replacement.md`（646 行）启动。 |
 >
-> **2026-06-22 v19 进度备注**: v19 i18n 渐进迁移 M0 8 项决策已拍板（D1=B / D2=C / D3=B / D4=B / D5=C + D6=B / D7=B / D8=A）；M1 硬编码字符串调研清单已交付（17,500 字符 v19 范围）；M2 基础设施已完成（目录骨架 + integrity.ts + pseudoLocale.ts + 测试 16→54）；M3 TypeScript 强约束已完成（`AssertSameKeys` 深度递归编译时断言 + `no-hardcoded-chinese-in-jsx` 自定义 ESLint 规则 + 45 项测试）；**M4 实施真源文档已交付**（[docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md](./docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md)，385 行 13 章节，3 子阶段 M4-1/M4-2/M4-3 + Q1-Q4 拍板点 + 完整文件迁移清单 + 测试更新矩阵 + 6 维度回滚预案）。M4-1 启动前需用户拍板 4 个决策点。 |
+> **2026-06-22 v19 进度备注**: v19 i18n 渐进迁移 M0 8 项决策已拍板（D1=B / D2=C / D3=B / D4=B / D5=C + D6=B / D7=B / D8=A）；M1 硬编码字符串调研清单已交付（17,500 字符 v19 范围）；M2 基础设施已完成（目录骨架 + integrity.ts + pseudoLocale.ts + 测试 16→54）；M3 TypeScript 强约束已完成（`AssertSameKeys` 深度递归编译时断言 + `no-hardcoded-chinese-in-jsx` 自定义 ESLint 规则 + 45 项测试）；M4 实施真源文档已交付（[docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md](./docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md)，385 行 13 章节，3 子阶段 M4-1/M4-2/M4-3 + Q1-Q4 拍板点 + 完整文件迁移清单 + 测试更新矩阵 + 6 维度回滚预案）。**M4-1 已收尾**（4 页面 0 字符硬编码，v15.x + v17 累积 `t()` 化完成；按用户拍板 A 跳过步骤 1.2-1.7），详见 [docs/superpowers/i18n-inventory/03-m4-1-summary.md](./docs/superpowers/i18n-inventory/03-m4-1-summary.md)。M4-2/3 走向待拍板。|
 
 ---
 
 ## 2. 最近完成的工作
+
+### 2026-06-22 深夜 | v19 i18n 渐进迁移 M4-1 收尾完成（按用户拍板 A）
+
+#### 目标
+在 M3 TypeScript 强约束已上线的基础上，启动 M4 实施真源文档（[docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md](./docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md)）的首个子阶段 M4-1（P0 4 页面：Home / SortPage / ArrayPage / GraphPage）。
+
+#### 启动异常 + 拍板
+- **步骤 1.1 扫描结果**：4 页面实际硬编码中文字符数 < 50（仅 7 行注释），与 M1 调研估计的 ~1,550 字符差异 > 95%
+- **根因**：v15.x ENH-2 + v17 UI/UX 迭代过程中，4 页面已**完全 `t()` 化**（Home 101 / SortPage 19 / ArrayPage 29 / GraphPage 46 = 合计 195 个 `t()` 调用 + 7 个 placeholder `t()`）
+- **步骤 1.1 验收**：❌ 不通过（差异 > 10% 阈值）→ 立即停止 + 汇报
+- **用户拍板 A**：直接收尾 M4-1，跳过步骤 1.2-1.7
+
+#### 收尾范围
+- ✅ 步骤 1.1 扫描（已执行）
+- ❌ 步骤 1.2-1.7（跳过：4 页面已 `t()` 化，无实际工作内容）
+  - 跳过创建 4 zh + 4 en locale 文件
+  - 跳过 17 处 `t()` 替换（4 页面 0 字符硬编码）
+  - 跳过 ~10 项测试新增（无新增键）
+  - 跳过验证（4 页面已验证）
+
+#### 文件清单
+- 新增总结：[docs/superpowers/i18n-inventory/03-m4-1-summary.md](./docs/superpowers/i18n-inventory/03-m4-1-summary.md)（12 章节 / 收尾报告）
+- 新增子清单：[docs/superpowers/i18n-inventory/02-m4-1-p0-strings.md](./docs/superpowers/i18n-inventory/02-m4-1-p0-strings.md)（步骤 1.1 扫描结果）
+- 修改 M4 计划：[docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md](./docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md) §3.0 M4-1 收尾状态
+- 修改 v19 计划：[docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md](./docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md) §1 状态行
+- 同步核心文档：PROJECT_STATUS.md / TODO.md / WORKLOG.md / CLAUDE.md / AGENTS.md
+
+#### 验证
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run` | 2745/2745 通过（基线 2699 + M2 46 + M3 45）|
+| `npm run build` | 成功（仅文档变更，无代码变更）|
+| `no-hardcoded-chinese-in-jsx` | 对 4 页面 0 警告（确认 100% `t()` 化）|
+
+#### 范围外
+- ❌ M4-2/3 实施（待用户拍板走向）
+- ❌ 17 页面聚合层（待 M4-2/3 范围重新评估）
+- ❌ locale 文件物理迁移（4 页面无新增键，无需迁移）
+- ❌ 修改任何代码（仅文档变更）
+
+#### M4-2/3 走向待拍板
+- **A.1**（推荐）：立即启动 M4-2 步骤 2.1 扫描 13 页面验证一致性（~10 分钟）
+- A.2：跳过 M4-2/3 直接进入 M5 组件级迁移
+- A.3：做 M1.5 重新调研（覆盖 v17 实际状态）
+- A.4：M4 全部收尾（基于 M1 严重失真 + M3 规则已上线）
+
+#### 关键约束遵守
+- ✅ 不扩展需求（严格按用户拍板 A 执行收尾）
+- ✅ 不基于猜测改代码（步骤 1.1 异常立即停止 + 汇报）
+- ✅ 不伪造结果（步骤 1.1 验收明确标注 ❌ 不通过）
+- ✅ 不在 main 分支上修改（在 feature/v19-m4-pages-migration 上）
+- ✅ 不自动进入下一个子阶段（本报告 + 选项 A 拍板后才进入收尾）
+
+---
 
 ### 2026-06-22 (深夜) | v19 i18n 渐进迁移 M3 TypeScript 强约束完成
 
@@ -550,6 +605,38 @@ v15 GA 基础上完成工程深化（ENG-1/2/3）与功能增强（ENH-1/2），
 ---
 
 ## 3. 当前活跃任务 / 下一步方向
+
+### v19 i18n 渐进迁移（🟡 M4-1 已收尾 / M4-2/3 走向待拍板）
+
+| 维度 | 内容 |
+|------|------|
+| **计划文档** | [docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md](docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md) |
+| **M4 实施真源** | [docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md](docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md)（385 行 / 13 章节）|
+| **M4-1 总结报告** | [docs/superpowers/i18n-inventory/03-m4-1-summary.md](docs/superpowers/i18n-inventory/03-m4-1-summary.md) |
+| **基线** | v17.0.0 GA（merge `b991566`）|
+| **当前分支** | `feature/v19-m4-pages-migration`（基于 main HEAD `b991566`）|
+| **M0-M3 状态** | ✅ M0 8 项决策 + M1 调研清单 + M2 基础设施 + M3 TypeScript 强约束全部完成 |
+| **M4-1 状态** | ✅ **已收尾**（按用户拍板 A：4 页面 0 字符硬编码，跳过步骤 1.2-1.7）|
+| **M4-2/3 状态** | ⏳ **走向待拍板**（推荐 A.1 立即扫描 13 页面验证一致性，~10 分钟）|
+
+#### M4 子阶段状态表
+
+| 子阶段 | 范围 | 字符数（实际）| 状态 |
+|--------|------|--------------|------|
+| **M4-1** | P0 4 页面（Home / SortPage / ArrayPage / GraphPage）| 0 字符（v15.x + v17 累积 `t()` 化）| ✅ **已收尾** |
+| **M4-2** | P1 13 页面（stack / queue / linkedlist / tree / avl / rb / btree / segtree / hash / heap / trie / skiplist / unionfind）| 待扫描 | ⏳ 待启动（待 M4-2 走向拍板）|
+| **M4-3** | P2 2 页面（graphAlgorithm / sortCompare）+ 17 页面聚合层接入 | 待扫描 | ⏳ 待启动 |
+
+#### M4-2/3 走向待拍板（4 选项）
+
+| 选项 | 描述 | 估时 | 风险 | 推荐度 |
+|------|------|------|------|--------|
+| **A.1** | 立即启动 M4-2 步骤 2.1 扫描 13 页面验证一致性 | ~10 分钟 | 低（低成本验证）| ⭐⭐⭐ |
+| **A.2** | 跳过 M4-2/3 直接进入 M5 组件级迁移 | 0 | 中（基于 M4-1 推断）| ⭐⭐ |
+| **A.3** | 做 M1.5 重新调研（覆盖 v17 实际状态）| 1-2d | 中（推迟实施）| ⭐ |
+| **A.4** | M4 全部收尾（基于 M1 严重失真 + M3 规则已上线）| 0 | 高（放弃 M4 范围）| ❌ |
+
+---
 
 ### v16 设计统一化（⏳ 待启动 — 长线路线图第四阶段）
 
