@@ -176,7 +176,7 @@ export default function GraphAlgorithmPage() {
   }, !isAnimating)
   
   return (
-    <div className="h-full flex flex-col bg-paper dark:bg-dark-paper grain">
+    <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader
         title={t('graphAlgorithm.title')}
         subtitle={t('graphAlgorithm.subtitle')}
@@ -185,8 +185,8 @@ export default function GraphAlgorithmPage() {
           {t('common.reset')}
         </OperationButton>
       </PageHeader>
-      
-      <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4">
+
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4 min-h-0">
         <div className="flex-1 flex flex-col gap-4">
           <OperationBar label={t('graphAlgorithm.algorithm')}>
             {graphAlgorithms.map(algo => (
@@ -239,7 +239,7 @@ export default function GraphAlgorithmPage() {
             )}
           </OperationBar>
 
-          <div className="flex-1 flex flex-col bg-surface dark:bg-dark-surface border-2 border-ink dark:border-dark-border">
+          <div className="flex-1 flex flex-col relative min-h-0 bg-surface dark:bg-dark-surface border-2 border-ink dark:border-dark-border">
             <Visualizer
               data={nodes}
               renderFn={handleGraphRender}
