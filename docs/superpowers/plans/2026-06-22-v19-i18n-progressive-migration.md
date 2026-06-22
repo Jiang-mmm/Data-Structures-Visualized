@@ -1,7 +1,8 @@
 # v19 i18n 渐进迁移（i18n Progressive Migration）
 
 > **目标**: 在不破坏现有 50+ 命名空间的前提下，将 `src/i18n/locales.ts`（单文件 6310 行）拆分为 `locales/{zh,en}/` 目录结构（**D2=C**），并按"模块级渐进"方式将所有 UI 硬编码中文字符串纳入 i18n 系统（**D1=B**）。
-> **状态**: 📝 计划阶段（M0 5 项决策已拍板，M1 调研启动中）
+> **状态**: 🟢 M0 + M1 + M2 + M3 已完成（2026-06-22）；M4+ 待启动
+> **M3 范围**：types.ts 追加 `AssertSameKeys` 深度递归类型断言（任意嵌套深度的 zh/en 镜像检查）+ 自定义 ESLint 规则 `no-hardcoded-chinese-in-jsx`（minLength/allowList 配置，作用于 `src/{pages,components,visualizers,layouts}/**` warn 级）+ 45 项测试（types 20 + eslint 21 + 与 M2 合并 95 项）。
 > **基线**: v17.0.0 GA（merge `b991566`）+ v18 封存清理（merge `37478cf`，main HEAD）
 > **关联**: 继承 v18 i18n 封存决策（D1=B / D2=C / D3=B / D4=B / D5=C）
 
@@ -246,9 +247,9 @@ src/i18n/
 | 阶段 | 任务 | 估时 | 依赖 | 状态 |
 |------|------|------|------|------|
 | **M0** | 5 项决策拍板 | - | - | ✅ 已完成 |
-| **M1** | 硬编码中文清单 + 5 份管理清单 | 0.5d | M0 | 🟡 进行中 |
-| **M2** | i18n 基础设施（`locales/{zh,en}/` 目录 + integrity.ts + 测试 8→50+） | 2d | M1 | ⏳ |
-| **M3** | TypeScript 强约束（types.ts + AssertSameKeys 编译检查 + ESLint 规则） | 1.5d | M2 | ⏳ |
+| **M1** | 硬编码中文清单 + 5 份管理清单 | 0.5d | M0 | ✅ 已完成 2026-06-22 |
+| **M2** | i18n 基础设施（`locales/{zh,en}/` 目录 + integrity.ts + 测试 8→50+） | 2d | M1 | ✅ 已完成 2026-06-22 |
+| **M3** | TypeScript 强约束（types.ts + AssertSameKeys 编译检查 + ESLint 规则） | 1.5d | M2 | ✅ 已完成 2026-06-22 |
 | **M4** | 页面级渐进迁移（17 pages，~2500 字符串） | 5d | M3 | ⏳ |
 | **M5** | 组件级渐进迁移（16+ components，~1500 字符串） | 3d | M3 | ⏳ |
 | **M6** | 工具类迁移（5 utils，~500 字符串） | 1d | M3 | ⏳ |

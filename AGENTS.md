@@ -30,7 +30,7 @@ Managed by Trellis. Edits outside this block are preserved; edits inside may be 
 
 ## 当前活跃计划（2026-06-22）
 
-- **v19 i18n 渐进迁移**：[`docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md`](docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md) — 🟢 M0+M1+M2 已完成（基于 v17.0.0 GA）。基线 v17.0.0 GA（merge `b991566`）；M0 8 项决策 D1=B / D2=C / D3=B / D4=B / D5=C / D6=B / D7=B / D8=A 已拍板；M1 硬编码字符串调研清单 17,500 字符已交付；M2 基础设施完成（locales/{zh,en}/ 目录骨架 + integrity.ts + pseudoLocale.ts + 46 项测试）；M3+ 待启动（TypeScript 强约束 + 实际 UI 翻译）。
+- **v19 i18n 渐进迁移**：[`docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md`](docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md) — 🟢 M0+M1+M2+M3 已完成（基于 v17.0.0 GA）。基线 v17.0.0 GA（merge `b991566`）；M0 8 项决策 D1=B / D2=C / D3=B / D4=B / D5=C / D6=B / D7=B / D8=A 已拍板；M1 硬编码字符串调研清单 17,500 字符已交付；M2 基础设施完成（locales/{zh,en}/ 目录骨架 + integrity.ts + pseudoLocale.ts + 46 项测试）；**M3 TypeScript 强约束完成**（`AssertSameKeys` 深度递归编译时断言 + `no-hardcoded-chinese-in-jsx` 自定义 ESLint 规则 + 45 项测试，i18n+eslint 子目录 95/95）。M4+ 待启动（Pages/Components 实际 UI 翻译）。
 - **v18 i18n 全量替换**：（已封存，commit `774025a` 历史快照）— 📦 M0 决策保留为项目记忆；可基于 D1-D5 摘要 + v18 计划文档重启。
 - **v17 UI/UX 迭代**：[`docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md`](docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md) — ✅ 已完成（merge `b991566`）。基线 v16.0.0 GA（merge `b8d0b03`）；7 项优化 R1-R7 全部通过浏览器验收（1440p 截图 + DOM 断言 + 7/7 PASS）。
 - **v16 设计统一化**：[`docs/superpowers/plans/2026-06-22-design-unification-v16.md`](docs/superpowers/plans/2026-06-22-design-unification-v16.md) — ✅ 已完成（merge `b8d0b03`）。基线 = v16.0.0 GA（commit `879f04e`，2699 测试 / 0 lint / 80.05% 覆盖）。

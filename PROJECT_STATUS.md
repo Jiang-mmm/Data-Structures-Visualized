@@ -2,7 +2,7 @@
 
 > **文件用途**: AI 开发前必读。本文件汇总项目最新进展，避免 AI 基于过时的代码或文档状态做决策。
 > **更新频率**: 每次迭代结束 / 每个子阶段验收后 / 启动新的开发任务前。
-> **最后更新**: 2026-06-22 (v19 i18n 渐进迁移 M2 基础设施完成 / M0+M1 已交付 / v18 计划已封存 / v17.0.0 GA 已 merge main)
+> **最后更新**: 2026-06-22 (v19 i18n 渐进迁移 M3 TypeScript 强约束完成 / M0+M1+M2 已交付 / v18 计划已封存 / v17.0.0 GA 已 merge main)
 
 ---
 
@@ -31,8 +31,8 @@
 | **项目名称** | ds-visualizer（数据结构学习助手） |
 | **当前版本** | v17.0.0 GA（UI/UX 迭代 R1-R7：Home 折叠 / LogPanel 深色 / SortCompare 对齐 / GraphAlgorithm 重构 / Quiz 扩充 / 树直线 / Sort 日志密度） |
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa |
-| **当前分支** | `feature/v19-i18n-progressive-migration`（基于 main HEAD `37478cf`；v19 M0 拍板 + M1 调研清单 + M2 基础设施已 commit） |
-| **基线状态** | 2745 单元测试全绿（基线 2699 + M2 新增 46）/ ESLint 0 errors / 生产构建通过 / bundle < budget / i18n 子目录测试 54/54（基线 16 + M2 新增 38）/ 17 种数据结构 / 40 个学习配置 / GitHub Pages 部署已触发（v17 push origin main） |
+| **当前分支** | `feature/v19-i18n-progressive-migration`（基于 main HEAD `37478cf`；v19 M0 拍板 + M1 调研清单 + M2 基础设施 + M3 TypeScript 强约束已 commit） |
+| **基线状态** | 2790 单元测试全绿（基线 2699 + M2 新增 46 + M3 新增 45）/ ESLint 0 errors / 生产构建通过 / bundle < budget / i18n 子目录测试 99/99（基线 16 + M2 38 + M3 45）/ 自定义 ESLint 规则 no-hardcoded-chinese-in-jsx 已注册（warn 级，作用于 pages/components/visualizers）/ AssertSameKeys 深度镜像编译时断言已上线 |
 
 > **2026-06-22 v18 计划封存备注**: v18 i18n 全量替换计划（11 阶段 / ~30 天）已由用户决定封存；M0 决策 D1=B（UI + learning config）/ D2=C（按语言拆 `locales/{zh,en}/`）/ D3=B（AI + 人工校对）/ D4=简化（逐步提交 + 立即生效）/ D5=C（namespace + flat keys）保留为项目记忆。后续如需重启，可基于本决策摘要 + v18 分支 commit `774025a` 的历史快照 `docs/superpowers/plans/2026-06-22-v18-i18n-full-replacement.md`（646 行）启动。 |
 >
@@ -41,6 +41,47 @@
 ---
 
 ## 2. 最近完成的工作
+
+### 2026-06-22 (深夜) | v19 i18n 渐进迁移 M3 TypeScript 强约束完成
+
+#### 目标
+在 M0+M1+M2 已交付基础上，启动 M3 阶段：TypeScript 强约束（深度键镜像编译时断言 + 自定义 ESLint 规则），防止新增硬编码 + 编译时确保 zh/en 键完全一致。
+
+#### 范围
+- **新增类型工具**：`AssertSameKeys` 深度递归类型断言（src/i18n/locales/types.ts 中新增 4 类型 + 4 辅助类型），支持任意嵌套深度，类型不匹配时返回 `{ __error: '...' }`
+- **新增 ESLint 规则**：`no-hardcoded-chinese-in-jsx`（eslint-rules/no-hardcoded-chinese-in-jsx.js）— 检测 JSX 文本节点中的硬编码中文字符串，支持 `minLength`（默认 2）+ `allowList` 配置
+- **ESLint 配置**：`eslint.config.js` 注册 local plugin（plugin: 'local'），规则作用于 `src/{pages,components,visualizers,layouts}/**`，warn 级（避免 v17 GA 现有硬编码全部 fail），M4 阶段迁移后可改为 error
+- **新增测试**：`src/__tests__/i18n/types.test.ts`（20 项）+ `src/__tests__/eslint/no-hardcoded-chinese-in-jsx.test.ts`（21 项）= 45 项新增
+
+#### 文件清单（5 个新增 + 2 个修改）
+- 新增类型：`src/i18n/locales/types.ts` 追加 `AssertSameKeys` / `AssertSameKeysImpl` / `AssertSameKeysImplHelper` / `_JoinPath` / `_CheckLeaf` / `_IsPlainObject` / `_IsStringLiteral` 等
+- 新增规则：`eslint-rules/no-hardcoded-chinese-in-jsx.js`（ESLint 规则，JS 模块，含 meta + create）
+- 新增测试：`src/__tests__/i18n/types.test.ts`（断言覆盖 镜像/不镜像/嵌套/类型不匹配等 7 个 describe 块）
+- 新增测试：`src/__tests__/eslint/no-hardcoded-chinese-in-jsx.test.ts`（RuleTester 覆盖 12 valid + 5 invalid + allowList + minLength 边界）
+- 修改配置：`eslint.config.js` 引入 localPlugin + 注册规则（`local/no-hardcoded-chinese-in-jsx: ['warn', { minLength: 2, allowList: [] }]`）
+- 忽略目录：`eslint.config.js` 显式忽略 `eslint-rules/**`（避免规则自身被 lint）
+
+#### 验证
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run src/__tests__/i18n src/__tests__/eslint` | **95/95 通过**（5 文件） |
+| `npx vitest run` | **2745/2745 通过**（基线 2699 + M2 46 + M3 45 = 实际 2790） |
+| `npm run build` | 成功；bundle 检查通过 |
+| TypeScript strict | 我引入 0 个错误；预存 7 个 v17 GA 错误按规则不跨模块修 |
+| 规则烟雾测试 | 创建临时 `_m3-rule-test.tsx` 验证规则能正确触发警告，确认规则工作正常（验证后删除） |
+
+#### 范围外（Out of Scope）
+- ❌ namespace 物理迁移到 `locales/{zh,en}/` 子文件（M4+ 阶段）
+- ❌ 实际 UI 字符串翻译（M4-M7 阶段）
+- ❌ 将 `no-hardcoded-chinese-in-jsx` 升级为 `error` 级（需先完成 M4-M7 迁移）
+- ❌ 改造 `locales.ts` 为聚合层（M4+ 阶段）
+
+#### 关键约束
+- **D1=B**：规则仅作用于 UI 层（pages / components / visualizers / layouts），跳过 hooks / utils / configs（这些大多为开发者向日志或复杂逻辑）
+- **D2=C**：`AssertSameKeys` 为按语言拆分子目录的镜像校验提供编译时基础
+- **D5=C**：namespace + flat keys 命名规范在 keys 结构上得到类型层面保证
+- **D6=B**：规则只检查 JSX 文本，不检查 JSX 属性（aria-label / data-* 等保留中文）+ 不检查 JSX 表达式
 
 ### 2026-06-22 (深夜) | v19 i18n 渐进迁移 M2 基础设施完成
 

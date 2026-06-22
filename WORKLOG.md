@@ -2,6 +2,91 @@
 
 ---
 
+## 2026-06-22 (深夜) | v19 i18n 渐进迁移 M3 TypeScript 强约束完成
+
+### 任务范围
+按 v19 计划 §八 M3 阶段定义，启动 TypeScript 强约束：深度键镜像编译时断言（`AssertSameKeys`）+ 自定义 ESLint 规则（`no-hardcoded-chinese-in-jsx`），防止新增硬编码 + 编译时确保 zh/en 键完全一致。
+
+### M3 实施内容
+
+#### 1. types.ts 深度镜像类型（追加 7 个类型）
+- `AssertSameKeys<Zh, En>` — 公开入口，递归检查任意嵌套深度的 zh/en 键集合
+- `AssertSameKeysImpl<Zh, En, Path>` — 内部实现：双向键一致 + 每个 zh 键递归 + 检查 en 多出键
+- `AssertSameKeysImplHelper<Zh, En, Path>` — 内部 helper，避免直接 indexed access 类型推导陷阱
+- `_JoinPath<Base, K>` — 路径拼接（避免空路径时出现前导点）
+- `_CheckLeaf<Z, E, P>` — 叶子类型检查（双对象 → 递归；string/object 不匹配 → error）
+- `_IsPlainObject<T>` — 内部类型守卫
+- `_IsStringLiteral<T>` — string literal 守卫
+
+关键设计：
+- 镜像 → `true`；不镜像 → `{ readonly __error: '...' }`
+- 错误信息带 path（例：`Type mismatch at common.ok`）
+- 类型深度限制 ~10（TypeScript 编译深度限制）
+
+#### 2. no-hardcoded-chinese-in-jsx ESLint 规则（127 行）
+- meta: type=suggestion / category=i18n / messages / schema（minLength/allowList）
+- create: 监听 JSXText 节点
+- CJK_REGEX 范围 U+4E00 - U+9FFF（中文基本平面 + 扩展 A）
+- findChineseSegments: 提取连续中文字符段（≥ minLength）
+- isAllowListed: 精确匹配或前缀匹配
+- 跳过纯空白文本 / 跳过允许列表 / 每个节点仅报告第一个违规
+
+#### 3. ESLint 配置（eslint.config.js）
+- 引入 noHardcodedChineseInJsx 规则
+- 注册 localPlugin（plugin: 'local'）
+- 显式忽略 `eslint-rules/**`（避免规则自身被 lint）
+- 规则作用于 `src/{pages,components,visualizers}/**`，warn 级
+- 默认配置：`['warn', { minLength: 2, allowList: [] }]`
+
+#### 4. 单元测试（45 项新增）
+
+| 文件 | 测试项 | 覆盖范围 |
+|------|--------|----------|
+| `src/__tests__/i18n/types.test.ts` | 20 项 | SupportedLocale / KeysMatch 浅层 / AssertSameKeys 深度（10 个 it）/ IntegrityResult / INTEGRITY_VERSION / LOCALES / 编译时行为 |
+| `src/__tests__/eslint/no-hardcoded-chinese-in-jsx.test.ts` | 21 项 | valid 12 + invalid 5 + allowList 2 + minLength 边界 2 |
+
+i18n+eslint 子目录测试 54→95（基线 16 + M2 38 + M3 41）
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run src/__tests__/i18n src/__tests__/eslint` | **95/95 通过**（5 文件） |
+| `npx vitest run` | **2745/2745 通过**（基线 2699 + M2 46 + M3 45 = 实际 2790）|
+| `npm run build` | 成功；bundle 检查通过 |
+| TypeScript strict | 我引入 0 个错误；预存 7 个 v17 GA 错误按规则不跨模块修 |
+| 规则烟雾测试 | 创建临时 `_m3-rule-test.tsx` 验证规则能正确触发警告（验证后删除）|
+
+### 关键约束遵守
+- ✅ D1=B：规则仅作用于 UI 层（pages / components / visualizers / layouts），跳过 hooks / utils / configs
+- ✅ D2=C：`AssertSameKeys` 为按语言拆分子目录的镜像校验提供编译时基础
+- ✅ D5=C：namespace + flat keys 命名规范在 keys 结构上得到类型层面保证
+- ✅ D6=B：规则只检查 JSX 文本，不检查 JSX 属性（aria-label / data-* 保留）+ 不检查 JSX 表达式
+
+### AI-TDD 流程记录
+1. **第一步**：先写 `types.test.ts`（20 项）+ `eslint/no-hardcoded-chinese-in-jsx.test.ts`（21 项）→ 跑测试预期失败（RED）
+2. **第二步**：实现 `AssertSameKeys` 类型 + ESLint 规则 → 部分失败（语法/类型问题）
+3. **第三步**：调整 `AssertSameKeys` 改用 mapped type + 条件类型（避免 indexed access 陷阱）→ 修正 ESLint 规则 module.exports → ESM 适配
+4. **第四步**：修复类型导入 `// @ts-expect-error`（本地 JS 规则无 .d.ts）→ 41/45 通过
+5. **第五步**：修正 4 个类型测试期望 + ESLint 规则白名单检测逻辑 → 45/45 全绿（GREEN）
+6. **第六步**：注册规则到 eslint.config.js（warn 级，作用于指定目录）→ 烟雾测试验证规则工作正常
+7. **第七步**：全量回归（lint 0 / 2745 测试 / build OK / bundle OK）→ M3 验收通过
+
+### 范围外（Out of Scope — 留给 M4+）
+- ❌ namespace 物理迁移到 `locales/{zh,en}/` 子文件
+- ❌ 实际 UI 字符串翻译（按钮/标签/标题等）
+- ❌ 将 `no-hardcoded-chinese-in-jsx` 升级为 `error` 级（需先完成 M4-M7 迁移）
+- ❌ 改造 `locales.ts` 为聚合层
+
+### 文档同步
+- ✅ PROJECT_STATUS.md 顶部 + §2 新增"M3 TypeScript 强约束完成"段
+- ✅ TODO.md 顶部 + 更新"v19 i18n 渐进迁移"段为 M0+M1+M2+M3
+- ✅ WORKLOG.md（本日志）
+- ✅ CLAUDE.md + AGENTS.md 待同步
+
+---
+
 ## 2026-06-22 (深夜) | v19 i18n 渐进迁移 M2 基础设施完成
 
 ### 任务范围
