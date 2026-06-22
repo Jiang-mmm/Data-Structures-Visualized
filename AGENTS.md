@@ -30,7 +30,9 @@ Managed by Trellis. Edits outside this block are preserved; edits inside may be 
 
 ## 当前活跃计划（2026-06-22）
 
-- **v17 UI/UX 迭代**：[`docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md`](docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md) — ✅ 已完成（待合并 main）。基线 v16.0.0 GA（merge `b8d0b03`）；7 项优化 R1-R7 全部通过浏览器验收（1440p 截图 + DOM 断言 + 7/7 PASS）。
+- **v19 i18n 渐进迁移**：[`docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md`](docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md) — 🟡 M0+M1 已完成（commit `36d110e`）。基线 v17.0.0 GA（merge `b991566`）；M0 5 项决策 D1=B / D2=C / D3=B / D4=B / D5=C 已拍板；M1 硬编码字符串调研清单 17,500 字符已交付；待 M2 启动授权 + D6/D7/D8 新增决策。
+- **v18 i18n 全量替换**：（已封存，commit `774025a` 历史快照）— 📦 M0 决策保留为项目记忆；可基于 D1-D5 摘要 + v18 计划文档重启。
+- **v17 UI/UX 迭代**：[`docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md`](docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md) — ✅ 已完成（merge `b991566`）。基线 v16.0.0 GA（merge `b8d0b03`）；7 项优化 R1-R7 全部通过浏览器验收（1440p 截图 + DOM 断言 + 7/7 PASS）。
 - **v16 设计统一化**：[`docs/superpowers/plans/2026-06-22-design-unification-v16.md`](docs/superpowers/plans/2026-06-22-design-unification-v16.md) — ✅ 已完成（merge `b8d0b03`）。基线 = v16.0.0 GA（commit `879f04e`，2699 测试 / 0 lint / 80.05% 覆盖）。
 - **v16+ 工程化（✅ 已完成 2026-06-22）**：ENG-1 E2E 迁移 + ENG-2 覆盖率 80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善。详见 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第四阶段。
 - **v15.x ENH-2 i18n 完善**：[`docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md`](docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md) — ✅ 已完成（2026-06-22）：新增 `complexity` + `algorithms` 命名空间 + `useAlgorithmGlossary` Hook + `AlgorithmGlossaryCard` 组件 + Home 集成 + 20 项测试。

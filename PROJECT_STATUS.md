@@ -2,7 +2,7 @@
 
 > **文件用途**: AI 开发前必读。本文件汇总项目最新进展，避免 AI 基于过时的代码或文档状态做决策。
 > **更新频率**: 每次迭代结束 / 每个子阶段验收后 / 启动新的开发任务前。
-> **最后更新**: 2026-06-22 (v18 i18n 计划阶段产物封存清理 / v17.0.0 GA 已 merge main)
+> **最后更新**: 2026-06-22 (v19 i18n 渐进迁移 M0+M1 启动 / v18 计划已封存 / v17.0.0 GA 已 merge main)
 
 ---
 
@@ -31,10 +31,12 @@
 | **项目名称** | ds-visualizer（数据结构学习助手） |
 | **当前版本** | v17.0.0 GA（UI/UX 迭代 R1-R7：Home 折叠 / LogPanel 深色 / SortCompare 对齐 / GraphAlgorithm 重构 / Quiz 扩充 / 树直线 / Sort 日志密度） |
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa |
-| **当前分支** | `main`（v17.0.0 GA 已 merge `b991566`；v18 i18n 计划阶段产物已封存清理） |
+| **当前分支** | `feature/v19-i18n-progressive-migration`（基于 main HEAD `37478cf`；v19 M0 拍板 + M1 调研清单已 commit `36d110e`） |
 | **基线状态** | 2699 单元测试全绿 / ESLint 0 errors / 生产构建通过 / bundle < budget / 测试覆盖率 80.05% / 17 种数据结构 / 40 个学习配置 / E2E 7+2 spec 迁移至 Playwright Test / GitHub Pages 部署已触发（v17 push origin main） |
 
 > **2026-06-22 v18 计划封存备注**: v18 i18n 全量替换计划（11 阶段 / ~30 天）已由用户决定封存；M0 决策 D1=B（UI + learning config）/ D2=C（按语言拆 `locales/{zh,en}/`）/ D3=B（AI + 人工校对）/ D4=简化（逐步提交 + 立即生效）/ D5=C（namespace + flat keys）保留为项目记忆。后续如需重启，可基于本决策摘要 + v18 分支 commit `774025a` 的历史快照 `docs/superpowers/plans/2026-06-22-v18-i18n-full-replacement.md`（646 行）启动。 |
+>
+> **2026-06-22 v19 启动备注**: v19 i18n 渐进迁移 M0 5 项决策已拍板（D1=B / D2=C / D3=B / D4=B / D5=C）；M1 硬编码字符串调研清单已交付（17,500 字符 v19 范围）。M2 启动前需新增 3 项决策：D6 工具类翻译策略 / D7 学习配置翻译范围 / D8 翻译协作模式。详细见 [docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md](./docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md)。 |
 
 ---
 

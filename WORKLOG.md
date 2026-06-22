@@ -2,6 +2,58 @@
 
 ---
 
+## 2026-06-22 (深夜) | v19 i18n 渐进迁移 M0+M1 启动
+
+### 任务范围
+应用户要求启动 v19 i18n 渐进迁移任务。首先对"v13 遗留 6+59 警告"做核验（实际不存在），随后启动 v19 启动流程：拍板 M0 5 项决策 + 编制 v19 计划 + 梳理 M1 硬编码中文清单。
+
+### v13 警告核验
+- `npm run lint` exit code = 0
+- 0 errors / 0 warnings
+- 6 处 set-state-in-effect + 59 处 exhaustive-deps **不存在**（已 downgraded to warn + 实际 0 warning）
+- 用户确认跳过该子任务
+
+### v19 M0 决策（5 项已拍板）
+| 决策 | 方案 |
+|------|------|
+| D1 范围 | B（UI + learning config） |
+| D2 文件结构 | C（按语言拆 `locales/{zh,en}/`）|
+| D3 翻译工作流 | B（AI 辅助 + 人工校对）|
+| D4 渐进发布 | B（立即生效 + 测试保底）|
+| D5 命名规范 | C（namespace + flat keys）|
+
+### v19 计划产出
+- 文件：`docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md`
+- 12 章节 / 11 阶段（M0-M10） / 总估时 ~27d
+- 范围：UI + learning config（~17,500 字符）
+- 不引入 i18next，保持自研轻量
+- 不做范围：hooks 日志 / tests 断言 / 多语种扩展
+
+### M1 硬编码字符串清单
+- 文件：`docs/superpowers/i18n-inventory/01-hardcoded-strings-inventory.md`
+- 17 页面：~2,900 字符（P0 4 个 / P1 13 个 / P2 3 个）
+- 16+ 组件：~960 字符
+- 5 utils：~360 字符
+- 31 学习配置：~10,000-15,000 字符
+- 总 v19 范围：~17,500 字符
+- 优先级映射：M4（页面）/ M5（组件）/ M6（utils）/ M7（学习配置）
+
+### v19 启动前需新增决策（D6/D7/D8）
+- D6 工具类翻译策略（A 双显 / B 仅 UI 翻译）
+- D7 学习配置翻译范围（A 完整 / B 高频 10 个）
+- D8 翻译协作模式（A AI + 单次校对 / B AI + 分批校对）
+
+### git 状态
+- 分支：`feature/v19-i18n-progressive-migration`
+- Commit：`36d110e` docs(v19): 启动 v19 i18n 渐进迁移（M0 拍板 + M1 调研清单）
+- 修改：2 files, 573 insertions
+
+### 下一步
+- 等待 M2 启动拍板（D6/D7/D8 + 启动授权）
+- M2 任务：创建 `locales/{zh,en}/` 目录 + integrity.ts + 测试 8→50+
+
+---
+
 ## 2026-06-22 (深夜) | v18 i18n 全量替换计划封存清理
 
 ### 任务范围

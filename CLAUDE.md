@@ -24,7 +24,9 @@ This file provides guidance to MiMo Code (claude.ai/code) when working with code
 
 | 计划 | 路径 | 状态 | 启动条件 |
 |------|------|------|----------|
-| **v17 UI/UX 迭代** | [docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md](docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md) | ✅ 已完成（待合并 main） | 基线 v16.0.0 GA（merge `b8d0b03`）；R1-R7 全部通过浏览器验收（1440p 截图 + DOM 断言）|
+| **v19 i18n 渐进迁移** | [docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md](docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md) | 🟡 M0+M1 已完成（commit `36d110e`）| 基线 v17.0.0 GA（merge `b991566`）；M0 5 项决策 D1=B / D2=C / D3=B / D4=B / D5=C 已拍板；M1 调研清单 17,500 字符已交付；待 M2 启动授权 + D6/D7/D8 新增决策 |
+| **v18 i18n 全量替换** | （已封存，commit `774025a` 历史快照）| 📦 封存 | M0 决策保留为项目记忆；可基于 D1-D5 摘要 + v18 计划文档重启 |
+| **v17 UI/UX 迭代** | [docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md](docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md) | ✅ 已完成（merge `b991566`） | 基线 v16.0.0 GA（merge `b8d0b03`）；R1-R7 全部通过浏览器验收（1440p 截图 + DOM 断言）|
 | **v16 设计统一化** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](docs/superpowers/plans/2026-06-22-design-unification-v16.md) | ✅ 已完成 | M0-M6 全部完成（merge `b8d0b03`） |
 | **v15.x ENH-2 i18n 完善** | [docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md](docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md) | ✅ 已完成 | 新增 `complexity` + `algorithms` 命名空间 + `useAlgorithmGlossary` + `AlgorithmGlossaryCard`（Home 集成）|
 
