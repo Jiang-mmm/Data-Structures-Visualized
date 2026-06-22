@@ -178,5 +178,26 @@ export const treeConfig: LearningModeConfig = {
       correctIndex: 1,
       explanation: '双子节点删除常用中序后继（右子树的最小值）替换被删节点，保持 BST 性质不变。也可用中序前驱（左子树最大值）。',
     },
+    {
+      id: 'q4',
+      question: 'BST 退化为链表时（按升序插入），查找时间复杂度会变成？',
+      options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+      correctIndex: 2,
+      explanation: 'BST 退化为链表后，每个节点只有右子节点，树高等于 n，查找退化为 O(n)。这正是 AVL/红黑树等平衡树要解决的问题。',
+    },
+    {
+      id: 'q5',
+      question: '层序遍历（BFS）通常使用什么数据结构辅助？',
+      options: ['栈', '队列', '哈希表', '堆'],
+      correctIndex: 1,
+      explanation: 'BFS 按层访问节点，使用队列（FIFO）保证"先入先出"特性，符合按层扩展的访问顺序。',
+    },
+    {
+      id: 'q6',
+      question: '前序遍历（preorder）的访问顺序是？',
+      options: ['左→根→右', '根→左→右', '左→右→根', '按层从左到右'],
+      correctIndex: 1,
+      explanation: '前序遍历顺序是"根→左→右"，常用于树的复制与序列化（前序的第一个节点就是根）。',
+    },
   ],
 }

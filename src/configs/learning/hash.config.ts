@@ -81,4 +81,41 @@ function get(key) {
       complexity: { time: '平均 O(1)，最坏 O(n)', space: 'O(1)' },
     },
   ],
+  quiz: [
+    {
+      id: 'q1',
+      question: '哈希表查找的平均时间复杂度是？',
+      options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+      correctIndex: 0,
+      explanation: '好的哈希函数 + 合理冲突处理下，哈希表平均查找 O(1)。最坏情况（所有键都冲突）为 O(n)。',
+    },
+    {
+      id: 'q2',
+      question: '哈希冲突的两种主要处理方式是？',
+      options: ['栈/队列', '链地址法/开放寻址法', '冒泡/快排', 'BFS/DFS'],
+      correctIndex: 1,
+      explanation: '链地址法（拉链法）每个桶存一个链表；开放寻址法（线性/二次/双重哈希）冲突时探测下一个空位。',
+    },
+    {
+      id: 'q3',
+      question: '哈希表的"负载因子"（load factor）指什么？',
+      options: ['键值对的总数', '桶的数量', '已存元素数 / 桶数', '哈希函数返回值'],
+      correctIndex: 2,
+      explanation: '负载因子 = 元素数 / 桶数。负载因子越大冲突概率越高，超过 0.75 通常需要扩容 rehash 以保持 O(1) 性能。',
+    },
+    {
+      id: 'q4',
+      question: '为什么好的哈希函数要"均匀分布"？',
+      options: ['加快计算速度', '减少冲突', '节省内存', '支持范围查询'],
+      correctIndex: 1,
+      explanation: '均匀分布让键尽量分散到不同桶，减少冲突次数。冲突多了，链地址法链表变长，开放寻址法探测次数增加，性能退化。',
+    },
+    {
+      id: 'q5',
+      question: 'JavaScript 的 Object / Map 底层使用什么结构？',
+      options: ['二叉树', '哈希表', '跳表', 'B+ 树'],
+      correctIndex: 1,
+      explanation: 'V8 等主流 JS 引擎中 Object 和 Map 底层都是哈希表（V8 使用开放寻址 + 线性探测的优化变体）。',
+    },
+  ],
 }

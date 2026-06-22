@@ -72,7 +72,7 @@ function InfoPanel({ logs, learningMode, isAnimating, onJumpToStep, algorithmKey
     <>
       {/* 桌面端：右侧常驻面板 */}
       <aside
-        className="hidden lg:flex flex-col w-96 shrink-0 bg-surface dark:bg-dark-surface border-l-2 border-ink dark:border-dark-border"
+        className="hidden lg:flex flex-col w-96 shrink-0 h-full bg-surface dark:bg-dark-surface border-l-2 border-ink dark:border-dark-border"
         aria-label={t('infoPanel.tabLog')}
       >
         <div className="border-b-2 border-ink dark:border-dark-border px-3 py-2">

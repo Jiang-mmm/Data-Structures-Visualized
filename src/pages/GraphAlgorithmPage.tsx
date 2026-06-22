@@ -56,7 +56,7 @@ export default function GraphAlgorithmPage() {
     const svg = svgRef.current
     return () => { if (svg) clearGraphSimulation(svg) }
   }, [svgRef])
-  
+
   const addLog = useCallback((type: string, message: string) => {
     const time = new Date().toLocaleTimeString(undefined, { hour12: false })
     setLogs(prev => [...prev, { time, type, message }])
@@ -67,7 +67,7 @@ export default function GraphAlgorithmPage() {
       renderGraph(svg, nodes, links, dims)
     }
   }, [nodes, links])
-  
+
   const handleStop = useCallback((): void => {
     abortAnimation()
     setIsAnimating(false)
@@ -171,11 +171,11 @@ export default function GraphAlgorithmPage() {
       }
     } as any)
   }, [selectedAlgorithm, logs])
-  
+
   useKeyboard({
     'r': reset,
   }, !isAnimating)
-  
+
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
       <PageHeader
@@ -201,7 +201,7 @@ export default function GraphAlgorithmPage() {
               </OperationButton>
             ))}
           </OperationBar>
-          
+
           <OperationBar label={t('graphAlgorithm.startNode')}>
             {nodes.map(node => (
               <OperationButton
@@ -214,7 +214,7 @@ export default function GraphAlgorithmPage() {
               </OperationButton>
             ))}
           </OperationBar>
-          
+
           <OperationBar>
             <SpeedControl />
             <OperationButton variant="primary" onClick={handleRun} disabled={isAnimating} isBusy={isAnimating}>
@@ -252,8 +252,11 @@ export default function GraphAlgorithmPage() {
               className="!border-b-0"
             />
           </div>
+        </div>
 
-          <Card shadow="md" radius="none">
+        {/* 右侧：复杂度对比（顶） + InfoPanel（底）。统一与 16 个其他页面的 96 宽度对齐 */}
+        <div className="hidden lg:flex flex-col w-96 shrink-0 gap-4 min-h-0">
+          <Card shadow="md" radius="none" className="shrink-0">
             <h3 className="text-sm font-bold text-ink dark:text-dark-ink mb-3">{t('graphAlgorithm.complexityCompare')}</h3>
             <ComplexityChart
               algorithms={graphAlgorithms.map(algo => ({
@@ -266,13 +269,35 @@ export default function GraphAlgorithmPage() {
               showChart={false}
             />
           </Card>
+          <div className="flex-1 min-h-0">
+            <InfoPanel
+              logs={logs}
+              learningMode={learningMode}
+              isAnimating={isAnimating}
+            />
+          </div>
         </div>
-
-        <InfoPanel
-          logs={logs}
-          learningMode={learningMode}
-          isAnimating={isAnimating}
-        />
+        {/* 移动端：InfoPanel 仍由 InfoPanel 自身渲染，复杂度对比卡片挪到主内容底部（lg 断点以下） */}
+        <div className="lg:hidden">
+          <Card shadow="md" radius="none" className="m-4">
+            <h3 className="text-sm font-bold text-ink dark:text-dark-ink mb-3">{t('graphAlgorithm.complexityCompare')}</h3>
+            <ComplexityChart
+              algorithms={graphAlgorithms.map(algo => ({
+                name: algo.name,
+                complexity: algo.timeComplexity,
+                timeComplexity: algo.timeComplexity,
+                spaceComplexity: algo.spaceComplexity,
+                description: algo.description,
+              }))}
+              showChart={false}
+            />
+          </Card>
+          <InfoPanel
+            logs={logs}
+            learningMode={learningMode}
+            isAnimating={isAnimating}
+          />
+        </div>
       </div>
     </div>
   )

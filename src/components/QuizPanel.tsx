@@ -1,4 +1,4 @@
-import { useState, useCallback, memo } from 'react'
+import { useState, useCallback, memo, useEffect, useRef } from 'react'
 import type { QuizQuestion } from '../types/learning'
 import { useQuizProgress } from '../hooks/useQuizProgress'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
@@ -12,17 +12,42 @@ interface QuizPanelProps {
 }
 
 /**
+ * Fisher-Yates 洗牌算法（原地）。返回新数组，原数组不变。
+ * 用于在 QuizPanel 挂载时打乱题目顺序，避免连续打开两次看到相同顺序。
+ */
+function shuffleQuestions<T>(arr: T[]): T[] {
+  const result = [...arr]
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+      ;[result[i], result[j]] = [result[j], result[i]]
+  }
+  return result
+}
+
+/**
  * 测验面板组件
  *
  * 在学习模式完成后展示选择题，提供即时反馈和解析。
  * 答题进度持久化到 localStorage，下次打开可继续。
+ * 题目顺序在挂载时随机打乱（Fisher-Yates），重置时再次洗牌。
  */
 function QuizPanelBase({ algorithmKey, questions }: QuizPanelProps) {
   const { t } = useGlobalSettings()
   const progress = useQuizProgress(algorithmKey, questions)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
+  // 题目顺序在挂载时打乱；按 algorithmKey 变化或显式 shuffle() 重新洗牌
+  const [shuffledQuestions, setShuffledQuestions] = useState<QuizQuestion[]>(() => shuffleQuestions(questions))
+  // 记录 algorithmKey，effect 中检测变化触发重新洗牌（避免 render 中直接访问 ref）
+  const lastAlgoKeyRef = useRef(algorithmKey)
+  useEffect(() => {
+    if (lastAlgoKeyRef.current !== algorithmKey) {
+      lastAlgoKeyRef.current = algorithmKey
+      setShuffledQuestions(shuffleQuestions(questions))
+    }
+  }, [algorithmKey, questions])
 
-  const currentQuestion = questions[progress.currentIndex]
+  // currentQuestion 始终使用洗牌后的列表
+  const currentQuestion = shuffledQuestions[progress.currentIndex]
   const existingAnswer = currentQuestion ? progress.getAnswer(currentQuestion.id) : undefined
   const hasAnswered = existingAnswer !== undefined
 
@@ -39,8 +64,18 @@ function QuizPanelBase({ algorithmKey, questions }: QuizPanelProps) {
     setSelectedOption(index)
   }, [hasAnswered])
 
+  // 显式重新洗牌（重置按钮触发）
+  const handleReshuffle = useCallback(() => {
+    progress.reset()
+    setShuffledQuestions(shuffleQuestions(questions))
+    setSelectedOption(null)
+  }, [progress, questions])
+
+  // 派生：题目数取洗牌后列表长度（与原列表一致）
+  const questionCount = shuffledQuestions.length
+
   // 无题目时显示空状态
-  if (questions.length === 0) {
+  if (questionCount === 0) {
     return (
       <div className="p-4 text-center text-sm text-ink-light dark:text-dark-ink-light">
         {t('quiz.noQuestions')}
@@ -54,7 +89,7 @@ function QuizPanelBase({ algorithmKey, questions }: QuizPanelProps) {
       <div className="flex items-center justify-between">
         <h3 className="font-bold text-sm text-ink dark:text-dark-ink">{t('quiz.title')}</h3>
         <span className="font-mono text-xs text-ink-light dark:text-dark-ink-light">
-          {t('quiz.score')}: {progress.score}% ({progress.correctCount}/{questions.length})
+          {t('quiz.score')}: {progress.score}% ({progress.correctCount}/{questionCount})
         </span>
       </div>
 
@@ -62,7 +97,7 @@ function QuizPanelBase({ algorithmKey, questions }: QuizPanelProps) {
       <div className="h-1 bg-border dark:bg-dark-border overflow-hidden">
         <div
           className="h-full bg-accent-blue transition-all duration-300"
-          style={{ width: `${(progress.answeredCount / questions.length) * 100}%` }}
+          style={{ width: `${(progress.answeredCount / questionCount) * 100}%` }}
         />
       </div>
 
@@ -70,7 +105,7 @@ function QuizPanelBase({ algorithmKey, questions }: QuizPanelProps) {
       <div className="border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface p-3">
         <div className="flex items-center gap-2 mb-2">
           <span className="font-mono text-xs text-accent-blue">
-            {t('quiz.question')} {progress.currentIndex + 1}{t('quiz.of')}{questions.length}
+            {t('quiz.question')} {progress.currentIndex + 1}{t('quiz.of')}{questionCount}
           </span>
           {hasAnswered && (
             <span className={`text-xs font-bold flex items-center gap-1 ${existingAnswer.isCorrect ? 'text-accent-emerald' : 'text-accent-rose'}`}>
@@ -147,7 +182,7 @@ function QuizPanelBase({ algorithmKey, questions }: QuizPanelProps) {
         ) : (
           <button
             onClick={progress.nextQuestion}
-            disabled={progress.currentIndex === questions.length - 1}
+            disabled={progress.currentIndex === questionCount - 1}
             className="flex-1 px-3 py-1.5 text-xs font-bold border-2 border-ink dark:border-dark-border bg-accent-blue text-white disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-80 transition-opacity"
           >
             {t('quiz.next')}
@@ -155,9 +190,10 @@ function QuizPanelBase({ algorithmKey, questions }: QuizPanelProps) {
         )}
 
         <button
-          onClick={progress.reset}
+          onClick={handleReshuffle}
           className="px-3 py-1.5 text-xs font-bold border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface text-ink dark:text-dark-ink hover:bg-muted dark:hover:bg-dark-muted transition-colors"
           title={t('quiz.reset')}
+          aria-label={t('quiz.reset')}
         >
           ↻
         </button>

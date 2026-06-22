@@ -299,12 +299,12 @@ export function renderAvlTree(
       const y1 = fromPos.y + NODE_RADIUS
       const x2 = toPos.x
       const y2 = toPos.y - NODE_RADIUS
-      const midY = (y1 + y2) / 2
 
-      container.append('path')
+      // v17 R6：边统一为直线（参考 heap/trie visualizer），更符合二叉树学术风格
+      container.append('line')
         .attr('class', `avl-edge from-${edge.from}-to-${edge.to}`)
-        .attr('d', `M${x1},${y1} C${x1},${midY} ${x2},${midY} ${x2},${y2}`)
-        .attr('fill', 'none')
+        .attr('x1', x1).attr('y1', y1)
+        .attr('x2', x2).attr('y2', y2)
         .attr('stroke', C.edgeDefault)
         .attr('stroke-width', 2)
     }

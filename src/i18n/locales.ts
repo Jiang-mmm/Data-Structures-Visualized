@@ -1274,6 +1274,8 @@ export const zh: Locale = {
     selectStructure: '选择数据结构开始探索',
     enterModule: '进入模块',
     modules: '个模块',
+    learningHub: '学习中心',
+    learningHubHint: '进度 / 推荐 / 路径 / 术语表',
   },
   settings: {
     animationSpeed: '动画速度',
@@ -2433,6 +2435,8 @@ export const en: Locale = {
     selectStructure: 'Select a data structure to explore',
     enterModule: 'Enter Module',
     modules: 'MODULES',
+    learningHub: 'Learning Hub',
+    learningHubHint: 'Progress / Recommendations / Path / Glossary',
   },
   settings: {
     animationSpeed: 'Animation Speed',

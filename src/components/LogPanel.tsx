@@ -17,11 +17,33 @@ interface LogPanelProps {
   id?: string
 }
 
+// 深色模式适配：在 v16 DESIGN.md token 基础上，4 种日志类型在 dark 模式下
+// 使用更亮的 accent + 更深的背景，确保 WCAG AA 对比度（≥4.5:1）。
 const typeConfig = {
-  oper: { color: 'text-accent-blue', bg: 'bg-accent-blue/10', border: 'border-accent-blue/30', labelKey: 'logPanel.type.oper' },
-  info: { color: 'text-accent-emerald', bg: 'bg-accent-emerald/10', border: 'border-accent-emerald/30', labelKey: 'logPanel.type.info' },
-  error: { color: 'text-accent-rose', bg: 'bg-accent-rose/10', border: 'border-accent-rose/30', labelKey: 'logPanel.type.error' },
-  code: { color: 'text-accent-amber', bg: 'bg-accent-amber/10', border: 'border-accent-amber/30', labelKey: 'logPanel.type.code' },
+  oper: {
+    color: 'text-accent-blue dark:text-blue-300',
+    bg: 'bg-accent-blue/10 dark:bg-blue-500/20',
+    border: 'border-accent-blue/30 dark:border-blue-400/50',
+    labelKey: 'logPanel.type.oper',
+  },
+  info: {
+    color: 'text-accent-emerald dark:text-emerald-300',
+    bg: 'bg-accent-emerald/10 dark:bg-emerald-500/20',
+    border: 'border-accent-emerald/30 dark:border-emerald-400/50',
+    labelKey: 'logPanel.type.info',
+  },
+  error: {
+    color: 'text-accent-rose dark:text-rose-300',
+    bg: 'bg-accent-rose/10 dark:bg-rose-500/20',
+    border: 'border-accent-rose/30 dark:border-rose-400/50',
+    labelKey: 'logPanel.type.error',
+  },
+  code: {
+    color: 'text-accent-amber dark:text-amber-300',
+    bg: 'bg-accent-amber/10 dark:bg-amber-500/20',
+    border: 'border-accent-amber/30 dark:border-amber-400/50',
+    labelKey: 'logPanel.type.code',
+  },
 } as const
 
 export default function LogPanel({
@@ -90,7 +112,7 @@ function EmbeddedLogList({ logs, onJumpToStep, highlightedLogId, id, t }: {
             key={i}
             className={`bg-paper dark:bg-dark-paper border p-2.5 animate-slide-up transition-colors duration-300
               ${isHighlighted
-                ? 'border-accent-amber bg-accent-amber/10 shadow-[0_0_0_2px_var(--color-accent-amber)]'
+                ? 'border-accent-amber dark:border-amber-400 bg-accent-amber/10 dark:bg-amber-500/20 shadow-[0_0_0_2px_var(--color-accent-amber)]'
                 : 'border-ink/10 dark:border-dark-border'
               }`}
           >
@@ -113,7 +135,7 @@ function EmbeddedLogList({ logs, onJumpToStep, highlightedLogId, id, t }: {
             {log.codeStepId && onJumpToStep && (
               <button
                 onClick={() => onJumpToStep(log.codeStepId!)}
-                className="mt-2 px-2 py-0.5 text-[10px] font-bold font-mono border-2 border-accent-amber/40 text-accent-amber bg-accent-amber/10 hover:bg-accent-amber/20 hover:border-accent-amber/60 transition-colors shadow-button dark:shadow-button-dark active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                className="mt-2 px-2 py-0.5 text-[10px] font-bold font-mono border-2 border-accent-amber/40 dark:border-amber-400/60 text-accent-amber dark:text-amber-300 bg-accent-amber/10 dark:bg-amber-500/20 hover:bg-accent-amber/20 dark:hover:bg-amber-500/30 hover:border-accent-amber/60 dark:hover:border-amber-400 transition-colors shadow-button dark:shadow-button-dark active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
                 aria-label={t('logPanel.viewCode')}
               >
                 {t('logPanel.viewCode')}

@@ -152,6 +152,10 @@ export default function SortComparePage() {
     setLogs(prev => [...prev, { time, type, message }])
   }, [])
 
+  // v17 R7：日志降频阈值。数据量 > 50 时，每 5 步写一条 code 日志，避免大量数据时日志爆炸
+  const LARGE_DATA_THRESHOLD = 50
+  const LOG_SAMPLE_STEP = 5
+
   const handleRandomize = () => {
     if (isRunning) return
     const newData = Array.from({ length: 15 }, () => Math.floor(Math.random() * 95) + 5)
@@ -202,6 +206,11 @@ export default function SortComparePage() {
           ...prev,
           [key]: { ...(prev[key] || {}), comparisons: count, progress: pct },
         }))
+        // v17 R7：每步比较写一条 code 日志（小数据）；大数据时按 LOG_SAMPLE_STEP 降频
+        const isLarge = data.length > LARGE_DATA_THRESHOLD
+        if (!isLarge || count % LOG_SAMPLE_STEP === 0) {
+          addLog('code', `${algorithm.name} · 比较 #${count} (${pct}%)`)
+        }
       }
 
       const onSwap = (swaps: number, steps: number) => {
@@ -209,6 +218,11 @@ export default function SortComparePage() {
           ...prev,
           [key]: { ...(prev[key] || {}), swaps, steps },
         }))
+        // v17 R7：每步交换写一条 code 日志（小数据）；大数据时按 LOG_SAMPLE_STEP 降频
+        const isLarge = data.length > LARGE_DATA_THRESHOLD
+        if (!isLarge || swaps % LOG_SAMPLE_STEP === 0) {
+          addLog('code', `${algorithm.name} · 交换 #${swaps} (步 ${steps})`)
+        }
       }
 
       let lastStep = 0
@@ -344,73 +358,73 @@ export default function SortComparePage() {
       </OperationBar>
 
       <div className="flex-1 flex flex-col lg:flex-row min-h-0">
-        <div className="flex-1 p-2 overflow-auto bg-paper dark:bg-dark-paper">
+        <div className="flex-1 flex flex-col p-2 overflow-auto bg-paper dark:bg-dark-paper min-h-0">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
-          {allAlgorithms.map(([key, algo]) => {
-            const isSelected = selectedAlgos.includes(key)
-            const result = algoResults[key]
-            return (
-              <div
-                key={key}
-                role="checkbox"
-                aria-checked={isSelected}
-                tabIndex={isRunning ? -1 : 0}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleAlgo(key) } }}
-                className={`
+            {allAlgorithms.map(([key, algo]) => {
+              const isSelected = selectedAlgos.includes(key)
+              const result = algoResults[key]
+              return (
+                <div
+                  key={key}
+                  role="checkbox"
+                  aria-checked={isSelected}
+                  tabIndex={isRunning ? -1 : 0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleAlgo(key) } }}
+                  className={`
                   p-2 border-2 cursor-pointer transition-all text-center
                   ${isSelected
-                    ? 'border-ink dark:border-dark-border bg-surface dark:bg-dark-surface'
-                    : 'border-border dark:border-dark-border bg-muted dark:bg-dark-muted opacity-50'
-                  }
+                      ? 'border-ink dark:border-dark-border bg-surface dark:bg-dark-surface'
+                      : 'border-border dark:border-dark-border bg-muted dark:bg-dark-muted opacity-50'
+                    }
                   ${isRunning ? 'pointer-events-none' : ''}
                 `}
-                onClick={() => toggleAlgo(key)}
-              >
-                <span className="text-lg">{algo.icon}</span>
-                <div className="font-bold text-[10px] text-ink dark:text-dark-ink mt-0.5">{algo.nameKey ? t(algo.nameKey) : algo.name}</div>
-                <div className="font-mono text-[8px] text-ink-light">
-                  <span className="text-accent-blue">{algo.timeComplexity}</span>
-                  <span className="mx-0.5 opacity-40">|</span>
-                  <span className="text-accent-amber">{algo.spaceComplexity}</span>
+                  onClick={() => toggleAlgo(key)}
+                >
+                  <span className="text-lg">{algo.icon}</span>
+                  <div className="font-bold text-[10px] text-ink dark:text-dark-ink mt-0.5">{algo.nameKey ? t(algo.nameKey) : algo.name}</div>
+                  <div className="font-mono text-[8px] text-ink-light">
+                    <span className="text-accent-blue">{algo.timeComplexity}</span>
+                    <span className="mx-0.5 opacity-40">|</span>
+                    <span className="text-accent-amber">{algo.spaceComplexity}</span>
+                  </div>
+                  {result?.done && !result?.error && <div className="text-accent-emerald flex justify-center"><Icon name="check" size={12} /></div>}
+                  {result?.error && <div className="text-accent-rose text-[10px]">✗</div>}
                 </div>
-                {result?.done && !result?.error && <div className="text-accent-emerald flex justify-center"><Icon name="check" size={12} /></div>}
-                {result?.error && <div className="text-accent-rose text-[10px]">✗</div>}
-              </div>
-            )
-          })}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {selectedAlgos.map((key) => {
-            const algorithm = getSortAlgorithm(key)
-            if (!algorithm) return null
-            return (
-              <ComparePanel
-                key={key}
-                algoKey={key}
-                algorithm={algorithm as any}
-                data={data}
-                svgRef={(el: SVGSVGElement | null) => { svgRefs.current[key] = el }}
-                onDimensions={updateDimensions}
-                result={algoResults[key]}
-              />
-            )
-          })}
-        </div>
-
-        {allDone && Object.keys(algoResults).length > 0 && (
-          <div className="mb-3 mt-4">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="font-bold text-sm text-ink dark:text-dark-ink">
-                {t('performanceChart.title')}
-              </span>
-              <span className="font-mono text-[10px] text-ink-light">
-                {selectedAlgos.length} {t('page.algorithms')}
-              </span>
-            </div>
-            <PerformanceChart results={algoResults} />
+              )
+            })}
           </div>
-        )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {selectedAlgos.map((key) => {
+              const algorithm = getSortAlgorithm(key)
+              if (!algorithm) return null
+              return (
+                <ComparePanel
+                  key={key}
+                  algoKey={key}
+                  algorithm={algorithm as any}
+                  data={data}
+                  svgRef={(el: SVGSVGElement | null) => { svgRefs.current[key] = el }}
+                  onDimensions={updateDimensions}
+                  result={algoResults[key]}
+                />
+              )
+            })}
+          </div>
+
+          {allDone && Object.keys(algoResults).length > 0 && (
+            <div className="mt-4 pt-4 border-t-2 border-border dark:border-dark-border">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-bold text-sm text-ink dark:text-dark-ink">
+                  {t('performanceChart.title')}
+                </span>
+                <span className="font-mono text-[10px] text-ink-light">
+                  {selectedAlgos.length} {t('page.algorithms')}
+                </span>
+              </div>
+              <PerformanceChart results={algoResults} />
+            </div>
+          )}
         </div>
         <InfoPanel
           logs={logs}

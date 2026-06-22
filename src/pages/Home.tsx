@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import LearningPath from '../components/LearningPath'
 import ProgressOverview from '../components/ProgressOverview'
@@ -16,6 +16,9 @@ const ACCENT_COLORS = [
 
 export default function Home() {
   const { t } = useGlobalSettings()
+  // 4 个辅助区块（ProgressOverview / Recommendations / LearningPath / GlossaryCard）默认折叠，
+  // 避免首屏被推至 2 屏外；用户主动点击 "学习中心" 才展开。
+  const [learningHubOpen, setLearningHubOpen] = useState(false)
 
   const structures = useMemo(() => [
     // 线性结构类 (blue)
@@ -95,11 +98,36 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Progress Overview + Recommendations + Learning Path */}
-        <ProgressOverview />
-        <LearningRecommendations />
-        <LearningPath />
-        <AlgorithmGlossaryCard />
+        {/* v17 R1：学习中心（4 个辅助区块）默认折叠，避免首屏被推至 2 屏外 */}
+        <div className="mb-6 animate-slide-up">
+          <button
+            onClick={() => setLearningHubOpen(o => !o)}
+            aria-expanded={learningHubOpen}
+            aria-controls="learning-hub-panel"
+            className="w-full flex items-center justify-between gap-3 px-4 py-3 border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface hover:bg-muted dark:hover:bg-dark-muted transition-colors shadow-button dark:shadow-button-dark"
+          >
+            <span className="flex items-center gap-3">
+              <span className={`inline-flex w-7 h-7 items-center justify-center border-2 border-ink dark:border-dark-border text-sm font-bold transition-transform duration-200 ${learningHubOpen ? 'bg-accent-blue text-paper rotate-90' : 'bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink'}`}>
+                →
+              </span>
+              <span className="font-bold text-sm text-ink dark:text-dark-ink">{t('home.learningHub')}</span>
+            </span>
+            <span className="font-mono text-[10px] font-bold text-ink-light dark:text-dark-ink-light">
+              {learningHubOpen ? t('page.collapse') : t('page.expand')}
+            </span>
+          </button>
+          {learningHubOpen && (
+            <div
+              id="learning-hub-panel"
+              className="mt-4 space-y-6 animate-slide-up"
+            >
+              <ProgressOverview />
+              <LearningRecommendations />
+              <LearningPath />
+              <AlgorithmGlossaryCard />
+            </div>
+          )}
+        </div>
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="ds-cards-grid">
