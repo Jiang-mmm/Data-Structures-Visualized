@@ -544,6 +544,18 @@ export interface Locale {
     exportTooltip: string
     importTooltip: string
   }
+  exportAnimation: {
+    label: string
+    title: string
+    webm: string
+    gif: string
+    frames: string
+    recording: string
+    success: string
+    failed: string
+    unsupported: string
+    tooltip: string
+  }
   visualizer: {
     hideGrid: string
     showGrid: string
@@ -928,6 +940,49 @@ export interface Locale {
     mode: string
     hint: string
   }
+  complexity: {
+    title: string
+    name: string
+    useCase: string
+    time: string
+    space: string
+    best: string
+    average: string
+    worst: string
+    glossaryTitle: string
+    glossarySubtitle: string
+    emptyHint: string
+    showMore: string
+    showLess: string
+  }
+  algorithms: {
+    array: AlgorithmGlossaryEntry
+    stack: AlgorithmGlossaryEntry
+    queue: AlgorithmGlossaryEntry
+    linkedlist: AlgorithmGlossaryEntry
+    tree: AlgorithmGlossaryEntry
+    avlTree: AlgorithmGlossaryEntry
+    redBlackTree: AlgorithmGlossaryEntry
+    bTree: AlgorithmGlossaryEntry
+    segmentTree: AlgorithmGlossaryEntry
+    heap: AlgorithmGlossaryEntry
+    trie: AlgorithmGlossaryEntry
+    hash: AlgorithmGlossaryEntry
+    graph: AlgorithmGlossaryEntry
+    skipList: AlgorithmGlossaryEntry
+    unionFind: AlgorithmGlossaryEntry
+    sort: AlgorithmGlossaryEntry
+  }
+}
+
+interface AlgorithmGlossaryEntry {
+  name: string
+  description: string
+  useCase: string
+  best: string
+  average: string
+  worst: string
+  space: string
 }
 
 interface ContentTierStructure {
@@ -1291,6 +1346,18 @@ export const zh: Locale = {
     invalidFile: '无效文件',
     exportTooltip: '导出数据为 JSON 文件',
     importTooltip: '从 JSON 文件导入数据',
+  },
+  exportAnimation: {
+    label: '导出动画',
+    title: '导出当前动画为视频 / GIF / 帧序列',
+    webm: 'WebM 视频',
+    gif: 'GIF 动图',
+    frames: '帧序列 ZIP',
+    recording: '正在录制...',
+    success: '动画已导出',
+    failed: '动画导出失败',
+    unsupported: '当前浏览器不支持动画导出',
+    tooltip: '录制当前画布并导出',
   },
   visualizer: {
     hideGrid: '隐藏网格',
@@ -1925,6 +1992,167 @@ export const zh: Locale = {
     mode: '性能模式',
     hint: '大数据场景已跳过动画',
   },
+  complexity: {
+    title: '复杂度',
+    name: '名称',
+    useCase: '应用场景',
+    time: '时间',
+    space: '空间',
+    best: '最优',
+    average: '平均',
+    worst: '最差',
+    glossaryTitle: '算法术语速查表',
+    glossarySubtitle: '双栏对照 16 种核心数据结构与排序算法',
+    emptyHint: '暂无术语数据',
+    showMore: '展开表格',
+    showLess: '收起表格',
+  },
+  algorithms: {
+    array: {
+      name: '数组',
+      description: '连续内存存储相同类型元素，通过下标 O(1) 访问',
+      useCase: '查找表、缓冲、动态规划、矩阵运算',
+      best: 'O(1)',
+      average: 'O(n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    stack: {
+      name: '栈',
+      description: '后进先出（LIFO）线性结构，仅在一端操作',
+      useCase: '函数调用栈、括号匹配、表达式求值、DFS、撤销',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    queue: {
+      name: '队列',
+      description: '先进先出（FIFO）线性结构，队尾入队头出',
+      useCase: 'BFS、任务调度、消息队列、缓冲管理',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    linkedlist: {
+      name: '链表',
+      description: '动态内存节点通过指针串联，不支持随机访问',
+      useCase: 'LRU 缓存、哈希冲突链、多项式运算、内存管理',
+      best: 'O(1)',
+      average: 'O(n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    tree: {
+      name: '二叉树',
+      description: '层次结构，每个节点最多两个子节点',
+      useCase: 'BST 查找、文件系统、DOM、表达式树、堆',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    avlTree: {
+      name: 'AVL 树',
+      description: '严格自平衡 BST，任意节点左右子树高度差 ≤ 1',
+      useCase: '数据库索引、内存有序映射、空间分区、网络路由',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    redBlackTree: {
+      name: '红黑树',
+      description: '近似自平衡 BST，通过颜色约束保证 O(log n)',
+      useCase: 'std::map、TreeMap、Linux CFS、epoll',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    bTree: {
+      name: 'B 树',
+      description: '多路平衡搜索树，节点可容纳多个键',
+      useCase: '数据库索引、文件系统、磁盘存储',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    segmentTree: {
+      name: '线段树',
+      description: '二叉区间树，支持区间查询与单点更新',
+      useCase: '区间求和/最值、RMQ、频率统计',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    heap: {
+      name: '堆',
+      description: '完全二叉树，父节点优于子节点（最大/最小堆）',
+      useCase: '优先队列、堆排序、Top-K、调度',
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    trie: {
+      name: '字典树',
+      description: '前缀树，沿字符路径存储字符串',
+      useCase: '自动补全、IP 路由、词频统计、拼写检查',
+      best: 'O(m)',
+      average: 'O(m)',
+      worst: 'O(m)',
+      space: 'O(n·m)',
+    },
+    hash: {
+      name: '哈希表',
+      description: '键通过哈希函数映射到桶，平均 O(1) 访问',
+      useCase: '缓存、索引、集合、字典、符号表',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    graph: {
+      name: '图',
+      description: '节点与边构成的网络结构，分有向/无向/加权',
+      useCase: '社交网络、地图导航、依赖分析、推荐',
+      best: 'O(V+E)',
+      average: 'O(V+E)',
+      worst: 'O(V+E)',
+      space: 'O(V²)',
+    },
+    skipList: {
+      name: '跳表',
+      description: '多层概率平衡的有序链表',
+      useCase: 'Redis 有序集合、LevelDB、内存数据库索引',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(n)',
+      space: 'O(n log n)',
+    },
+    unionFind: {
+      name: '并查集',
+      description: '不相交集合数据结构，路径压缩 + 按秩合并',
+      useCase: '连通分量、Kruskal、网络连接、社交集群',
+      best: 'O(α(n))',
+      average: 'O(α(n))',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    sort: {
+      name: '排序',
+      description: '将序列按指定顺序重排的一族算法',
+      useCase: '数据预处理、查找加速、Top-K、归并',
+      best: 'O(n)',
+      average: 'O(n log n)',
+      worst: 'O(n²)',
+      space: 'O(1)',
+    },
+  },
 }
 
 export const en: Locale = {
@@ -2277,6 +2505,18 @@ export const en: Locale = {
     invalidFile: 'Invalid File',
     exportTooltip: 'Export data as JSON file',
     importTooltip: 'Import data from JSON file',
+  },
+  exportAnimation: {
+    label: 'Export Animation',
+    title: 'Export current animation as video / GIF / frames',
+    webm: 'WebM Video',
+    gif: 'GIF Animation',
+    frames: 'Frame Sequence (ZIP)',
+    recording: 'Recording...',
+    success: 'Animation exported',
+    failed: 'Animation export failed',
+    unsupported: 'Animation export not supported in this browser',
+    tooltip: 'Record the current canvas and export',
   },
   visualizer: {
     hideGrid: 'Hide grid',
@@ -2910,5 +3150,166 @@ export const en: Locale = {
   performance: {
     mode: 'Performance Mode',
     hint: 'Animations skipped for large data',
+  },
+  complexity: {
+    title: 'Complexity',
+    name: 'Name',
+    useCase: 'Use Case',
+    time: 'Time',
+    space: 'Space',
+    best: 'Best',
+    average: 'Average',
+    worst: 'Worst',
+    glossaryTitle: 'Algorithm Glossary',
+    glossarySubtitle: 'Bilingual reference for 16 core data structures & sorting',
+    emptyHint: 'No glossary data',
+    showMore: 'Show table',
+    showLess: 'Hide table',
+  },
+  algorithms: {
+    array: {
+      name: 'Array',
+      description: 'Stores elements of the same type in contiguous memory; O(1) random access by index.',
+      useCase: 'Lookup tables, buffers, DP state arrays, matrix operations.',
+      best: 'O(1)',
+      average: 'O(n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    stack: {
+      name: 'Stack',
+      description: 'Last-In-First-Out (LIFO) linear structure with operations only at the top.',
+      useCase: 'Call stack, parenthesis matching, expression evaluation, DFS, undo.',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    queue: {
+      name: 'Queue',
+      description: 'First-In-First-Out (FIFO) linear structure; enqueue at rear, dequeue at front.',
+      useCase: 'BFS, task scheduling, message queues, buffering.',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    linkedlist: {
+      name: 'Linked List',
+      description: 'Nodes connected by pointers in non-contiguous memory; no random access.',
+      useCase: 'LRU cache, hash chaining, polynomial arithmetic, memory free-lists.',
+      best: 'O(1)',
+      average: 'O(n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    tree: {
+      name: 'Binary Tree',
+      description: 'Hierarchical structure with at most two children per node.',
+      useCase: 'BST search, file systems, DOM, expression trees, heaps.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    avlTree: {
+      name: 'AVL Tree',
+      description: 'Strictly self-balancing BST; height difference of any node is at most 1.',
+      useCase: 'Database indexes, in-memory ordered maps, spatial partitioning, routing tables.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    redBlackTree: {
+      name: 'Red-Black Tree',
+      description: 'Approximately balanced BST; guarantees O(log n) via color constraints.',
+      useCase: 'std::map, TreeMap, Linux CFS scheduler, epoll.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    bTree: {
+      name: 'B-Tree',
+      description: 'Multi-way balanced search tree; each node may hold multiple keys.',
+      useCase: 'Database indexes, file systems, on-disk storage.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    segmentTree: {
+      name: 'Segment Tree',
+      description: 'Binary interval tree supporting range queries and point updates.',
+      useCase: 'Range sum/min, RMQ, frequency counts.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    heap: {
+      name: 'Heap',
+      description: 'Complete binary tree where the parent dominates children (max/min heap).',
+      useCase: 'Priority queues, heap sort, Top-K, scheduling.',
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    trie: {
+      name: 'Trie',
+      description: 'Prefix tree storing strings along character paths.',
+      useCase: 'Autocomplete, IP routing, word frequency, spell check.',
+      best: 'O(m)',
+      average: 'O(m)',
+      worst: 'O(m)',
+      space: 'O(n·m)',
+    },
+    hash: {
+      name: 'Hash Table',
+      description: 'Keys mapped to buckets via a hash function; average O(1) access.',
+      useCase: 'Caching, indexing, sets, dictionaries, symbol tables.',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    graph: {
+      name: 'Graph',
+      description: 'Network of nodes and edges; can be directed/undirected/weighted.',
+      useCase: 'Social networks, navigation, dependency analysis, recommendations.',
+      best: 'O(V+E)',
+      average: 'O(V+E)',
+      worst: 'O(V+E)',
+      space: 'O(V²)',
+    },
+    skipList: {
+      name: 'Skip List',
+      description: 'Multi-level probabilistically balanced ordered linked list.',
+      useCase: 'Redis sorted sets, LevelDB, in-memory DB indexes.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(n)',
+      space: 'O(n log n)',
+    },
+    unionFind: {
+      name: 'Union-Find',
+      description: 'Disjoint-set data structure with path compression and union by rank.',
+      useCase: 'Connected components, Kruskal, network connectivity, social clusters.',
+      best: 'O(α(n))',
+      average: 'O(α(n))',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    sort: {
+      name: 'Sorting',
+      description: 'A family of algorithms that rearrange sequences into order.',
+      useCase: 'Data preprocessing, accelerating search, Top-K, merging.',
+      best: 'O(n)',
+      average: 'O(n log n)',
+      worst: 'O(n²)',
+      space: 'O(1)',
+    },
   },
 }

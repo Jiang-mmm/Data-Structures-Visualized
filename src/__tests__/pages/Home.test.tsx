@@ -68,4 +68,10 @@ describe('Home', () => {
     expect(html).not.toContain('accent-teal')
     expect(html).not.toContain('accent-purple')
   })
+
+  it('renders the algorithm glossary card', () => {
+    renderWithRouter(<Home />)
+    expect(screen.getByTestId('algorithm-glossary-card')).toBeInTheDocument()
+    expect(screen.getByText('complexity.glossaryTitle')).toBeInTheDocument()
+  })
 })

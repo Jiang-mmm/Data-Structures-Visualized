@@ -4,6 +4,7 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import LearningPath from '../components/LearningPath'
 import ProgressOverview from '../components/ProgressOverview'
 import LearningRecommendations from '../components/LearningRecommendations'
+import AlgorithmGlossaryCard from '../components/AlgorithmGlossaryCard'
 import Card, { type CardAccent } from '../components/Card'
 import Icon from '../components/Icon'
 
@@ -98,6 +99,7 @@ export default function Home() {
         <ProgressOverview />
         <LearningRecommendations />
         <LearningPath />
+        <AlgorithmGlossaryCard />
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="ds-cards-grid">
