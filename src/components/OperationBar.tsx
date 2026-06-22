@@ -1,4 +1,4 @@
-import { memo, useState, type ReactNode, type ButtonHTMLAttributes } from 'react'
+import { memo, useState, useId, type ReactNode, type ButtonHTMLAttributes } from 'react'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import Button, { type ButtonVariant } from './Button'
 
@@ -17,6 +17,7 @@ interface OperationButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: ReactNode
   children: ReactNode
   className?: string
+  disabledReason?: string
 }
 
 interface OperationInputProps {
@@ -141,11 +142,19 @@ export const OperationButton = memo(({
   icon,
   children,
   className = '',
+  disabledReason,
   'aria-busy': ariaBusyProp,
   'aria-disabled': ariaDisabledProp,
+  'aria-describedby': ariaDescribedbyProp,
   title: titleProp,
   ...rest
 }: OperationButtonProps) => {
+  const { t } = useGlobalSettings()
+  const reasonId = useId()
+  // 禁用原因文本：优先使用自定义原因，其次回退到动画进行中的国际化文案
+  const reasonText = disabledReason || (isBusy ? t('page.animating') : undefined)
+  const showReason = (disabled || isBusy) && reasonText
+
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (popAnimation && !disabled && !isLoading) {
       const btn = e.currentTarget
@@ -159,25 +168,33 @@ export const OperationButton = memo(({
 
   const ariaBusy = isBusy || ariaBusyProp || isLoading || undefined
   const ariaDisabled = ariaDisabledProp || (disabled ? true : undefined)
-  const title = titleProp || (isBusy ? '动画进行中，请稍候' : undefined)
+  const title = titleProp || (showReason ? reasonText : undefined)
 
   return (
-    <Button
-      variant={variant}
-      size="sm"
-      isLoading={isLoading}
-      isBusy={isBusy}
-      disabled={disabled}
-      onClick={handleClick}
-      className={className}
-      aria-busy={ariaBusy}
-      aria-disabled={ariaDisabled}
-      title={title}
-      {...rest}
-    >
-      {icon && <span className="inline-flex items-center justify-center">{icon}</span>}
-      {children}
-    </Button>
+    <>
+      <Button
+        variant={variant}
+        size="sm"
+        isLoading={isLoading}
+        isBusy={isBusy}
+        disabled={disabled}
+        onClick={handleClick}
+        className={className}
+        aria-busy={ariaBusy}
+        aria-disabled={ariaDisabled}
+        aria-describedby={ariaDescribedbyProp || (showReason ? reasonId : undefined)}
+        title={title}
+        {...rest}
+      >
+        {icon && <span className="inline-flex items-center justify-center">{icon}</span>}
+        {children}
+      </Button>
+      {showReason && (
+        <span id={reasonId} className="sr-only">
+          {reasonText}
+        </span>
+      )}
+    </>
   )
 })
 

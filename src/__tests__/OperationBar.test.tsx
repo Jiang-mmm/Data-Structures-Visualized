@@ -229,6 +229,32 @@ describe('OperationButton', () => {
       expect(btn.className).toContain('bg-transparent')
     })
   })
+
+  describe('禁用原因 (disabledReason)', () => {
+    it('disabledReason 应作为 title 显示', () => {
+      render(<OperationButton disabled disabledReason="自定义原因">按钮</OperationButton>)
+      const btn = screen.getByText('按钮')
+      expect(btn).toHaveAttribute('title', '自定义原因')
+    })
+
+    it('isBusy 为 true 时应显示默认动画 title', () => {
+      render(<OperationButton isBusy>按钮</OperationButton>)
+      const btn = screen.getByText('按钮')
+      expect(btn).toHaveAttribute('title', 'page.animating')
+    })
+
+    it('禁用时渲染 sr-only 原因文本', () => {
+      render(<OperationButton disabled disabledReason="不可用">按钮</OperationButton>)
+      const srOnly = screen.getByText('不可用')
+      expect(srOnly).toBeInTheDocument()
+      expect(srOnly.className).toContain('sr-only')
+    })
+
+    it('未禁用时不渲染原因文本', () => {
+      render(<OperationButton disabledReason="不可用">按钮</OperationButton>)
+      expect(screen.queryByText('不可用')).not.toBeInTheDocument()
+    })
+  })
 })
 
 describe('OperationInput', () => {

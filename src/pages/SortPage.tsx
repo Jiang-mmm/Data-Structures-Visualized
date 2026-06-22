@@ -111,6 +111,7 @@ export default function SortPage() {
               variant={(VARIANT_MAP[algo.variant] || 'primary') as any}
               onClick={() => handleSort(key)}
               disabled={isAnimating} isBusy={isAnimating}
+              disabledReason={t('page.animating')}
               title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}
             >
               {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
@@ -126,6 +127,7 @@ export default function SortPage() {
                 variant={(VARIANT_MAP[algo.variant] || 'primary') as any}
                 onClick={() => handleSort(key)}
                 disabled={isAnimating} isBusy={isAnimating}
+                disabledReason={t('page.animating')}
                 title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}
               >
                 {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}

@@ -197,9 +197,9 @@ export default function ArrayPage() {
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationInput type="number" placeholder={t('array.indexPlaceholder')} value={inputIndex} onChange={setInputIndex} className="w-20" />
-        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating} isBusy={isAnimating}>{t('array.insert')}</OperationButton>
-        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating} isBusy={isAnimating}>{t('common.delete')}</OperationButton>
-        <OperationButton variant="warning" onClick={handleSearch} disabled={isAnimating} isBusy={isAnimating} popAnimation>{t('common.search')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating} isBusy={isAnimating} disabledReason={t('page.animating')}>{t('array.insert')}</OperationButton>
+        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating} isBusy={isAnimating} disabledReason={t('page.animating')}>{t('common.delete')}</OperationButton>
+        <OperationButton variant="warning" onClick={handleSearch} disabled={isAnimating} isBusy={isAnimating} popAnimation disabledReason={t('page.animating')}>{t('common.search')}</OperationButton>
         <OperationButton variant="warning" onClick={handleSearchAll} disabled={isAnimating} isBusy={isAnimating}>{t('array.searchAll')}</OperationButton>
         <OperationButton variant="warning" onClick={handleBinarySearch} disabled={isAnimating} isBusy={isAnimating}>{t('array.binarySearch')}</OperationButton>
         {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}

@@ -595,6 +595,8 @@ export interface Locale {
     compareDone: string
     algorithms: string
     stopped: string
+    animating: string
+    disabled: string
   }
   performanceChart: {
     title: string
@@ -1341,6 +1343,8 @@ export const zh: Locale = {
     compareDone: '对比完成',
     algorithms: '个算法',
     stopped: '已停止排序',
+    animating: '动画进行中，请稍候',
+    disabled: '已禁用',
   },
   performanceChart: {
     title: '性能对比',
@@ -2325,6 +2329,8 @@ export const en: Locale = {
     compareDone: 'Comparison complete',
     algorithms: 'algorithms',
     stopped: 'Sorting stopped',
+    animating: 'Animation in progress, please wait',
+    disabled: 'Disabled',
   },
   performanceChart: {
     title: 'Performance Comparison',

@@ -106,8 +106,8 @@ export default function StackPage() {
         <SpeedControl />
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
-        <OperationButton variant="primary" onClick={handlePush} disabled={isAnimating} isBusy={isAnimating}>{'+ ' + t('stack.push')}</OperationButton>
-        <OperationButton variant="danger" onClick={handlePop} disabled={isAnimating || data.length === 0} isBusy={isAnimating}>{'- ' + t('stack.pop')}</OperationButton>
+        <OperationButton variant="primary" onClick={handlePush} disabled={isAnimating} isBusy={isAnimating} disabledReason={t('page.animating')}>{'+ ' + t('stack.push')}</OperationButton>
+        <OperationButton variant="danger" onClick={handlePop} disabled={isAnimating || data.length === 0} isBusy={isAnimating} disabledReason={t('page.animating')}>{'- ' + t('stack.pop')}</OperationButton>
         <OperationButton variant="secondary" onClick={handlePeek} disabled={isAnimating || data.length === 0} isBusy={isAnimating} popAnimation>{t('stack.peek')}</OperationButton>
         <OperationButton variant="secondary" onClick={() => { if (window.confirm(t('common.confirmClear'))) clear() }} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
         {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
