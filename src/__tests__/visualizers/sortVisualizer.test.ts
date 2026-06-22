@@ -197,6 +197,57 @@ describe('sortVisualizer 集成测试', () => {
       expect(() => renderSortBars(svg, largeData, { width: 800, height: 400 })).not.toThrow()
     })
 
+    it('大数据场景（>100）应使用简化渲染：无阴影滤镜、无渐变', () => {
+      const largeData = Array.from({ length: 150 }, (_, i) => i + 1)
+      expect(() => renderSortBars(svg, largeData, { width: 800, height: 400 })).not.toThrow()
+
+      // 无阴影 filter 定义
+      expect(svg.querySelector('#bar-shadow')).toBeNull()
+
+      // rect 无 filter 属性，fill 为纯色（非渐变 url）
+      const rects = svg.querySelectorAll('rect')
+      expect(rects.length).toBe(150)
+      rects.forEach(rect => {
+        expect(rect.getAttribute('filter')).toBeNull()
+        const fill = rect.getAttribute('fill') || ''
+        expect(fill).not.toContain('url(')
+      })
+    })
+
+    it('大数据场景（>=30 且 <=100）应跳过阴影和渐变', () => {
+      const data = Array.from({ length: 50 }, (_, i) => i + 1)
+      renderSortBars(svg, data, { width: 800, height: 400 })
+
+      // 无阴影 filter 定义
+      expect(svg.querySelector('#bar-shadow')).toBeNull()
+
+      // rect 无 filter 属性，fill 为纯色
+      const rects = svg.querySelectorAll('rect')
+      expect(rects.length).toBe(50)
+      rects.forEach(rect => {
+        expect(rect.getAttribute('filter')).toBeNull()
+        const fill = rect.getAttribute('fill') || ''
+        expect(fill).not.toContain('url(')
+      })
+    })
+
+    it('小数据场景（<30）应使用渐变和阴影', () => {
+      const data = [50, 30, 80, 20, 60]
+      renderSortBars(svg, data, { width: 800, height: 400 })
+
+      // 有阴影 filter 定义
+      expect(svg.querySelector('#bar-shadow')).not.toBeNull()
+
+      // rect 有 filter 属性，fill 为渐变 url
+      const rects = svg.querySelectorAll('rect')
+      expect(rects.length).toBe(5)
+      rects.forEach(rect => {
+        expect(rect.getAttribute('filter')).toContain('bar-shadow')
+        const fill = rect.getAttribute('fill') || ''
+        expect(fill).toContain('url(')
+      })
+    })
+
     it('应该处理单元素数据', () => {
       renderSortBars(svg, [42], { width: 800, height: 400 })
       const bars = svg.querySelectorAll('g.bar')

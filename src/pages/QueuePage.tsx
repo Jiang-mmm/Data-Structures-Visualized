@@ -26,8 +26,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function QueuePage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, enqueue, dequeue, front, clear, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, size } = useQueueState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, enqueue, dequeue, front, clear, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, size } = useQueueState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('queue')
   useSharedData({ dataType: 'queue', loadData, validator: Array.isArray })
@@ -49,7 +49,7 @@ export default function QueuePage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleEnqueue = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -68,7 +68,7 @@ export default function QueuePage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, setIsAnimating, getAnimationContext, svgRef, data, dimensions, enqueue, setInputValue])
+  }, [isAnimating, inputValue, setIsAnimating, getAnimationContext, svgRef, data, dimensions, enqueue, setInputValue, t])
 
   const handleDequeue = useCallback(async (): Promise<void> => {
     if (isAnimating || data.length === 0) return
@@ -77,7 +77,7 @@ export default function QueuePage() {
     try { if (svgRef.current) await animateDequeue(svgRef.current, data, dimensions, anim); dequeue() }
     catch (error) { handleAnimationError(error, t('queue.dequeue')) }
     finally { setIsAnimating(false) }
-  }, [isAnimating, data, setIsAnimating, getAnimationContext, svgRef, dimensions, dequeue])
+  }, [isAnimating, data, setIsAnimating, getAnimationContext, svgRef, dimensions, dequeue, t])
 
   const handleFront = useCallback(async (): Promise<void> => {
     if (isAnimating || data.length === 0) return
@@ -86,7 +86,7 @@ export default function QueuePage() {
     try { if (svgRef.current) await animateFront(svgRef.current, data, dimensions, anim); front() }
     catch (error) { handleAnimationError(error, t('queue.peek')) }
     finally { setIsAnimating(false) }
-  }, [isAnimating, data, setIsAnimating, getAnimationContext, svgRef, dimensions, front])
+  }, [isAnimating, data, setIsAnimating, getAnimationContext, svgRef, dimensions, front, t])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">

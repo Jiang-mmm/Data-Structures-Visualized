@@ -62,9 +62,12 @@ interface ComponentLayout {
 }
 
 /**
- * 找出节点的根（不带压缩）
+ * 找出节点的根（不带压缩），使用调用方传入的缓存避免重复遍历
  */
-function findRootId(data: UnionFindData, id: string): string {
+function findRootId(data: UnionFindData, id: string, cache: Map<string, string>): string {
+  const cached = cache.get(id)
+  if (cached !== undefined) return cached
+
   let current = id
   const visited = new Set<string>()
   while (data.parent[current] !== current) {
@@ -72,6 +75,7 @@ function findRootId(data: UnionFindData, id: string): string {
     visited.add(current)
     current = data.parent[current]
   }
+  cache.set(id, current)
   return current
 }
 
@@ -93,9 +97,10 @@ function layout(data: UnionFindData, width: number, _height: number): {
   }
 
   // 按根节点分组
+  const rootCache = new Map<string, string>()
   const componentMap = new Map<string, string[]>()
   for (const node of data.nodes) {
-    const root = findRootId(data, node.id)
+    const root = findRootId(data, node.id, rootCache)
     if (!componentMap.has(root)) {
       componentMap.set(root, [])
     }
@@ -186,7 +191,7 @@ function layout(data: UnionFindData, width: number, _height: number): {
 
     componentLayouts.push({
       positions: compPositions,
-      edges: edges.filter(e => compPositions.includes(e.source)),
+      edges,
       width: componentWidth,
     })
   }

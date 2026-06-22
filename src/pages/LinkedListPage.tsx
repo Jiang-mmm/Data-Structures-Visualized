@@ -27,8 +27,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function LinkedListPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, insertHead, insertTail, insertAt, deleteAt, search, reverse, detectCycle, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, length } = useLinkedListState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, insertHead, insertTail, insertAt, deleteAt, search, reverse, detectCycle, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, length } = useLinkedListState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const [inputIndex, setInputIndex] = useState<string>('')
   const [isDoublyMode, setIsDoublyMode] = useState(false)
@@ -53,20 +53,20 @@ export default function LinkedListPage() {
     if (isNaN(index)) { showToast({ type: 'error', message: t('errors.invalidIndex') }); return null }
     if (index < 0 || index >= data.length) { showToast({ type: 'error', message: t('errors.indexOutOfRange').replace('{range}', `0~${data.length - 1}`) }); return null }
     return index
-  }, [inputIndex, data.length])
+  }, [inputIndex, data.length, t])
 
   const handleStop = useCallback((): void => {
     abortAnimation()
     setIsAnimating(false)
     showToast({ type: 'warning', message: t('errors.stopped') })
-  }, [abortAnimation, setIsAnimating])
+  }, [abortAnimation, setIsAnimating, t])
 
   const handleJumpToStep = useCallback((stepId: string): void => {
     const idx = learningMode.steps.findIndex(s => s.id === stepId)
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleInsertHead = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -83,7 +83,7 @@ export default function LinkedListPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, data, dimensions, insertHead, setIsAnimating, getAnimationContext, svgRef, validateValueInput, setInputValue])
+  }, [isAnimating, data, dimensions, insertHead, setIsAnimating, getAnimationContext, svgRef, validateValueInput, setInputValue, t])
 
   const handleInsertTail = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -100,7 +100,7 @@ export default function LinkedListPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, data, dimensions, insertTail, setIsAnimating, getAnimationContext, svgRef, validateValueInput, setInputValue])
+  }, [isAnimating, data, dimensions, insertTail, setIsAnimating, getAnimationContext, svgRef, validateValueInput, setInputValue, t])
 
   const handleDelete = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -117,7 +117,7 @@ export default function LinkedListPage() {
       setIsAnimating(false)
     }
     setInputIndex('')
-  }, [isAnimating, data, dimensions, deleteAt, setIsAnimating, getAnimationContext, svgRef, validateIndexInput, setInputIndex])
+  }, [isAnimating, data, dimensions, deleteAt, setIsAnimating, getAnimationContext, svgRef, validateIndexInput, setInputIndex, t])
 
   const handleSearch = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -134,7 +134,7 @@ export default function LinkedListPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, data, dimensions, search, setIsAnimating, getAnimationContext, svgRef, validateValueInput, setInputValue])
+  }, [isAnimating, data, dimensions, search, setIsAnimating, getAnimationContext, svgRef, validateValueInput, setInputValue, t])
 
   const handleInsertAt = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -154,7 +154,7 @@ export default function LinkedListPage() {
     }
     setInputValue('')
     setInputIndex('')
-  }, [isAnimating, data, dimensions, insertAt, setIsAnimating, getAnimationContext, svgRef, validateValueInput, validateIndexInput, setInputValue, setInputIndex])
+  }, [isAnimating, data, dimensions, insertAt, setIsAnimating, getAnimationContext, svgRef, validateValueInput, validateIndexInput, setInputValue, setInputIndex, t])
 
   const handleReverse = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -172,7 +172,7 @@ export default function LinkedListPage() {
     } finally {
       setIsAnimating(false)
     }
-  }, [isAnimating, data, dimensions, reverse, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, data, dimensions, reverse, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleDetectCycle = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -187,7 +187,7 @@ export default function LinkedListPage() {
     } finally {
       setIsAnimating(false)
     }
-  }, [isAnimating, dimensions, detectCycle, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, detectCycle, setIsAnimating, getAnimationContext, svgRef, t])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">

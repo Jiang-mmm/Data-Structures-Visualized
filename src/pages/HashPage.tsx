@@ -24,8 +24,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function HashPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, insert, remove, search, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, entryCount, bucketCount, hashFn } = useHashState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, insert, remove, search, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, entryCount, bucketCount, hashFn } = useHashState(abortAnimation)
   const [keyValue, setKeyValue] = useState<string>('')
   const [valueInput, setValueInput] = useState<string>('')
   const learningMode = useLearningMode('hash')
@@ -48,7 +48,7 @@ export default function HashPage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleInsert = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -90,7 +90,7 @@ export default function HashPage() {
     try { if (svgRef.current) await animateSearchHash(svgRef.current, key, !!found, data, { hashFn: hashFn as any }, anim) }
     catch (error) { handleAnimationError(error, t('hash.search')) }
     finally { setIsAnimating(false) }
-  }, [isAnimating, keyValue, search, data, setIsAnimating, getAnimationContext, svgRef, hashFn])
+  }, [isAnimating, keyValue, search, data, setIsAnimating, getAnimationContext, svgRef, hashFn, t])
 
   const handleDelete = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -110,7 +110,7 @@ export default function HashPage() {
     }
     setKeyValue('')
     setValueInput('')
-  }, [isAnimating, keyValue, data, remove, setIsAnimating, getAnimationContext, svgRef, hashFn])
+  }, [isAnimating, keyValue, data, remove, setIsAnimating, getAnimationContext, svgRef, hashFn, t])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">

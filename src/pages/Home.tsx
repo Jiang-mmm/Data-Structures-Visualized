@@ -4,7 +4,9 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import LearningPath from '../components/LearningPath'
 import ProgressOverview from '../components/ProgressOverview'
 import LearningRecommendations from '../components/LearningRecommendations'
+import AlgorithmGlossaryCard from '../components/AlgorithmGlossaryCard'
 import Card, { type CardAccent } from '../components/Card'
+import Icon from '../components/Icon'
 
 const ACCENT_COLORS = [
   { accent: 'blue' as CardAccent, badge: 'bg-card-group-linear/10 text-card-group-linear', iconBg: 'bg-card-group-linear/10', hoverText: 'group-hover:text-card-group-linear' },
@@ -27,6 +29,8 @@ export default function Home() {
     { path: '/tree', name: t('tree.title'), en: 'BinaryTree', icon: '◆', desc: t('tree.subtitle'), ops: [t('tree.preorder'), t('tree.inorder'), t('tree.postorder')], colorIdx: 1 },
     { path: '/avl-tree', name: t('avlTree.title'), en: 'AVLTree', icon: '◇', desc: t('avlTree.subtitle'), ops: [t('avlTree.insert'), t('avlTree.search'), t('avlTree.inorder')], colorIdx: 1 },
     { path: '/red-black-tree', name: t('redBlackTree.title'), en: 'RedBlackTree', icon: '◉', desc: t('redBlackTree.subtitle'), ops: [t('redBlackTree.insert'), t('redBlackTree.search'), t('redBlackTree.inorder')], colorIdx: 1 },
+    { path: '/b-tree', name: t('bTree.title'), en: 'BTree', icon: '⊞', desc: t('bTree.subtitle'), ops: [t('bTree.insert'), t('bTree.search'), t('bTree.inorder')], colorIdx: 1 },
+    { path: '/segment-tree', name: t('segmentTree.title'), en: 'SegmentTree', icon: '⊟', desc: t('segmentTree.subtitle'), ops: [t('segmentTree.build'), t('segmentTree.query'), t('segmentTree.update')], colorIdx: 1 },
     { path: '/heap', name: t('heap.title'), en: 'Heap', icon: '▲', desc: t('heap.subtitle'), ops: [t('heap.insert'), t('heap.extractMax'), t('heap.peek')], colorIdx: 1 },
     { path: '/trie', name: t('trie.title'), en: 'Trie', icon: '◈', desc: t('trie.subtitle'), ops: [t('trie.insert'), t('trie.search'), t('trie.prefixSearch')], colorIdx: 1 },
     { path: '/skip-list', name: t('skipList.title'), en: 'SkipList', icon: '≡', desc: t('skipList.subtitle'), ops: [t('skipList.insert'), t('skipList.search'), t('skipList.delete')], colorIdx: 1 },
@@ -65,7 +69,7 @@ export default function Home() {
                   <span className="text-5xl font-black text-paper drop-shadow-lg">DS</span>
                 </div>
                 <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-accent-blue border-2 border-ink dark:border-dark-border flex items-center justify-center text-xs font-bold text-paper shadow-button dark:shadow-button-dark">
-                  ✓
+                  <Icon name="check" size={14} />
                 </div>
               </div>
             </div>
@@ -95,6 +99,7 @@ export default function Home() {
         <ProgressOverview />
         <LearningRecommendations />
         <LearningPath />
+        <AlgorithmGlossaryCard />
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="ds-cards-grid">

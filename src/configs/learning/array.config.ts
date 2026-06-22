@@ -99,4 +99,27 @@ export const arrayConfig: LearningModeConfig = {
       complexity: { time: 'O(log n)', space: 'O(1)' },
     },
   ],
+  quiz: [
+    {
+      id: 'q1',
+      question: '数组随机访问（通过索引读取）的时间复杂度是？',
+      options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+      correctIndex: 0,
+      explanation: '数组在内存中连续存储，通过 base + index * sizeof 计算地址，O(1) 即可直接访问任意元素。',
+    },
+    {
+      id: 'q2',
+      question: '在数组头部插入元素的时间复杂度是？',
+      options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+      correctIndex: 2,
+      explanation: '头部插入需要将所有现有元素向后移动一位，共 n 次移动，时间复杂度 O(n)。',
+    },
+    {
+      id: 'q3',
+      question: '二分查找的前提条件是什么？',
+      options: ['数组长度为偶数', '数组已排序', '数组元素唯一', '数组支持随机访问且已排序'],
+      correctIndex: 3,
+      explanation: '二分查找需要数组支持 O(1) 随机访问（能取 mid），且数组必须有序。两者缺一不可。',
+    },
+  ],
 }

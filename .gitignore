@@ -26,6 +26,8 @@ dist-ssr
 # AI tool directories
 .agents/
 .claude/
+.trae/
+design-md/
 
 # Coverage and test artifacts
 coverage/
@@ -33,5 +35,8 @@ e2e/screenshots/
 e2e/check-*.png
 e2e/test-report.txt
 e2e/quality-check-report.json
+e2e/test-results.json
+e2e/test-comprehensive-result-*.json
 test-output.txt
-.trae/
+test-results/
+playwright-report/

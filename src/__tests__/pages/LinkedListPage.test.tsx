@@ -213,4 +213,48 @@ describe('LinkedListPage', () => {
     expect(screen.getByText('common.undo')).toBeDisabled()
     expect(screen.getByText('common.redo')).toBeDisabled()
   })
+
+  it('shows switch to doubly button by default', () => {
+    mockedUseLinkedListState.mockReturnValue(createMockLinkedListState())
+    renderWithRouter(<LinkedListPage />)
+
+    expect(screen.getByText('linkedlist.switchToDoubly')).toBeInTheDocument()
+  })
+
+  it('switches to doubly mode when toggle button clicked', () => {
+    mockedUseLinkedListState.mockReturnValue(createMockLinkedListState())
+    renderWithRouter(<LinkedListPage />)
+
+    // 初始显示单向链表标题
+    expect(screen.getByText('linkedlist.title')).toBeInTheDocument()
+
+    // 点击切换到双向链表
+    fireEvent.click(screen.getByText('linkedlist.switchToDoubly'))
+
+    // 切换后显示双向链表标题和切换回单向按钮
+    expect(screen.getByText('linkedlist.doublyTitle')).toBeInTheDocument()
+    expect(screen.getByText('linkedlist.switchToSingle')).toBeInTheDocument()
+  })
+
+  it('switches back to single mode when toggle button clicked again', () => {
+    mockedUseLinkedListState.mockReturnValue(createMockLinkedListState())
+    renderWithRouter(<LinkedListPage />)
+
+    // 切换到双向
+    fireEvent.click(screen.getByText('linkedlist.switchToDoubly'))
+    expect(screen.getByText('linkedlist.doublyTitle')).toBeInTheDocument()
+
+    // 切换回单向
+    fireEvent.click(screen.getByText('linkedlist.switchToSingle'))
+    expect(screen.getByText('linkedlist.title')).toBeInTheDocument()
+    expect(screen.getByText('linkedlist.switchToDoubly')).toBeInTheDocument()
+  })
+
+  it('disables toggle button while animating', () => {
+    const mockState = createMockLinkedListState({ isAnimating: true })
+    mockedUseLinkedListState.mockReturnValue(mockState)
+    renderWithRouter(<LinkedListPage />)
+
+    expect(screen.getByText('linkedlist.switchToDoubly')).toBeDisabled()
+  })
 })

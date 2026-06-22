@@ -1,5 +1,6 @@
 import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
+import { fileURLToPath } from 'url';
 
 const BUDGETS = {
   'index': 110,      // 110KB（v9.0 新增学习路径系统/进度可视化/推荐/内容分层后调整）
@@ -7,7 +8,8 @@ const BUDGETS = {
   'vendor-d3': 60,   // 60KB
 };
 
-const distDir = join(import.meta.dirname, '..', 'dist', 'assets');
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const distDir = join(__dirname, '..', 'dist', 'assets');
 let failed = false;
 
 for (const file of readdirSync(distDir)) {

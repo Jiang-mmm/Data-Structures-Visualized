@@ -24,22 +24,24 @@ export type {
   UnionFindFindResult,
 } from '../algorithms/unionFind'
 
-export function useUnionFindState() {
+const MODULE = () => tStatic('unionFind.title')
+
+export function useUnionFindState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<UnionFindData>(buildInitialUnionFind(), { storageKey: 'union-find' })
+  } = useDataStructureState<UnionFindData>(buildInitialUnionFind(), { storageKey: 'union-find', abortAnimation })
 
   const insert = useCallback((value: number): void => {
     if (typeof value !== 'number' || !Number.isFinite(value)) {
-      showToast({ type: 'error', message: tStatic('errors.inputRequired') })
+      showToast({ type: 'error', message: tStatic('errors.inputRequired'), module: MODULE(), operation: tStatic('unionFind.insert') })
       addLog('error', tStatic('hooks.unionFindInputRequired'))
       return
     }
     const num = Math.floor(value)
     if (num < 1 || num > 99) {
-      showToast({ type: 'error', message: tStatic('errors.invalidRange') })
+      showToast({ type: 'error', message: tStatic('errors.invalidRange'), module: MODULE(), operation: tStatic('unionFind.insert') })
       addLog('error', tStatic('hooks.unionFindLogInsertError').replace('{value}', String(num)))
       return
     }
@@ -62,7 +64,7 @@ export function useUnionFindState() {
 
   const remove = useCallback((value: number): void => {
     if (typeof value !== 'number' || !Number.isFinite(value)) {
-      showToast({ type: 'error', message: tStatic('errors.inputRequired') })
+      showToast({ type: 'error', message: tStatic('errors.inputRequired'), module: MODULE(), operation: tStatic('unionFind.remove') })
       return
     }
     const num = Math.floor(value)
@@ -106,7 +108,7 @@ export function useUnionFindState() {
   const union = useCallback((valueA: number, valueB: number): void => {
     if (typeof valueA !== 'number' || !Number.isFinite(valueA) ||
         typeof valueB !== 'number' || !Number.isFinite(valueB)) {
-      showToast({ type: 'error', message: tStatic('errors.inputRequired') })
+      showToast({ type: 'error', message: tStatic('errors.inputRequired'), module: MODULE(), operation: tStatic('unionFind.union') })
       return
     }
     const numA = Math.floor(valueA)

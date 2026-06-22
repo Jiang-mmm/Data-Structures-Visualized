@@ -3,6 +3,7 @@ import {
   LARGE_DATA_THRESHOLDS,
   getLargeDataThreshold,
   shouldSkipAnimation,
+  isLargeData,
   type VisualizerKey,
 } from '../../utils/performanceConfig'
 
@@ -84,6 +85,47 @@ describe('performanceConfig', () => {
     it('负 override 应被忽略', () => {
       expect(shouldSkipAnimation('array', 49, -1)).toBe(false)
       expect(shouldSkipAnimation('array', 50, -1)).toBe(true)
+    })
+  })
+
+  describe('isLargeData', () => {
+    it('数据量大于等于阈值时应返回 true', () => {
+      expect(isLargeData('array', 50)).toBe(true)
+      expect(isLargeData('array', 51)).toBe(true)
+      expect(isLargeData('sort', 30)).toBe(true)
+      expect(isLargeData('graph', 20)).toBe(true)
+    })
+
+    it('数据量小于阈值时应返回 false', () => {
+      expect(isLargeData('array', 49)).toBe(false)
+      expect(isLargeData('sort', 29)).toBe(false)
+      expect(isLargeData('graph', 19)).toBe(false)
+    })
+
+    it('应支持 override 阈值', () => {
+      expect(isLargeData('array', 10, 10)).toBe(true)
+      expect(isLargeData('array', 9, 10)).toBe(false)
+      expect(isLargeData('sort', 5, 5)).toBe(true)
+      expect(isLargeData('sort', 4, 5)).toBe(false)
+    })
+
+    it('负 override 应被忽略', () => {
+      expect(isLargeData('array', 49, -1)).toBe(false)
+      expect(isLargeData('array', 50, -1)).toBe(true)
+    })
+
+    it('应与 shouldSkipAnimation 行为一致', () => {
+      const cases: Array<{ key: VisualizerKey; len: number; override?: number }> = [
+        { key: 'array', len: 50 },
+        { key: 'array', len: 49 },
+        { key: 'sort', len: 30 },
+        { key: 'sort', len: 29 },
+        { key: 'graph', len: 20, override: 5 },
+        { key: 'tree', len: 30, override: 50 },
+      ]
+      cases.forEach(({ key, len, override }) => {
+        expect(isLargeData(key, len, override)).toBe(shouldSkipAnimation(key, len, override))
+      })
     })
   })
 })

@@ -23,6 +23,8 @@ import { doublyLinkedListConfig } from './doublyLinkedList.config'
 import { treeConfig } from './tree.config'
 import { avlTreeConfig } from './avlTree.config'
 import { redBlackTreeConfig } from './redBlackTree.config'
+import { bTreeConfig } from './bTree.config'
+import { segmentTreeConfig } from './segmentTree.config'
 import { hashConfig } from './hash.config'
 import { arrayConfig } from './array.config'
 import { stackConfig } from './stack.config'
@@ -35,6 +37,7 @@ import { graphConfig } from './graph.config'
 import { complexityAnalysisConfig } from './complexityAnalysis.config'
 import { advancedDataStructuresConfig } from './advancedDataStructures.config'
 import { realWorldApplicationsConfig } from './realWorldApplications.config'
+import { sortCompareConfig } from './sortCompare.config'
 
 export const learningConfigs = {
   bfs: bfsConfig,
@@ -62,6 +65,8 @@ export const learningConfigs = {
   tree: treeConfig,
   avlTree: avlTreeConfig,
   redBlackTree: redBlackTreeConfig,
+  bTree: bTreeConfig,
+  segmentTree: segmentTreeConfig,
   hash: hashConfig,
   array: arrayConfig,
   stack: stackConfig,
@@ -74,6 +79,7 @@ export const learningConfigs = {
   complexityAnalysis: complexityAnalysisConfig,
   advancedDataStructures: advancedDataStructuresConfig,
   realWorldApplications: realWorldApplicationsConfig,
+  sortCompare: sortCompareConfig,
 }
 
 export type LearningConfigKey = keyof typeof learningConfigs

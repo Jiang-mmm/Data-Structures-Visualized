@@ -343,4 +343,45 @@ describe('useSortState', () => {
       expect(result.current.stats.algorithm).toMatch(/桶排序/)
     })
   })
+
+  describe('undoBlock 机制', () => {
+    it('排序过程中应阻塞撤销（canUndo 为 false），排序完成后恢复', async () => {
+      const { result } = renderHook(() => useSortState())
+
+      // 先 push 一个状态，确保存在可撤销的历史
+      act(() => { result.current.randomize() })
+      expect(result.current.canUndo()).toBe(true)
+
+      // 使用可控的 deferred promise 暂停排序动画
+      let resolveCompare: () => void = () => {}
+      const comparePromise = new Promise<void>((resolve) => { resolveCompare = resolve })
+      const mockAnimateFns = {
+        animateCompare: vi.fn().mockReturnValue(comparePromise),
+        animateSwap: vi.fn().mockResolvedValue(undefined),
+        animateSorted: vi.fn().mockResolvedValue(undefined),
+        renderSortBars: vi.fn()
+      }
+      const mockSvgRef: { current: SVGSVGElement | null } = { current: null }
+      const mockDimensions = { width: 800, height: 400 }
+      const mockAnim = { isAborted: vi.fn().mockReturnValue(false), abort: vi.fn() }
+
+      // 启动排序但不 await，让它在 animateCompare 处暂停
+      let sortPromise: Promise<void> | undefined
+      act(() => {
+        sortPromise = result.current.runAlgorithm('bubble', mockAnimateFns, mockSvgRef, mockDimensions, mockAnim)
+      })
+
+      // 排序进行中：canUndo 应被阻塞为 false
+      expect(result.current.canUndo()).toBe(false)
+
+      // 解除 animateCompare 的暂停，让排序继续完成
+      await act(async () => {
+        resolveCompare()
+        await sortPromise
+      })
+
+      // 排序完成后：canUndo 应恢复为 true
+      expect(result.current.canUndo()).toBe(true)
+    })
+  })
 })

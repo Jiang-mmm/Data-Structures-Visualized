@@ -26,14 +26,14 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function AvlTreePage() {
   const { t } = useGlobalSettings()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const {
     data, logs, isAnimating, setIsAnimating,
     insert, deleteNode, search,
     preorder, inorder, postorder, levelorder,
     getFlattened, nodeCount,
     reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useAvlTreeState()
-  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  } = useAvlTreeState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
   const learningMode = useLearningMode('avlTree')
@@ -127,7 +127,7 @@ export default function AvlTreePage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">

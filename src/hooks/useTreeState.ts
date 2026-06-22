@@ -5,6 +5,7 @@ import { validateNumericInput } from '../utils/validate'
 import { tStatic } from '../i18n/useI18n'
 
 const INITIAL_DATA: number[] = [50, 30, 70, 20, 40, 60, 80]
+const MODULE = () => tStatic('tree.title')
 
 function trimTrailingZeros(arr: number[]): number[] {
   let end = arr.length
@@ -20,17 +21,17 @@ function findInorderSuccessorIndex(data: number[], startIndex: number): number {
   return idx
 }
 
-export function useTreeState() {
+export function useTreeState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'tree' })
+  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'tree', abortAnimation })
 
   const insert = useCallback((value: string | number): void => {
     const { valid, value: safeValue } = validateNumericInput(value)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('hooks.inputInvalid') })
+      showToast({ type: 'error', message: tStatic('hooks.inputInvalid'), module: MODULE(), operation: tStatic('tree.insert') })
       return
     }
     const newData = [...data]

@@ -1,11 +1,13 @@
 import { useRef, useEffect, useLayoutEffect, useState, useCallback } from 'react'
-import { createAnimation, type Animation } from '../utils/animationEngine'
+import { createAnimation, type Animation, registerApplyPresetAbortCallback, unregisterApplyPresetAbortCallback } from '../utils/animationEngine'
+import { clearGraphSimulation } from '../visualizers/graphVisualizer'
 import { debounce } from '../utils/debounce'
 
 export function useVisualizer() {
   const containerRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
   const animRef = useRef<Animation | null>(null)
+  const rafIdRef = useRef<number | null>(null)
   const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 800, height: 400 })
 
   const updateDimensions = useCallback((): boolean => {
@@ -37,15 +39,24 @@ export function useVisualizer() {
     }
   }, [])
 
+  const abortAnimation = useCallback((): void => {
+    if (animRef.current) {
+      animRef.current.abort()
+      animRef.current = null
+    }
+  }, [])
+
   useEffect(() => {
     updateDimensions()
     const el = containerRef.current
     if (!el) return
+    const svg = svgRef.current
 
-    let rafId: number
+    registerApplyPresetAbortCallback(abortAnimation)
+
     const debouncedUpdate = debounce(() => {
-      cancelAnimationFrame(rafId)
-      rafId = requestAnimationFrame(updateDimensions)
+      if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current)
+      rafIdRef.current = requestAnimationFrame(updateDimensions)
     }, 100)
 
     const observer = new ResizeObserver(() => {
@@ -55,15 +66,17 @@ export function useVisualizer() {
     observer.observe(el)
 
     return () => {
-      cancelAnimationFrame(rafId)
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current)
+        rafIdRef.current = null
+      }
       debouncedUpdate.cancel()
       observer.disconnect()
-      if (animRef.current) {
-        animRef.current.abort()
-        animRef.current = null
-      }
+      abortAnimation()
+      unregisterApplyPresetAbortCallback()
+      if (svg) clearGraphSimulation(svg)
     }
-  }, [updateDimensions])
+  }, [updateDimensions, abortAnimation, svgRef])
 
   const getAnimationContext = useCallback((): Animation => {
     if (animRef.current) {
@@ -72,13 +85,6 @@ export function useVisualizer() {
     const anim = createAnimation()
     animRef.current = anim
     return anim
-  }, [])
-
-  const abortAnimation = useCallback((): void => {
-    if (animRef.current) {
-      animRef.current.abort()
-      animRef.current = null
-    }
   }, [])
 
   return { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation }

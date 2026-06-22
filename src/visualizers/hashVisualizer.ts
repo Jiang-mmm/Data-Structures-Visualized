@@ -2,13 +2,13 @@ import { select } from '../utils/d3Imports'
 import { duration, EASING, transitionEnd, getDefaultEasing, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
-import { shouldSkipAnimation } from '../utils/performanceConfig'
 
 const BUCKET_HEIGHT = 48
 const BUCKET_WIDTH = 56
 const ENTRY_RADIUS = 18
 const GAP_Y = 52
 const BUCKET_GROUP_GAP = 20
+const LARGE_DATA_THRESHOLD = 50
 const MAX_CHAIN_DISPLAY = 5
 
 interface HashEntry {
@@ -39,7 +39,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
     return
   }
 
-  // 为条目添加阴影
+  // Add drop shadow for entries
   const defs = container.select('defs')
   if (defs.select('#hash-shadow').empty()) {
     const filter = defs.append('filter').attr('id', 'hash-shadow').attr('x', '-30%').attr('y', '-30%').attr('width', '160%').attr('height', '160%')
@@ -78,22 +78,22 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       .attr('class', `hash-bucket-${bi}`)
       .attr('transform', `translate(${bx}, ${by})`)
 
-    // 桶标签（索引号）在框上方
+    // Bucket label (index number) above the box
     bucketGroup.append('text')
       .attr('x', BUCKET_WIDTH / 2).attr('y', -8)
       .attr('text-anchor', 'middle')
       .attr('fill', C.textMuted).attr('font-size', '11px').attr('font-weight', '600')
-      .attr('font-family', 'var(--font-mono)')
+      .attr('font-family', 'JetBrains Mono, monospace')
       .text(`[${bi}]`)
 
-    // 桶框
+    // Bucket box
     bucketGroup.append('rect')
       .attr('x', 0).attr('y', 0)
       .attr('width', BUCKET_WIDTH).attr('height', BUCKET_HEIGHT)
       .attr('rx', 6)
       .attr('fill', C.bucketBg).attr('stroke', bucket.entries.length > 0 ? C.nodeDefaultStroke : C.bucketStroke).attr('stroke-width', bucket.entries.length > 0 ? 2 : 1.5)
 
-    // 条目数量徽章
+    // Entry count badge
     if (bucket.entries.length > 0) {
       bucketGroup.append('rect')
         .attr('x', BUCKET_WIDTH - 12).attr('y', -12)
@@ -114,7 +114,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
       const entry = bucket.entries[ei]
       const ey = entryStartY + ei * (ENTRY_RADIUS * 2 + 24)
 
-      // 从桶到第一个条目的连接线（带箭头）
+      // Connector line from bucket to first entry (with arrow)
       if (ei === 0) {
         container.append('line')
           .attr('x1', centerX).attr('y1', by + BUCKET_HEIGHT)
@@ -123,7 +123,7 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
           .attr('marker-end', 'url(#hash-arrow)')
       }
 
-      // 条目之间的连接线（带箭头）
+      // Connector between entries (with arrow)
       if (ei > 0) {
         const prevEy = entryStartY + (ei - 1) * (ENTRY_RADIUS * 2 + 24)
         container.append('line')
@@ -167,14 +167,14 @@ export function renderHash(svg: SVGSVGElement, data: HashEntry[], options: HashV
         .attr('fill', gradUrl('node-default')).attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
         .attr('filter', 'url(#hash-shadow)')
 
-      // key 文本（圆圈上半部分）
+      // Key text (top half of circle)
       entryGroup.append('text')
         .attr('dy', '-0.2em').attr('text-anchor', 'middle')
         .attr('fill', C.textWhite).attr('font-size', '12px').attr('font-weight', 'bold')
-        .attr('font-family', 'var(--font-mono)')
+        .attr('font-family', 'JetBrains Mono, monospace')
         .text(entry.key)
 
-      // value 文本（圆圈下方，不在内部）
+      // Value text (below circle, not inside)
       const fullValue = String(entry.value)
       const displayValue = fullValue.length > 10 ? fullValue.slice(0, 9) + '…' : fullValue
       entryGroup.append('text')
@@ -252,15 +252,15 @@ export async function animateInsertHash(svg: SVGSVGElement, key: number | string
     const match = originalTransform.match(/translate\(([^,]+),\s*([^)]+)\)/)
     const targetY = match ? parseFloat(match[2]) : 0
 
-    // 从上方开始
+    // Start from above
     entryGroup.attr('transform', originalTransform.replace(/translate\(([^,]+),\s*[^)]+\)/, `translate($1, ${targetY - 60})`))
     circle.attr('opacity', 0)
     texts.attr('opacity', 0)
 
-    // 平滑三次曲线下落
+    // Drop down with bounce
     await transitionEnd(
       entryGroup
-        .transition().duration(duration(350)).ease(EASING.easeOutCubic)
+        .transition().duration(duration(350)).ease(EASING.easeOutBack)
         .attr('transform', originalTransform)
         .attr('opacity', 1)
     )
@@ -286,7 +286,7 @@ export async function animateInsertHash(svg: SVGSVGElement, key: number | string
 }
 
 export async function animateSearchHash(svg: SVGSVGElement, key: number | string, found: boolean, data: HashEntry[], options: HashVisualizerOptions = {} as HashVisualizerOptions, anim?: Animation) {
-  if (shouldSkipAnimation('hash', data.length)) return
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   if (anim?.isAborted?.()) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)
@@ -360,7 +360,7 @@ export async function animateSearchHash(svg: SVGSVGElement, key: number | string
 }
 
 export async function animateDeleteHash(svg: SVGSVGElement, key: number | string, data: HashEntry[], options: HashVisualizerOptions = {} as HashVisualizerOptions, anim?: Animation) {
-  if (shouldSkipAnimation('hash', data.length)) return
+  if (data.length >= LARGE_DATA_THRESHOLD) return
   if (anim?.isAborted?.()) return
   const isDark = detectDarkMode()
   const C = getColors(isDark)

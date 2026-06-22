@@ -3,8 +3,9 @@ import { duration, EASING, transitionEnd, getDefaultEasing, measureRender, type 
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { tStatic } from '../i18n/useI18n'
 import { shouldSkipAnimation } from '../utils/performanceConfig'
+import { DEFAULT_NODE_RADIUS as NODE_RADIUS } from './visualizerConstants'
 
-const NODE_RADIUS = 20
+
 
 interface GraphNode {
   id: string
@@ -142,6 +143,12 @@ export function renderGraph(svg: SVGWithSimulation, nodes: GraphNode[], links: G
       .data(simLinks, (d: SimLink) => `${getNodeIdentifier(d.source)}-${getNodeIdentifier(d.target)}`)
       .join('g')
       .attr('class', 'link-group')
+      .attr('role', 'img')
+      .attr('aria-label', (d: SimLink) => {
+        const from = getNodeIdentifier(d.source)
+        const to = getNodeIdentifier(d.target)
+        return `Edge ${from} to ${to}, weight ${d.weight}`
+      })
 
     const lineWrappers = linkGroups.append('g').attr('class', 'link-line-wrapper')
     lineWrappers.append('line')
@@ -171,23 +178,37 @@ export function renderGraph(svg: SVGWithSimulation, nodes: GraphNode[], links: G
       .on('focus', function(this: SVGGElement) {
         if (!this?.querySelector) return
         select(this).select('circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+        select(this)
+          .style('outline', '3px solid var(--color-accent-amber)')
+          .style('outline-offset', '2px')
       })
       .on('blur', function(this: SVGGElement) {
         if (!this?.querySelector) return
         select(this).select('circle').attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
+        select(this).style('outline', 'none')
       })
-      .on('keydown', function(this: SVGGElement, event: KeyboardEvent) {
+      .on('keydown', function(this: SVGGElement, event: KeyboardEvent, d: SimNode) {
         if (!event?.key) return
-        const allNodes = Array.from(nodeGroup.selectAll('g.graph-node').nodes())
-        const idx = allNodes.indexOf(this)
-        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+        const nodeMap = new Map<string, SVGGElement>()
+        nodeGroup.selectAll('g.graph-node').each(function(this: SVGGElement, n: SimNode) {
+          nodeMap.set(n.id, this)
+        })
+        const sources = simLinks.filter(l => getNodeIdentifier(l.target) === d.id).map(l => getNodeIdentifier(l.source))
+        const targets = simLinks.filter(l => getNodeIdentifier(l.source) === d.id).map(l => getNodeIdentifier(l.target))
+        let targetId: string | null = null
+        if (event.key === 'ArrowUp') {
+          targetId = sources[0] || null
+        } else if (event.key === 'ArrowDown') {
+          targetId = targets[0] || null
+        } else if (event.key === 'ArrowLeft') {
+          targetId = sources[sources.length - 1] || targets[targets.length - 1] || null
+        } else if (event.key === 'ArrowRight') {
+          targetId = targets[targets.length - 1] || sources[sources.length - 1] || null
+        }
+        if (targetId) {
           event.preventDefault()
-          const next = allNodes[(idx + 1) % allNodes.length] as HTMLElement
-          next?.focus()
-        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-          event.preventDefault()
-          const prev = allNodes[(idx - 1 + allNodes.length) % allNodes.length] as HTMLElement
-          prev?.focus()
+          const target = nodeMap.get(targetId)
+          target?.focus()
         }
       })
       .call(drag(sim) as any)
@@ -201,6 +222,7 @@ export function renderGraph(svg: SVGWithSimulation, nodes: GraphNode[], links: G
       })
       .attr('stroke', C.nodeDefaultStroke).attr('stroke-width', 2)
       .style('cursor', 'pointer')
+      .style('touch-action', 'none')
 
     nodeElements.append('text')
       .attr('dy', '0.35em').attr('text-anchor', 'middle')

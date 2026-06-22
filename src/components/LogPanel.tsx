@@ -13,6 +13,8 @@ interface LogPanelProps {
   maxHeight?: number
   onJumpToStep?: (stepId: string) => void
   variant?: 'standalone' | 'embedded'
+  highlightedLogId?: string | null
+  id?: string
 }
 
 const typeConfig = {
@@ -22,20 +24,36 @@ const typeConfig = {
   code: { color: 'text-accent-amber', bg: 'bg-accent-amber/10', border: 'border-accent-amber/30', labelKey: 'logPanel.type.code' },
 } as const
 
-export default function LogPanel({ logs = [], onJumpToStep, variant = 'standalone' }: LogPanelProps) {
+export default function LogPanel({
+  logs = [],
+  onJumpToStep,
+  variant = 'standalone',
+  highlightedLogId,
+  id,
+}: LogPanelProps) {
   const { t } = useGlobalSettings()
 
   if (variant === 'embedded') {
-    return <EmbeddedLogList logs={logs} onJumpToStep={onJumpToStep} t={t} />
+    return (
+      <EmbeddedLogList
+        logs={logs}
+        onJumpToStep={onJumpToStep}
+        highlightedLogId={highlightedLogId}
+        id={id}
+        t={t}
+      />
+    )
   }
 
   return <StandaloneLogPanel logs={logs} onJumpToStep={onJumpToStep} t={t} />
 }
 
 // ====== Embedded 模式：卡片化时间线（InfoPanel 内使用）======
-function EmbeddedLogList({ logs, onJumpToStep, t }: {
+function EmbeddedLogList({ logs, onJumpToStep, highlightedLogId, id, t }: {
   logs: LogEntryLike[]
   onJumpToStep?: (stepId: string) => void
+  highlightedLogId?: string | null
+  id?: string
   t: (key: string) => string
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -57,17 +75,24 @@ function EmbeddedLogList({ logs, onJumpToStep, t }: {
   return (
     <div
       ref={scrollRef}
+      id={id}
       role="log"
-      aria-live="polite"
+      aria-relevant="additions"
       aria-label={t('infoPanel.tabLog')}
       className="p-3 space-y-2 scrollbar-thin"
     >
       {logs.map((log, i) => {
         const config = typeConfig[log.type as keyof typeof typeConfig] || typeConfig.info
+        const logId = `${i}-${log.codeStepId || ''}`
+        const isHighlighted = highlightedLogId === logId && log.codeStepId
         return (
           <div
             key={i}
-            className={`bg-paper dark:bg-dark-paper border border-ink/10 dark:border-dark-border p-2.5 animate-slide-up`}
+            className={`bg-paper dark:bg-dark-paper border p-2.5 animate-slide-up transition-colors duration-300
+              ${isHighlighted
+                ? 'border-accent-amber bg-accent-amber/10 shadow-[0_0_0_2px_var(--color-accent-amber)]'
+                : 'border-ink/10 dark:border-dark-border'
+              }`}
           >
             <div className="flex items-center gap-2 mb-1.5">
               <span className="inline-flex px-1.5 py-0.5 text-[10px] font-mono bg-paper text-ink-light dark:text-dark-ink-light border border-ink/10 dark:border-dark-border tabular-nums">
@@ -76,6 +101,11 @@ function EmbeddedLogList({ logs, onJumpToStep, t }: {
               <span className={`inline-flex px-1.5 py-0.5 text-[10px] font-mono font-bold ${config.bg} ${config.color} ${config.border} border`}>
                 {t(config.labelKey)}
               </span>
+              {isHighlighted && (
+                <span className="inline-flex px-1.5 py-0.5 text-[10px] font-mono font-bold bg-accent-amber text-paper border border-accent-amber">
+                  {t('infoPanel.stepBadge')}
+                </span>
+              )}
             </div>
             <div className="text-xs text-ink dark:text-dark-ink break-all leading-relaxed">
               {log.message}

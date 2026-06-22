@@ -15,6 +15,15 @@ interface NumericValidationResult {
   value: number
 }
 
+/**
+ * 校验数值输入是否在指定范围内
+ * @example
+ * ```ts
+ * validateNumericInput('5')  // { valid: true, value: 5 }
+ * validateNumericInput('0')  // { valid: false, value: 0 }
+ * validateNumericInput('abc') // { valid: false, value: 0 }
+ * ```
+ */
 export function validateNumericInput(value: string | number, min: number = 1, max: number = 99): NumericValidationResult {
   const num = Number(value)
   if (isNaN(num) || !isFinite(num)) {
@@ -26,6 +35,15 @@ export function validateNumericInput(value: string | number, min: number = 1, ma
   return { valid: true, value: num }
 }
 
+/**
+ * 获取数值输入的校验错误信息，无错误返回 null
+ * @example
+ * ```ts
+ * getValidationError('5')  // null
+ * getValidationError('0')  // '索引必须在 1~99 范围内'
+ * getValidationError('abc') // '请输入有效的索引'
+ * ```
+ */
 export function getValidationError(value: string | number, min: number = 1, max: number = 99): string | null {
   const num = Number(value)
   if (isNaN(num) || !isFinite(num)) return tStatic('errors.invalidIndex')
@@ -39,6 +57,16 @@ export interface ImportValidationResult {
   error?: string
 }
 
+/**
+ * 校验导入数据：必须是整数数组，长度与每个元素值都在限定范围内
+ * @example
+ * ```ts
+ * validateImportData([1, 2, 3])
+ * // { valid: true, data: [1, 2, 3] }
+ * validateImportData([1, 'a', 3])
+ * // { valid: false, error: '导入数据格式不正确' }
+ * ```
+ */
 export function validateImportData(data: unknown, maxSize: number = 200, minValue: number = -999, maxValue: number = 999): ImportValidationResult {
   if (!data) {
     return { valid: false, error: tStatic('errors.importFailed') }

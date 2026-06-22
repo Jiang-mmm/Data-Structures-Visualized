@@ -2,7 +2,7 @@ import { select } from '../utils/d3Imports'
 import { duration, EASING, transitionEnd, wait, measureRender, type Animation } from '../utils/animationEngine'
 import { getColors, detectDarkMode, ensureGradientDefs, gradUrl } from '../utils/themeColors'
 import { calculateCenterStart } from '../utils/visualizerLayout'
-import { getLargeDataThreshold } from '../utils/performanceConfig'
+import { getLargeDataThreshold, isLargeData } from '../utils/performanceConfig'
 
 const RECT_WIDTH = 60
 const RECT_HEIGHT = 50
@@ -47,10 +47,11 @@ function purgeSVG(svg: SVGSVGElement) {
   container.interrupt()
 
   const allNodes = svg.querySelectorAll('*')
+  const d3InternalKeys = new Set(['__data__', '__zoom', '__brush', '__transition', '__event', '__on'])
   allNodes.forEach(node => {
     const keys = Object.keys(node)
     keys.forEach(key => {
-      if (key.startsWith('__')) {
+      if (d3InternalKeys.has(key)) {
         delete (node as any)[key]
       }
     })
@@ -74,26 +75,34 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVi
 
     if (!data || data.length === 0) return
 
-    ensureGradientDefs(svg, isDark)
+    // 大数据场景：简化渲染（跳过阴影、渐变、超量标签）
+    const isLarge = isLargeData('array', data.length)
+    const skipValueLabels = data.length > 100
+
+    if (!isLarge) {
+      ensureGradientDefs(svg, isDark)
+    }
 
     const ns = 'http://www.w3.org/2000/svg'
 
-    // 为数组单元格添加阴影滤镜
-    const defs = svg.querySelector('defs')
-    if (defs && !defs.querySelector('#array-shadow')) {
-      const filter = document.createElementNS(ns, 'filter')
-      filter.setAttribute('id', 'array-shadow')
-      filter.setAttribute('x', '-20%')
-      filter.setAttribute('y', '-20%')
-      filter.setAttribute('width', '140%')
-      filter.setAttribute('height', '140%')
-      const shadow = document.createElementNS(ns, 'feDropShadow')
-      shadow.setAttribute('dx', '1')
-      shadow.setAttribute('dy', '2')
-      shadow.setAttribute('stdDeviation', '2')
-      shadow.setAttribute('flood-opacity', '0.15')
-      filter.appendChild(shadow)
-      defs.appendChild(filter)
+    // 为数组单元格添加阴影滤镜（大数据场景跳过）
+    if (!isLarge) {
+      const defs = svg.querySelector('defs')
+      if (defs && !defs.querySelector('#array-shadow')) {
+        const filter = document.createElementNS(ns, 'filter')
+        filter.setAttribute('id', 'array-shadow')
+        filter.setAttribute('x', '-20%')
+        filter.setAttribute('y', '-20%')
+        filter.setAttribute('width', '140%')
+        filter.setAttribute('height', '140%')
+        const shadow = document.createElementNS(ns, 'feDropShadow')
+        shadow.setAttribute('dx', '1')
+        shadow.setAttribute('dy', '2')
+        shadow.setAttribute('stdDeviation', '2')
+        shadow.setAttribute('flood-opacity', '0.15')
+        filter.appendChild(shadow)
+        defs.appendChild(filter)
+      }
     }
 
     const { startX, startY } = layout(data.length, width, height)
@@ -131,22 +140,30 @@ export function renderArray(svg: SVGSVGElement, data: number[], options: ArrayVi
       rect.setAttribute('width', String(RECT_WIDTH))
       rect.setAttribute('height', String(RECT_HEIGHT))
       rect.setAttribute('rx', '8')
-      rect.setAttribute('fill', gradUrl('bar-default'))
+      // 大数据场景使用纯色填充，跳过渐变与阴影
+      if (isLarge) {
+        rect.setAttribute('fill', C.nodeDefault)
+      } else {
+        rect.setAttribute('fill', gradUrl('bar-default'))
+        rect.setAttribute('filter', 'url(#array-shadow)')
+      }
       rect.setAttribute('stroke', C.nodeDefaultStroke)
       rect.setAttribute('stroke-width', '2')
-      rect.setAttribute('filter', 'url(#array-shadow)')
       g.appendChild(rect)
 
-      const textValue = document.createElementNS(ns, 'text')
-      textValue.setAttribute('x', String(RECT_WIDTH / 2))
-      textValue.setAttribute('y', String(RECT_HEIGHT / 2))
-      textValue.setAttribute('dy', '0.35em')
-      textValue.setAttribute('text-anchor', 'middle')
-      textValue.setAttribute('fill', C.textWhite)
-      textValue.setAttribute('font-size', '16px')
-      textValue.setAttribute('font-weight', 'bold')
-      textValue.textContent = String(value)
-      g.appendChild(textValue)
+      // 大数据场景跳过数值标签（>100 个元素时不可读）
+      if (!skipValueLabels) {
+        const textValue = document.createElementNS(ns, 'text')
+        textValue.setAttribute('x', String(RECT_WIDTH / 2))
+        textValue.setAttribute('y', String(RECT_HEIGHT / 2))
+        textValue.setAttribute('dy', '0.35em')
+        textValue.setAttribute('text-anchor', 'middle')
+        textValue.setAttribute('fill', C.textWhite)
+        textValue.setAttribute('font-size', '16px')
+        textValue.setAttribute('font-weight', 'bold')
+        textValue.textContent = String(value)
+        g.appendChild(textValue)
+      }
 
       const textIndex = document.createElementNS(ns, 'text')
       textIndex.setAttribute('x', String(RECT_WIDTH / 2))

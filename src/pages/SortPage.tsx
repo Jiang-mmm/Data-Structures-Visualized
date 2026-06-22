@@ -4,9 +4,11 @@ import OperationBar, { OperationButton } from '../components/OperationBar'
 import OperationGroup from '../components/OperationGroup'
 import UndoPreviewButton from '../components/UndoPreviewButton'
 import ShareButton from '../components/ShareButton'
+import AnimationExportButton from '../components/AnimationExportButton'
 import Visualizer from '../components/Visualizer'
 import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
+import PerformanceIndicator from '../components/PerformanceIndicator'
 import SpeedControl from '../components/SpeedControl'
 import ExportImport from '../components/ExportImport'
 import ProgressBar from '../components/ProgressBar'
@@ -15,6 +17,7 @@ import { useSortState } from '../hooks/useSortState'
 import { useVisualizer } from '../hooks/useVisualizer'
 import { useKeyboard } from '../hooks/useKeyboard'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { learningConfigs } from '../configs/learning'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
 import { getAllSortAlgorithms } from '../algorithms/sorting'
@@ -33,8 +36,8 @@ const VARIANT_MAP: Record<string, string> = {
 
 export default function SortPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, stats, progress, randomize, reset, loadData, stop, runAlgorithm, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useSortState()
-  const { containerRef, svgRef, dimensions, getAnimationContext } = useVisualizer()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, stats, progress, randomize, reset, loadData, stop, runAlgorithm, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useSortState(abortAnimation)
   useSharedData({ dataType: 'sort', loadData, validator: Array.isArray })
   usePageTracker('sort')
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('bubble')
@@ -82,7 +85,7 @@ export default function SortPage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
@@ -96,6 +99,12 @@ export default function SortPage() {
           }
         }} />
         <ShareButton data={data} dataType="sort" disabled={isAnimating} />
+        <AnimationExportButton
+          svgRef={svgRef}
+          width={dimensions.width}
+          height={dimensions.height}
+          disabled={isAnimating || data.length === 0}
+        />
         <OperationButton variant="secondary" onClick={reset}>{t('common.reset')}</OperationButton>
         <OperationButton variant="primary" onClick={randomize}>{t('sort.randomize')}</OperationButton>
       </PageHeader>
@@ -109,6 +118,7 @@ export default function SortPage() {
               variant={(VARIANT_MAP[algo.variant] || 'primary') as any}
               onClick={() => handleSort(key)}
               disabled={isAnimating} isBusy={isAnimating}
+              disabledReason={t('page.animating')}
               title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}
             >
               {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
@@ -124,6 +134,7 @@ export default function SortPage() {
                 variant={(VARIANT_MAP[algo.variant] || 'primary') as any}
                 onClick={() => handleSort(key)}
                 disabled={isAnimating} isBusy={isAnimating}
+                disabledReason={t('page.animating')}
                 title={`${algo.nameKey ? t(algo.nameKey) : algo.name} | Time: ${algo.timeComplexity} | Space: ${algo.spaceComplexity}`}
               >
                 {algo.icon} {algo.nameKey ? t(algo.nameKey) : algo.name}
@@ -188,6 +199,9 @@ export default function SortPage() {
 
       <div className="flex-1 flex flex-col lg:flex-row min-h-0">
         <div className="relative flex flex-col flex-1 min-h-0">
+          <div className="absolute top-2 right-2 z-20">
+            <PerformanceIndicator visualizerKey="sort" dataLength={data.length} />
+          </div>
           <Visualizer data={data} renderFn={renderSortBars as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.sortLabel")} />
           {data.length === 0 && (
             <EmptyState icon="⇅" titleKey="emptyState.emptySort" descriptionKey="emptyState.emptySortDesc" onFill={randomize} />
@@ -207,6 +221,8 @@ export default function SortPage() {
           learningMode={learningMode}
           isAnimating={isAnimating}
           onJumpToStep={handleJumpToStep}
+          algorithmKey={selectedAlgorithm}
+          quizQuestions={learningConfigs[selectedAlgorithm as keyof typeof learningConfigs]?.quiz}
         />
       </div>
     </div>

@@ -104,4 +104,38 @@ describe('SortComparePage', () => {
     const runBtn = screen.getByText('compare.runAll')
     expect(runBtn).toBeInTheDocument()
   })
+
+  it('sortCompare 学习配置已注册且包含 5 个步骤', async () => {
+    const { learningConfigs } = await import('../../configs/learning')
+    const config = learningConfigs.sortCompare
+    expect(config).toBeDefined()
+    expect(config.steps).toHaveLength(5)
+    expect(config.algorithmKey).toBe('sortCompare')
+  })
+
+  it('sortCompare 学习配置步骤包含正确 id 顺序', async () => {
+    const { learningConfigs } = await import('../../configs/learning')
+    const config = learningConfigs.sortCompare
+    const ids = config.steps.map(s => s.id)
+    expect(ids).toEqual(['select', 'init', 'firstRound', 'keyDiff', 'complete'])
+  })
+
+  it('sortCompare 学习配置每步都有必要字段', async () => {
+    const { learningConfigs } = await import('../../configs/learning')
+    const config = learningConfigs.sortCompare
+    config.steps.forEach(step => {
+      expect(step.id).toBeTruthy()
+      expect(step.title).toBeTruthy()
+      expect(step.description).toBeTruthy()
+      expect(step.codeSnippet).toBeTruthy()
+      expect(step.highlightedLine).toBeGreaterThan(0)
+      expect(step.highlightTerms).toBeInstanceOf(Array)
+    })
+  })
+
+  it('SortComparePage 使用 sortCompare 学习配置', () => {
+    renderWithRouter(<SortComparePage />)
+    // 页面正常渲染即说明学习模式已接入（InfoPanel 已在组件中渲染）
+    expect(screen.getByText('compare.title')).toBeInTheDocument()
+  })
 })

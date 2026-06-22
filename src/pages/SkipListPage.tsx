@@ -24,12 +24,12 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function SkipListPage() {
   const { t } = useGlobalSettings()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const {
     data, logs, isAnimating, setIsAnimating,
     insert, remove, search, size, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useSkipListState()
-  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  } = useSkipListState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('skipList')
   useSharedData({
@@ -55,7 +55,7 @@ export default function SkipListPage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleInsert = useCallback(async () => {
     if (isAnimating) return
@@ -97,7 +97,7 @@ export default function SkipListPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, remove, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, inputValue, remove, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleSearch = useCallback(async () => {
     if (isAnimating) return
@@ -115,7 +115,7 @@ export default function SkipListPage() {
     } finally {
       setIsAnimating(false)
     }
-  }, [isAnimating, inputValue, search, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, inputValue, search, setIsAnimating, getAnimationContext, svgRef, t])
 
   const isEmpty = size() === 0
 

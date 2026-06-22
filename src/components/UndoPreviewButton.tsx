@@ -7,6 +7,7 @@ interface UndoPreviewButtonProps {
   variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'outline'
   previewData?: unknown
   previewLabel?: string
+  ariaKeyshortcuts?: string
   children: ReactNode
   className?: string
 }
@@ -37,6 +38,7 @@ function UndoPreviewButton({
   variant = 'outline',
   previewData,
   previewLabel,
+  ariaKeyshortcuts,
   children,
   className = '',
 }: UndoPreviewButtonProps) {
@@ -69,6 +71,7 @@ function UndoPreviewButton({
         disabled={disabled}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        aria-keyshortcuts={ariaKeyshortcuts}
         className={`
           px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold
           border-2

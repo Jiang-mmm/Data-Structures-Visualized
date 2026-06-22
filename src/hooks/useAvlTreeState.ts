@@ -16,6 +16,8 @@ import {
 } from '../algorithms/avlTree'
 import type { AvlNode, AvlFlattened } from '../types/hooks'
 
+const MODULE = () => tStatic('avlTree.title')
+
 /** 初始 AVL 树：插入 50, 30, 70, 20, 40, 60, 80 后自动平衡 */
 function buildInitialTree(): AvlNode | null {
   const values = [50, 30, 70, 20, 40, 60, 80]
@@ -26,17 +28,17 @@ function buildInitialTree(): AvlNode | null {
   return root
 }
 
-export function useAvlTreeState() {
+export function useAvlTreeState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<AvlNode | null>(buildInitialTree(), { storageKey: 'avl-tree' })
+  } = useDataStructureState<AvlNode | null>(buildInitialTree(), { storageKey: 'avl-tree', abortAnimation })
 
   const insert = useCallback((value: string | number): void => {
     const { valid, value: safeValue } = validateNumericInput(value)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('hooks.inputInvalid') })
+      showToast({ type: 'error', message: tStatic('hooks.inputInvalid'), module: MODULE(), operation: tStatic('avlTree.insert') })
       return
     }
     const newData = insertAvl(data, safeValue)

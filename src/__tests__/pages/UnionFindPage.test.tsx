@@ -29,6 +29,12 @@ vi.mock('../../hooks/useSharedData', () => ({
 vi.mock('../../hooks/usePageTracker', () => ({
   usePageTracker: vi.fn(),
 }))
+vi.mock('../../hooks/useAnimationAbort', () => ({
+  useAnimationAbort: () => ({ abort: vi.fn(), abortRef: { current: null } }),
+}))
+vi.mock('../../components/toastStore', () => ({
+  showToast: vi.fn(),
+}))
 vi.mock('../../components/Visualizer', () => ({
   default: (): null => null,
 }))
@@ -184,5 +190,131 @@ describe('UnionFindPage', () => {
     const inputsB = screen.getAllByPlaceholderText('unionFind.inputPlaceholderB')
     expect(inputsA.length).toBeGreaterThanOrEqual(1)
     expect(inputsB.length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('calls union with two values when union button clicked', async () => {
+    const data = {
+      nodes: [
+        { id: 'n1', value: 5, x: 0, y: 0, type: 'default' as const, state: 'normal' as const },
+        { id: 'n2', value: 8, x: 0, y: 0, type: 'default' as const, state: 'normal' as const },
+      ],
+      edges: [],
+      parent: {},
+      rank: {},
+    }
+    const mockState = createMockUnionFindState({ data, findIdByValue: vi.fn((_d, v) => v === 5 ? 'n1' : v === 8 ? 'n2' : null) } as any)
+    mockedUseUnionFindState.mockReturnValue(mockState as any)
+    renderWithRouter(<UnionFindPage />)
+
+    const inputsA = screen.getAllByPlaceholderText('unionFind.inputPlaceholder')
+    const inputsB = screen.getAllByPlaceholderText('unionFind.inputPlaceholderB')
+    fireEvent.change(inputsA[0], { target: { value: '5' } })
+    fireEvent.change(inputsB[0], { target: { value: '8' } })
+    fireEvent.click(screen.getByText('unionFind.union'))
+
+    await waitFor(() => {
+      expect(mockState.union).toHaveBeenCalledWith(5, 8)
+    })
+  })
+
+  it('shows warning toast when A and B are the same in union', async () => {
+    const { showToast } = await import('../../components/toastStore')
+    const showToastSpy = vi.mocked(showToast)
+    const mockState = createMockUnionFindState()
+    mockedUseUnionFindState.mockReturnValue(mockState as any)
+    renderWithRouter(<UnionFindPage />)
+
+    const inputsA = screen.getAllByPlaceholderText('unionFind.inputPlaceholder')
+    const inputsB = screen.getAllByPlaceholderText('unionFind.inputPlaceholderB')
+    fireEvent.change(inputsA[0], { target: { value: '5' } })
+    fireEvent.change(inputsB[0], { target: { value: '5' } })
+    fireEvent.click(screen.getByText('unionFind.union'))
+
+    await waitFor(() => {
+      expect(showToastSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'warning' }))
+    })
+  })
+
+  it('shows error toast when union values are invalid', async () => {
+    const { showToast } = await import('../../components/toastStore')
+    const showToastSpy = vi.mocked(showToast)
+    const mockState = createMockUnionFindState()
+    mockedUseUnionFindState.mockReturnValue(mockState as any)
+    renderWithRouter(<UnionFindPage />)
+
+    const inputsA = screen.getAllByPlaceholderText('unionFind.inputPlaceholder')
+    const inputsB = screen.getAllByPlaceholderText('unionFind.inputPlaceholderB')
+    fireEvent.change(inputsA[0], { target: { value: 'abc' } })
+    fireEvent.change(inputsB[0], { target: { value: '8' } })
+    fireEvent.click(screen.getByText('unionFind.union'))
+
+    await waitFor(() => {
+      expect(showToastSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }))
+    })
+  })
+
+  it('calls checkConnected with two values when connected button clicked', async () => {
+    const data = {
+      nodes: [
+        { id: 'n1', value: 5, x: 0, y: 0, type: 'default' as const, state: 'normal' as const },
+        { id: 'n2', value: 8, x: 0, y: 0, type: 'default' as const, state: 'normal' as const },
+      ],
+      edges: [],
+      parent: {},
+      rank: {},
+    }
+    const mockState = createMockUnionFindState({ data, findIdByValue: vi.fn((_d, v) => v === 5 ? 'n1' : v === 8 ? 'n2' : null) } as any)
+    mockedUseUnionFindState.mockReturnValue(mockState as any)
+    renderWithRouter(<UnionFindPage />)
+
+    const inputsA = screen.getAllByPlaceholderText('unionFind.inputPlaceholder')
+    const inputsB = screen.getAllByPlaceholderText('unionFind.inputPlaceholderB')
+    fireEvent.change(inputsA[0], { target: { value: '5' } })
+    fireEvent.change(inputsB[0], { target: { value: '8' } })
+    fireEvent.click(screen.getByText('unionFind.connected'))
+
+    await waitFor(() => {
+      expect(mockState.checkConnected).toHaveBeenCalledWith(5, 8)
+    })
+  })
+
+  it('shows error toast when connected values are invalid', async () => {
+    const { showToast } = await import('../../components/toastStore')
+    const showToastSpy = vi.mocked(showToast)
+    const mockState = createMockUnionFindState()
+    mockedUseUnionFindState.mockReturnValue(mockState as any)
+    renderWithRouter(<UnionFindPage />)
+
+    const inputsA = screen.getAllByPlaceholderText('unionFind.inputPlaceholder')
+    fireEvent.change(inputsA[0], { target: { value: 'xyz' } })
+    fireEvent.click(screen.getByText('unionFind.connected'))
+
+    await waitFor(() => {
+      expect(showToastSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }))
+    })
+  })
+
+  it('shows empty state when size is 0', () => {
+    const mockState = createMockUnionFindState({ size: vi.fn().mockReturnValue(0) })
+    mockedUseUnionFindState.mockReturnValue(mockState as any)
+    renderWithRouter(<UnionFindPage />)
+
+    expect(screen.getByText('emptyState.emptyUnionFind')).toBeInTheDocument()
+  })
+
+  it('stops animation when stop button clicked', () => {
+    const mockState = createMockUnionFindState({ isAnimating: true })
+    mockedUseUnionFindState.mockReturnValue(mockState as any)
+    renderWithRouter(<UnionFindPage />)
+
+    fireEvent.click(screen.getByText('common.stop'))
+  })
+
+  it('shows size info in OperationInfo', () => {
+    const mockState = createMockUnionFindState({ size: vi.fn().mockReturnValue(7) })
+    mockedUseUnionFindState.mockReturnValue(mockState as any)
+    renderWithRouter(<UnionFindPage />)
+
+    expect(screen.getByText(/SIZE: 7/)).toBeInTheDocument()
   })
 })

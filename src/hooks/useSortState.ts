@@ -7,6 +7,7 @@ import { tStatic } from '../i18n/useI18n'
 
 const INITIAL_DATA: number[] = [38, 27, 43, 9, 82, 10, 55, 21]
 const YIELD_INTERVAL = 5
+const MODULE = () => tStatic('sort.title')
 
 export interface SortStats {
   algorithm: string
@@ -15,13 +16,13 @@ export interface SortStats {
   steps: number
 }
 
-export function useSortState() {
+export function useSortState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset: baseReset, loadData,
-    undo, redo, canUndo, canRedo,
+    undo, redo, canUndo, canRedo, setUndoBlock,
     getUndoPreview, getRedoPreview,
-  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'sort' })
+  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'sort', abortAnimation })
 
   const [stats, setStats] = useState<SortStats>({ algorithm: '', comparisons: 0, swaps: 0, steps: 0 })
   const [progress, setProgress] = useState<number>(0)
@@ -69,7 +70,7 @@ export function useSortState() {
   ): Promise<void> => {
     const algorithm = getSortAlgorithm(algorithmKey)
     if (!algorithm) {
-      showToast({ type: 'error', message: tStatic('hooks.sortUnknownAlgorithm').replace('{key}', algorithmKey) })
+      showToast({ type: 'error', message: tStatic('hooks.sortUnknownAlgorithm').replace('{key}', algorithmKey), module: MODULE(), operation: tStatic('common.run') })
       return
     }
 
@@ -80,6 +81,9 @@ export function useSortState() {
 
     const animation = anim || { isAborted: () => false, abort: () => {} }
     animRef.current = animation
+
+    // 排序过程中阻塞撤销/重做，避免破坏中间状态
+    setUndoBlock(true)
 
     let lastStep = 0
 
@@ -109,8 +113,9 @@ export function useSortState() {
     } finally {
       setIsAnimating(false)
       animRef.current = null
+      setUndoBlock(false)
     }
-  }, [data, push, addLog, setIsAnimating])
+  }, [data, push, addLog, setIsAnimating, setUndoBlock])
 
   const bubbleSort = useCallback((a: SortAnimationFns, b: React.RefObject<SVGSVGElement | null>, c: { width: number; height: number }, d?: { isAborted: () => boolean; abort: () => void }) => runAlgorithm('bubble', a, b, c, d), [runAlgorithm])
   const selectionSort = useCallback((a: SortAnimationFns, b: React.RefObject<SVGSVGElement | null>, c: { width: number; height: number }, d?: { isAborted: () => boolean; abort: () => void }) => runAlgorithm('selection', a, b, c, d), [runAlgorithm])

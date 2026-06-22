@@ -283,6 +283,12 @@ export function renderAvlTree(
       posMap[pos.id] = pos
     }
 
+    const childrenMap = new Map<string, string[]>()
+    for (const n of data.nodes) {
+      if (!childrenMap.has(n.parent)) childrenMap.set(n.parent, [])
+      childrenMap.get(n.parent)!.push(n.id)
+    }
+
     // 先绘制边（在节点下层）
     for (const edge of edges) {
       const fromPos = posMap[edge.from]
@@ -312,6 +318,49 @@ export function renderAvlTree(
         .attr('transform', `translate(${pos.x}, ${pos.y})`)
         .attr('data-id', pos.id)
         .attr('data-value', pos.value)
+        .attr('tabindex', '0')
+        .attr('role', 'group')
+        .attr('aria-label', `Node ${pos.value}`)
+        .on('focus', function(this: SVGGElement) {
+          if (!this?.querySelector) return
+          select(this).select('circle').attr('stroke', C.nodeActive).attr('stroke-width', 3)
+          select(this)
+            .style('outline', '3px solid var(--color-accent-amber)')
+            .style('outline-offset', '2px')
+        })
+        .on('blur', function(this: SVGGElement) {
+          if (!this?.querySelector) return
+          const baseStroke = pos.isRoot ? C.nodeRootStroke : (pos.isLeaf ? C.nodeLeafStroke : C.nodeDefaultStroke)
+          select(this).select('circle').attr('stroke', baseStroke).attr('stroke-width', 2)
+          select(this).style('outline', 'none')
+        })
+        .on('keydown', function(this: SVGGElement, event: KeyboardEvent, d: AvlPosition) {
+          if (!event?.key) return
+          const nodeMap = new Map<string, SVGGElement>()
+          container.selectAll('g.avl-node').each(function(this: SVGGElement, n: AvlPosition) {
+            nodeMap.set(n.id, this)
+          })
+          const flatNode = data.nodes.find(n => n.id === d.id)
+          if (!flatNode) return
+          const children = childrenMap.get(d.id) || []
+          const firstChild = children[0]
+          const lastChild = children[children.length - 1]
+          let targetId: string | null = null
+          if (event.key === 'ArrowUp') {
+            targetId = flatNode.parent || null
+          } else if (event.key === 'ArrowDown') {
+            targetId = firstChild || null
+          } else if (event.key === 'ArrowLeft') {
+            targetId = firstChild || null
+          } else if (event.key === 'ArrowRight') {
+            targetId = lastChild || null
+          }
+          if (targetId) {
+            event.preventDefault()
+            const target = nodeMap.get(targetId)
+            target?.focus()
+          }
+        })
 
       // 节点圆形
       nodeG.append('circle')

@@ -5,6 +5,7 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings'
 import { useColorTheme } from '../hooks/useColorTheme'
 import { initThemeColors } from '../utils/themeColors'
 import { showToast } from './toastStore'
+import Icon from './Icon'
 
 interface StructureItem {
   path: string
@@ -27,6 +28,8 @@ export const STRUCTURE_KEYS: StructureItem[] = [
   { path: '/tree', key: 'tree' },
   { path: '/avl-tree', key: 'avlTree' },
   { path: '/red-black-tree', key: 'redBlackTree' },
+  { path: '/b-tree', key: 'bTree' },
+  { path: '/segment-tree', key: 'segmentTree' },
   { path: '/graph', key: 'graph' },
   { path: '/sort', key: 'sort' },
   { path: '/hash', key: 'hash' },
@@ -65,23 +68,27 @@ function getIconSvg(index: number): ReactNode {
       return <svg {...p}><circle cx="10" cy="4" r="2" /><circle cx="5" cy="13" r="2" /><circle cx="15" cy="13" r="2" /><line x1="8.5" y1="5.7" x2="6.2" y2="11.3" /><line x1="11.5" y1="5.7" x2="13.8" y2="11.3" /><line x1="3" y1="17" x2="17" y2="17" strokeDasharray="2,1.5" /></svg>
     case 7: // Red-Black Tree - tree with colored nodes (filled circles)
       return <svg {...p}><circle cx="10" cy="4" r="2" fill="currentColor" /><circle cx="5" cy="13" r="2" /><circle cx="15" cy="13" r="2" /><line x1="8.5" y1="5.7" x2="6.2" y2="11.3" /><line x1="11.5" y1="5.7" x2="13.8" y2="11.3" /></svg>
-    case 8: // Graph - triangle network
+    case 8: // B-Tree - multi-way tree with wide nodes
+      return <svg {...p}><rect x="5" y="3" width="10" height="3" rx="0.5" /><rect x="2" y="13" width="6" height="3" rx="0.5" /><rect x="12" y="13" width="6" height="3" rx="0.5" /><line x1="8" y1="6" x2="5" y2="13" /><line x1="12" y1="6" x2="15" y2="13" /></svg>
+    case 9: // Segment Tree - tree with interval bars
+      return <svg {...p}><rect x="6" y="3" width="8" height="2.5" rx="0.5" /><rect x="2" y="9" width="6" height="2.5" rx="0.5" /><rect x="12" y="9" width="6" height="2.5" rx="0.5" /><rect x="1" y="14.5" width="4" height="2.5" rx="0.5" /><rect x="6" y="14.5" width="4" height="2.5" rx="0.5" /><rect x="11" y="14.5" width="4" height="2.5" rx="0.5" /><rect x="15" y="14.5" width="4" height="2.5" rx="0.5" /><line x1="8" y1="5.5" x2="5" y2="9" /><line x1="12" y1="5.5" x2="15" y2="9" /></svg>
+    case 10: // Graph - triangle network
       return <svg {...p}><circle cx="10" cy="4.5" r="2" /><circle cx="4.5" cy="15" r="2" /><circle cx="15.5" cy="15" r="2" /><line x1="8.5" y1="6.2" x2="5.8" y2="13.2" /><line x1="11.5" y1="6.2" x2="14.2" y2="13.2" /><line x1="6.5" y1="15" x2="13.5" y2="15" /></svg>
-    case 9: // Sort - ascending bars
+    case 11: // Sort - ascending bars
       return <svg {...p}><rect x="3" y="13" width="3" height="4" rx="0.5" /><rect x="7.5" y="9" width="3" height="8" rx="0.5" /><rect x="12" y="5" width="3" height="12" rx="0.5" /></svg>
-    case 10: // Hash
+    case 12: // Hash
       return <svg {...p}><line x1="7" y1="3" x2="6" y2="17" /><line x1="13" y1="3" x2="12" y2="17" /><line x1="3" y1="7" x2="17" y2="7" /><line x1="3" y1="13" x2="17" y2="13" /></svg>
-    case 11: // Heap - pyramid
+    case 13: // Heap - pyramid
       return <svg {...p}><circle cx="10" cy="4.5" r="2" /><circle cx="5.5" cy="14" r="2" /><circle cx="14.5" cy="14" r="2" /><line x1="8.5" y1="6.2" x2="6.8" y2="12.2" /><line x1="11.5" y1="6.2" x2="13.2" y2="12.2" /></svg>
-    case 12: // Trie - root with branches
+    case 14: // Trie - root with branches
       return <svg {...p}><circle cx="10" cy="4" r="2" /><circle cx="5" cy="13" r="1.5" /><circle cx="10" cy="15" r="1.5" /><circle cx="15" cy="13" r="1.5" /><line x1="8.8" y1="5.7" x2="5.6" y2="11.6" /><line x1="10" y1="6" x2="10" y2="13.5" /><line x1="11.2" y1="5.7" x2="14.4" y2="11.6" /></svg>
-    case 13: // SkipList - multi-level linked list
+    case 15: // SkipList - multi-level linked list
       return <svg {...p}><circle cx="4" cy="5" r="1.5" /><circle cx="10" cy="5" r="1.5" /><circle cx="16" cy="5" r="1.5" /><line x1="5.5" y1="5" x2="8.5" y2="5" /><line x1="11.5" y1="5" x2="14.5" y2="5" /><circle cx="4" cy="10" r="1.5" /><circle cx="10" cy="10" r="1.5" /><circle cx="16" cy="10" r="1.5" /><line x1="5.5" y1="10" x2="8.5" y2="10" /><line x1="11.5" y1="10" x2="14.5" y2="10" /><circle cx="4" cy="15" r="1.5" /><circle cx="10" cy="15" r="1.5" /><circle cx="16" cy="15" r="1.5" /><line x1="5.5" y1="15" x2="8.5" y2="15" /><line x1="11.5" y1="15" x2="14.5" y2="15" /></svg>
-    case 14: // Compare - two bar charts
+    case 16: // Compare - two bar charts
       return <svg {...p}><rect x="3" y="9" width="3" height="8" rx="0.5" /><rect x="7.5" y="5" width="3" height="12" rx="0.5" /><rect x="12.5" y="7" width="3" height="10" rx="0.5" /><line x1="2" y1="17" x2="17" y2="17" /></svg>
-    case 15: // Graph Algorithm - node with circular arrow
+    case 17: // Graph Algorithm - node with circular arrow
       return <svg {...p}><circle cx="10" cy="10" r="6" /><polyline points="10,6 12,8 10,10" /><path d="M7 15a6 6 0 016-6" /></svg>
-    case 16: // Union-Find - two trees merging
+    case 18: // Union-Find - two trees merging
       return <svg {...p}><circle cx="5" cy="5" r="1.8" /><circle cx="15" cy="5" r="1.8" /><circle cx="5" cy="14" r="1.8" /><circle cx="15" cy="14" r="1.8" /><line x1="5" y1="6.8" x2="5" y2="12.2" /><line x1="15" y1="6.8" x2="15" y2="12.2" /><line x1="6.8" y1="5" x2="13.2" y2="5" /></svg>
     default:
       return <svg {...p}><circle cx="10" cy="10" r="6" /></svg>
@@ -134,8 +141,12 @@ export default function Sidebar() {
   const handleTouchEnd = useCallback((e: TouchEvent) => {
     if (!swipeRef.current.isSwiping) return
     const deltaX = e.changedTouches[0].clientX - swipeRef.current.startX
-    if (deltaX < -60) {
-      setMobileOpen(false)
+    const deltaY = e.changedTouches[0].clientY - swipeRef.current.startY
+    // 水平滑动且主要在 X 轴方向才响应
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX < -60) {
+        setMobileOpen(false)
+      }
     }
     swipeRef.current.isSwiping = false
   }, [])
@@ -151,13 +162,44 @@ export default function Sidebar() {
     }
   }, [isMobile, handleTouchStart, handleTouchEnd])
 
-  const prevPathname = useRef<string>(location.pathname)
-  useEffect(() => {
-    if (prevPathname.current !== location.pathname) {
-      prevPathname.current = location.pathname
-      if (isMobile) setMobileOpen(false)
+  // 屏幕左缘 24px 内右滑打开侧边栏
+  const openSwipeRef = useRef<{ startX: number; startY: number; isSwiping: boolean }>({ startX: 0, startY: 0, isSwiping: false })
+  const handleOpenTouchStart = useCallback((e: TouchEvent) => {
+    if (mobileOpen) return
+    if (e.touches[0].clientX > 24) return
+    openSwipeRef.current.startX = e.touches[0].clientX
+    openSwipeRef.current.startY = e.touches[0].clientY
+    openSwipeRef.current.isSwiping = true
+  }, [mobileOpen])
+
+  const handleOpenTouchEnd = useCallback((e: TouchEvent) => {
+    if (!openSwipeRef.current.isSwiping) return
+    const deltaX = e.changedTouches[0].clientX - openSwipeRef.current.startX
+    const deltaY = e.changedTouches[0].clientY - openSwipeRef.current.startY
+    if (Math.abs(deltaX) > Math.abs(deltaY) && deltaX > 60) {
+      setMobileOpen(true)
     }
-  }, [location.pathname, isMobile])
+    openSwipeRef.current.isSwiping = false
+  }, [])
+
+  useEffect(() => {
+    if (!isMobile) return
+    document.addEventListener('touchstart', handleOpenTouchStart, { passive: true })
+    document.addEventListener('touchend', handleOpenTouchEnd, { passive: true })
+    return () => {
+      document.removeEventListener('touchstart', handleOpenTouchStart)
+      document.removeEventListener('touchend', handleOpenTouchEnd)
+    }
+  }, [isMobile, handleOpenTouchStart, handleOpenTouchEnd])
+
+  // 派生 state：pathname 变化时自动关闭移动端菜单（避免导航后菜单仍然展开）
+  const [prevPathname, setPrevPathname] = useState<string>(location.pathname)
+  if (prevPathname !== location.pathname) {
+    setPrevPathname(location.pathname)
+    if (isMobile) {
+      setMobileOpen(false)
+    }
+  }
 
   useEffect(() => {
     if (!mobileOpen) return
@@ -237,9 +279,9 @@ export default function Sidebar() {
           <button
             onClick={() => setMobileOpen(false)}
             aria-label={t('common.close')}
-            className="w-9 h-9 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper hover:bg-accent-blue hover:text-paper transition-colors text-sm font-bold touch-manipulation focus-ring"
+            className="w-11 h-11 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper hover:bg-accent-blue hover:text-paper transition-colors text-sm font-bold touch-manipulation focus-ring"
           >
-            ✕
+            <Icon name="close" size={14} />
           </button>
         ) : (
           <button
@@ -247,7 +289,7 @@ export default function Sidebar() {
             aria-label={collapsed ? t('sidebar.openMenu') : t('sidebar.collapseMenu')}
             aria-expanded={!collapsed}
             className={`
-              w-7 h-7 flex items-center justify-center
+              w-11 h-11 flex items-center justify-center
               border-2 border-ink dark:border-dark-border bg-paper dark:bg-dark-paper
               hover:bg-accent-blue hover:text-paper dark:hover:bg-accent-blue dark:hover:text-paper
               transition-colors text-xs font-bold focus-ring
@@ -365,7 +407,7 @@ export default function Sidebar() {
       {isMobile && (
         <button
           onClick={() => setMobileOpen(true)}
-          className="fixed top-3 left-3 z-50 w-10 h-10 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface shadow-button dark:shadow-button-dark hover:bg-accent-blue hover:text-paper transition-colors text-lg font-bold md:hidden"
+          className="fixed top-3 left-3 z-50 w-11 h-11 flex items-center justify-center border-2 border-ink dark:border-dark-border bg-surface dark:bg-dark-surface shadow-button dark:shadow-button-dark hover:bg-accent-blue hover:text-paper transition-colors text-lg font-bold md:hidden"
           aria-label={t('sidebar.openMenu')}
         >
           ☰

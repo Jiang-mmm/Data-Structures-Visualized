@@ -1,8 +1,82 @@
 # 数据结构学习助手 — Architecture 文档
 
-> **版本:** v12.0
-> **更新日期:** 2026-06-20
-> **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
+> **版本:** v16.0.0 GA（ENG-1 E2E 迁移 + ENG-2 覆盖率 80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善 全部完成）
+> **更新日期:** 2026-06-22
+> **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa + gifenc + jszip
+
+---
+
+## 0. v13 体检方法论（2026-06-20）与 Phase A 进展
+
+> **来源**: [docs/superpowers/specs/2026-06-20-v13-code-audit-design.md](./docs/superpowers/specs/2026-06-20-v13-code-audit-design.md) §4
+
+v13 起，每个重大版本（v14+）都应采用 **双模型互盲 + 集中仲裁** 方法做全面代码体检。
+
+### 三个角色
+
+| 角色 | 职责 | 产出 |
+|------|------|------|
+| **Subagent A** | 工程审计师（架构/安全/性能/可测试性/文档/工程化 6 维） | 独立问题清单 A |
+| **Subagent B** | 教学体验 + 渲染工程师（8 角度，**与 A 完全互盲**） | 独立问题清单 B |
+| **仲裁者** | 主对话 agent（合并去重 + 分级 P0~P3） | 合并仲裁报告 + 修复路线 |
+
+### 仲裁标签
+
+- `[共识]` = A 与 B 都报告的同一文件同一根因（高置信度）
+- `[A-独报-工程]` = A 报告、B 未提（工程性问题）
+- `[B-独报-体验]` = B 报告、A 未提（教学/体验问题）
+- `[仲裁]` = A、B 同主题但表述冲突
+
+### 4 阶段修复路线（输出产物）
+
+| Phase | 主题 | 工时 |
+|-------|------|------|
+| A | 紧急修复（安全+数据完整性） | 1~2 天 | ✅ 已完成 |
+| B | 体验+工程优化 | 3~5 天 | ✅ 已完成 |
+| C | 文档完善 | 1~2 天 | ✅ 已完成 |
+| D | 测试+CI 升级 | 2~3 天 | ✅ 已完成 |
+
+### 工作流约束
+
+- 体检在独立 feature 分支（如 `feature/vN-code-audit`）
+- 产物 1 个 commit，仅文档/审计产物，**不动业务代码**
+- 修复留到 v(N+1) Phase A 启动时按用户确认执行
+
+### Phase A 完成摘要（2026-06-21）
+
+| 修复项 | 文件 | 说明 |
+|--------|------|------|
+| 统一 schema 校验 | `src/utils/schema.ts` | 递归深度限制 `MAX_STORAGE_DEPTH = 10`，供 localStorage/import 复用 |
+| localStorage 数据清洗 | `src/hooks/useDataStructureState.ts` | 无效/过深数据自动清除并回退 `initialData` |
+| 渲染阶段 ref 修复 | `src/hooks/useDataStructureState.ts` | `dataRef.current = data` 移入 `useEffect` |
+| 依赖版本锁定 | `package.json` + `.github/workflows/ci.yml` | devDependencies 改 `~`，CI 加 `npm ls --depth=0` |
+| Node 兼容修复 | `scripts/check-bundle.js` | 用 `fileURLToPath` 替代 `import.meta.dirname` |
+| 第三方代理移除 | `vite.config.js` | 移除 `loli.net` 字体缓存规则 |
+
+### Phase C/D 完成摘要（2026-06-21）
+
+| 修复项 | 文件 | 说明 |
+|--------|------|------|
+| 文档一致性 | `README.md` / `PROJECT_SUMMARY.md` / `CHANGELOG.md` / `TODO.md` / `WORKLOG.md` / `ARCHITECTURE.md` / `CODE_WIKI.md` / `PROJECT_STATUS.md` | 版本号与 Phase 状态同步 |
+| 版本升级 | `package.json` | version 升级为 `v13.0.0-rc2` |
+| Playwright a11y spec | `e2e/a11y.spec.ts` | 动态扫描 17 页 |
+| Playwright home spec | `e2e/home.spec.ts` | 首页 3 用例 |
+| a11y runner | `e2e/test-a11y.js` | 委托 Playwright Test |
+| E2E JSON 报告 | `e2e/run-all-tests.js` | 输出 `e2e/test-results.json` |
+| TypeScript setup | `src/__tests__/setup.ts` | 替代 `setup.js` |
+| D3 mock 增强 | `src/__tests__/visualizers/d3MockHelper.ts` | 调用记录与链式 forceSimulation |
+| Snapshot 测试 | `src/__tests__/visualizers/arrayVisualizer.snapshot.test.ts` | SVG 结构快照 |
+| CI 增强 | `.github/workflows/ci.yml` | a11y、覆盖率/构建/E2E 报告 artifact |
+
+### Path 3 H2 全局搜索增强（2026-06-21）
+
+| 模块 | 文件 | 说明 |
+|------|------|------|
+| Fuzzy 匹配 | `src/utils/fuzzySearch.ts` | LCS 轻量模糊匹配（新建） |
+| 搜索历史 | `src/hooks/useSearchHistory.ts` | localStorage 持久化 Hook（新建） |
+| 搜索索引 | `src/data/searchIndex.ts` | `SearchItem` 扩展 `complexity` / `tags` |
+| 组件 UI | `src/components/GlobalSearch.tsx` | 集成模糊匹配、历史、复杂度过滤、分类展示 |
+| i18n | `src/i18n/locales.ts` | 新增搜索历史、复杂度、分类相关键 |
 
 ---
 
@@ -52,8 +126,9 @@
 ├─────────────────────────────────────────────────────────────────┤
 │                      算法层 (Algorithms)                          │
 │  sorting: bubble | selection | insertion | quick | merge         │
-│          heap | radix | bucket                                   │
-│  graph: bfs | dfs | dijkstra | topoSort                          │
+│          heap | radix | bucket | shell | comb | tim | counting   │
+│  graph: bfs | dfs | dijkstra | topoSort | bellmanFord |          │
+│          floydWarshall | prim | kruskal                            │
 │  skipList | unionFind | redBlackTree                             │
 ├─────────────────────────────────────────────────────────────────┤
 │                       工具层 (Utils)                              │
@@ -98,6 +173,7 @@
 | | `Toast.tsx` | 全局 Toast 通知系统（发布-订阅模式） |
 | | `UndoPreviewButton.tsx` | 撤销/重做按钮，悬停显示状态预览 |
 | | `ShareButton.tsx` | Base64 编码数据分享到 URL |
+| | `AnimationExportButton.tsx` | 算法动画导出菜单（WebM/GIF/帧序列 ZIP），与 SortPage 集成 |
 | | `KeyboardHelp.tsx` | 快捷键帮助弹窗（路由感知动态显示） |
 | | `EmptyState.tsx` | 空状态引导覆盖层 |
 | | `NetworkStatus.tsx` | 网络在线/离线状态提示 |
@@ -131,6 +207,7 @@
 | **Utils** | `animationEngine.ts` | 动画时序控制、性能模式、缓动函数、FPS 监控、动画预设、delayStart 延迟启动 |
 | | `validate.ts` | 输入验证（XSS 净化、数值范围、导入数据校验） |
 | | `dataExport.ts` | JSON/CSV 序列化、版本校验、文件下载 |
+| | `animationExport.ts` | 算法动画 WebM/GIF/ZIP 导出；`isAnimationExportSupported()` 特征检测 + `loadSvgImage()` SVG→Image 注入 |
 | | `debounce.ts` | 防抖工具 |
 | | `timeslicing.ts` | 时间分片工具 |
 | | `themeColors.ts` | 颜色系统 + 渐变定义 + 暗色检测 + 4 套主题 |
@@ -316,7 +393,7 @@ const StackPage = lazy(() => import('./pages/StackPage'))
 - E2E 核心流程 — 中优先级
 
 **当前状态:**
-- 3480 个单元测试（203 个测试文件），100% 通过率，TypeScript strict 模式
+- 3506 个单元测试（204 个测试文件），100% 通过率，TypeScript strict 模式
 - 9 个 E2E 测试文件，282 用例，98.2% 通过率（Chromium + Firefox）
 - axe-core WCAG 2 AA 零 violations
 

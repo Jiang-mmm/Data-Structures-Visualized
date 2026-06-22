@@ -25,12 +25,12 @@ import { findIdByValue } from '../algorithms/unionFind'
 
 export default function UnionFindPage() {
   const { t } = useGlobalSettings()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const {
     data, logs, isAnimating, setIsAnimating,
     insert, remove, find, union, checkConnected, size, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useUnionFindState()
-  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  } = useUnionFindState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const [inputValueB, setInputValueB] = useState<string>('')
   const learningMode = useLearningMode('unionFind')
@@ -57,7 +57,7 @@ export default function UnionFindPage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleInsert = useCallback(async () => {
     if (isAnimating) return
@@ -97,7 +97,7 @@ export default function UnionFindPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, remove, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, inputValue, remove, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleFind = useCallback(async () => {
     if (isAnimating) return
@@ -117,7 +117,7 @@ export default function UnionFindPage() {
     } finally {
       setIsAnimating(false)
     }
-  }, [isAnimating, inputValue, find, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, inputValue, find, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleUnion = useCallback(async () => {
     if (isAnimating) return

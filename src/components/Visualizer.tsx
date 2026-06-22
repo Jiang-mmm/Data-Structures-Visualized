@@ -1,7 +1,8 @@
-import { useEffect, useState, useCallback, useRef, useMemo, memo, type ReactNode } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo, memo, ReactNode } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useColorTheme } from '../hooks/useColorTheme'
 import { useGlobalSettings } from '../hooks/useGlobalSettings'
+import { useGestures } from '../hooks/useGestures'
 import { measureRender } from '../utils/animationEngine'
 
 interface VisualizerProps {
@@ -14,7 +15,12 @@ interface VisualizerProps {
   ariaLabel?: string
   renderOptions?: Record<string, unknown>
   overlay?: ReactNode
+  /** 是否正在执行动画（动画中跳过 dimensions 触发的 re-render，避免打断 D3 过渡） */
   isAnimating?: boolean
+  /** 左滑回调（deltaX < 0 时触发） */
+  onSwipeLeft?: () => void
+  /** 右滑回调（deltaX > 0 时触发） */
+  onSwipeRight?: () => void
 }
 
 const ZOOM_MIN = 0.5
@@ -30,7 +36,7 @@ function loadNumber(key: string, fallback: number): number {
   try { const v = localStorage.getItem(key); return v !== null ? Number(v) : fallback } catch { return fallback }
 }
 
-function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel, renderOptions, overlay, isAnimating = false }: VisualizerProps) {
+function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, className = '', ariaLabel, renderOptions, overlay, isAnimating = false, onSwipeLeft, onSwipeRight }: VisualizerProps) {
   const { resolved: themeResolved } = useTheme()
   const { theme: colorTheme } = useColorTheme()
   const { t } = useGlobalSettings()
@@ -41,15 +47,24 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
   const pinchRef = useRef({ initialDistance: 0, initialZoom: 1 })
   const dragRef = useRef({ dragging: false, startX: 0, startY: 0, startPanX: 0, startPanY: 0 })
 
-  const prevIsAnimatingRef = useRef<boolean | undefined>(undefined)
-  const prevDimensionsRef = useRef<{ width: number; height: number } | undefined>(undefined)
-  const prevDataRef = useRef<unknown>(undefined)
-  const prevRenderFnRef = useRef<VisualizerProps['renderFn'] | undefined>(undefined)
-  const prevSvgRefRef = useRef<React.RefObject<SVGSVGElement | null> | undefined>(undefined)
-  const prevIsDarkRef = useRef<boolean | undefined>(undefined)
-  const prevColorThemeRef = useRef<string | undefined>(undefined)
-  const prevRenderOptionsRef = useRef<Record<string, unknown> | undefined>(undefined)
-  const pendingRenderRef = useRef(false)
+  // 缓存 dimensions 引用：在 render effect 中使用，避免 render 闭包捕获旧值
+  const dimensionsRef = useRef(dimensions)
+  useEffect(() => {
+    dimensionsRef.current = dimensions
+  }, [dimensions])
+
+  // 跟踪上次 render 的 data 引用，用于判断 effect 触发原因（data 变 vs dimensions 变）
+  const prevDataRef = useRef<unknown>(data)
+
+  // 移动端手势：左滑/右滑回调（不传 onPinch，缩放仍由上方原生 touch 处理）
+  const handleSwipeHorizontal = useCallback((deltaX: number) => {
+    if (deltaX < 0) {
+      onSwipeLeft?.()
+    } else {
+      onSwipeRight?.()
+    }
+  }, [onSwipeLeft, onSwipeRight])
+  useGestures(containerRef, { onSwipeHorizontal: handleSwipeHorizontal })
 
   const handleZoomIn = useCallback(() => {
     setZoom(z => {
@@ -142,65 +157,32 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
     }
   }, [containerRef, handleWheel, handleTouchStart, handleTouchMove])
 
+  // 渲染 effect：
+  // - data 变化时总是 render（即使动画进行中）
+  // - dimensions 变化时：非动画状态立即 render，动画状态跳过（待动画结束 effect 触发 render）
+  // - isAnimating 从 true→false 时强制 render
   useEffect(() => {
-    const wasAnimating = prevIsAnimatingRef.current
-    const prevDims = prevDimensionsRef.current
-    const dimsChanged = prevDims === undefined || dimensions.width !== prevDims.width || dimensions.height !== prevDims.height
-    const dataChanged = data !== prevDataRef.current
-    const renderFnChanged = renderFn !== prevRenderFnRef.current
-    const svgRefChanged = svgRef !== prevSvgRefRef.current
-    const isDarkChanged = isDark !== prevIsDarkRef.current
-    const colorThemeChanged = colorTheme !== prevColorThemeRef.current
-    const renderOptionsChanged = renderOptions !== prevRenderOptionsRef.current
-
-    prevIsAnimatingRef.current = isAnimating
-    prevDimensionsRef.current = dimensions
+    if (!svgRef?.current || !renderFn || !data) {
+      prevDataRef.current = data
+      return
+    }
+    const dataChanged = prevDataRef.current !== data
     prevDataRef.current = data
-    prevRenderFnRef.current = renderFn
-    prevSvgRefRef.current = svgRef
-    prevIsDarkRef.current = isDark
-    prevColorThemeRef.current = colorTheme
-    prevRenderOptionsRef.current = renderOptions
-
-    const doRender = () => {
-      if (!svgRef?.current || !renderFn || !data) return
-      try {
-        const d = data as Record<string, unknown>
-        const dataSize = Array.isArray(data) ? data.length : (d?.nodes as unknown[])?.length || (d?.length as number) || 1
-        const dims = { width: dimensions.width, height: dimensions.height }
-        const label = `${renderFn.name || 'Visualizer'}:render (${dataSize} items, ${dims.width}x${dims.height})`
-        measureRender(label, () => {
-          renderFn(svgRef.current!, data, { ...dims, isDark: isDark as boolean | undefined, ...renderOptions })
-        })
-      } catch (error) {
-        if (import.meta.env.DEV) {
-          console.error('Visualization render error:', error)
-        }
+    if (isAnimating && !dataChanged) return
+    try {
+      const d = data as Record<string, unknown>
+      const dataSize = Array.isArray(data) ? data.length : (d?.nodes as unknown[])?.length || (d?.length as number) || 1
+      const dims = dimensionsRef.current
+      const label = `${renderFn.name || 'Visualizer'}:render (${dataSize} items, ${dims.width}x${dims.height})`
+      measureRender(label, () => {
+        renderFn(svgRef.current!, data, { ...dims, isDark: isDark as boolean | undefined, ...renderOptions })
+      })
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('Visualization render error:', error)
       }
     }
-
-    if (isAnimating) {
-      if (dimsChanged) {
-        pendingRenderRef.current = true
-      }
-      if (dataChanged || renderFnChanged || svgRefChanged || isDarkChanged || colorThemeChanged || renderOptionsChanged) {
-        pendingRenderRef.current = false
-        doRender()
-      }
-      return
-    }
-
-    if (wasAnimating && pendingRenderRef.current) {
-      pendingRenderRef.current = false
-      doRender()
-      return
-    }
-
-    if (dimsChanged || dataChanged || renderFnChanged || svgRefChanged || isDarkChanged || colorThemeChanged || renderOptionsChanged) {
-      pendingRenderRef.current = false
-      doRender()
-    }
-  }, [data, renderFn, svgRef, isDark, colorTheme, renderOptions, dimensions.width, dimensions.height, isAnimating])
+  }, [data, renderFn, svgRef, isDark, colorTheme, renderOptions, dimensions, isAnimating])
 
   const viewBox = useMemo(() => {
     const w = Math.round(dimensions.width / zoom)
@@ -219,7 +201,6 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
       onMouseLeave={handleMouseUp}
       className={`
         flex-1 relative min-h-[200px] sm:min-h-[250px] lg:min-h-[350px] overflow-hidden bg-clip-padding
-        bg-surface/40 dark:bg-dark-surface/40 shadow-inner
         border-b-2 border-ink dark:border-dark-border cursor-grab select-none
         ${className}
         ${showGrid ? 'dot-grid dark:dot-grid' : ''}
@@ -236,14 +217,14 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
 
       {overlay}
 
-      <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-surface/90 dark:bg-dark-surface/90 backdrop-blur-sm border-2 border-ink/20 dark:border-dark-border/40 px-2 py-1 shadow-hard-sm dark:shadow-button-dark z-10 rounded-sm"
+      <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-white/90 dark:bg-slate/90 backdrop-blur-sm border-2 border-ink/20 dark:border-dark-border/40 px-2 py-1 shadow-soft z-10 rounded-sm"
         onMouseDown={(e) => e.stopPropagation()}
         onMouseMove={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
       >
         <button
           onClick={() => setShowGrid(g => { const next = !g; try { localStorage.setItem(GRID_KEY, String(next)) } catch {}; return next })}
-          className={`w-9 h-9 sm:w-7 sm:h-7 flex items-center justify-center transition-colors text-xs font-bold border-2 focus-ring
+          className={`focus-ring w-9 h-9 sm:w-7 sm:h-7 flex items-center justify-center transition-colors text-xs font-bold border-2
             ${showGrid
               ? 'bg-accent-blue/15 border-accent-blue/50 text-accent-blue'
               : 'bg-ink/5 dark:bg-dark-ink/5 border-ink/15 dark:border-dark-border/30 text-ink-light/50 dark:text-dark-ink-light/50 hover:border-ink/30 dark:hover:border-dark-border/50'
@@ -257,7 +238,7 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
           <button
             onClick={handleResetPan}
             aria-label={t('visualizer.center') || 'Center'}
-            className="w-9 h-9 sm:w-7 sm:h-7 flex items-center justify-center transition-colors text-xs font-bold border-2 bg-ink/5 dark:bg-dark-ink/5 border-ink/15 dark:border-dark-border/30 text-ink-light/50 dark:text-dark-ink-light/50 hover:border-ink/30 dark:hover:border-dark-border/50 focus-ring"
+            className="focus-ring w-9 h-9 sm:w-7 sm:h-7 flex items-center justify-center transition-colors text-xs font-bold border-2 bg-ink/5 dark:bg-dark-ink/5 border-ink/15 dark:border-dark-border/30 text-ink-light/50 dark:text-dark-ink-light/50 hover:border-ink/30 dark:hover:border-dark-border/50"
           >
             ⌖
           </button>
@@ -266,7 +247,7 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
           onClick={handleZoomOut}
           disabled={zoom <= ZOOM_MIN}
           aria-label={t('visualizer.zoomOut') || 'Zoom out'}
-          className="w-7 h-7 flex items-center justify-center text-ink-light dark:text-dark-ink-light hover:bg-ink/10 dark:hover:bg-dark-ink/10 disabled:bg-bg-disabled disabled:text-text-disabled disabled:border-border-disabled dark:disabled:bg-bg-disabled-dark dark:disabled:text-text-disabled-dark dark:disabled:border-border-disabled-dark disabled:cursor-not-allowed transition-colors text-sm font-bold touch-manipulation focus-ring"
+          className="focus-ring w-7 h-7 flex items-center justify-center text-ink-light dark:text-dark-ink-light hover:bg-ink/10 dark:hover:bg-dark-ink/10 disabled:opacity-30 transition-colors text-sm font-bold touch-manipulation"
         >
           −
         </button>
@@ -277,7 +258,7 @@ function Visualizer({ data, renderFn, svgRef, dimensions, containerRef, classNam
           onClick={handleZoomIn}
           disabled={zoom >= ZOOM_MAX}
           aria-label={t('visualizer.zoomIn') || 'Zoom in'}
-          className="w-7 h-7 flex items-center justify-center text-ink-light dark:text-dark-ink-light hover:bg-ink/10 dark:hover:bg-dark-ink/10 disabled:bg-bg-disabled disabled:text-text-disabled disabled:border-border-disabled dark:disabled:bg-bg-disabled-dark dark:disabled:text-text-disabled-dark dark:disabled:border-border-disabled-dark disabled:cursor-not-allowed transition-colors text-sm font-bold touch-manipulation focus-ring"
+          className="focus-ring w-7 h-7 flex items-center justify-center text-ink-light dark:text-dark-ink-light hover:bg-ink/10 dark:hover:bg-dark-ink/10 disabled:opacity-30 transition-colors text-sm font-bold touch-manipulation"
         >
           +
         </button>

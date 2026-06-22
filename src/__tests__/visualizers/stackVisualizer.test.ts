@@ -43,7 +43,7 @@ vi.mock('../../utils/animationEngine', () => ({
 }))
 vi.mock('../../i18n/useI18n', () => ({ tStatic: (key: string) => key }))
 
-const { renderStack, animatePush, animatePop, animatePeek, layout, RECT_WIDTH, RECT_HEIGHT, GAP } = await import('../../visualizers/stackVisualizer')
+const { renderStack, animatePush, animatePop, animatePeek, layout, RECT_WIDTH, MAX_RECT_WIDTH, RECT_HEIGHT, GAP } = await import('../../visualizers/stackVisualizer')
 
 describe('stackVisualizer', () => {
   let svg: SVGSVGElement
@@ -117,6 +117,17 @@ describe('stackVisualizer', () => {
         const { totalHeight } = layout(data, 400, 600)
         expect(totalHeight).toBe(n * (RECT_HEIGHT + GAP) - GAP)
       }
+    })
+
+    it('小屏下矩形宽度应自适应且不低于 40px', () => {
+      const { rectWidth } = layout([1, 2, 3], 200, 400)
+      expect(rectWidth).toBeLessThanOrEqual(MAX_RECT_WIDTH)
+      expect(rectWidth).toBeGreaterThanOrEqual(40)
+    })
+
+    it('大屏下矩形宽度应使用最大宽度', () => {
+      const { rectWidth } = layout([1, 2, 3], 800, 600)
+      expect(rectWidth).toBe(MAX_RECT_WIDTH)
     })
 
     it('栈底元素 Y (startY) 应使栈整体垂直居中', () => {

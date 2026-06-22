@@ -22,6 +22,7 @@ import { useSharedData } from '../hooks/useSharedData'
 
 export default function GraphPage() {
   const { t } = useGlobalSettings()
+  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
   const {
     nodes, links, logs, isAnimating, setIsAnimating,
     viewMode, setViewMode,
@@ -29,9 +30,7 @@ export default function GraphPage() {
     bfs, dfs, dijkstra, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
     getAdjacencyMatrix, getAdjacencyList,
-  } = useGraphState()
-
-  const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  } = useGraphState(abortAnimation)
   const [sourceInput, setSourceInput] = useState<string>('A')
   const [targetInput, setTargetInput] = useState<string>('B')
   const [weightInput, setWeightInput] = useState<string>('1')
@@ -48,8 +47,9 @@ export default function GraphPage() {
   }, !isAnimating)
 
   useEffect(() => {
-    return () => { clearGraphSimulation(svgRef.current) }
-  }, [])
+    const svg = svgRef.current
+    return () => { if (svg) clearGraphSimulation(svg) }
+  }, [svgRef])
 
   const handleGraphRender = useCallback((svg: SVGSVGElement, _data: unknown, dims: { width: number; height: number }) => {
     if (viewMode === 'force' && svg) {
@@ -84,7 +84,7 @@ export default function GraphPage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleBFS = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -135,7 +135,7 @@ export default function GraphPage() {
   const handleReset = useCallback((): void => {
     clearGraphSimulation(svgRef.current)
     reset()
-  }, [reset])
+  }, [reset, svgRef])
 
   const { ids, matrix } = getAdjacencyMatrix()
   const adjList = getAdjacencyList()

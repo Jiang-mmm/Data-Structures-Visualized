@@ -6,29 +6,30 @@ import { tStatic } from '../i18n/useI18n'
 
 const INITIAL_DATA: number[] = [8, 3, 12, 5, 9]
 const MAX_SIZE = 20
+const MODULE = () => tStatic('array.title')
 
-export function useArrayState() {
+export function useArrayState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo,
     getUndoPreview, getRedoPreview,
-  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'array' })
+  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'array', abortAnimation })
 
   const insert = useCallback((rawValue: string | number, index: number): boolean => {
     if (data.length >= MAX_SIZE) {
-      showToast({ type: 'error', message: tStatic('hooks.arrayFull').replace('{max}', String(MAX_SIZE)) })
+      showToast({ type: 'error', message: tStatic('hooks.arrayFull').replace('{max}', String(MAX_SIZE)), module: MODULE(), operation: tStatic('array.insert') })
       addLog('error', tStatic('hooks.arrayLogFull'))
       return false
     }
     if (index < 0 || index > data.length) {
-      showToast({ type: 'error', message: tStatic('errors.indexOutOfRange').replace('{range}', `0~${data.length}`) })
+      showToast({ type: 'error', message: tStatic('errors.indexOutOfRange').replace('{range}', `0~${data.length}`), module: MODULE(), operation: tStatic('array.insert') })
       addLog('error', `insert(${rawValue}, ${index}) - index out of range`)
       return false
     }
     const { valid, value: safeValue } = validateNumericInput(rawValue)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('hooks.inputInvalid') })
+      showToast({ type: 'error', message: tStatic('hooks.inputInvalid'), module: MODULE(), operation: tStatic('array.insert') })
       addLog('error', tStatic('hooks.arrayLogInsertError').replace('{value}', String(rawValue)))
       return false
     }
@@ -42,7 +43,7 @@ export function useArrayState() {
 
   const remove = useCallback((index: number): number | null => {
     if (index < 0 || index >= data.length) {
-      showToast({ type: 'error', message: tStatic('errors.indexOutOfRange').replace('{range}', `0~${data.length - 1}`) })
+      showToast({ type: 'error', message: tStatic('errors.indexOutOfRange').replace('{range}', `0~${data.length - 1}`), module: MODULE(), operation: tStatic('common.delete') })
       addLog('error', tStatic('hooks.arrayLogDeleteError').replace('{index}', String(index)))
       return null
     }

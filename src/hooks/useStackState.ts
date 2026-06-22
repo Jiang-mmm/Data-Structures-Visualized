@@ -6,22 +6,23 @@ import { tStatic } from '../i18n/useI18n'
 
 const INITIAL_DATA: number[] = [8, 17, 42]
 const MAX_SIZE = 10
+const MODULE = () => tStatic('stack.title')
 
-export function useStackState() {
+export function useStackState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'stack' })
+  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'stack', abortAnimation })
 
   const pushValue = useCallback((value: string | number): boolean => {
     if (data.length >= MAX_SIZE) {
-      showToast({ type: 'error', message: tStatic('hooks.stackFull').replace('{max}', String(MAX_SIZE)) })
+      showToast({ type: 'error', message: tStatic('hooks.stackFull').replace('{max}', String(MAX_SIZE)), module: MODULE(), operation: tStatic('stack.push') })
       return false
     }
     const { valid, value: safeValue } = validateNumericInput(value)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('hooks.inputInvalid') })
+      showToast({ type: 'error', message: tStatic('hooks.inputInvalid'), module: MODULE(), operation: tStatic('stack.push') })
       return false
     }
     const newData = [...data, safeValue]
@@ -33,7 +34,7 @@ export function useStackState() {
 
   const pop = useCallback((): number | null => {
     if (data.length === 0) {
-      showToast({ type: 'error', message: tStatic('hooks.stackEmpty') })
+      showToast({ type: 'error', message: tStatic('hooks.stackEmpty'), module: MODULE(), operation: tStatic('stack.pop') })
       return null
     }
     const newData = data.slice(0, -1)

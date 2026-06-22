@@ -6,6 +6,22 @@
  */
 
 /**
+ * 测验题目类型
+ */
+export interface QuizQuestion {
+  /** 题目唯一标识 */
+  id: string;
+  /** 题干 */
+  question: string;
+  /** 选项列表（2~4 个） */
+  options: string[];
+  /** 正确答案索引（0-based） */
+  correctIndex: number;
+  /** 答案解析 */
+  explanation: string;
+}
+
+/**
  * 单个学习步骤的配置
  * 用于描述算法执行过程中的一个步骤，包含代码片段和高亮信息
  */
@@ -45,4 +61,7 @@ export interface LearningModeConfig {
 
   /** 该算法的所有学习步骤，按教学顺序排列 */
   steps: LearningStep[];
+
+  /** 可选的测验题目列表，用于学习完成后检验掌握程度 */
+  quiz?: QuizQuestion[];
 }

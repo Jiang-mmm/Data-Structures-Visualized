@@ -5,18 +5,19 @@ import { validateNumericInput } from '../utils/validate'
 import { tStatic } from '../i18n/useI18n'
 
 const INITIAL_DATA: number[] = [10, 20, 30, 40]
+const MODULE = () => tStatic('linkedlist.title')
 
-export function useLinkedListState() {
+export function useLinkedListState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'linkedlist' })
+  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'linkedlist', abortAnimation })
 
   const insertHead = useCallback((value: string | number): void => {
     const { valid, value: safeValue } = validateNumericInput(value)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('hooks.inputInvalid') })
+      showToast({ type: 'error', message: tStatic('hooks.inputInvalid'), module: MODULE(), operation: tStatic('linkedlist.pushFront') })
       return
     }
     const newData = [safeValue, ...data]
@@ -29,7 +30,7 @@ export function useLinkedListState() {
   const insertTail = useCallback((value: string | number): void => {
     const { valid, value: safeValue } = validateNumericInput(value)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('hooks.inputInvalid') })
+      showToast({ type: 'error', message: tStatic('hooks.inputInvalid'), module: MODULE(), operation: tStatic('linkedlist.pushBack') })
       return
     }
     const newData = [...data, safeValue]
@@ -41,7 +42,7 @@ export function useLinkedListState() {
 
   const deleteAt = useCallback((index: number): number | null => {
     if (index < 0 || index >= data.length) {
-      showToast({ type: 'error', message: tStatic('errors.indexOutOfRange').replace('{range}', `0~${data.length - 1}`) })
+      showToast({ type: 'error', message: tStatic('errors.indexOutOfRange').replace('{range}', `0~${data.length - 1}`), module: MODULE(), operation: tStatic('common.delete') })
       addLog('error', tStatic('hooks.llLogDeleteError').replace('{index}', String(index)))
       return null
     }
@@ -69,13 +70,13 @@ export function useLinkedListState() {
 
   const insertAt = useCallback((index: number, value: string | number): boolean => {
     if (index < 0 || index > data.length) {
-      showToast({ type: 'error', message: tStatic('errors.indexOutOfRange').replace('{range}', `0~${data.length}`) })
+      showToast({ type: 'error', message: tStatic('errors.indexOutOfRange').replace('{range}', `0~${data.length}`), module: MODULE(), operation: tStatic('linkedlist.insertAt') })
       addLog('error', tStatic('hooks.llLogInsertAtError').replace('{index}', String(index)).replace('{value}', String(value)))
       return false
     }
     const { valid, value: safeValue } = validateNumericInput(value)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('hooks.inputInvalid') })
+      showToast({ type: 'error', message: tStatic('hooks.inputInvalid'), module: MODULE(), operation: tStatic('linkedlist.insertAt') })
       return false
     }
     const newData = [...data]

@@ -120,6 +120,7 @@ function flattenTrie(root: TrieNode): TrieFlattened {
 }
 
 const INITIAL_WORDS = ['cat', 'car', 'cart', 'dog', 'dot']
+const MODULE = () => tStatic('trie.title')
 
 function buildInitialTrie(): TrieNode {
   let root = createNode()
@@ -129,22 +130,22 @@ function buildInitialTrie(): TrieNode {
   return root
 }
 
-export function useTrieState() {
+export function useTrieState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<TrieNode>(buildInitialTrie(), { storageKey: 'trie' })
+  } = useDataStructureState<TrieNode>(buildInitialTrie(), { storageKey: 'trie', abortAnimation })
 
   const insert = useCallback((word: string): void => {
     if (!word || typeof word !== 'string' || word.trim().length === 0) {
-      showToast({ type: 'error', message: tStatic('errors.enterWord') })
+      showToast({ type: 'error', message: tStatic('errors.enterWord'), module: MODULE(), operation: tStatic('trie.insert') })
       addLog('error', tStatic('hooks.trieInputRequired'))
       return
     }
     const cleanWord = word.trim().toLowerCase().replace(/[^a-z]/g, '')
     if (cleanWord.length === 0) {
-      showToast({ type: 'error', message: tStatic('errors.trieLettersOnly') })
+      showToast({ type: 'error', message: tStatic('errors.trieLettersOnly'), module: MODULE(), operation: tStatic('trie.insert') })
       addLog('error', tStatic('hooks.trieLogInsertError').replace('{word}', word))
       return
     }
@@ -157,7 +158,7 @@ export function useTrieState() {
 
   const remove = useCallback((word: string): void => {
     if (!word || typeof word !== 'string') {
-      showToast({ type: 'error', message: tStatic('errors.enterWord') })
+      showToast({ type: 'error', message: tStatic('errors.enterWord'), module: MODULE(), operation: tStatic('trie.delete') })
       return
     }
     const cleanWord = word.trim().toLowerCase()

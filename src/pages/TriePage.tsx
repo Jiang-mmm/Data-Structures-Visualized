@@ -23,8 +23,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function TriePage() {
   const { t } = useGlobalSettings()
-  const { logs, isAnimating, setIsAnimating, insert, remove, search, searchPrefix, getFlattened, wordCount, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useTrieState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { logs, isAnimating, setIsAnimating, insert, remove, search, searchPrefix, getFlattened, wordCount, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useTrieState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('trie')
   useSharedData({ dataType: 'trie', loadData, validator: (d): d is unknown => !!(d && typeof d === 'object' && !Array.isArray(d)) })
@@ -46,7 +46,7 @@ export default function TriePage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleInsert = useCallback(async () => {
     if (isAnimating) return
@@ -91,7 +91,7 @@ export default function TriePage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, remove, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, inputValue, remove, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handleSearch = useCallback(async () => {
     if (isAnimating) return
@@ -110,7 +110,7 @@ export default function TriePage() {
     } finally {
       setIsAnimating(false)
     }
-  }, [isAnimating, inputValue, search, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, inputValue, search, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handlePrefixSearch = useCallback(async () => {
     if (isAnimating) return
@@ -134,7 +134,7 @@ export default function TriePage() {
     } finally {
       setIsAnimating(false)
     }
-  }, [isAnimating, inputValue, searchPrefix, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, inputValue, searchPrefix, setIsAnimating, getAnimationContext, svgRef, t])
 
   const flatData = getFlattened()
   const count = wordCount()

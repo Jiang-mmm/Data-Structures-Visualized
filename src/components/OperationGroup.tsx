@@ -23,11 +23,10 @@ function OperationGroup({
   const [maxHeight, setMaxHeight] = useState(defaultOpen ? 'none' : '0px')
   const [shouldRender, setShouldRender] = useState(defaultOpen)
 
-  useEffect(() => {
-    if (isOpen) {
-      setShouldRender(true)
-    }
-  }, [isOpen])
+  // 派生 state：当 isOpen 变为 true 时确保 shouldRender 也是 true（展开时需先挂载再播放动画）
+  if (isOpen && !shouldRender) {
+    setShouldRender(true)
+  }
 
   useEffect(() => {
     if (!contentRef.current) return

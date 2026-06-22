@@ -21,17 +21,19 @@ export type {
   Color,
 } from '../algorithms/redBlackTree'
 
-export function useRedBlackTreeState() {
+const MODULE = () => tStatic('redBlackTree.title')
+
+export function useRedBlackTreeState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<RedBlackNode | null>(buildInitialRedBlackTree(), { storageKey: 'red-black-tree' })
+  } = useDataStructureState<RedBlackNode | null>(buildInitialRedBlackTree(), { storageKey: 'red-black-tree', abortAnimation })
 
   const insert = useCallback((value: string | number): void => {
     const { valid, value: safeValue } = validateNumericInput(value)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('hooks.inputInvalid') })
+      showToast({ type: 'error', message: tStatic('hooks.inputInvalid'), module: MODULE(), operation: tStatic('redBlackTree.insert') })
       return
     }
     const newData = insertRedBlack(data, safeValue)

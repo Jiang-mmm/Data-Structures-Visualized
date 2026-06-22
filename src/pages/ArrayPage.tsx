@@ -7,6 +7,7 @@ import ShareButton from '../components/ShareButton'
 import Visualizer from '../components/Visualizer'
 import InfoPanel from '../components/InfoPanel'
 import EmptyState from '../components/EmptyState'
+import PerformanceIndicator from '../components/PerformanceIndicator'
 import { renderArray, animateInsert, animateDelete, animateSearch, animateSearchAll, animateBinarySearch } from '../visualizers/arrayVisualizer'
 import { useArrayState } from '../hooks/useArrayState'
 import { useVisualizer } from '../hooks/useVisualizer'
@@ -21,13 +22,14 @@ import ColorLegend from '../components/ColorLegend'
 import StatsOverlay from '../components/StatsOverlay'
 import ContentTier from '../components/ContentTier'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { learningConfigs } from '../configs/learning'
 import { useSharedData } from '../hooks/useSharedData'
 import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function ArrayPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, insert, remove, search, searchAll, binarySearch, randomize, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useArrayState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, insert, remove, search, searchAll, binarySearch, randomize, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview } = useArrayState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const [inputIndex, setInputIndex] = useState<string>('')
   const learningMode = useLearningMode('array')
@@ -61,7 +63,7 @@ export default function ArrayPage() {
       return null
     }
     return index
-  }, [inputIndex, data.length])
+  }, [inputIndex, data.length, t])
 
   const handleStop = useCallback((): void => {
     abortAnimation()
@@ -73,7 +75,7 @@ export default function ArrayPage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handleInsert = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -96,7 +98,7 @@ export default function ArrayPage() {
     }
     setInputValue('')
     setInputIndex('')
-  }, [isAnimating, validateInputs, validateIndexInput, inputValue, setIsAnimating, getAnimationContext, svgRef, data, dimensions, insert, setInputValue, setInputIndex])
+  }, [isAnimating, validateInputs, validateIndexInput, inputValue, setIsAnimating, getAnimationContext, svgRef, data, dimensions, insert, setInputValue, setInputIndex, t])
 
   const handleDelete = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -114,7 +116,7 @@ export default function ArrayPage() {
       setIsAnimating(false)
     }
     setInputIndex('')
-  }, [isAnimating, validateIndexInput, setIsAnimating, getAnimationContext, svgRef, data, dimensions, remove, setInputIndex])
+  }, [isAnimating, validateIndexInput, setIsAnimating, getAnimationContext, svgRef, data, dimensions, remove, setInputIndex, t])
 
   const handleSearch = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -132,7 +134,7 @@ export default function ArrayPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, search, svgRef, data, dimensions, setInputValue])
+  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, search, svgRef, data, dimensions, setInputValue, t])
 
   const handleSearchAll = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -150,7 +152,7 @@ export default function ArrayPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, searchAll, svgRef, data, dimensions, setInputValue])
+  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, searchAll, svgRef, data, dimensions, setInputValue, t])
 
   const handleBinarySearch = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -173,7 +175,7 @@ export default function ArrayPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, binarySearch, svgRef, data, dimensions, setInputValue])
+  }, [isAnimating, validateInputs, inputValue, setIsAnimating, getAnimationContext, binarySearch, svgRef, data, dimensions, setInputValue, t])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
@@ -195,9 +197,9 @@ export default function ArrayPage() {
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
         <OperationInput type="number" placeholder={t('array.indexPlaceholder')} value={inputIndex} onChange={setInputIndex} className="w-20" />
-        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating} isBusy={isAnimating}>{t('array.insert')}</OperationButton>
-        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating} isBusy={isAnimating}>{t('common.delete')}</OperationButton>
-        <OperationButton variant="warning" onClick={handleSearch} disabled={isAnimating} isBusy={isAnimating} popAnimation>{t('common.search')}</OperationButton>
+        <OperationButton variant="primary" onClick={handleInsert} disabled={isAnimating} isBusy={isAnimating} disabledReason={t('page.animating')}>{t('array.insert')}</OperationButton>
+        <OperationButton variant="danger" onClick={handleDelete} disabled={isAnimating} isBusy={isAnimating} disabledReason={t('page.animating')}>{t('common.delete')}</OperationButton>
+        <OperationButton variant="warning" onClick={handleSearch} disabled={isAnimating} isBusy={isAnimating} popAnimation disabledReason={t('page.animating')}>{t('common.search')}</OperationButton>
         <OperationButton variant="warning" onClick={handleSearchAll} disabled={isAnimating} isBusy={isAnimating}>{t('array.searchAll')}</OperationButton>
         <OperationButton variant="warning" onClick={handleBinarySearch} disabled={isAnimating} isBusy={isAnimating}>{t('array.binarySearch')}</OperationButton>
         {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}
@@ -229,6 +231,9 @@ export default function ArrayPage() {
       <ContentTier structureKey="array" />
       <div className="flex-1 flex flex-col lg:flex-row min-h-0">
         <div className="relative flex flex-col flex-1 min-h-0">
+          <div className="absolute top-2 right-2 z-20">
+            <PerformanceIndicator visualizerKey="array" dataLength={data.length} />
+          </div>
           <Visualizer data={data} renderFn={renderArray as any} svgRef={svgRef} dimensions={dimensions} containerRef={containerRef} isAnimating={isAnimating} ariaLabel={t("visualizer.arrayLabel")} overlay={<StatsOverlay stats={[{ label: 'SIZE', value: `${data.length} / 20` }]} />} />
           {data.length === 0 && (
             <EmptyState icon="▦" titleKey="emptyState.emptyArray" descriptionKey="emptyState.emptyArrayDesc" onFill={randomize} />
@@ -239,6 +244,8 @@ export default function ArrayPage() {
           learningMode={learningMode}
           isAnimating={isAnimating}
           onJumpToStep={handleJumpToStep}
+          algorithmKey="array"
+          quizQuestions={learningConfigs.array.quiz}
         />
       </div>
     </div>

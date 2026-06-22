@@ -186,22 +186,17 @@ describe('animationEngine.ts', () => {
       const nowSpy = vi.spyOn(performance, 'now').mockImplementation(() => time)
 
       if (measureFPSFn) {
-        time = 1000
-        measureFPSFn()
-        expect(getCurrentFPS()).toBe(1)
-        expect(isFPSDegraded()).toBe(false)
-
-        time = 2000
-        measureFPSFn()
-        expect(isFPSDegraded()).toBe(false)
-
-        time = 3000
-        measureFPSFn()
-        expect(isFPSDegraded()).toBe(false)
-
-        time = 4000
-        measureFPSFn()
-        expect(isFPSDegraded()).toBe(true)
+        // 90ms frames => ~11 FPS, below 20 but above 100ms stall threshold
+        for (let frame = 1; frame <= 50; frame++) {
+          time = frame * 90
+          measureFPSFn()
+          if (time === 900 || time === 1800 || time === 2700) {
+            expect(isFPSDegraded()).toBe(false)
+          }
+          if (time === 3900) {
+            expect(isFPSDegraded()).toBe(true)
+          }
+        }
 
         expect(duration(500)).toBe(0)
 
@@ -227,13 +222,19 @@ describe('animationEngine.ts', () => {
       const nowSpy = vi.spyOn(performance, 'now').mockImplementation(() => time)
 
       if (measureFPSFn) {
+        // First second: 90ms frames => ~11 FPS
+        for (let frame = 1; frame <= 10; frame++) {
+          time = frame * 90
+          measureFPSFn()
+        }
         time = 1000
         measureFPSFn()
-        expect(getCurrentFPS()).toBe(1)
+        expect(getCurrentFPS()).toBe(11)
         expect(isFPSDegraded()).toBe(false)
 
-        time = 1999
-        for (let i = 0; i < 29; i++) {
+        // Second second: 33ms frames => ~30 FPS
+        for (let frame = 1; frame <= 29; frame++) {
+          time = 1000 + frame * 33
           measureFPSFn()
         }
         time = 2000
@@ -241,15 +242,44 @@ describe('animationEngine.ts', () => {
         expect(getCurrentFPS()).toBe(30)
         expect(isFPSDegraded()).toBe(false)
 
+        // Third second: 90ms frames => ~11 FPS, timer resets
+        for (let frame = 1; frame <= 8; frame++) {
+          time = 1990 + frame * 90
+          measureFPSFn()
+        }
+        // 插入过渡帧避免 frameTime > 100ms 触发 stall 降级
+        time = 2810
+        measureFPSFn()
+        time = 2910
+        measureFPSFn()
         time = 3000
         measureFPSFn()
-        expect(getCurrentFPS()).toBe(1)
+        expect(getCurrentFPS()).toBe(11)
+        expect(isFPSDegraded()).toBe(false)
+      }
+
+      nowSpy.mockRestore()
+      rAFSpy.mockRestore()
+    })
+
+    it('should degrade immediately on frame stall > 100ms', () => {
+      const rAFSpy = vi.spyOn(globalThis, 'requestAnimationFrame')
+      startFPSMonitoring()
+
+      const measureFPSFn = rAFSpy.mock.calls[0]?.[0] as () => void
+      expect(measureFPSFn).toBeDefined()
+
+      let time = 0
+      const nowSpy = vi.spyOn(performance, 'now').mockImplementation(() => time)
+
+      if (measureFPSFn) {
+        time = 16
+        measureFPSFn()
         expect(isFPSDegraded()).toBe(false)
 
-        time = 4000
+        time = 150
         measureFPSFn()
-        expect(getCurrentFPS()).toBe(1)
-        expect(isFPSDegraded()).toBe(false)
+        expect(isFPSDegraded()).toBe(true)
       }
 
       nowSpy.mockRestore()
@@ -629,18 +659,28 @@ describe('animationEngine.ts', () => {
       await expect(promise).resolves.toBeUndefined()
     })
 
-    it('should patch animation abort to clear timeout', () => {
+    it('should keep stable abort and clear timeout on abort', () => {
       const anim = createAnimation()
       const originalAbort = anim.abort
 
       wait(5000, anim)
 
-      expect(anim.abort).not.toBe(originalAbort)
+      expect(anim.abort).toBe(originalAbort)
 
       const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout')
       anim.abort()
       expect(clearTimeoutSpy).toHaveBeenCalled()
       clearTimeoutSpy.mockRestore()
+    })
+
+    it('should resolve pending waits when animation is aborted', async () => {
+      const anim = createAnimation()
+      let resolved = false
+      wait(5000, anim).then(() => { resolved = true })
+
+      anim.abort()
+      await vi.advanceTimersByTimeAsync(0)
+      expect(resolved).toBe(true)
     })
 
     it('should handle wait without animation', async () => {

@@ -26,8 +26,8 @@ import { usePageTracker } from '../hooks/usePageTracker'
 
 export default function StackPage() {
   const { t } = useGlobalSettings()
-  const { data, logs, isAnimating, setIsAnimating, push, pop, peek, clear, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, size } = useStackState()
   const { containerRef, svgRef, dimensions, getAnimationContext, abortAnimation } = useVisualizer()
+  const { data, logs, isAnimating, setIsAnimating, push, pop, peek, clear, reset, loadData, undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview, size } = useStackState(abortAnimation)
   const [inputValue, setInputValue] = useState<string>('')
   const learningMode = useLearningMode('stack')
   useSharedData({ dataType: 'stack', loadData, validator: Array.isArray })
@@ -49,7 +49,7 @@ export default function StackPage() {
     if (idx >= 0) {
       learningMode.goToStep(idx)
     }
-  }, [learningMode.steps, learningMode.goToStep])
+  }, [learningMode])
 
   const handlePush = useCallback(async (): Promise<void> => {
     if (isAnimating) return
@@ -68,7 +68,7 @@ export default function StackPage() {
       setIsAnimating(false)
     }
     setInputValue('')
-  }, [isAnimating, inputValue, data, dimensions, push, setIsAnimating, getAnimationContext, svgRef, setInputValue])
+  }, [isAnimating, inputValue, data, dimensions, push, setIsAnimating, getAnimationContext, svgRef, setInputValue, t])
 
   const handlePop = useCallback(async (): Promise<void> => {
     if (isAnimating || data.length === 0) return
@@ -77,7 +77,7 @@ export default function StackPage() {
     try { if (svgRef.current) await animatePop(svgRef.current, data, dimensions, anim); pop() }
     catch (error) { handleAnimationError(error, t('stack.pop')) }
     finally { setIsAnimating(false) }
-  }, [isAnimating, data, dimensions, pop, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, data, dimensions, pop, setIsAnimating, getAnimationContext, svgRef, t])
 
   const handlePeek = useCallback(async (): Promise<void> => {
     if (isAnimating || data.length === 0) return
@@ -86,7 +86,7 @@ export default function StackPage() {
     try { if (svgRef.current) await animatePeek(svgRef.current, data, dimensions, anim); peek() }
     catch (error) { handleAnimationError(error, t('stack.peek')) }
     finally { setIsAnimating(false) }
-  }, [isAnimating, data, dimensions, peek, setIsAnimating, getAnimationContext, svgRef])
+  }, [isAnimating, data, dimensions, peek, setIsAnimating, getAnimationContext, svgRef, t])
 
   return (
     <div className="flex flex-col min-h-dvh bg-paper dark:bg-dark-paper grain">
@@ -106,8 +106,8 @@ export default function StackPage() {
         <SpeedControl />
         <OperationLabel>{t('page.operations')}</OperationLabel>
         <OperationInput type="number" placeholder={t('array.valuePlaceholder')} value={inputValue} onChange={setInputValue} />
-        <OperationButton variant="primary" onClick={handlePush} disabled={isAnimating} isBusy={isAnimating}>{'+ ' + t('stack.push')}</OperationButton>
-        <OperationButton variant="danger" onClick={handlePop} disabled={isAnimating || data.length === 0} isBusy={isAnimating}>{'- ' + t('stack.pop')}</OperationButton>
+        <OperationButton variant="primary" onClick={handlePush} disabled={isAnimating} isBusy={isAnimating} disabledReason={t('page.animating')}>{'+ ' + t('stack.push')}</OperationButton>
+        <OperationButton variant="danger" onClick={handlePop} disabled={isAnimating || data.length === 0} isBusy={isAnimating} disabledReason={t('page.animating')}>{'- ' + t('stack.pop')}</OperationButton>
         <OperationButton variant="secondary" onClick={handlePeek} disabled={isAnimating || data.length === 0} isBusy={isAnimating} popAnimation>{t('stack.peek')}</OperationButton>
         <OperationButton variant="secondary" onClick={() => { if (window.confirm(t('common.confirmClear'))) clear() }} disabled={data.length === 0}>{t('common.clear')}</OperationButton>
         {isAnimating && <OperationButton variant="secondary" onClick={handleStop}>{t('common.stop')}</OperationButton>}

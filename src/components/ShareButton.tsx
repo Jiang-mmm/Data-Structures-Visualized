@@ -46,7 +46,7 @@ function ShareButton({ data, dataType, disabled = false }: ShareButtonProps) {
       if (timerRef.current) clearTimeout(timerRef.current)
       timerRef.current = setTimeout(() => setShowTooltip(false), 5000)
     }
-  }, [data, dataType, disabled])
+  }, [data, dataType, disabled, t])
 
   return (
     <div className="relative inline-block">

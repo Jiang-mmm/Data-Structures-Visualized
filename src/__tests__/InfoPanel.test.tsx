@@ -55,10 +55,10 @@ describe('InfoPanel', () => {
 
     it('默认应激活日志 tab', () => {
       renderInfoPanel()
-      // 找到 aria-pressed=true 的日志 tab 按钮
+      // 找到 aria-selected=true 的日志 tab 按钮
       const logTabs = screen.getAllByText('infoPanel.tabLog')
-      const pressedLogTab = logTabs.find(el => el.closest('button')?.getAttribute('aria-pressed') === 'true')
-      expect(pressedLogTab).toBeDefined()
+      const selectedLogTab = logTabs.find(el => el.closest('button')?.getAttribute('aria-selected') === 'true')
+      expect(selectedLogTab).toBeDefined()
     })
 
     it('点击学习模式 tab 应切换', () => {
@@ -66,9 +66,9 @@ describe('InfoPanel', () => {
       // 点击第一个学习模式 tab（桌面端）
       const learningTabs = screen.getAllByText('infoPanel.tabLearning')
       fireEvent.click(learningTabs[0])
-      const pressedLearningTabs = screen.getAllByText('infoPanel.tabLearning')
-        .filter(el => el.closest('button')?.getAttribute('aria-pressed') === 'true')
-      expect(pressedLearningTabs.length).toBeGreaterThanOrEqual(1)
+      const selectedLearningTabs = screen.getAllByText('infoPanel.tabLearning')
+        .filter(el => el.closest('button')?.getAttribute('aria-selected') === 'true')
+      expect(selectedLearningTabs.length).toBeGreaterThanOrEqual(1)
     })
   })
 

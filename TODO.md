@@ -1,9 +1,219 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** v12.0
-> **更新日期:** 2026-06-20
-> **状态:** v12.0 迭代（跳表 / 并查集 / 红黑树 / 全局搜索 / D1 新增 4 图算法 / D2 新增 4 排序算法）已完成；v12.x 后续阶段（B 树、线段树、测验系统等）待开始
-> **详细迭代计划:** docs/iteration-plan-v10.md（最新），v10/v11/v12 迭代记录见 WORKLOG.md
+> **版本:** v16.0.0 GA
+> **更新日期:** 2026-06-22
+> **状态:** v16.0.0 GA 完成（ENG-1 E2E 迁移 + ENG-2 覆盖率 >80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善）；下一步进入 v16 设计统一化或 v17 规划
+> **v15 GA:** 已完成（2026-06-22）— 体验打磨（E1 PWA + E2 大数据 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞）
+> **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1/G1/G2/G3/F2）
+> **详细迭代计划:** v11 计划已归档至 [docs/archive/iteration-plan-v11.md](./docs/archive/iteration-plan-v11.md)；v12/v13/v14/v15 计划见 [docs/superpowers/plans/](./docs/superpowers/plans/)，v10/v11/v12 迭代记录见 WORKLOG.md
+> **v13 体检报告:** [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md)
+> **Path 3 实施真源文档:** [docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md](./docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md)
+> **长线路线图:** [docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md)
+
+---
+
+## 正在进行的规则同步（2026-06-22）
+
+| 任务 | 状态 | 说明 |
+|------|------|------|
+| **`design-md/` 默认禁读** | ✅ 已落地 | `.trae/rules/project_rules.md` §16.1；`CLAUDE.md` / `AGENTS.md` / `PROJECT_STATUS.md` 已引用 |
+| **`DESIGN.md` 设计真源约束** | ✅ 已落地 | `.trae/rules/project_rules.md` §16.2；冲突实现视为越权 |
+| **任务收尾强制文档同步** | ✅ 已落地 | `.trae/rules/project_rules.md` §16.3；本 TODO.md 即按该规则同步更新 |
+
+**后续执行要求**：每次任务完成前必须完成相关文档同步；用户豁免需标注 `DOCS: SKIPPED (user override)`。
+
+---
+
+## i18n 完善 / 算法术语表（2026-06-22 完成）
+
+| 维度 | 内容 |
+|------|------|
+| **状态** | ✅ 完成 |
+| **新增 i18n 命名空间** | `complexity`（13 键）+ `algorithms`（16 数据结构 × 7 字段 = 112 键，type 定义 `AlgorithmGlossaryEntry`） |
+| **新增 Hook** | `src/hooks/useAlgorithmGlossary.ts`（16 项术语条目） |
+| **新增组件** | `src/components/AlgorithmGlossaryCard.tsx`（默认折叠避免 DOM 过大） |
+| **集成页面** | Home（在 LearningPath 之后） |
+| **测试** | 20 个（i18n 完整性 8 + hook 5 + component 6 + Home 集成 1） |
+| **范围外** | 全项目 100+ 硬编码中文字符串（多为 `hooks.*` 内部日志 + `learningConfig.step.*` 教学文案，不属于用户可见 UI 字符串） |
+| **验证** | lint 0/0 / 2699 测试全绿 / build 通过 / bundle check 通过 |
+| **实施真源** | [docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md](./docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md) |
+
+---
+
+## 动画导出功能（2026-06-22 完成，SortPage 已集成）
+
+| 维度 | 内容 |
+|------|------|
+| **状态** | ✅ 完成（SortPage 试点） |
+| **新增工具** | `src/utils/animationExport.ts`（WebM / GIF / ZIP 三种导出） |
+| **新增组件** | `src/components/AnimationExportButton.tsx`（下拉式菜单） |
+| **新增类型** | `src/types/gifenc.d.ts`（gifenc 1.0.3） |
+| **新增依赖** | gifenc@1.0.3 + jszip@3.10.1（合计 < 35KB gzipped） |
+| **i18n** | `exportAnimation` 命名空间（10 键，中英双文） |
+| **测试** | 21 个（12 utils + 9 component） |
+| **集成页面** | SortPage（其余 16 个页面可后续独立集成） |
+| **验证** | lint 0/0 / 2679 测试全绿 / build 通过 / bundle check 通过 |
+
+---
+
+## v16 设计统一化（2026-06-22 完成）
+
+| 维度 | 内容 |
+|------|------|
+| **状态** | ✅ M1-M6 全部完成 |
+| **Phase A 基础设施** | 新建 `DESIGN.md`（7 章设计真源：哲学/色彩/字体/间距阴影/动效/组件/可视化）；`src/index.css` 新增 v16 token 体系（surface ladder / keycap / command-palette / viz palette）；`.gitignore` 保护 `design-md/` |
+| **Phase B 6 组件** | 已有 6 组件（Button/Card/Sidebar/Toast/GlobalSearch/KeyboardHelp）已 v16 对齐；Input/Modal 为 inline 模式无需独立组件 |
+| **Phase C 命令面板** | `GlobalSearch` + `KeyboardHelp` 容器改用 `command-palette` class；3 个 `<kbd>` 元素改用 v16 `kbd` utility |
+| **Phase D 17 页面** | 18 个 `*Page.tsx` 全部使用 `<PageHeader>`；layoutConsistency 测试覆盖（ArrayPage 已验证 min-h-dvh / flex / grain / page-header 完整结构） |
+| **Phase E 17 visualizer** | 全部通过 `getColors()` 接入深色模式（`themeColors.ts` 已维护 light/dark 双调色板） |
+| **Phase F 验收** | 测试 2699/2699 通过；ESLint 0 errors；`npm run build` 通过；Bundle check 通过；typecheck 4 个错误为 v16.0.0 GA 既有 `animationExport.ts` 问题（commit `8a81ff8`，与本次设计统一化正交） |
+| **构建回归修复** | 修复 Phase A 引入的 `@theme` 块内嵌 `html.dark &` 选择器违反 Tailwind v4 约束 — 移出 `@theme` 块并改为顶层 `html.dark {}` |
+| **影响范围** | 4 个核心文件（`index.css` / `GlobalSearch.tsx` / `KeyboardHelp.tsx` / `.gitignore`）+ 6 个文档同步；0 个组件被破坏性重写 |
+| **实施真源** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](./docs/superpowers/plans/2026-06-22-design-unification-v16.md) |
+
+---
+
+## v15 体验打磨（已完成）
+
+| 阶段 | 主题 | 状态 | 说明 |
+|------|------|------|------|
+| **E1** | PWA 离线 | ✅ 已完成 | ReloadPrompt + Google Fonts caching（commit `ba39cd7`） |
+| **E2** | 大数据可视化 | ✅ 已完成 | PerformanceIndicator + 简化渲染（commit `d7952b7`） |
+| **E3** | 移动端手势 | ✅ 已完成 | useGestures hook（5 种手势，commit `be4e59d`） |
+| **E4** | KeyboardHelp 模糊搜索 | ✅ 已完成 | fuzzyMatchAny 跨页面搜索（commit `66d282c`） |
+| **U2** | 响应式操作面板 | ✅ 已完成 | 移动端横向滚动 + collapsibleOnMobile（commit `594cd9f`） |
+| **U3** | 跨页面布局一致性 | ✅ 已完成 | GraphAlgorithmPage 修复 + 布局测试（commit `11b298b`） |
+| **U4** | SVG 图标系统 | ✅ 已完成 | Icon 组件 + 6 文件 emoji 替换（commit `6518050`） |
+| **U5** | 条件禁用按钮原因 | ✅ 已完成 | disabledReason + aria-describedby（commit `1146d47`） |
+| **ISSUE-007** | 排序撤销 | ✅ 已完成 | undoBlock 机制（commit `5355ea2`） |
+
+### v15.0.0 GA 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2590 passed（137 文件） |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+
+---
+
+## 下一阶段
+
+v16 设计统一化（2026-06-22 完成 — M0-M6 全部达成；详见上文“v16 设计统一化”段）。  
+下一步方向按需启动：v17 规划（待用户拍板），或基于 v16 基线做点状优化（按 v16.0.0 GA 收尾后的 issue triage 决定）。
+
+> 按 `§16.1` 规则，`design-md/` 默认禁读；按 `§16.2` 规则，`DESIGN.md` 是设计真源（已存在，所有视觉决策必须以其为依据）。
+
+---
+
+## v16+ 工程化（已完成）
+
+详见 [长线路图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第四阶段。
+
+| 阶段 | 主题 | 状态 | 关键产出 | Commit |
+|------|------|------|----------|--------|
+| **ENG-1** | Playwright 迁移 | ✅ 已完成 | 7 个 `test-*.js` → `*.spec.ts`；`scripts/run-e2e.mjs` | `23913a7` |
+| **ENG-2** | 覆盖率 >80% | ✅ 已完成 | statements 77.92% → **80.05%**（+62 tests） | `7da029b` |
+| **ENG-3** | lint 警告清理 | ✅ 已完成 | 67 → 0（react-hooks 补全 + 6 个 pre-existing 测试修复） | `6d32435` / `0fb5a2f` |
+| **ENH-1** | 动画导出 | ✅ 已完成 | WebM/GIF/帧序列 ZIP；SortPage 集成；`gifenc` + `jszip` | `8a81ff8` |
+| **ENH-2** | i18n 完善 | ✅ 已完成 | 125 键术语表；`AlgorithmGlossaryCard` | `99b5b0e` |
+
+### v16.0.0 GA 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | **2699 passed**（147 文件） |
+| ESLint | **0 errors / 0 warnings** |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功；bundle 全部 < budget（index 77.93KB / vendor-react 231.35KB / vendor-d3 52.54KB） |
+| 测试覆盖率 | statements **80.05%** / lines 84.02% / branches 67.23% / functions 81.03% |
+| E2E | core/edge/v5-features 三组 spec 全绿（chromium + firefox） |
+
+---
+
+## v14 内容扩张（已完成）
+
+| 阶段 | 主题 | 状态 | 说明 |
+|------|------|------|------|
+| **D1** | 图算法补齐（4 个） | ✅ 已完成 | Bellman-Ford / Floyd-Warshall / Prim / Kruskal 测试补齐（46 tests，commit `d63a07c`） |
+| **G1** | B-Tree | ✅ 已完成 | 多路搜索树完整实现（97 tests，commit `3d0acca`） |
+| **G2** | Segment Tree | ✅ 已完成 | 区间查询 + 更新完整实现（104 tests，commit `cc6905f`） |
+| **G3** | doublyLinkedList 模式 | ✅ 已完成 | LinkedListPage 双向模式测试补齐（4 tests，commit `0a64d91`） |
+| **F2** | 文档完善 | ✅ 已完成 | 算法接入指南（commit `10c1ad5`） |
+
+### v14.0.0 GA 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2526 passed（132 文件） |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| 数据结构总数 | 17（原 15 + B-Tree + Segment Tree） |
+| 学习配置总数 | 40（原 38 + bTree + segmentTree） |
+
+---
+
+## 下一阶段：v15 体验打磨
+
+详见 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第三阶段。
+
+| 阶段 | 主题 | 说明 |
+|------|------|------|
+| **E1** | PWA 离线 | Service Worker + Web App Manifest |
+| **E2** | 大数据可视化 | 虚拟化 + 增量渲染 |
+| **E3** | 移动端手势 | 滑动、双指缩放、长按 |
+| **E4** | KeyboardHelp 模糊搜索 | 复用 fuzzySearch |
+| **U2** | 响应式操作面板 | 移动端折叠 |
+| **U3** | 跨页面布局一致性 | 统一 PageHeader 间距 |
+| **U4** | SVG 图标系统 | 替换 emoji |
+| **U5** | 条件禁用按钮原因 | aria-describedby + tooltip |
+| **ISSUE-007** | 排序撤销 | undoBlock 优化 |
+
+---
+
+## Path 3 — 学习体验增强（v13.0.0-rc2 → GA，已完成）
+
+| 阶段 | 主题 | 状态 | 说明 |
+|------|------|------|------|
+| **H2** | 全局搜索增强（fuzzy 匹配、搜索历史、复杂度过滤、分类展示） | ✅ 已完成 | fuzzySearch / useSearchHistory / searchIndex 扩展 / GlobalSearch UI 与测试 |
+| **H3** | SortComparePage 学习模式 | ✅ 已完成 | sortCompare.config.ts / 页面集成 / 4 个测试（commit `2f56b83`） |
+| **H1** | 测验系统 | ✅ 已完成 | QuizQuestion 类型 / useQuizProgress Hook / QuizPanel 组件 / InfoPanel 集成 / 19 个测试（commit `c07b89a`） |
+
+### v13.0.0 GA 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2280 passed（123 文件） |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+
+---
+
+## v13 修复路线（来自 audit-merged.md，2026-06-20 待启动）
+
+| Phase | 主题 | 包含问题 | 预计工时 | 验证方式 |
+|-------|------|----------|----------|----------|
+| **A** | 紧急修复（安全+数据完整性） | S-01/S-02/S-03/E-01/E-04、A-01、A-05 | 1~2 天 | ✅ 已完成（commit 0a544a9）：3494 tests / lint 0 errors / typecheck / build 通过 |
+| **B** | 体验+工程优化（性能+渲染+a11y） | P-01~P-04、ANIM-1~5、PERF-1~5、VIZ-1~5、BUG-1~7、A11Y-1~6、MOB-1~6、FB-1~6 | 3~5 天 | ✅ 已完成：lint 0 errors（65 warnings） / typecheck / build 通过 |
+| **C** | 文档完善（一致性+API 文档） | D-01~D-07、E-02、E-07、E-09、E-10 | 1~2 天 | ✅ 已完成：8 份文档同步 / package.json version 升级 rc2 |
+| **D** | 测试+CI 升级（e2e 框架+覆盖率可视化） | T-01~T-08、E-03、E-05、E-06、E-08 | 2~3 天 | ✅ 已完成：Playwright 20 spec / a11y 17 页 / CI artifacts / setup.ts / snapshot |
+
+**总预计工时**: 7~12 天（单人）
+
+### Top10 优先清单
+
+| 序 | 标签 | 等级 | 问题 | 文件 | 修复方向 |
+|----|------|------|------|------|----------|
+| 1 | A-独报 | P1 | devDependencies 版本越界（vite ^8 / vitest ^4 / eslint ^10 / tailwind ^4.3 / @sentry ^10） | `package.json:38-54` | `npm ci` 校验 + CI `npm ls --depth=0` |
+| 2 | 共识 | P1 | `isValidStoredData` 不递归深度 + `loadFromStorage` `JSON.parse as T` | `useDataStructureState.ts:14-51` | zod/valibot 统一 schema |
+| 3 | 共识 | P1 | useVisualizer rafId 闭包错乱 + animationEngine 模块单例 + wait() 闭包链 | `useVisualizer.ts:40-66` + `animationEngine.ts:20-30, 286-293` | rafId 提 ref；preset 挂 useVisualizer() 上下文；wait 加 clearTimers() |
+| 4 | 共识 | P1 | `treeVisualizer positionStore` 全局单例 | `treeVisualizer.ts:39-51` | `Map<svgElement, Map<dataIndex, pos>>` 绑 svg |
+| 5 | A-独报 | P1 | `useDataStructureState` 渲染阶段写 ref | `useDataStructureState.ts:110-111` | useEffect 包裹 |
+| 6 | A-独报 | P1 | `react-hooks/set-state-in-effect` 永久降级 warn | `eslint.config.js:36-37` | 逐文件开启 error 修补后启用 |
+| 7 | A-独报 | P1 | vite.config.js 配 `loli.net` 注释写 google fonts | `vite.config.js:27-45` | 移除 loli.net 规则 |
+| 8 | B-独报 | P1 | InfoPanel 自动跳转 + LogPanel aria-live 双重轰炸 | `InfoPanel.tsx:36-48` + `LogPanel.tsx:60-61` | 自动跳转改高亮+徽标；aria-relevant=additions |
+| 9 | B-独报 | P1 | 树/图键盘 ↑↓ 跳"前/后节点"而非"父/子" + AVL/UnionFind 节点不可 tab | `treeVisualizer.ts:322-335` 等 4 文件 | parentMap + 补 tabindex/role/aria-label |
+| 10 | B-独报 | P1 | undo/redo/applyPreset 不打断正在跑的动画 | `useHistory.ts:27-35` 等 3 文件 | 先 `animRef.current?.abort()` |
 
 ---
 
@@ -26,7 +236,7 @@
 | # | 任务 | 优先级 | 状态 | 说明 |
 |---|------|--------|------|------|
 | v12-Q1 | 单元测试 | P0 | ✅ | 3480 tests passed（203 文件），较 v11 增加 391 个新测试 |
-| v12-Q2 | ESLint | P0 | ✅ | 0 errors / 66 warnings（全部既有模式） |
+| v12-Q2 | ESLint | P0 | ✅ | 0 errors / 66 warnings（全部既有模式，Phase B 后 65 warnings） |
 | v12-Q3 | TypeScript strict | P0 | ✅ | 0 错误 |
 | v12-Q4 | 生产构建 | P0 | ✅ | 成功，Bundle size check passed（index 63.40KB / vendor-react 231.35KB / vendor-d3 52.54KB） |
 
@@ -217,7 +427,7 @@
 
 ## 已完成（UI 美化 Phase 1-3）
 
-基于 `docs/项目视觉设计审查报告.md` 的长期 UI 美化计划。
+基于 [docs/archive/referenced-planning.md](./docs/archive/referenced-planning.md) 中归档的「项目视觉设计审查报告」的长期 UI 美化计划。
 
 | # | 任务 | 优先级 | 状态 | 说明 |
 |---|------|--------|------|------|
@@ -323,6 +533,7 @@
 | 大数据量性能 | P2 | ✅ 已解决 | 100+ 节点帧率下降 | v10 U1 通过 performanceConfig + 跳动画 + transform/opacity 优化解决 |
 | 本地打开异常 | P0 | ✅ 已解决 | file:// 下资源路径与路由失效 | v11.0.1 通过 HashRouter + 相对 base 路径修复 |
 | 文档缺口 | P3 | ⏳ 部分解决 | onboarding 体验 | README/ARCHITECTURE/CODE_WIKI/TODO 已同步；仍缺 CONTRIBUTING.md、API 文档 |
+| lint warnings 清理 | P3 | ⏳ 待处理 | 代码规范 | v13 Phase B 后剩余 65 个 warnings：react-hooks/set-state-in-effect 6 处（InfoPanel/NetworkStatus/OperationGroup/Sidebar/SpeedControl/StepExplainer，已降级为 warn 的既有模式）；react-hooks/exhaustive-deps 59 处（页面 useCallback 缺 `t`/`learningMode` 依赖、Visualizer/useVisualizer/svgRef 依赖等）。修复需重构依赖数组或拆分 effect，风险高于收益，移至后续阶段 |
 
 ---
 

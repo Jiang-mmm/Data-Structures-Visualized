@@ -5,6 +5,7 @@ import { showToast } from '../components/toastStore'
 import { tStatic } from '../i18n/useI18n'
 
 const INITIAL_HEAP: number[] = [95, 80, 70, 60, 50, 40, 30]
+const MODULE = () => tStatic('heap.title')
 
 function siftDown(arr: number[], index: number): number[] {
   const newArr = [...arr]
@@ -38,17 +39,17 @@ function siftUp(arr: number[], index: number): number[] {
   return arr
 }
 
-export function useHeapState() {
+export function useHeapState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<number[]>(INITIAL_HEAP, { storageKey: 'heap' })
+  } = useDataStructureState<number[]>(INITIAL_HEAP, { storageKey: 'heap', abortAnimation })
 
   const insert = useCallback((value: string | number): boolean => {
     const { valid, value: safeValue } = validateNumericInput(value)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('errors.invalidRange').replace('{min}', '1').replace('{max}', '99') })
+      showToast({ type: 'error', message: tStatic('errors.invalidRange').replace('{min}', '1').replace('{max}', '99'), module: MODULE(), operation: tStatic('heap.insert') })
       addLog('error', tStatic('hooks.inputInvalid'))
       return false
     }

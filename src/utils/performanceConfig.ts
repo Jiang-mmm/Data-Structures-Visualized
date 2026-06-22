@@ -41,3 +41,18 @@ export function shouldSkipAnimation(
   const threshold = getLargeDataThreshold(visualizerKey, override)
   return dataLength >= threshold
 }
+
+/**
+ * 判断给定数据量是否属于大数据场景
+ * @param visualizerKey - 可视化器标识
+ * @param dataLength - 数据长度
+ * @param override - 可选阈值覆盖
+ * @returns 是否为大数据
+ */
+export function isLargeData(
+  visualizerKey: VisualizerKey,
+  dataLength: number,
+  override?: number,
+): boolean {
+  return shouldSkipAnimation(visualizerKey, dataLength, override)
+}

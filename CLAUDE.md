@@ -2,6 +2,33 @@
 
 This file provides guidance to MiMo Code (claude.ai/code) when working with code in this repository.
 
+## AI 协作前置步骤（开发前必读）
+
+> 开始任何代码开发任务前，**必须**先读取项目当前状态，避免基于过时代码或已归档文档做决策。
+
+1. **读取 `PROJECT_STATUS.md`** — 了解当前版本、分支、最近完成的工作、下一步方向、已知约束。
+2. **读取 `TODO.md` 顶部 3 段** — 确认当前活跃任务与优先级。
+3. **读取 `WORKLOG.md` 前 60 行** — 了解最近工作上下文。
+4. 若状态文档与代码冲突，**以 `PROJECT_STATUS.md` 和 `TODO.md` 为准**。
+5. 历史参考请访问 `docs/archive/`，**禁止**将归档文档作为当前开发决策依据。
+
+## 项目级强制规则（必须遵守）
+
+> 完整规则在 `.trae/rules/project_rules.md`（Agent 宪法），本节为执行速查。
+
+1. **`design-md/` 默认禁读** — 收录各品牌设计资料，**仅在用户显式指示**下才允许读取；Glob / Grep / SearchCodebase 调用前必须显式排除该目录。
+2. **设计规范的唯一真源是 `DESIGN.md`** — 视觉/交互决策**必须**以项目根目录的 `DESIGN.md`（若存在）为依据；冲突实现视为越权；DESIGN.md 不存在时，**不擅自拍板**，向用户确认。
+3. **每次任务完成必须同步所有相关文档** — 含 `PROJECT_STATUS.md` / `TODO.md` / `WORKLOG.md` / `README.md` / `ARCHITECTURE.md` / `CODE_WIKI.md` / `docs/superpowers/{specs,plans}/*` / `CLAUDE.md` / `AGENTS.md` 等；**汇报完成前**完成更新；用户明确豁免需标注 `DOCS: SKIPPED (user override)`。
+
+## 当前活跃计划（2026-06-22）
+
+| 计划 | 路径 | 状态 | 启动条件 |
+|------|------|------|----------|
+| **v16 设计统一化** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](docs/superpowers/plans/2026-06-22-design-unification-v16.md) | ⏳ M0 启动闸门待用户拍板 | 基线 v16.0.0 GA（commit `879f04e`）；需 M0 4 项决策：① `design-md/` 读取授权；② 主参考确认；③ `design-md/` 追踪策略；④ 新建 `feature/v16-design-unification` 分支 |
+| **v15.x ENH-2 i18n 完善** | [docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md](docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md) | ✅ 已完成 | 新增 `complexity` + `algorithms` 命名空间 + `useAlgorithmGlossary` + `AlgorithmGlossaryCard`（Home 集成）|
+
+> ⚠️ **`design-md/` 追踪策略**（2026-06-22 发现）：该资料夹当前**未**被 `.gitignore` 收录（`git status` 显示 untracked），与 rule 16.1 隐含假设冲突。**禁止**在未拍板前 commit、stash、或引用其内容。
+
 ## Project Overview
 
 **ds-visualizer** (数据结构学习助手) — a Chinese-language educational web app for university students to learn data structures through interactive D3.js SVG animations. React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4. Deployed to GitHub Pages at base path `/Data-Structures-Visualized/`.
@@ -38,7 +65,7 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 
 **Data persistence:** All 15 data structures auto-save/restore via localStorage.
 
-**i18n:** Custom lightweight implementation (Chinese + English) — `src/i18n/locales.ts` + `src/i18n/useI18n.ts`. No external i18n library.
+**i18n:** Custom lightweight implementation (Chinese + English) — `src/i18n/locales.ts` + `src/i18n/useI18n.ts`. No external i18n library. Namespaces include `complexity` (13 keys for best/avg/worst/space/title) and `algorithms` (16 data structures × 7 fields via `AlgorithmGlossaryEntry` type) for the algorithm glossary; `useAlgorithmGlossary()` hook + `AlgorithmGlossaryCard` component available.
 
 **Global search:** `src/components/GlobalSearch.tsx` mounted in `Layout.tsx`, triggered by Ctrl/Cmd+K. Data source is `src/data/searchIndex.ts`, which aggregates data structure/algorithm/page metadata. Reuses `STRUCTURE_KEYS` exported from `Sidebar.tsx` for navigation consistency.
 
@@ -54,14 +81,15 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 
 ## Testing
 
-- **Unit tests:** Vitest + React Testing Library. 3480 tests across 203 files in `src/__tests__/`. Test files mirror source: `useArrayState.test.ts`, `arrayVisualizer.test.ts`, etc.
-- **Known failures:** 0 unit test failures. All 3480 pass.
+- **Unit tests:** Vitest + React Testing Library. 2699 tests across 147 files in `src/__tests__/`. Test files mirror source: `useArrayState.test.ts`, `arrayVisualizer.test.ts`, etc.
+- **Known failures:** 0 unit test failures. All 2699 pass.
 - **Test setup:** `src/__tests__/setup.js` (jsdom environment, jest-dom matchers, SVG mocks).
-- **E2E:** Playwright in `e2e/` directory. Run with `node e2e/run-all-tests.js` (requires dev server at `http://localhost:3000/Data-Structures-Visualized/`). Uses `domcontentloaded` wait strategy.
-- **Cross-browser:** E2E supports `BROWSER=firefox` env var. Run with `BROWSER=firefox node e2e/test-home.js`.
-- **Comprehensive suites:** `test-comprehensive.js` (all 15 data structures), `test-interactions.js` (cross-module), `test-persistence.js` (localStorage + boundaries). Run after core E2E.
-- **Screenshot assertions:** `verifyScreenshot()` helper in `test-helpers.js` checks file existence + 5KB minimum size.
-- **A11y testing:** `test-a11y.js` uses `@axe-core/playwright` to scan all 17 pages for WCAG 2 AA violations. Run with `node e2e/test-a11y.js` (requires dev server).
+- **E2E:** Playwright in `e2e/` directory. Run with `node scripts/run-e2e.mjs` (requires dev server at `http://localhost:3000/Data-Structures-Visualized/`). Uses `domcontentloaded` wait strategy. 7 migrated spec files + 2 pre-existing (`home.spec.ts` / `a11y.spec.ts`).
+- **E2E scripts:** `npm run test:e2e` (orchestrator), `npm run test:e2e:run` (raw), `npm run test:e2e:list` (list), `npm run test:e2e:firefox` (firefox).
+- **Cross-browser:** E2E supports `BROWSER=firefox` env var.
+- **Comprehensive suite:** `comprehensive.spec.ts` covers 11 data structures (timeout 600s).
+- **Screenshot assertions:** Each spec generates screenshots under `e2e/screenshots/`.
+- **A11y testing:** `a11y.spec.ts` uses `@axe-core/playwright` to scan all 17 pages for WCAG 2 AA violations. Run with `npx playwright test e2e/a11y.spec.ts` (requires dev server).
 
 ## Conventions
 

@@ -4,6 +4,324 @@
 
 ---
 
+## [v16.0.0 GA] - 2026-06-22
+
+**主题**：工程深化与功能增强（生产级项目）
+
+### 新增（Features）
+
+| 子任务 | 描述 | 关键文件 | Commit |
+|--------|------|----------|--------|
+| **ENG-1** | E2E 框架迁移至 Playwright Test | `e2e/*.spec.ts` (7) + `scripts/run-e2e.mjs` | `23913a7` |
+| **ENG-2** | 测试覆盖率提升至 80.05% | 新增 6 个测试文件 + 扩充 4 个 | `7da029b` |
+| **ENH-1** | 算法动画导出（WebM/GIF/帧序列 ZIP） | `src/utils/animationExport.ts` + `AnimationExportButton` | `8a81ff8` |
+| **ENH-2** | i18n 完善（算法术语对照表） | `complexity` + `algorithms` 命名空间（125 键） | `99b5b0e` |
+
+### 改进（Improvements）
+
+| 子任务 | 描述 | 关键文件 | Commit |
+|--------|------|----------|--------|
+| **ENG-3** | lint warnings 归零（67→0） | 26 个源文件（react-hooks deps 补全） | `6d32435` |
+
+### 修复（Bug Fixes）
+
+| 描述 | 关键文件 | Commit |
+|------|----------|--------|
+| 6 个 pre-existing 测试失败 | `src/components/Visualizer.tsx` + 3 个 snapshot 文件 | `0fb5a2f` |
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| ESLint | 0 errors / 0 warnings |
+| TypeScript strict | 0 错误 |
+| 单元测试 | 2699 passed（147 文件） |
+| 测试覆盖率 | statements 80.05% / lines 84.02% / branches 67.23% / functions 81.03% |
+| 生产构建 | 成功；bundle：index 77.93KB / vendor-react 231.35KB / vendor-d3 52.54KB |
+| E2E | core/edge/v5-features 三组 spec 全绿（chromium + firefox） |
+
+### 里程碑
+
+v16.0.0 GA — 工程深化完成，达到生产级质量标准
+
+---
+
+## [v15.0.0 GA] - 2026-06-22
+
+### E1 — PWA 离线增强
+- 新增 `src/components/ReloadPrompt.tsx`：PWA 新版本提示组件（useRegisterSW + Neo-Brutalist + a11y）
+- 更新 `vite.config.js`：Google Fonts runtime caching（CacheFirst, 60 天）
+- 更新 `src/components/Layout.tsx`：渲染 ReloadPrompt
+- 新增 `src/types/pwa.d.ts`：virtual:pwa-register/react 类型声明
+- 更新 `src/i18n/locales.ts`：pwa 命名空间（3 键）
+- 新增 `src/__tests__/components/ReloadPrompt.test.tsx`（4 tests）
+
+### E2 — 大数据可视化
+- 新增 `src/components/PerformanceIndicator.tsx`：性能模式徽章
+- 更新 `src/utils/performanceConfig.ts`：新增 isLargeData 辅助函数
+- 更新 `src/visualizers/arrayVisualizer.ts` / `sortVisualizer.ts`：大数据简化渲染（跳过渐变/阴影/标签）
+- 更新 `src/pages/ArrayPage.tsx` / `SortPage.tsx`：集成浮动徽章
+- 更新 `src/i18n/locales.ts`：performance 命名空间（2 键）
+- 新增 15 个测试（performanceConfig 5 + PerformanceIndicator 5 + arrayVisualizer 2 + sortVisualizer 3）
+
+### E3 — 移动端手势
+- 新增 `src/hooks/useGestures.ts`：5 种手势（pinch/swipeH/swipeV/longPress/tap，ref-based 避免 stale closure）
+- 更新 `src/components/Visualizer.tsx`：onSwipeLeft/onSwipeRight 可选 props
+- 新增 `src/__tests__/hooks/useGestures.test.ts`（9 tests）
+
+### E4 — KeyboardHelp 模糊搜索
+- 更新 `src/components/KeyboardHelp.tsx`：fuzzyMatchAny 跨页面搜索 + 三态渲染（默认/无结果/搜索结果）
+- 更新 `src/i18n/locales.ts`：shortcuts 命名空间新增 3 键（searchPlaceholder/searchNoResults/allShortcuts）
+- 更新 `src/__tests__/KeyboardHelp.test.tsx`：5 个新测试（共 20 tests）
+
+### U2 — 响应式操作面板
+- 更新 `src/components/OperationBar.tsx`：移动端横向滚动 + collapsibleOnMobile 折叠模式
+- 更新 `src/i18n/locales.ts`：page 命名空间新增 expand/collapse
+- 更新 `src/__tests__/OperationBar.test.tsx`：5 个新测试（共 43 tests）
+
+### U3 — 跨页面布局一致性
+- 更新 `src/pages/GraphAlgorithmPage.tsx`：3 处布局偏差修复（h-full→min-h-dvh、添加 min-h-0、添加 relative）
+- 新增 `src/__tests__/pages/layoutConsistency.test.tsx`（8 tests）
+
+### U4 — SVG 图标系统
+- 新增 `src/components/Icon.tsx`：8 个 stroke-based SVG 图标（Feather/Lucide 风格）
+- 更新 6 个文件：KeyboardHelp/GlobalSearch/Sidebar/Home/SortComparePage/QuizPanel emoji→Icon
+- 新增 `src/__tests__/components/Icon.test.tsx`（5 tests）
+
+### U5 — 条件禁用按钮原因
+- 更新 `src/components/OperationBar.tsx`：disabledReason prop + useId + aria-describedby + sr-only
+- 更新 `src/index.css`：sr-only 工具类
+- 更新 ArrayPage/StackPage/SortPage：示例接入 disabledReason
+- 更新 `src/i18n/locales.ts`：page.animating / page.disabled
+- 更新 `src/__tests__/OperationBar.test.tsx`：4 个新测试（共 47 tests）
+
+### ISSUE-007 — 排序撤销阻塞
+- 更新 `src/hooks/useHistory.ts`：undoBlock 机制（ref-based，不触发重渲染）
+- 更新 `src/hooks/useDataStructureState.ts`：透传 setUndoBlock
+- 更新 `src/hooks/useSortState.ts`：排序过程中 setUndoBlock(true)，finally 解除
+- 更新 `src/__tests__/useHistory.test.ts` / `useSortState.test.ts`：6 个新测试
+
+### Verification
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2590 passed（137 文件），较 v14 GA 新增 64 个测试 |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| Git commits | E1 `ba39cd7` / E2 `d7952b7` / E3 `be4e59d` / E4 `66d282c` / U2 `594cd9f` / U3 `11b298b` / U4 `6518050` / U5 `1146d47` / ISSUE-007 `5355ea2` |
+
+### 里程碑
+v15.0.0 GA — 体验打磨完成（PWA + 大数据 + 手势 + 搜索 + 响应式 + 布局 + 图标 + a11y + 撤销阻塞）
+
+---
+
+## [v14.0.0 GA] - 2026-06-22
+
+### D1 — 图算法测试补齐
+- 新增 `src/__tests__/algorithms/graph/graphAlgorithms.test.ts`：46 个测试覆盖 Bellman-Ford（10）、Floyd-Warshall（10）、Prim（10）、Kruskal（11）、注册（5）
+- 4 个图算法（Bellman-Ford / Floyd-Warshall / Prim / Kruskal）此前已实现但缺测试，本次补齐
+
+### G1 — B-Tree 数据结构完整实现
+- 新增 `src/algorithms/bTree.ts`：多路搜索树，insert + split、search、inorder、validate
+- 新增 `src/hooks/useBTreeState.ts`：状态管理 + localStorage + undo/redo
+- 新增 `src/visualizers/bTreeVisualizer.ts`：D3 多路树可视化
+- 新增 `src/pages/BTreePage.tsx`：插入/搜索/中序/重置页面
+- 新增 `src/configs/learning/bTree.config.ts`：7 步学习配置
+- 更新 `src/types/hooks.d.ts`：BTreeNode / BTreeFlattenedNode / BTreeFlattened / BTreeState 接口
+- 更新 `src/i18n/locales.ts`：btree 命名空间（24 键，中英文）
+- 更新 `src/App.tsx` / `Sidebar.tsx` / `Home.tsx`：`/b-tree` 路由 + 侧边栏 + 首页卡片
+- 更新 `src/configs/learning/index.ts`：注册 `bTree` 配置（38 → 39）
+- 更新 `src/data/searchIndex.ts`：搜索入口
+- 修复 B-Tree 根节点分裂逻辑：改为"先插入，再判断溢出分裂"策略
+
+### G1 Tests
+- 新增 `src/__tests__/algorithms/bTree.test.ts`（41 tests）
+- 新增 `src/__tests__/hooks/useBTreeState.test.ts`（30 tests）
+- 新增 `src/__tests__/visualizers/bTreeVisualizer.test.ts`（16 tests）
+- 新增 `src/__tests__/pages/BTreePage.test.tsx`（10 tests）
+
+### G2 — Segment Tree 数据结构完整实现
+- 新增 `src/algorithms/segmentTree.ts`：build / query（区间求和）/ update（点更新）
+- 新增 `src/hooks/useSegmentTreeState.ts`：状态管理 + localStorage + undo/redo
+- 新增 `src/visualizers/segmentTreeVisualizer.ts`：D3 树形可视化
+- 新增 `src/pages/SegmentTreePage.tsx`：build/query/update/reset 页面
+- 新增 `src/configs/learning/segmentTree.config.ts`：7 步学习配置
+- 更新 `src/types/hooks.d.ts`：SegmentTreeNode / SegmentTreeFlattened 等接口
+- 更新 `src/i18n/locales.ts`：segmentTree 命名空间（24 键）
+- 更新 `src/App.tsx` / `Sidebar.tsx` / `Home.tsx`：`/segment-tree` 路由 + 入口
+- 更新 `src/configs/learning/index.ts`：注册 `segmentTree` 配置（39 → 40）
+- 更新 `src/data/searchIndex.ts`：搜索入口
+- 修复 `SegmentTree.array` 属性 `readonly` 修饰符（build 需要重新赋值）
+
+### G2 Tests
+- 新增 `src/__tests__/algorithms/segmentTree.test.ts`（45 tests）
+- 新增 `src/__tests__/hooks/useSegmentTreeState.test.ts`（29 tests）
+- 新增 `src/__tests__/visualizers/segmentTreeVisualizer.test.ts`（20 tests）
+- 新增 `src/__tests__/pages/SegmentTreePage.test.tsx`（10 tests）
+
+### G3 — 双向链表模式测试
+- 更新 `src/__tests__/pages/LinkedListPage.test.tsx`：新增 4 个测试覆盖切换按钮可见性、切换到双向、切回单向、动画期间禁用
+- 注：LinkedListPage 此前已支持 `isDoublyMode` 切换，本次仅补齐测试
+
+### F2 — 算法接入指南
+- 新增 `docs/ALGORITHM_INTEGRATION_GUIDE.md`：7 章节覆盖排序算法接入、图算法接入、数据结构接入（8 步）、学习配置编写、可视化器编写、测试编写、i18n 国际化 + checklist
+
+### Verification
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2526 passed（132 文件），较 v13 GA 新增 246 个测试 |
+| ESLint | 0 errors / 67 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| 数据结构总数 | 17（原 15 + B-Tree + Segment Tree） |
+| 学习配置总数 | 40（原 38 + bTree + segmentTree） |
+| Git commits | D1 `d63a07c` / G1 `3d0acca` / G2 `cc6905f` / G3 `0a64d91` / F2 `10c1ad5` |
+
+### 里程碑
+v14.0.0 GA — 内容扩张完成（图算法测试补齐 + B-Tree + Segment Tree + 双向链表测试 + 算法接入指南）
+
+---
+
+## [v13.0.0 GA] - 2026-06-22
+
+### Path 3 H3 — SortComparePage 学习模式
+- 新增 `src/configs/learning/sortCompare.config.ts`：5 步学习配置（选择算法、初始化、第一轮比较、关键差异、完成对比）
+- 更新 `src/configs/learning/index.ts`：注册 `sortCompare` 配置（37 → 38 个学习配置）
+- 更新 `src/pages/SortComparePage.tsx`：接入 `useLearningMode('sortCompare')`
+- 更新 `src/__tests__/pages/SortComparePage.test.tsx`：新增 4 个学习配置测试
+
+### Path 3 H1 — 测验系统
+- 新增 `src/types/learning.d.ts`：`QuizQuestion` 接口与 `LearningModeConfig.quiz` 字段
+- 新增 `src/hooks/useQuizProgress.ts`：测验进度管理 Hook（localStorage 持久化，提交/导航/重置/得分计算）
+- 新增 `src/components/QuizPanel.tsx`：测验 UI 组件（题目展示、选项选择、即时反馈、解释、进度条、完成徽标）
+- 更新 `src/components/InfoPanel.tsx`：集成 QuizPanel（桌面端与移动端学习标签页）
+- 更新 `src/configs/learning/array.config.ts`、`bubble.config.ts`、`tree.config.ts`：各添加 3 道测验题
+- 更新 `src/pages/ArrayPage.tsx`、`SortPage.tsx`、`TreePage.tsx`：传递 quizQuestions 到 InfoPanel
+- 更新 `src/i18n/locales.ts`：新增 `quiz` 命名空间（16 个键，中英文）
+- 修复 `src/__tests__/newLearningConfigs.test.ts`：配置总数断言 37 → 38
+
+### Tests
+- 新增 `src/__tests__/hooks/useQuizProgress.test.ts`（10 tests）
+- 新增 `src/__tests__/components/QuizPanel.test.tsx`（9 tests）
+- 新增 `src/__tests__/pages/SortComparePage.test.tsx`（4 tests）
+
+### Verification
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2280 passed（123 文件），较 rc3 新增 23 个测试 |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| 生产构建 | 成功，bundle 预算通过 |
+| Git commits | H3 `2f56b83` / H1 `c07b89a` |
+
+### 里程碑
+v13.0.0 GA — 学习体验闭环完成（全局搜索增强 + SortCompare 学习模式 + 测验系统）
+
+---
+
+## [v13.0.0-rc3] - 2026-06-21
+
+### Path 3 H2 — 全局搜索增强
+- 新增 `src/utils/fuzzySearch.ts`：LCS 轻量模糊匹配，含连续匹配/首字符/大小写敏感加权
+- 新增 `src/hooks/useSearchHistory.ts`：localStorage 持久化（上限 10 条、去重），支持单个/全部清除
+- 扩展 `src/data/searchIndex.ts`：`SearchItem` 新增 `complexity` / `tags`，从学习步骤描述提取时间/空间复杂度
+- 改造 `src/components/GlobalSearch.tsx`：集成 fuzzy 匹配、搜索历史展示、复杂度过滤（O(1)/O(log n)/O(n)/O(n log n)/O(n²)）、page/learning/history 分类展示（sticky header）
+- 补充 `src/i18n/locales.ts`：新增历史、复杂度、分类相关键
+
+### Tests
+- 新增 `src/__tests__/utils/fuzzySearch.test.ts`（10 tests）
+- 新增 `src/__tests__/hooks/useSearchHistory.test.ts`（8 tests）
+- 新增 `src/__tests__/data/searchIndex.test.ts`（4 tests）
+- 更新 `src/__tests__/components/GlobalSearch.test.tsx`（18 tests，含历史/fuzzy/分类）
+
+### Verification
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2261 passed（121 文件），新增 27 个测试 |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过 |
+| Git commit | `5ccbc00` |
+
+---
+
+## [v13.0.0-rc2] - 2026-06-21
+
+### Phase C — 文档完善
+- 同步 `README.md` / `PROJECT_SUMMARY.md` / `CHANGELOG.md` / `TODO.md` / `WORKLOG.md` / `ARCHITECTURE.md` / `CODE_WIKI.md` / `PROJECT_STATUS.md` 版本号与 Phase 状态
+- `package.json` version 从 `v13.0.0-rc1-phase-b` 升级为 `v13.0.0-rc2`
+
+### Phase D — 测试 + CI 升级
+- 新增 `e2e/a11y.spec.ts`：基于 `STRUCTURE_KEYS` 动态覆盖 17 页 axe-core WCAG 2 AA 扫描
+- 新增 `e2e/home.spec.ts`：首页加载、卡片展示、控制台错误 3 个 Playwright Test 用例
+- `e2e/test-a11y.js` 改为委托 `npx playwright test a11y.spec.ts`；CI 中只跑 chromium 项目
+- `e2e/run-all-tests.js` 输出统一 JSON 协议 `e2e/test-results.json`
+- `src/__tests__/setup.js` 升级为 `setup.ts`
+- `src/__tests__/visualizers/d3MockHelper.ts` 增强调用记录与链式 forceSimulation mock
+- 新增 `src/__tests__/visualizers/arrayVisualizer.snapshot.test.ts` SVG 结构快照测试
+- `.github/workflows/ci.yml` 增加 Playwright a11y 测试、覆盖率 artifact、构建产物 artifact、E2E 报告 artifact
+
+### Verification
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | 2234 passed（118 文件） |
+| ESLint | 0 errors / 65 warnings（既有模式） |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功，bundle 预算通过 |
+| Playwright spec | 20 passed（a11y 17 页 + home 3 用例） |
+| a11y 扫描 | 17 页 0 critical/serious violations |
+
+---
+
+## [v13.0.0-rc1] - 2026-06-21
+
+### Meta
+- 完成 v13 全面代码体检（**双模型互盲 + 集中仲裁**）
+- **范围**：6 维（架构/安全/性能/可测试性/文档/工程化）+ 8 角度（visualizer 差异/动画性能/教学闭环/移动端/a11y/visualizer bug/性能监控/教学反馈）
+- **方法**：Subagent A（工程审计师）独立审查 44 条 + Subagent B（教学体验+渲染工程师，**双盲**）独立审查 45 条 → 我合并仲裁 56 条独立问题
+- **产物**：
+  - [Design Spec](./docs/superpowers/specs/2026-06-20-v13-code-audit-design.md)
+  - [实施计划](./docs/superpowers/plans/2026-06-20-v13-code-audit-plan.md)
+  - [Subagent A 报告（工程）](./docs/audit-2026-06-20/audit-report-A.md)
+  - [Subagent B 报告（教学+渲染）](./docs/audit-2026-06-20/audit-report-B.md)
+  - [合并仲裁报告（含 Top10 + v13 路线）](./docs/audit-2026-06-20/audit-merged.md)
+- **分级**：P0 致命 0 / P1 高 29 / P2 中 24 / P3 低 3
+- **路线**：v13 Phase A（紧急修复 1~2 天）→ B（体验+工程 3~5 天）→ C（文档 1~2 天）→ D（测试+CI 2~3 天）
+
+### Security & Data Integrity（Phase A，2026-06-21）
+- `src/utils/schema.ts`：新增统一 schema 校验（递归深度限制 `MAX_STORAGE_DEPTH = 10`）
+- `src/hooks/useDataStructureState.ts`：
+  - `loadFromStorage` 使用 `validateStoredData` 替代原 `isValidStoredData`
+  - 无效/过深 localStorage 数据自动清除并回退到 `initialData`
+  - 渲染阶段 `dataRef.current = data` 移入 `useEffect`
+- `package.json`：devDependencies 版本限定从 `^` 改为 `~`
+- `.github/workflows/ci.yml`：新增 `npm ls --depth=0` 依赖版本校验
+- `scripts/check-bundle.js`：用 `fileURLToPath` 替代 `import.meta.dirname`，兼容 Node 20+
+- `vite.config.js`：移除 `loli.net` 第三方字体代理缓存配置
+
+### Tests
+- 新增 `src/__tests__/utils/schema.test.ts`（14 tests）覆盖 schema 边界条件
+
+### Verification
+- 单元测试：3494 passed（新增 14 个）
+- ESLint：0 errors / 65 warnings（历史遗留）
+- TypeScript strict：0 错误
+- 生产构建：成功，bundle 预算通过
+- Git commit：`0a544a9`
+
+### Experience & Engineering（Phase B，2026-06-21）
+- `src/utils/animationEngine.ts` + `src/hooks/useVisualizer.ts`：FPS 降级（>100ms 帧阻塞立即触发）、动画 abort、wait 清理、applyPreset 中断当前动画、RAF ID 提 ref、graph simulation cleanup
+- `src/visualizers/treeVisualizer.ts` / `graphVisualizer.ts` / `unionFindVisualizer.ts` / `avlTreeVisualizer.ts` / `trieVisualizer.ts` / `arrayVisualizer.ts` / `stackVisualizer.ts`：树 positionStore 绑定 SVG、图 NODE_RADIUS 收敛常量、defs 去重、并查集 findRootId 缓存、栈宽度自适应
+- `src/components/InfoPanel.tsx` / `LogPanel.tsx` / `SpeedControl.tsx` / `UndoRedoBar.tsx` + 4 个 visualizer：日志高亮替代自动跳转、ARIA tablist/tab/aria-controls、树/图 ↑↓ 父/子导航、节点焦点环、边 aria-label、快捷键 aria-keyshortcuts
+- `src/components/Sidebar.tsx` / `InfoPanel.tsx` / `src/hooks/useKeyboard.ts` / `src/utils/toastStore.ts` / `src/hooks/useHistory.ts`：左缘右滑打开侧边栏、触控按钮 ≥44px、InfoPanel 移动端 flex-1 抽屉、输入框跳过 Ctrl+Z/Y、错误 toast 显示模块/操作、undo/redo 先 abort
+- 测试：`toastStore.test.ts`、`useKeyboard.test.ts`、`stackVisualizer.test.ts`、`InfoPanel.test.tsx`、`animationEngine.test.ts`、`useVisualizer.test.ts` 等更新
+
+### Verification
+- 单元测试：3506 passed（204 文件）
+- ESLint：0 errors / 65 warnings（既有模式）
+- TypeScript strict：0 错误
+- 生产构建：成功，bundle 预算通过
+- Git：46 个文件改动待 Phase C/D 完成后统一 commit
+
+---
+
 ## [v12.0.0] - 2026-06-20
 
 ### 新增

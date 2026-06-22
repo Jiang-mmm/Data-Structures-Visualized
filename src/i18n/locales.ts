@@ -90,6 +90,38 @@ export interface Locale {
     colorRed: string
     colorBlack: string
   }
+  bTree: {
+    title: string
+    subtitle: string
+    insert: string
+    search: string
+    inorder: string
+    nodeTitle: string
+    leaf: string
+    internal: string
+  }
+  segmentTree: {
+    title: string
+    subtitle: string
+    build: string
+    query: string
+    update: string
+    rangeStart: string
+    rangeEnd: string
+    index: string
+    value: string
+    buildPlaceholder: string
+    buildEmpty: string
+    buildInvalid: string
+    queryInvalid: string
+    queryOutOfRange: string
+    updateInvalid: string
+    updateOutOfRange: string
+    nodeTitle: string
+    leaf: string
+    internal: string
+    arrayLabel: string
+  }
   graph: {
     title: string
     subtitle: string
@@ -220,6 +252,8 @@ export interface Locale {
     tree: string
     avlTree: string
     redBlackTree: string
+    bTree: string
+    segmentTree: string
     graph: string
     sort: string
     hash: string
@@ -262,6 +296,7 @@ export interface Locale {
     emptyTreeShort: string
     emptyAvlShort: string
     emptyRedBlackTreeShort: string
+    emptyBTreeShort: string
     emptyGraphShort: string
     emptyHashShort: string
     emptyHeapShort: string
@@ -283,6 +318,11 @@ export interface Locale {
     emptyAvlDesc: string
     emptyRedBlackTree: string
     emptyRedBlackTreeDesc: string
+    emptyBTree: string
+    emptyBTreeDesc: string
+    emptySegmentTree: string
+    emptySegmentTreeShort: string
+    emptySegmentTreeDesc: string
     emptyGraph: string
     emptyGraphDesc: string
     emptyHash: string
@@ -333,6 +373,26 @@ export interface Locale {
     closeDrawer: string
     openDrawer: string
     recent: string
+    tabs: string
+    stepBadge: string
+  }
+  quiz: {
+    title: string
+    question: string
+    of: string
+    submit: string
+    correct: string
+    incorrect: string
+    explanation: string
+    next: string
+    prev: string
+    score: string
+    correctCount: string
+    reset: string
+    complete: string
+    noQuestions: string
+    yourAnswer: string
+    correctAnswer: string
   }
   errorBoundary: {
     title: string
@@ -484,6 +544,18 @@ export interface Locale {
     exportTooltip: string
     importTooltip: string
   }
+  exportAnimation: {
+    label: string
+    title: string
+    webm: string
+    gif: string
+    frames: string
+    recording: string
+    success: string
+    failed: string
+    unsupported: string
+    tooltip: string
+  }
   visualizer: {
     hideGrid: string
     showGrid: string
@@ -502,6 +574,8 @@ export interface Locale {
     treeLabel: string
     avlTreeLabel: string
     redBlackTreeLabel: string
+    bTreeLabel: string
+    segmentTreeLabel: string
     graphLabel: string
     sortLabel: string
     hashLabel: string
@@ -518,9 +592,14 @@ export interface Locale {
     reset: string
     pause: string
     toggleHelp: string
+    searchPlaceholder: string
+    searchNoResults: string
+    allShortcuts: string
   }
   page: {
     operations: string
+    expand: string
+    collapse: string
     selected: string
     running: string
     done: string
@@ -528,6 +607,8 @@ export interface Locale {
     compareDone: string
     algorithms: string
     stopped: string
+    animating: string
+    disabled: string
   }
   performanceChart: {
     title: string
@@ -708,6 +789,22 @@ export interface Locale {
     redBlackTreeLogSearchFound: string
     redBlackTreeLogSearchNotFound: string
     redBlackTreeLogInorder: string
+    bTreeLogInsert: string
+    bTreeInsertSuccess: string
+    bTreeInsertDuplicate: string
+    bTreeLogInsertDuplicate: string
+    bTreeLogSearchFound: string
+    bTreeLogSearchNotFound: string
+    bTreeLogInorder: string
+    segmentTreeBuildEmpty: string
+    segmentTreeLogBuild: string
+    segmentTreeBuildSuccess: string
+    segmentTreeLogQuery: string
+    segmentTreeQueryInvalid: string
+    segmentTreeQuerySuccess: string
+    segmentTreeUpdateOutOfRange: string
+    segmentTreeLogUpdate: string
+    segmentTreeUpdateSuccess: string
     graphLogAddNode: string
     graphNodeAdded: string
     graphSelfLoop: string
@@ -795,6 +892,7 @@ export interface Locale {
     presetDramatic: string
     presetInstant: string
     animationError: string
+    renderSlow: string
   }
   contentTier: {
     title: string
@@ -824,9 +922,67 @@ export interface Locale {
     inputAriaLabel: string
     shortcut: string
     noResults: string
+    noHistory: string
+    history: string
+    clearHistory: string
+    removeHistory: string
+    complexity: string
     categoryPage: string
     categoryLearning: string
+    categoryHistory: string
   }
+  pwa: {
+    updateAvailable: string
+    reload: string
+    close: string
+  }
+  performance: {
+    mode: string
+    hint: string
+  }
+  complexity: {
+    title: string
+    name: string
+    useCase: string
+    time: string
+    space: string
+    best: string
+    average: string
+    worst: string
+    glossaryTitle: string
+    glossarySubtitle: string
+    emptyHint: string
+    showMore: string
+    showLess: string
+  }
+  algorithms: {
+    array: AlgorithmGlossaryEntry
+    stack: AlgorithmGlossaryEntry
+    queue: AlgorithmGlossaryEntry
+    linkedlist: AlgorithmGlossaryEntry
+    tree: AlgorithmGlossaryEntry
+    avlTree: AlgorithmGlossaryEntry
+    redBlackTree: AlgorithmGlossaryEntry
+    bTree: AlgorithmGlossaryEntry
+    segmentTree: AlgorithmGlossaryEntry
+    heap: AlgorithmGlossaryEntry
+    trie: AlgorithmGlossaryEntry
+    hash: AlgorithmGlossaryEntry
+    graph: AlgorithmGlossaryEntry
+    skipList: AlgorithmGlossaryEntry
+    unionFind: AlgorithmGlossaryEntry
+    sort: AlgorithmGlossaryEntry
+  }
+}
+
+interface AlgorithmGlossaryEntry {
+  name: string
+  description: string
+  useCase: string
+  best: string
+  average: string
+  worst: string
+  space: string
 }
 
 interface ContentTierStructure {
@@ -931,6 +1087,38 @@ export const zh: Locale = {
     nodeTitle: '值: {value}, 颜色: {color}',
     colorRed: '红色',
     colorBlack: '黑色',
+  },
+  bTree: {
+    title: 'B 树',
+    subtitle: '多路搜索树 · 节点分裂 · O(log n) 保证',
+    insert: '插入',
+    search: '查找',
+    inorder: '中序',
+    nodeTitle: 'keys: {keys}\nkey 数量: {count}\n类型: {type}',
+    leaf: '叶子节点',
+    internal: '内部节点',
+  },
+  segmentTree: {
+    title: '线段树',
+    subtitle: '区间查询 · 单点更新 · O(log n)',
+    build: '构建',
+    query: '查询',
+    update: '更新',
+    rangeStart: '区间起点',
+    rangeEnd: '区间终点',
+    index: '下标',
+    value: '值',
+    buildPlaceholder: '数组 (如 1,2,3,4)',
+    buildEmpty: '请输入数组',
+    buildInvalid: '数组格式无效（1-50 个整数）',
+    queryInvalid: '请输入有效的区间',
+    queryOutOfRange: '区间超出范围',
+    updateInvalid: '请输入有效的下标和值',
+    updateOutOfRange: '下标超出范围',
+    nodeTitle: '区间: {range}\n求和: {sum}\n类型: {type}',
+    leaf: '叶子节点',
+    internal: '内部节点',
+    arrayLabel: '数组',
   },
   graph: {
     title: '图',
@@ -1062,6 +1250,8 @@ export const zh: Locale = {
     tree: '二叉树',
     avlTree: 'AVL 树',
     redBlackTree: '红黑树',
+    bTree: 'B 树',
+    segmentTree: '线段树',
     graph: '图',
     sort: '排序',
     hash: '哈希表',
@@ -1104,6 +1294,7 @@ export const zh: Locale = {
     emptyTreeShort: '空二叉树',
     emptyAvlShort: '空 AVL 树 · 请插入节点',
     emptyRedBlackTreeShort: '空红黑树 · 请插入节点',
+    emptyBTreeShort: '空 B 树 · 请插入节点',
     emptyGraphShort: '空图 · 请添加节点',
     emptyHashShort: '空哈希表 · 请插入键值对',
     emptyHeapShort: '空堆 · 请插入元素',
@@ -1125,6 +1316,11 @@ export const zh: Locale = {
     emptyAvlDesc: '点击插入按钮添加节点',
     emptyRedBlackTree: '红黑树为空',
     emptyRedBlackTreeDesc: '点击插入按钮添加节点',
+    emptyBTree: 'B 树为空',
+    emptyBTreeDesc: '点击插入按钮添加节点',
+    emptySegmentTree: '线段树为空',
+    emptySegmentTreeShort: '空线段树 · 请构建数组',
+    emptySegmentTreeDesc: '输入数组并点击构建按钮创建线段树',
     emptyGraph: '图为空',
     emptyGraphDesc: '点击添加节点按钮创建图',
     emptyHash: '哈希表为空',
@@ -1151,6 +1347,18 @@ export const zh: Locale = {
     exportTooltip: '导出数据为 JSON 文件',
     importTooltip: '从 JSON 文件导入数据',
   },
+  exportAnimation: {
+    label: '导出动画',
+    title: '导出当前动画为视频 / GIF / 帧序列',
+    webm: 'WebM 视频',
+    gif: 'GIF 动图',
+    frames: '帧序列 ZIP',
+    recording: '正在录制...',
+    success: '动画已导出',
+    failed: '动画导出失败',
+    unsupported: '当前浏览器不支持动画导出',
+    tooltip: '录制当前画布并导出',
+  },
   visualizer: {
     hideGrid: '隐藏网格',
     showGrid: '显示网格',
@@ -1169,6 +1377,8 @@ export const zh: Locale = {
     treeLabel: '二叉树可视化',
     avlTreeLabel: 'AVL 树可视化',
     redBlackTreeLabel: '红黑树可视化',
+    bTreeLabel: 'B 树可视化',
+    segmentTreeLabel: '线段树可视化',
     graphLabel: '图可视化',
     sortLabel: '排序可视化',
     hashLabel: '哈希表可视化',
@@ -1185,9 +1395,14 @@ export const zh: Locale = {
     reset: '重置数据结构',
     pause: '暂停动画',
     toggleHelp: '显示/隐藏快捷键帮助',
+    searchPlaceholder: '搜索快捷键...',
+    searchNoResults: '无匹配结果',
+    allShortcuts: '全部快捷键',
   },
   page: {
     operations: '操作',
+    expand: '展开',
+    collapse: '收起',
     selected: '个已选',
     running: '运行中...',
     done: '全部完成',
@@ -1195,6 +1410,8 @@ export const zh: Locale = {
     compareDone: '对比完成',
     algorithms: '个算法',
     stopped: '已停止排序',
+    animating: '动画进行中，请稍候',
+    disabled: '已禁用',
   },
   performanceChart: {
     title: '性能对比',
@@ -1258,6 +1475,26 @@ export const zh: Locale = {
     closeDrawer: '收起面板',
     openDrawer: '展开面板',
     recent: '最近',
+    tabs: '信息面板标签',
+    stepBadge: '对应学习步骤',
+  },
+  quiz: {
+    title: '课后测验',
+    question: '题目',
+    of: '/',
+    submit: '提交答案',
+    correct: '回答正确',
+    incorrect: '回答错误',
+    explanation: '解析',
+    next: '下一题',
+    prev: '上一题',
+    score: '得分',
+    correctCount: '答对',
+    reset: '重新开始',
+    complete: '测验完成',
+    noQuestions: '暂无测验题目',
+    yourAnswer: '你的答案',
+    correctAnswer: '正确答案',
   },
   errorBoundary: {
     title: '组件异常',
@@ -1550,6 +1787,22 @@ export const zh: Locale = {
     redBlackTreeLogSearchFound: 'search({value}) → 找到，深度: {depth}',
     redBlackTreeLogSearchNotFound: 'search({value}) → 未找到',
     redBlackTreeLogInorder: '中序遍历（有序）: [{data}]',
+    bTreeLogInsert: 'insert({value}) → 插入并按需分裂，节点数: {count}',
+    bTreeInsertSuccess: '插入节点 {value}（已分裂平衡）',
+    bTreeInsertDuplicate: '节点 {value} 已存在，不重复插入',
+    bTreeLogInsertDuplicate: 'insert({value}) → 值已存在，跳过',
+    bTreeLogSearchFound: 'search({value}) → 找到，深度: {depth}',
+    bTreeLogSearchNotFound: 'search({value}) → 未找到',
+    bTreeLogInorder: '中序遍历（有序）: [{data}]',
+    segmentTreeBuildEmpty: '请先输入数组',
+    segmentTreeLogBuild: 'build([{data}]) → 节点数: {count}',
+    segmentTreeBuildSuccess: '构建线段树（{count} 个节点）',
+    segmentTreeLogQuery: 'query({start}, {end}) → 区间和: {sum}',
+    segmentTreeQueryInvalid: '请输入有效的区间',
+    segmentTreeQuerySuccess: '区间 [{start}, {end}] 的和为 {sum}',
+    segmentTreeUpdateOutOfRange: '下标超出范围',
+    segmentTreeLogUpdate: 'update({index}, {value}) → 节点数: {count}',
+    segmentTreeUpdateSuccess: '更新下标 {index} 为 {value}',
     graphLogAddNode: 'addNode("{id}") → 节点数: {count}',
     graphNodeAdded: '添加节点 {id}',
     graphSelfLoop: '不能连接自身',
@@ -1637,6 +1890,7 @@ export const zh: Locale = {
     presetDramatic: '戏剧',
     presetInstant: '瞬时',
     animationError: '动画异常',
+    renderSlow: '渲染较慢',
   },
   contentTier: {
     title: '知识分层',
@@ -1720,8 +1974,184 @@ export const zh: Locale = {
     inputAriaLabel: '搜索输入框',
     shortcut: 'Ctrl + K',
     noResults: '无搜索结果',
+    noHistory: '无搜索历史',
+    history: '搜索历史',
+    clearHistory: '清空历史',
+    removeHistory: '删除该历史记录',
+    complexity: '复杂度',
     categoryPage: '页面',
     categoryLearning: '学习步骤',
+    categoryHistory: '历史',
+  },
+  pwa: {
+    updateAvailable: '有新版本可用',
+    reload: '刷新',
+    close: '关闭',
+  },
+  performance: {
+    mode: '性能模式',
+    hint: '大数据场景已跳过动画',
+  },
+  complexity: {
+    title: '复杂度',
+    name: '名称',
+    useCase: '应用场景',
+    time: '时间',
+    space: '空间',
+    best: '最优',
+    average: '平均',
+    worst: '最差',
+    glossaryTitle: '算法术语速查表',
+    glossarySubtitle: '双栏对照 16 种核心数据结构与排序算法',
+    emptyHint: '暂无术语数据',
+    showMore: '展开表格',
+    showLess: '收起表格',
+  },
+  algorithms: {
+    array: {
+      name: '数组',
+      description: '连续内存存储相同类型元素，通过下标 O(1) 访问',
+      useCase: '查找表、缓冲、动态规划、矩阵运算',
+      best: 'O(1)',
+      average: 'O(n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    stack: {
+      name: '栈',
+      description: '后进先出（LIFO）线性结构，仅在一端操作',
+      useCase: '函数调用栈、括号匹配、表达式求值、DFS、撤销',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    queue: {
+      name: '队列',
+      description: '先进先出（FIFO）线性结构，队尾入队头出',
+      useCase: 'BFS、任务调度、消息队列、缓冲管理',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    linkedlist: {
+      name: '链表',
+      description: '动态内存节点通过指针串联，不支持随机访问',
+      useCase: 'LRU 缓存、哈希冲突链、多项式运算、内存管理',
+      best: 'O(1)',
+      average: 'O(n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    tree: {
+      name: '二叉树',
+      description: '层次结构，每个节点最多两个子节点',
+      useCase: 'BST 查找、文件系统、DOM、表达式树、堆',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    avlTree: {
+      name: 'AVL 树',
+      description: '严格自平衡 BST，任意节点左右子树高度差 ≤ 1',
+      useCase: '数据库索引、内存有序映射、空间分区、网络路由',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    redBlackTree: {
+      name: '红黑树',
+      description: '近似自平衡 BST，通过颜色约束保证 O(log n)',
+      useCase: 'std::map、TreeMap、Linux CFS、epoll',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    bTree: {
+      name: 'B 树',
+      description: '多路平衡搜索树，节点可容纳多个键',
+      useCase: '数据库索引、文件系统、磁盘存储',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    segmentTree: {
+      name: '线段树',
+      description: '二叉区间树，支持区间查询与单点更新',
+      useCase: '区间求和/最值、RMQ、频率统计',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    heap: {
+      name: '堆',
+      description: '完全二叉树，父节点优于子节点（最大/最小堆）',
+      useCase: '优先队列、堆排序、Top-K、调度',
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    trie: {
+      name: '字典树',
+      description: '前缀树，沿字符路径存储字符串',
+      useCase: '自动补全、IP 路由、词频统计、拼写检查',
+      best: 'O(m)',
+      average: 'O(m)',
+      worst: 'O(m)',
+      space: 'O(n·m)',
+    },
+    hash: {
+      name: '哈希表',
+      description: '键通过哈希函数映射到桶，平均 O(1) 访问',
+      useCase: '缓存、索引、集合、字典、符号表',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    graph: {
+      name: '图',
+      description: '节点与边构成的网络结构，分有向/无向/加权',
+      useCase: '社交网络、地图导航、依赖分析、推荐',
+      best: 'O(V+E)',
+      average: 'O(V+E)',
+      worst: 'O(V+E)',
+      space: 'O(V²)',
+    },
+    skipList: {
+      name: '跳表',
+      description: '多层概率平衡的有序链表',
+      useCase: 'Redis 有序集合、LevelDB、内存数据库索引',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(n)',
+      space: 'O(n log n)',
+    },
+    unionFind: {
+      name: '并查集',
+      description: '不相交集合数据结构，路径压缩 + 按秩合并',
+      useCase: '连通分量、Kruskal、网络连接、社交集群',
+      best: 'O(α(n))',
+      average: 'O(α(n))',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    sort: {
+      name: '排序',
+      description: '将序列按指定顺序重排的一族算法',
+      useCase: '数据预处理、查找加速、Top-K、归并',
+      best: 'O(n)',
+      average: 'O(n log n)',
+      worst: 'O(n²)',
+      space: 'O(1)',
+    },
   },
 }
 
@@ -1816,6 +2246,38 @@ export const en: Locale = {
     nodeTitle: 'Value: {value}, Color: {color}',
     colorRed: 'Red',
     colorBlack: 'Black',
+  },
+  bTree: {
+    title: 'B-Tree',
+    subtitle: 'Multi-way Search Tree · Node Splitting · O(log n) Guaranteed',
+    insert: 'Insert',
+    search: 'Search',
+    inorder: 'Inorder',
+    nodeTitle: 'keys: {keys}\nkey count: {count}\ntype: {type}',
+    leaf: 'Leaf node',
+    internal: 'Internal node',
+  },
+  segmentTree: {
+    title: 'Segment Tree',
+    subtitle: 'Range Query · Point Update · O(log n)',
+    build: 'Build',
+    query: 'Query',
+    update: 'Update',
+    rangeStart: 'Range Start',
+    rangeEnd: 'Range End',
+    index: 'Index',
+    value: 'Value',
+    buildPlaceholder: 'Array (e.g. 1,2,3,4)',
+    buildEmpty: 'Please enter an array',
+    buildInvalid: 'Invalid array format (1-50 integers)',
+    queryInvalid: 'Please enter a valid range',
+    queryOutOfRange: 'Range out of bounds',
+    updateInvalid: 'Please enter a valid index and value',
+    updateOutOfRange: 'Index out of bounds',
+    nodeTitle: 'Range: {range}\nSum: {sum}\nType: {type}',
+    leaf: 'Leaf node',
+    internal: 'Internal node',
+    arrayLabel: 'Array',
   },
   graph: {
     title: 'Graph',
@@ -1947,6 +2409,8 @@ export const en: Locale = {
     tree: 'Binary Tree',
     avlTree: 'AVL Tree',
     redBlackTree: 'Red-Black Tree',
+    bTree: 'B-Tree',
+    segmentTree: 'Segment Tree',
     graph: 'Graph',
     sort: 'Sorting',
     hash: 'Hash Table',
@@ -1989,6 +2453,7 @@ export const en: Locale = {
     emptyTreeShort: 'Empty Tree',
     emptyAvlShort: 'Empty AVL Tree · Insert nodes',
     emptyRedBlackTreeShort: 'Empty Red-Black Tree · Insert nodes',
+    emptyBTreeShort: 'Empty B-Tree · Insert nodes',
     emptyGraphShort: 'Empty Graph · Add nodes',
     emptyHashShort: 'Empty Hash · Insert key-value pairs',
     emptyHeapShort: 'Empty Heap · Insert elements',
@@ -2010,6 +2475,11 @@ export const en: Locale = {
     emptyAvlDesc: 'Click insert to add nodes',
     emptyRedBlackTree: 'Red-Black tree is empty',
     emptyRedBlackTreeDesc: 'Click insert to add nodes',
+    emptyBTree: 'B-Tree is empty',
+    emptyBTreeDesc: 'Click insert to add nodes',
+    emptySegmentTree: 'Segment Tree is empty',
+    emptySegmentTreeShort: 'Empty Segment Tree · Please build',
+    emptySegmentTreeDesc: 'Enter an array and click build to create the segment tree',
     emptyGraph: 'Graph is empty',
     emptyGraphDesc: 'Click add node to create the graph',
     emptyHash: 'Hash table is empty',
@@ -2036,6 +2506,18 @@ export const en: Locale = {
     exportTooltip: 'Export data as JSON file',
     importTooltip: 'Import data from JSON file',
   },
+  exportAnimation: {
+    label: 'Export Animation',
+    title: 'Export current animation as video / GIF / frames',
+    webm: 'WebM Video',
+    gif: 'GIF Animation',
+    frames: 'Frame Sequence (ZIP)',
+    recording: 'Recording...',
+    success: 'Animation exported',
+    failed: 'Animation export failed',
+    unsupported: 'Animation export not supported in this browser',
+    tooltip: 'Record the current canvas and export',
+  },
   visualizer: {
     hideGrid: 'Hide grid',
     showGrid: 'Show grid',
@@ -2054,6 +2536,8 @@ export const en: Locale = {
     treeLabel: 'Binary tree visualization',
     avlTreeLabel: 'AVL tree visualization',
     redBlackTreeLabel: 'Red-Black tree visualization',
+    bTreeLabel: 'B-Tree visualization',
+    segmentTreeLabel: 'Segment Tree visualization',
     graphLabel: 'Graph visualization',
     sortLabel: 'Sorting visualization',
     hashLabel: 'Hash table visualization',
@@ -2070,9 +2554,14 @@ export const en: Locale = {
     reset: 'Reset data structure',
     pause: 'Pause animation',
     toggleHelp: 'Show/hide shortcut help',
+    searchPlaceholder: 'Search shortcuts...',
+    searchNoResults: 'No matching shortcuts',
+    allShortcuts: 'All shortcuts',
   },
   page: {
     operations: 'Operations',
+    expand: 'Expand',
+    collapse: 'Collapse',
     selected: 'selected',
     running: 'Running...',
     done: 'All Done',
@@ -2080,6 +2569,8 @@ export const en: Locale = {
     compareDone: 'Comparison complete',
     algorithms: 'algorithms',
     stopped: 'Sorting stopped',
+    animating: 'Animation in progress, please wait',
+    disabled: 'Disabled',
   },
   performanceChart: {
     title: 'Performance Comparison',
@@ -2143,6 +2634,26 @@ export const en: Locale = {
     closeDrawer: 'Collapse panel',
     openDrawer: 'Expand panel',
     recent: 'Recent',
+    tabs: 'Info panel tabs',
+    stepBadge: 'Step matches',
+  },
+  quiz: {
+    title: 'Quiz',
+    question: 'Question',
+    of: '/',
+    submit: 'Submit',
+    correct: 'Correct',
+    incorrect: 'Incorrect',
+    explanation: 'Explanation',
+    next: 'Next',
+    prev: 'Previous',
+    score: 'Score',
+    correctCount: 'Correct',
+    reset: 'Restart',
+    complete: 'Quiz Complete',
+    noQuestions: 'No quiz questions',
+    yourAnswer: 'Your answer',
+    correctAnswer: 'Correct answer',
   },
   errorBoundary: {
     title: 'Component Error',
@@ -2435,6 +2946,22 @@ export const en: Locale = {
     redBlackTreeLogSearchFound: 'search({value}) → found, depth: {depth}',
     redBlackTreeLogSearchNotFound: 'search({value}) → not found',
     redBlackTreeLogInorder: 'Inorder (sorted): [{data}]',
+    bTreeLogInsert: 'insert({value}) → inserted and split if needed, nodes: {count}',
+    bTreeInsertSuccess: 'Inserted node {value} (split balanced)',
+    bTreeInsertDuplicate: 'Node {value} already exists, skipping',
+    bTreeLogInsertDuplicate: 'insert({value}) → duplicate, skipped',
+    bTreeLogSearchFound: 'search({value}) → found, depth: {depth}',
+    bTreeLogSearchNotFound: 'search({value}) → not found',
+    bTreeLogInorder: 'Inorder (sorted): [{data}]',
+    segmentTreeBuildEmpty: 'Please enter an array first',
+    segmentTreeLogBuild: 'build([{data}]) → nodes: {count}',
+    segmentTreeBuildSuccess: 'Built segment tree ({count} nodes)',
+    segmentTreeLogQuery: 'query({start}, {end}) → sum: {sum}',
+    segmentTreeQueryInvalid: 'Please enter a valid range',
+    segmentTreeQuerySuccess: 'Sum of range [{start}, {end}] is {sum}',
+    segmentTreeUpdateOutOfRange: 'Index out of bounds',
+    segmentTreeLogUpdate: 'update({index}, {value}) → nodes: {count}',
+    segmentTreeUpdateSuccess: 'Updated index {index} to {value}',
     graphLogAddNode: 'addNode("{id}") → nodes: {count}',
     graphNodeAdded: 'Added node {id}',
     graphSelfLoop: 'Cannot connect to self',
@@ -2522,6 +3049,7 @@ export const en: Locale = {
     presetDramatic: 'Dramatic',
     presetInstant: 'Instant',
     animationError: 'Animation error',
+    renderSlow: 'Slow render',
   },
   contentTier: {
     title: 'Knowledge Tiers',
@@ -2605,7 +3133,183 @@ export const en: Locale = {
     inputAriaLabel: 'Search input',
     shortcut: 'Ctrl + K',
     noResults: 'No results found',
+    noHistory: 'No search history',
+    history: 'Search History',
+    clearHistory: 'Clear history',
+    removeHistory: 'Remove this history item',
+    complexity: 'Complexity',
     categoryPage: 'Page',
     categoryLearning: 'Learning Step',
+    categoryHistory: 'History',
+  },
+  pwa: {
+    updateAvailable: 'Update available',
+    reload: 'Reload',
+    close: 'Close',
+  },
+  performance: {
+    mode: 'Performance Mode',
+    hint: 'Animations skipped for large data',
+  },
+  complexity: {
+    title: 'Complexity',
+    name: 'Name',
+    useCase: 'Use Case',
+    time: 'Time',
+    space: 'Space',
+    best: 'Best',
+    average: 'Average',
+    worst: 'Worst',
+    glossaryTitle: 'Algorithm Glossary',
+    glossarySubtitle: 'Bilingual reference for 16 core data structures & sorting',
+    emptyHint: 'No glossary data',
+    showMore: 'Show table',
+    showLess: 'Hide table',
+  },
+  algorithms: {
+    array: {
+      name: 'Array',
+      description: 'Stores elements of the same type in contiguous memory; O(1) random access by index.',
+      useCase: 'Lookup tables, buffers, DP state arrays, matrix operations.',
+      best: 'O(1)',
+      average: 'O(n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    stack: {
+      name: 'Stack',
+      description: 'Last-In-First-Out (LIFO) linear structure with operations only at the top.',
+      useCase: 'Call stack, parenthesis matching, expression evaluation, DFS, undo.',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    queue: {
+      name: 'Queue',
+      description: 'First-In-First-Out (FIFO) linear structure; enqueue at rear, dequeue at front.',
+      useCase: 'BFS, task scheduling, message queues, buffering.',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    linkedlist: {
+      name: 'Linked List',
+      description: 'Nodes connected by pointers in non-contiguous memory; no random access.',
+      useCase: 'LRU cache, hash chaining, polynomial arithmetic, memory free-lists.',
+      best: 'O(1)',
+      average: 'O(n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    tree: {
+      name: 'Binary Tree',
+      description: 'Hierarchical structure with at most two children per node.',
+      useCase: 'BST search, file systems, DOM, expression trees, heaps.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    avlTree: {
+      name: 'AVL Tree',
+      description: 'Strictly self-balancing BST; height difference of any node is at most 1.',
+      useCase: 'Database indexes, in-memory ordered maps, spatial partitioning, routing tables.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    redBlackTree: {
+      name: 'Red-Black Tree',
+      description: 'Approximately balanced BST; guarantees O(log n) via color constraints.',
+      useCase: 'std::map, TreeMap, Linux CFS scheduler, epoll.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    bTree: {
+      name: 'B-Tree',
+      description: 'Multi-way balanced search tree; each node may hold multiple keys.',
+      useCase: 'Database indexes, file systems, on-disk storage.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    segmentTree: {
+      name: 'Segment Tree',
+      description: 'Binary interval tree supporting range queries and point updates.',
+      useCase: 'Range sum/min, RMQ, frequency counts.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    heap: {
+      name: 'Heap',
+      description: 'Complete binary tree where the parent dominates children (max/min heap).',
+      useCase: 'Priority queues, heap sort, Top-K, scheduling.',
+      best: 'O(1)',
+      average: 'O(log n)',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    trie: {
+      name: 'Trie',
+      description: 'Prefix tree storing strings along character paths.',
+      useCase: 'Autocomplete, IP routing, word frequency, spell check.',
+      best: 'O(m)',
+      average: 'O(m)',
+      worst: 'O(m)',
+      space: 'O(n·m)',
+    },
+    hash: {
+      name: 'Hash Table',
+      description: 'Keys mapped to buckets via a hash function; average O(1) access.',
+      useCase: 'Caching, indexing, sets, dictionaries, symbol tables.',
+      best: 'O(1)',
+      average: 'O(1)',
+      worst: 'O(n)',
+      space: 'O(n)',
+    },
+    graph: {
+      name: 'Graph',
+      description: 'Network of nodes and edges; can be directed/undirected/weighted.',
+      useCase: 'Social networks, navigation, dependency analysis, recommendations.',
+      best: 'O(V+E)',
+      average: 'O(V+E)',
+      worst: 'O(V+E)',
+      space: 'O(V²)',
+    },
+    skipList: {
+      name: 'Skip List',
+      description: 'Multi-level probabilistically balanced ordered linked list.',
+      useCase: 'Redis sorted sets, LevelDB, in-memory DB indexes.',
+      best: 'O(log n)',
+      average: 'O(log n)',
+      worst: 'O(n)',
+      space: 'O(n log n)',
+    },
+    unionFind: {
+      name: 'Union-Find',
+      description: 'Disjoint-set data structure with path compression and union by rank.',
+      useCase: 'Connected components, Kruskal, network connectivity, social clusters.',
+      best: 'O(α(n))',
+      average: 'O(α(n))',
+      worst: 'O(log n)',
+      space: 'O(n)',
+    },
+    sort: {
+      name: 'Sorting',
+      description: 'A family of algorithms that rearrange sequences into order.',
+      useCase: 'Data preprocessing, accelerating search, Top-K, merging.',
+      best: 'O(n)',
+      average: 'O(n log n)',
+      worst: 'O(n²)',
+      space: 'O(1)',
+    },
   },
 }

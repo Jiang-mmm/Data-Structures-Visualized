@@ -317,6 +317,18 @@ code,
   }
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 @media (max-width: 768px) {
   /* 视觉化容器 - 移动端触摸滚动 */
   .visualizer-container {
@@ -460,4 +472,151 @@ code,
   .log-panel {
     max-height: 120px;
   }
+}
+
+/* ==========================================================================
+ * v16 设计统一化（2026-06-22 起）— 详见 /DESIGN.md
+ * 新增内容：surface ladder、keycap、命令面板、viz 配色 token
+ * 不影响既有 token；既有组件无需立即迁移，渐进式接入
+ * ==========================================================================*/
+
+@theme {
+  /* v16 表面阶梯（Linear 风格，dark-first） */
+  --color-v16-canvas: #0f172a;          /* 页面底色（深色，参照 Linear canvas #010102 + Raycast #07080a 取折中） */
+  --color-v16-surface-1: #1e293b;       /* 卡片 */
+  --color-v16-surface-2: #334155;       /* 高亮卡片 / hover */
+  --color-v16-surface-3: #475569;       /* 浮层 / modal */
+  --color-v16-hairline: #334155;        /* 1px 边框（dark） */
+  --color-v16-hairline-strong: #475569; /* 强调边框 / focus */
+  --color-v16-ink: #e2e8f0;             /* 主文本（dark） */
+  --color-v16-ink-muted: #b4c0d4;       /* 副文本 */
+  --color-v16-ink-subtle: #94a3b8;      /* 提示 */
+
+  /* v16 浅色模式对应（用于浅色主题下命令面板、Modal 等需要"elevated 表面"的场景） */
+  --color-v16-canvas-light: #faf8f5;       /* = --color-paper 暖米 */
+  --color-v16-surface-1-light: #ffffff;    /* = --color-surface */
+  --color-v16-surface-2-light: #f5f3ef;    /* = --color-surface-strong */
+  --color-v16-hairline-light: #e5e0d8;
+  --color-v16-ink-light: #1a1a2e;
+
+  /* v16 圆角阶梯（与 Linear / Vercel 收敛；既有的 2/4px 保留为 radius-sm/md） */
+  --radius-v16-lg: 8px;
+  --radius-v16-xl: 12px;
+  --radius-v16-2xl: 16px;
+
+  /* v16 柔和阴影（Vercel stacked shadow 风格；与既有的硬阴影互补） */
+  --shadow-v16-soft-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-v16-soft-md: 0 2px 4px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.04);
+
+  /* v16 动效曲线（与 Vercel/Linear 收敛；既有的 --animate-* 保留） */
+  --ease-v16-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-v16-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-v16-out: cubic-bezier(0, 0, 0.2, 1);
+  --duration-v16-fast: 100ms;
+  --duration-v16-normal: 200ms;
+  --duration-v16-slow: 300ms;
+
+  /* v16 可视化配色（17 visualizer 渐进迁移目标；保留单值模式）
+     ⚠️ 深色模式变体必须移出 @theme 块（Tailwind v4 限制：@theme 只允许 custom properties / @keyframes） */
+  --color-viz-default: #64748b;
+  --color-viz-compare: #3b82f6;
+  --color-viz-swap: #dc2626;
+  --color-viz-sorted: #059669;
+  --color-viz-active: #d97706;
+  --color-viz-found: #7c3aed;
+  --color-viz-path: #0891b2;
+  --color-viz-visited: #a78bfa;
+}
+
+/* v16 viz tokens 深色模式变体（移出 @theme 块以满足 Tailwind v4 约束） */
+html.dark {
+  --color-viz-default: #94a3b8;
+  --color-viz-compare: #60a5fa;
+  --color-viz-swap: #f87171;
+  --color-viz-sorted: #34d399;
+  --color-viz-active: #fbbf24;
+  --color-viz-found: #a78bfa;
+  --color-viz-path: #22d3ee;
+  --color-viz-visited: #c4b5fd;
+}
+
+/* ---------- v16 Keycap（Raycast 风格快捷键提示） ---------- */
+@utility kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  min-width: 20px;
+  padding: 0 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-ink-light);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-strong) 100%);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  box-shadow: 0 1px 0 var(--color-border);
+  user-select: none;
+}
+
+html.dark .kbd {
+  color: var(--color-dark-ink-light);
+  background: linear-gradient(180deg, var(--color-dark-surface) 0%, var(--color-dark-paper) 100%);
+  border-color: var(--color-dark-border);
+  box-shadow: 0 1px 0 var(--color-dark-border);
+}
+
+/* ---------- v16 Command Palette（Raycast 风格命令面板容器） ---------- */
+@utility command-palette {
+  background-color: var(--color-v16-canvas-light);
+  border: 1px solid var(--color-v16-hairline-light);
+  border-radius: var(--radius-v16-xl);
+  box-shadow: var(--shadow-v16-soft-md);
+  overflow: hidden;
+}
+
+html.dark .command-palette {
+  background-color: var(--color-v16-canvas);
+  border-color: var(--color-v16-hairline);
+}
+
+/* ---------- v16 Surface Ladder Utilities（Linear 风格层次） ---------- */
+@utility v16-surface-1 {
+  background-color: var(--color-v16-surface-1-light);
+  border: 1px solid var(--color-v16-hairline-light);
+  html.dark & {
+    background-color: var(--color-v16-surface-1);
+    border-color: var(--color-v16-hairline);
+  }
+}
+
+@utility v16-surface-2 {
+  background-color: var(--color-v16-surface-2-light);
+  border: 1px solid var(--color-v16-hairline-light);
+  html.dark & {
+    background-color: var(--color-v16-surface-2);
+    border-color: var(--color-v16-hairline-strong);
+  }
+}
+
+/* ---------- v16 Radius Extensions（与 Linear/Vercel 收敛） ---------- */
+@utility radius-v16-lg {
+  border-radius: var(--radius-v16-lg);
+}
+@utility radius-v16-xl {
+  border-radius: var(--radius-v16-xl);
+}
+@utility radius-v16-2xl {
+  border-radius: var(--radius-v16-2xl);
+}
+
+/* ---------- v16 Focus Ring（强化版，配合 keycap 命令面板） ---------- */
+.v16-focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+html.dark .v16-focus-ring:focus-visible {
+  outline-color: var(--color-dark-accent);
 }

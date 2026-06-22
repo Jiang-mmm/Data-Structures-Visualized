@@ -79,9 +79,9 @@ describe('新增高级学习模块配置', () => {
       })
     })
 
-    it('注册后 learningConfigs 总数应为 37（原 29 + 新增 3 + avlTree 1 + counting 1 + skipList 1 + unionFind 1 + redBlackTree 1）', () => {
+    it('注册后 learningConfigs 总数应为 40（原 29 + 新增 3 + avlTree 1 + counting 1 + skipList 1 + unionFind 1 + redBlackTree 1 + sortCompare 1 + bTree 1 + segmentTree 1）', () => {
       const keys = Object.keys(learningConfigs)
-      expect(keys.length).toBe(37)
+      expect(keys.length).toBe(40)
     })
   })
 

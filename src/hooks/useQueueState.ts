@@ -6,22 +6,23 @@ import { tStatic } from '../i18n/useI18n'
 
 const INITIAL_DATA: number[] = [10, 20, 30]
 const MAX_SIZE = 10
+const MODULE = () => tStatic('queue.title')
 
-export function useQueueState() {
+export function useQueueState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset, loadData,
     undo, redo, canUndo, canRedo, getUndoPreview, getRedoPreview,
-  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'queue' })
+  } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'queue', abortAnimation })
 
   const enqueue = useCallback((value: string | number): boolean => {
     if (data.length >= MAX_SIZE) {
-      showToast({ type: 'error', message: tStatic('hooks.queueFull').replace('{max}', String(MAX_SIZE)) })
+      showToast({ type: 'error', message: tStatic('hooks.queueFull').replace('{max}', String(MAX_SIZE)), module: MODULE(), operation: tStatic('queue.enqueue') })
       return false
     }
     const { valid, value: safeValue } = validateNumericInput(value)
     if (!valid) {
-      showToast({ type: 'error', message: tStatic('hooks.inputInvalid') })
+      showToast({ type: 'error', message: tStatic('hooks.inputInvalid'), module: MODULE(), operation: tStatic('queue.enqueue') })
       return false
     }
     const newData = [...data, safeValue]
@@ -33,7 +34,7 @@ export function useQueueState() {
 
   const dequeue = useCallback((): number | null => {
     if (data.length === 0) {
-      showToast({ type: 'error', message: tStatic('hooks.queueEmpty') })
+      showToast({ type: 'error', message: tStatic('hooks.queueEmpty'), module: MODULE(), operation: tStatic('queue.dequeue') })
       return null
     }
     const newData = data.slice(1)

@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify dependency versions
+        run: npm ls --depth=0
+
       - name: Lint
         run: npm run lint
 
@@ -64,3 +67,31 @@ jobs:
       - name: Run E2E tests (comprehensive)
         run: node e2e/test-comprehensive.js
         timeout-minutes: 10
+
+      - name: Run E2E tests (a11y)
+        run: node e2e/test-a11y.js
+        timeout-minutes: 10
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45bf83
+        if: always()
+        with:
+          name: coverage-node-${{ matrix.node-version }}
+          path: coverage/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45bf83
+        if: always()
+        with:
+          name: dist-node-${{ matrix.node-version }}
+          path: dist/
+
+      - name: Upload E2E reports
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45bf83
+        if: always()
+        with:
+          name: e2e-reports-node-${{ matrix.node-version }}
+          path: |
+            playwright-report/
+            e2e/test-results.json
+            test-results/
