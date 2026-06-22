@@ -2,6 +2,47 @@
 
 ---
 
+## 2026-06-22 (深夜) | v18 i18n 全量替换计划封存清理
+
+### 任务范围
+应用户要求清理 v18 i18n 计划阶段的全部产物（feature/v18-i18n-foundation 分支 + 10 份 M1 清单 + 计划文档）。同时记录 M0 决策摘要供未来重启参考。
+
+### 清理前状态
+- `feature/v18-i18n-foundation` 分支：1 个 commit（`774025a`），含 v18 计划文档（646 行）+ 5 份文档同步
+- `docs/superpowers/i18n-inventory/`：10 份 M1 阶段产出（5 份 UI 字符串清单 + 5 份项目管理清单），本地 untracked
+- 5 份主分支文档（PROJECT_STATUS / TODO / WORKLOG / CLAUDE / AGENTS）：main 上**无 v18 引用**（v18 内容只在 v18 分支上）
+
+### 清理动作
+| # | 操作 | 命令/路径 |
+|---|------|----------|
+| 1 | 建清理分支 | `git checkout main` + `git checkout -b chore/v18-cleanup`（基于 main = b991566） |
+| 2 | 删 untracked M1 清单 | `git clean -fd docs/superpowers/i18n-inventory/`（10 份） |
+| 3 | 同步 PROJECT_STATUS.md | §1 顶部状态更新至 v17 已 merge / v18 已封存 + 追加 v18 决策摘要备注 |
+| 4 | 同步 TODO.md | 顶部状态更新 + v17 段标记已 merge + 新增"v18 已封存"段 |
+| 5 | 同步 WORKLOG.md | 追加本日志 |
+| 6 | 同步 CLAUDE.md / AGENTS.md | main 上无 v18 引用，无需修改 |
+| 7 | commit + 合并 main | `chore(v18): 封存 v18 计划阶段产物` |
+| 8 | 删除 v18 分支 | `git push origin --delete feature/v18-i18n-foundation` + `git branch -D feature/v18-i18n-foundation` |
+
+### M0 决策摘要（封存保留）
+| 决策 | 推荐方案 |
+|------|----------|
+| **D1 范围深度** | B：UI + learning config（约 13000 处） |
+| **D2 文件结构** | C：按语言拆分 `locales/{zh,en}/` |
+| **D3 翻译工作流** | B：AI 辅助 + 人工校对 |
+| **D4 渐进发布** | 简化：逐步提交 + 立即生效（依赖测试+E2E 保底） |
+| **D5 命名规范** | C：namespace + flat keys（如 `arrayPage.title.insertButton`） |
+
+### 关联变更
+- 主分支策略：5 份核心文档已就位 v17 已 merge 状态；PROJECT_STATUS.md 追加 v18 封存备注段
+- 后续 v19+ 重启 i18n 全量替换时，可基于本决策摘要 + 计划文档历史快照（v18 分支 commit `774025a` 的 `docs/superpowers/plans/2026-06-22-v18-i18n-full-replacement.md` 646 行）启动
+
+### 下一步方向
+- **主线任务** = 当前 v17.0.0 GA 已 merge main；v18 已封存；待用户决定 v19+ 方向
+- 候选方向（待用户拍板）：① 启动 i18n 渐进迁移（v19）；② 启动数据可视化增强（v20）；③ 启动 v13 Top10 之外的 P2/P3 问题修复；④ 维护模式（仅 Bug 修复）
+
+---
+
 ## 2026-06-22 (晚) | v17.0.0 GA — UI/UX 迭代完成（待合并 main）
 
 ### 任务范围
