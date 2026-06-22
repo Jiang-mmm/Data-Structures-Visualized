@@ -28,10 +28,18 @@ const mockQuestions: QuizQuestion[] = [
 ]
 
 describe('QuizPanel', () => {
+  let randomSpy: ReturnType<typeof vi.spyOn>
+
   beforeEach(() => {
     vi.clearAllMocks()
     mockedUseGlobalSettings.mockReturnValue(mockUseGlobalSettings())
     localStorage.clear()
+    // v17 R5：让 Fisher-Yates 洗牌保持原序（Math.random()≈1 时 j=i，等于不交换）
+    randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.999999)
+  })
+
+  afterEach(() => {
+    randomSpy.mockRestore()
   })
 
   it('渲染标题和题目编号', () => {
@@ -100,8 +108,8 @@ describe('QuizPanel', () => {
     fireEvent.click(screen.getByText('选项 B'))
     fireEvent.click(screen.getByText('quiz.submit'))
 
-    // 点击重置
-    fireEvent.click(screen.getByRole('button', { name: '↻' }))
+    // 点击重置（按钮 accessible name 为 quiz.reset aria-label）
+    fireEvent.click(screen.getByLabelText('quiz.reset'))
 
     // 回到未答题状态
     expect(screen.getByText('quiz.submit')).toBeInTheDocument()

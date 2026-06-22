@@ -156,4 +156,41 @@ export const graphConfig: LearningModeConfig = {
       complexity: { time: 'O((V+E) log V)', space: 'O(V)' },
     },
   ],
+  quiz: [
+    {
+      id: 'q1',
+      question: 'BFS 适合解决什么类型的图问题？',
+      options: ['单源最短路径（无权图）', '负权最短路径', '最小生成树', '强连通分量'],
+      correctIndex: 0,
+      explanation: 'BFS 按层扩展，逐层增加路径长度，因此能保证找到无权图从源点到其他所有点的最短路径。',
+    },
+    {
+      id: 'q2',
+      question: 'DFS 与 BFS 的主要区别是？',
+      options: ['DFS 用队列，BFS 用栈', 'DFS 用栈（或递归），BFS 用队列', 'DFS 只能处理有向图', 'BFS 只能处理无向图'],
+      correctIndex: 1,
+      explanation: 'DFS（深度优先）使用栈或递归实现"沿一条路径深入"；BFS（广度优先）使用队列实现"按层扩展"。',
+    },
+    {
+      id: 'q3',
+      question: 'Dijkstra 算法不能处理什么情况？',
+      options: ['无权图', '负权边', '有向图', '稀疏图'],
+      correctIndex: 1,
+      explanation: 'Dijkstra 一旦确定某节点最短距离就不再更新，负权边可能导致"绕远反而更短"，需要 Bellman-Ford/SPFA 处理。',
+    },
+    {
+      id: 'q4',
+      question: '邻接表相对于邻接矩阵的主要优势是？',
+      options: ['查询两节点是否有边更快', '节省空间，适合稀疏图', '实现更简单', '支持负权边'],
+      correctIndex: 1,
+      explanation: '邻接表 O(V+E) 空间，邻接矩阵 O(V²)。对于稀疏图（E << V²），邻接表节省大量空间。',
+    },
+    {
+      id: 'q5',
+      question: 'Prim 和 Kruskal 都是什么算法？',
+      options: ['最短路径算法', '最小生成树算法', '拓扑排序算法', '强连通分量算法'],
+      correctIndex: 1,
+      explanation: 'Prim（加点法）和 Kruskal（加边法）都是构造最小生成树（MST）的经典贪心算法。',
+    },
+  ],
 }

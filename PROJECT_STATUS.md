@@ -2,7 +2,7 @@
 
 > **文件用途**: AI 开发前必读。本文件汇总项目最新进展，避免 AI 基于过时的代码或文档状态做决策。
 > **更新频率**: 每次迭代结束 / 每个子阶段验收后 / 启动新的开发任务前。
-> **最后更新**: 2026-06-22
+> **最后更新**: 2026-06-22 (v17 UI/UX 迭代完成)
 
 ---
 
@@ -31,12 +31,52 @@
 | **项目名称** | ds-visualizer（数据结构学习助手） |
 | **当前版本** | v16.0.0 GA（ENG-1 E2E 迁移 + ENG-2 覆盖率 >80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善） |
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa |
-| **当前分支** | `feature/v13-path3-learning-enhancements` |
+| **当前分支** | `feature/v17-ui-ux-iterations`（从 main HEAD `b8d0b03` 切出，v16.0.0 GA + v16 设计统一化已合入 main） |
 | **基线状态** | 2699 单元测试全绿 / ESLint 0 errors / 生产构建通过 / bundle < budget / 测试覆盖率 80.05% / 17 种数据结构 / 40 个学习配置 / E2E 7+2 spec 迁移至 Playwright Test |
 
 ---
 
 ## 2. 最近完成的工作
+
+### 2026-06-22 (晚) | v16 设计统一化合并到 main（v16 design unification GA merge）
+
+- `feature/v16-design-unification` → main 通过 `--no-ff` 合并，merge commit `b8d0b03`
+- 合并规模：main HEAD 从 v12.0（`afac96f`）一次性追平至 v16.0.0 GA；354 文件差异 0 冲突（全部新增/独立文件改动，git 3-way merge 自动解决）
+- 合并后稳定性验证：lint 0 / 2699 测试 / build OK / bundle OK / browser OK
+- `feature/v16-design-unification` 分支保留，便于回滚与追溯
+- v16 内部 3 个原子 commit 完整保留（`--no-ff` 策略）：
+  - `d14778a` Phase A 设计真源 + v16 token
+  - `4a30625` Phase C 命令面板 v16 化
+  - `be32bcd` Phase F 文档同步
+
+### 2026-06-22 (晚) | v17 UI/UX 迭代完成（v17.0.0 GA）
+
+基于浏览器截图（1440p）发现 7 项 UI/UX 问题，制定并实施 v17 计划，全部完成并通过验收。
+
+| # | 问题 | 解决方案 | 验收标志 |
+|---|------|----------|----------|
+| **R1** | 首页冗余 4 区块堆叠，导致首屏需 1.8 屏 | Home.tsx 新增学习中心折叠面板（默认收起） | 1440p 首屏可见 Hero + Stats Bar + 折叠按钮 + Cards Grid 顶部 |
+| **R2** | LogPanel 深色模式配色不协调 | typeConfig 新增 dark: 变体（4 类型用 bright accent + 深背景） | 深色模式 4 色可清晰区分（oper/info/error/code） |
+| **R3** | SortCompare PerformanceChart 与 InfoPanel 对齐混乱 | PerformanceChart 移入主内容列 wrapper；onCompare/onSwap 新增 code 日志 | 主内容列与 InfoPanel 左右对齐；日志显示「选择排序 · 比较 #7 (7%)」格式 |
+| **R4** | GraphAlgorithm 复杂度对比在主内容列底部 | ComplexityChart 移至右侧 InfoPanel 同级区（顶部），InfoPanel 在下方 | 复杂度对比与 InfoPanel 上下分布，主内容列专注图可视化 |
+| **R5** | 测验题库仅 3 题且顺序固定 | 5 核心 config 扩充至 5-8 题；QuizPanel 挂载时 Fisher-Yates 洗牌 | 核心 config ≥ 5 题；连续打开 3 次题目顺序不同 |
+| **R6** | 树连接线为曲线（curved path） | 7 个 tree visualizer 改为 SVG `<line>` 直线（heap/trie 风格） | B 树 / AVL / 红黑树 / 线段树均显示直线连接 |
+| **R7** | SortCompare 日志仅 2 条 | onCompare/onSwap callback 内每步写 `addLog('code', ...)`；>50 数据按 5 步降频 | 15 元素 sort 日志 ≥ 10 条（含每步比较/交换详情） |
+
+**实施文件**（23 个）：
+- 代码：Home.tsx / LogPanel.tsx / InfoPanel.tsx / QuizPanel.tsx / SortComparePage.tsx / GraphAlgorithmPage.tsx / 5 个 learning config / 4 个 tree visualizer / locales.ts
+- 测试：QuizPanel.test.tsx / Home.test.tsx / 4 个 visualizer test / 2 个 snapshot
+- 文档：PROJECT_STATUS.md / TODO.md / WORKLOG.md / CLAUDE.md / AGENTS.md / v17 计划文档
+
+**验证**：
+- `npm run lint` → 0 errors
+- `npm run test:run` → **2699/2699 通过**（147 文件）
+- `npm run build` → 成功；Bundle size check passed
+- 浏览器截图（1440p）：R1/R2/R3/R4/R5/R6/R7 全部通过
+
+详见 [v17 UI/UX 迭代计划](./docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md)。
+
+---
 
 ### 2026-06-22 | v16.0.0 GA — 工程深化与功能增强
 

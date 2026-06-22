@@ -124,7 +124,7 @@ describe('segmentTreeVisualizer', () => {
 
     it('应渲染边元素（6 条）', () => {
       renderSegmentTree(svg, makeData(), {})
-      const edges = svg.querySelectorAll('path.segtree-edge')
+      const edges = svg.querySelectorAll('line.segtree-edge')
       expect(edges.length).toBe(6)
     })
 

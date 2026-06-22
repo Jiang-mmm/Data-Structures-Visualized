@@ -106,7 +106,7 @@ describe('redBlackTreeVisualizer', () => {
 
     it('应渲染边元素', () => {
       renderRedBlackTree(svg, makeData(), {})
-      const edges = svg.querySelectorAll('path.rb-edge')
+      const edges = svg.querySelectorAll('line.rb-edge')
       expect(edges.length).toBe(2)
     })
 

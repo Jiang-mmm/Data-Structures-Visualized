@@ -93,7 +93,7 @@ describe('avlTreeVisualizer', () => {
 
     it('应渲染边元素', () => {
       renderAvlTree(svg, makeData(), {})
-      const edges = svg.querySelectorAll('path.avl-edge')
+      const edges = svg.querySelectorAll('line.avl-edge')
       expect(edges.length).toBe(2)
     })
 

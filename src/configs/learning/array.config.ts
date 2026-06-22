@@ -121,5 +121,26 @@ export const arrayConfig: LearningModeConfig = {
       correctIndex: 3,
       explanation: '二分查找需要数组支持 O(1) 随机访问（能取 mid），且数组必须有序。两者缺一不可。',
     },
+    {
+      id: 'q4',
+      question: '为什么数组的缓存命中率通常高于链表？',
+      options: ['数组元素类型相同', '数组在内存中连续存储，CPU 预取友好', '数组支持随机访问', '数组长度固定'],
+      correctIndex: 1,
+      explanation: '连续内存布局使得 CPU 可以预取相邻元素到缓存行，遍历数组时缓存命中率高，访问速度快于链表。',
+    },
+    {
+      id: 'q5',
+      question: '数组的"以空间换时间"主要体现在什么场景？',
+      options: ['动态扩容', '哈希表的桶数组', '多维数组', '栈的底层实现'],
+      correctIndex: 1,
+      explanation: '哈希表用额外的桶数组实现 O(1) 平均查找，典型的"以空间换时间"案例。',
+    },
+    {
+      id: 'q6',
+      question: '数组尾部追加（push）操作的均摊时间复杂度是？',
+      options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+      correctIndex: 0,
+      explanation: '动态数组尾部追加均摊 O(1)：虽然偶尔扩容需要 O(n) 复制，但分摊到所有操作后是 O(1)。',
+    },
   ],
 }

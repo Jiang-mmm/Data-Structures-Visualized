@@ -1,14 +1,34 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** v16.0.0 GA
+> **版本:** v17.0.0 GA（待合并 main）
 > **更新日期:** 2026-06-22
-> **状态:** v16.0.0 GA 完成（ENG-1 E2E 迁移 + ENG-2 覆盖率 >80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善）；下一步进入 v16 设计统一化或 v17 规划
+> **状态:** v17.0.0 GA 完成（UI/UX 7 项优化 R1-R7 + 浏览器验收 7/7 PASS）；下一步合并到 main 后规划 v18
+> **v16.0.0 GA:** 已完成（2026-06-22，merge `b8d0b03`）— 设计统一化 + ENG-1 E2E 迁移 + ENG-2 覆盖率 >80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善
 > **v15 GA:** 已完成（2026-06-22）— 体验打磨（E1 PWA + E2 大数据 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞）
 > **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1/G1/G2/G3/F2）
 > **详细迭代计划:** v11 计划已归档至 [docs/archive/iteration-plan-v11.md](./docs/archive/iteration-plan-v11.md)；v12/v13/v14/v15 计划见 [docs/superpowers/plans/](./docs/superpowers/plans/)，v10/v11/v12 迭代记录见 WORKLOG.md
 > **v13 体检报告:** [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md)
 > **Path 3 实施真源文档:** [docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md](./docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md)
 > **长线路线图:** [docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md)
+
+---
+
+## v17 UI/UX 迭代（2026-06-22 完成，待合并 main）
+
+| 维度 | 内容 |
+|------|------|
+| **状态** | ✅ 完成（待合并 main） |
+| **基线** | v16.0.0 GA（merge `b8d0b03`） |
+| **执行分支** | `feature/v17-ui-ux-iterations` |
+| **R1 首页精简** | 4 辅助区块折叠为「学习中心」可展开面板（默认收起） |
+| **R2 LogPanel 深色模式** | 4 类型 dark: 变体（oper / info / error / code） |
+| **R3 SortCompare 布局** | PerformanceChart 移入主内容列；onCompare/onSwap 写 code 日志 |
+| **R4 GraphAlgorithm 布局** | ComplexityChart 移至右侧 InfoPanel 同级区（上下布局） |
+| **R5 测验扩充** | 5 核心 config 扩充至 5-8 题；QuizPanel Fisher-Yates 随机 |
+| **R6 树连接线** | 4 个 tree visualizer 改 `<line>` 直线（B 树 / AVL / 红黑树 / 线段树） |
+| **R7 Sort 日志深度** | onCompare/onSwap callback 每步写 addLog('code', ...)，>50 元素按 5 步降频 |
+| **验收** | 1440p 浏览器 + Playwright DOM 断言 7/7 PASS；lint 0 / 2699 测试全绿 / build OK / bundle OK |
+| **实施真源** | [docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md](./docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md) |
 
 ---
 

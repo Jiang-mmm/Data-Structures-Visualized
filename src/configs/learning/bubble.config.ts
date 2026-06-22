@@ -80,5 +80,19 @@ export const bubbleConfig: LearningModeConfig = {
       correctIndex: 2,
       explanation: '如果数组已经有序，带 swapped 标志的冒泡排序只需一轮遍历即可终止，最佳情况为 O(n)。',
     },
+    {
+      id: 'q4',
+      question: '冒泡排序中"冒泡"一词指的是什么？',
+      options: ['小元素下沉到数组开头', '大元素经过比较交换上浮到数组末尾', '随机交换元素', '元素按值大小聚类'],
+      correctIndex: 1,
+      explanation: '"冒泡"指每轮内层循环将较大的元素通过两两交换逐步推到数组末尾（右侧），类似水中气泡上浮。',
+    },
+    {
+      id: 'q5',
+      question: '对 n=100 的随机数组排序，冒泡排序大约需要多少次比较？',
+      options: ['~100', '~1000', '~5000', '~10000'],
+      correctIndex: 2,
+      explanation: 'O(n²) = 100² = 10000 次最坏情况比较，平均约为一半 ≈ 5000 次（n*(n-1)/4 ≈ 2475）。简化记忆：~n²/2 量级。',
+    },
   ],
 }
