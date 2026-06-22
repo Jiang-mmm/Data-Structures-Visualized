@@ -46,6 +46,9 @@
 | **D3 翻译工作流** | B（AI 辅助 + 人工校对） | AI 初译 → 人工核对关键术语 → 写入 en 文件 |
 | **D4 渐进发布** | B（立即生效 + 测试保底） | 每个 namespace 迁移完成即生效；依赖 2699 单元测试 + 7 E2E 兜底 |
 | **D5 命名规范** | C（namespace + flat keys） | 例：`t('arrayPage.title.insertButton')`，`arrayPage` 为 namespace，`.title.insertButton` 为 flat key |
+| **D6 工具类翻译** | B（仅 UI 翻译，错误保留 zh） | validate 错误/动画状态消息保留中文；按钮/标签/页面标题全部翻译 |
+| **D7 学习配置范围** | B（高频 10 个，~5000 字符 / ~3d） | 仅翻译数组/栈/队列/链表/树/AVL/哈希/堆/图/BFS；其余 21 个保留 zh |
+| **D8 翻译协作** | A（AI + 单次校对） | AI 初译所有字符串 → 用户对 50+ namespace 逐个校对一次 |
 
 ---
 
