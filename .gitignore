@@ -29,6 +29,9 @@ dist-ssr
 .trae/
 design-md/
 
+# v16 设计推荐原始输入（已被 v16 计划文档和 DESIGN.md 完全覆盖；本地保留供 v19+ 设计复审参考）
+docs/数据结构学习助手-设计推荐.md
+
 # Coverage and test artifacts
 coverage/
 e2e/screenshots/
