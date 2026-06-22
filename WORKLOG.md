@@ -41,8 +41,14 @@
 | R6 4 trees all use `<line>` | ✓ |
 | R7 48 log entries from sort run | ✓ |
 
-### 待办
-- ⏳ 合并 `feature/v17-ui-ux-iterations` → main（建议 `--no-ff` 保留历史）
+### 合并记录
+- `feature/v17-ui-ux-iterations` → main 通过 `--no-ff` 合并，merge commit `ecee0ed`
+- 合并规模：28 文件差异 0 冲突（InfoPanel / LogPanel / QuizPanel / Home / SortComparePage / GraphAlgorithmPage / 5 个 learning config / 4 个 tree visualizer / 5 个文档 + 1 个 v17 计划文档）
+- 合并后稳定性验证：lint 0 / 2699 测试 / build OK / bundle OK
+- `feature/v17-ui-ux-iterations` 分支保留，便于回滚与追溯
+- v17 内部 2 个原子 commit 完整保留（`--no-ff` 策略）：
+  - `b70d458` feat(v17): R1-R7 UI/UX 优化
+  - `b9bffdc` docs(v17): 文档同步（rule §16.3 收尾）
 
 ### 实施真源
 [docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md](./docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md)
