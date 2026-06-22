@@ -51,8 +51,10 @@
 | 子阶段 | 范围 | 估时 | 依赖 | 状态 |
 |--------|------|------|------|------|
 | **M4-1** | P0 首批（4 pages / Home + SortPage + ArrayPage + GraphPage，~1550 字符）| 2d | M3 | ✅ **已收尾 2026-06-22**（4 页面 0 字符硬编码 / v15.x+v17 累积 `t()` 化 / 按用户拍板 A 跳过步骤 1.2-1.7）|
-| **M4-2** | P1 第二批（13 pages / Stack + Queue + LinkedList + Tree + AVLTree + BTree + SegmentTree + RedBlackTree + Hash + Heap + Trie + UnionFind + SkipList，~2350 字符）| 2d | M4-1 | 🟡 **步骤 2.1 已收尾 2026-06-22**（13 页面 0 字符 UI 硬编码 / 仅 26 行开发者向注释 / 312 个 `t()` 调用 / 步骤 2.2-2.6 跳过待拍板）|
-| **M4-3** | P2 第三批（3 pages / GraphAlgorithm + SortCompare + InfoPanel，~500 字符）+ 聚合层接入 + 规则升级 | 1d | M4-2 | ⏳ |
+| **M4-2** | P1 第二批（13 pages / Stack + Queue + LinkedList + Tree + AVLTree + BTree + SegmentTree + RedBlackTree + Hash + Heap + Trie + UnionFind + SkipList，~2350 字符）| 2d | M4-1 | ✅ **已收尾 2026-06-22**（13 页面 0 字符 UI 硬编码 / 312 个 `t()` 调用 / 按用户拍板 A.1 验证一致性）|
+| **M4-3** | P2 第三批（3 pages / GraphAlgorithm + SortCompare + InfoPanel，~500 字符）+ 聚合层接入 + 规则升级 | 1d | M4-2 | ✅ **已收尾 2026-06-22**（3 目标 0 字符 UI 硬编码 / 55 个 `t()` 调用 / 按用户最新指令"一次性全部完成"）|
+
+**M4 全部收尾**：20 目标 100% `t()` 化（569 个 `t()` 调用 / 0 字符 UI 硬编码 / 48 行开发者向注释）。详见 [docs/superpowers/i18n-inventory/06-m4-closure-report.md](../i18n-inventory/06-m4-closure-report.md)。
 
 **总估时**: 5d（与 v19 计划 §八一致）
 
