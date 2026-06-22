@@ -1,7 +1,7 @@
 # v19 i18n 渐进迁移（i18n Progressive Migration）
 
 > **目标**: 在不破坏现有 50+ 命名空间的前提下，将 `src/i18n/locales.ts`（单文件 6310 行）拆分为 `locales/{zh,en}/` 目录结构（**D2=C**），并按"模块级渐进"方式将所有 UI 硬编码中文字符串纳入 i18n 系统（**D1=B**）。
-> **状态**: 🟢 M0 + M1 + M2 + M3 已完成（2026-06-22）；M4-1 已收尾，M4-2/3 走向待拍板
+> **状态**: 🟡 M0 + M1 + M2 + M3 已完成（2026-06-22）；**M4-1 已收尾 + M4-2 步骤 2.1 已收尾**（17/17 P0+P1 页面 0 字符 UI 硬编码，514 个 `t()` 调用，v15.x + v17 累积 `t()` 化完成）；**M4-2/3 走向待拍板**（推荐 A.1.2 快速扫描 M4-3 2 页面后 M4 全部收尾）
 > **M3 范围**：types.ts 追加 `AssertSameKeys` 深度递归类型断言（任意嵌套深度的 zh/en 镜像检查）+ 自定义 ESLint 规则 `no-hardcoded-chinese-in-jsx`（minLength/allowList 配置，作用于 `src/{pages,components,visualizers,layouts}/**` warn 级）+ 45 项测试（types 20 + eslint 21 + 与 M2 合并 95 项）。
 > **M4 范围**：详细计划见 [docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md](./2026-06-22-v19-m4-pages-migration.md)（385 行 13 章节，3 子阶段 M4-1/M4-2/M4-3 + Q1-Q4 拍板点 + 完整文件迁移清单 + 测试更新矩阵 + 6 维度回滚预案）。**M4-1 已收尾**（4 页面 0 字符硬编码，v15.x + v17 累积 `t()` 化完成；按用户拍板 A 跳过步骤 1.2-1.7），详见 [docs/superpowers/i18n-inventory/03-m4-1-summary.md](./../i18n-inventory/03-m4-1-summary.md)。
 > **基线**: v17.0.0 GA（merge `b991566`）+ v18 封存清理（merge `37478cf`，main HEAD）

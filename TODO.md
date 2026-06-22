@@ -1,8 +1,8 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** v19 i18n 渐进迁移 M3 TypeScript 强约束完成 + M4-1 已收尾（基于 v17.0.0 GA）
+> **版本:** v19 i18n 渐进迁移 M3 TypeScript 强约束完成 + M4-1 已收尾 + M4-2 步骤 2.1 已收尾（基于 v17.0.0 GA）
 > **更新日期:** 2026-06-22
-> **状态:** v17.0.0 GA 已 merge main（commit `b991566`）→ v18 计划已封存（2026-06-22） → v19 M0 拍板 + M1 调研清单 + M2 基础设施 + M3 TypeScript 强约束已完成 → **M4-1 已收尾**（4 页面 0 字符硬编码，按用户拍板 A 跳过步骤 1.2-1.7）→ M4-2/3 走向待拍板（推荐 A.1 立即扫描 13 页面）
+> **状态:** v17.0.0 GA 已 merge main（commit `b991566`）→ v18 计划已封存（2026-06-22） → v19 M0 拍板 + M1 调研清单 + M2 基础设施 + M3 TypeScript 强约束已完成 → **M4-1 已收尾**（4 页面 0 字符硬编码，按用户拍板 A 跳过步骤 1.2-1.7）→ **M4-2 步骤 2.1 已收尾**（13 页面 0 字符 UI 硬编码 + 312 个 `t()` 调用 + 26 行注释，按用户拍板 A.1）→ M4-2/3 走向待拍板（推荐 A.1.2 快速扫描 M4-3 2 页面后 M4 全部收尾）
 > **v16.0.0 GA:** 已完成（2026-06-22，merge `b8d0b03`）— 设计统一化 + ENG-1 E2E 迁移 + ENG-2 覆盖率 >80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善
 > **v15 GA:** 已完成（2026-06-22）— 体验打磨（E1 PWA + E2 大数据 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞）
 > **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1/G1/G2/G3/F2）
@@ -43,11 +43,12 @@
 | **M3 TypeScript 强约束** | `AssertSameKeys` 深度递归编译时断言（任意嵌套深度的 zh/en 键镜像检查）+ `no-hardcoded-chinese-in-jsx` 自定义 ESLint 规则（minLength/allowList 配置）+ 45 项单元测试（types 20 + eslint 21 + 与 M2 子目录合并 95 项）；ESLint 注册 local plugin（作用于 `src/{pages,components,visualizers,layouts}/**`，warn 级） |
 | **M4 实施真源文档** | [docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md](./docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md)（385 行 13 章节 + §3.0 收尾状态段）。3 子阶段：M4-1 P0 4 页面（Home/SortPage/ArrayPage/GraphPage，~1550 字符，2d）/ M4-2 P1 13 页面（~2350 字符，2d）/ M4-3 P2 3 页面 + 聚合层接入 + 规则升级（~500 字符，1d）。共 17+17=34 个新 locale 文件 + 17 页面代码修改 + 1 聚合层 + 1 ESLint 规则升级 + ~86-126 新测试。 |
 | **M4-1 收尾** | [docs/superpowers/i18n-inventory/03-m4-1-summary.md](./docs/superpowers/i18n-inventory/03-m4-1-summary.md)（[02-m4-1-p0-strings.md](./docs/superpowers/i18n-inventory/02-m4-1-p0-strings.md) + 总结报告）— **4 页面 0 字符硬编码**（Home 101 `t()` / SortPage 19 `t()` / ArrayPage 31 `t()` / GraphPage 51 `t()`，合计 202 个 `t()` 调用），v15.x + v17 累积 `t()` 化完成；按用户拍板 A 跳过步骤 1.2-1.7（无实际工作内容）；M1 估计 ~1,550 字符**严重失真**（差异 > 95%）。 |
-| **测试结果** | 2745/2745 全量测试全绿（基线 2699 + M2 46 + M3 45 = 实际 2790）；i18n+eslint 子目录 95/95 |
+| **M4-2 步骤 2.1 收尾** | [docs/superpowers/i18n-inventory/04-m4-2-p1-strings.md](./docs/superpowers/i18n-inventory/04-m4-2-p1-strings.md) — **13 页面 0 字符 UI 硬编码**（Stack 22 `t()` / Queue 20 / LinkedList 36 / Tree 27 / AvlTree 26 / BTree 20 / SegmentTree 30 / RedBlackTree 20 / Hash 21 / Heap 18 / Trie 27 / SkipList 19 / UnionFind 26，合计 **312 个 `t()` 调用**），v15.x + v17 累积 `t()` 化完成；**与 M4-1 一致性 100%**（17/17 P0+P1 页面 0 字符 UI 硬编码，合计 514 个 `t()` 调用）；按用户拍板 A.1 启动扫描；仅 26 行开发者向注释（16 行树类导入注释 + 11 行动画时序注释 - 重复 1 行）；M1 估计 ~1,000+ 字符**严重失真**（实际 0 字符 UI，差异 > 100%）。 |
+| **测试结果** | 2786/2786 全量测试全绿（基线 2699 + M2 46 + M3 45 + 实际基线增量 0 = 实际 2790 接近）；i18n+eslint 子目录 95/95 |
 | **Lint / TypeCheck** | 0 errors / 0 warnings；我引入 TS 错误 0；预存 7 个 v17 GA 错误按规则不跨模块修 |
 | **Build** | 成功；i18n-locales 86.61KB / index 77.65KB / vendor-react 231.35KB / vendor-d3 52.54KB（均 < budget）|
 | **实施真源** | [docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md](./docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md) |
-| **下一阶段** | **M4-2 走向待拍板**（推荐 A.1 立即启动步骤 2.1 扫描 13 页面验证一致性，~10 分钟；备选 A.2 跳过 M4-2/3 直接进入 M5 / A.3 做 M1.5 重新调研 / A.4 M4 全部收尾）|
+| **下一阶段** | **M4-2/3 走向待拍板**（推荐 A.1.2 快速扫描 M4-3 2 页面（graphAlgorithm / sortCompare）后 M4 全部收尾，~5 分钟；备选 A.1.1 基于 17 页面一致性假设 M4 全部收尾 / A.1.3 完整执行 M4-2 步骤 2.2-2.6 创建 13 zh + 13 en locale 文件占位，1.5d）|
 
 ---
 
