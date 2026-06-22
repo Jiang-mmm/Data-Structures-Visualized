@@ -202,7 +202,7 @@ export const GlobalSearch = memo(function GlobalSearch({ isOpen, onClose }: Glob
       aria-modal="true"
       aria-label={t('globalSearch.title')}
     >
-      <div className="bg-surface dark:bg-dark-surface border-2 border-ink dark:border-dark-border shadow-hard-lg dark:shadow-card-dark max-w-2xl w-full animate-pop">
+      <div className="command-palette max-w-2xl w-full animate-pop">
         {/* 搜索输入区 */}
         <div className="flex items-center gap-3 px-4 py-3 border-b-2 border-ink dark:border-dark-border">
           <span className="text-ink-light dark:text-dark-ink-light flex-shrink-0"><Icon name="search" size={18} /></span>

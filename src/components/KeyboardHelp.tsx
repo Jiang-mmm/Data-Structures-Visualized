@@ -234,7 +234,7 @@ export default function KeyboardHelp() {
             {searchResults.map(({ page, shortcut }) => (
               <div key={`${page}-${shortcut.key}`} className="flex items-center justify-between py-2.5 px-3 border border-border/50 dark:border-dark-border/50 hover:bg-muted/50 dark:hover:bg-dark-muted/30 transition-colors">
                 <div className="flex items-center gap-2 min-w-0">
-                  <kbd className="px-2.5 py-1 bg-surface dark:bg-dark-surface border-2 border-ink/20 dark:border-dark-border text-xs font-mono font-bold text-ink dark:text-dark-ink shadow-[1px_1px_0px_rgba(26,26,46,0.1)]">{shortcut.key}</kbd>
+                  <kbd className="kbd">{shortcut.key}</kbd>
                   <span className="text-xs px-1.5 py-0.5 border border-ink/20 dark:border-dark-border/50 text-ink-light dark:text-dark-ink-light whitespace-nowrap">{PAGE_NAMES[page] ? t(PAGE_NAMES[page]) : page}</span>
                 </div>
                 <span className="text-sm text-ink-light dark:text-dark-ink-light text-right">{t(shortcut.descKey)}</span>
