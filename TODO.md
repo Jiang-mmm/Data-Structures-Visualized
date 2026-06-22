@@ -1,8 +1,9 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** v15.0.0 GA
+> **版本:** v16.0.0 GA
 > **更新日期:** 2026-06-22
-> **状态:** v15.0.0 GA 完成（E1-E4 体验 + U2-U5 UI + ISSUE-007）；下一步进入 v16+ 工程化
+> **状态:** v16.0.0 GA 完成（ENG-1 E2E 迁移 + ENG-2 覆盖率 >80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善）；下一步进入 v16 设计统一化或 v17 规划
+> **v15 GA:** 已完成（2026-06-22）— 体验打磨（E1 PWA + E2 大数据 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞）
 > **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1/G1/G2/G3/F2）
 > **详细迭代计划:** v11 计划已归档至 [docs/archive/iteration-plan-v11.md](./docs/archive/iteration-plan-v11.md)；v12/v13/v14/v15 计划见 [docs/superpowers/plans/](./docs/superpowers/plans/)，v10/v11/v12 迭代记录见 WORKLOG.md
 > **v13 体检报告:** [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md)
@@ -20,6 +21,38 @@
 | **任务收尾强制文档同步** | ✅ 已落地 | `.trae/rules/project_rules.md` §16.3；本 TODO.md 即按该规则同步更新 |
 
 **后续执行要求**：每次任务完成前必须完成相关文档同步；用户豁免需标注 `DOCS: SKIPPED (user override)`。
+
+---
+
+## i18n 完善 / 算法术语表（2026-06-22 完成）
+
+| 维度 | 内容 |
+|------|------|
+| **状态** | ✅ 完成 |
+| **新增 i18n 命名空间** | `complexity`（13 键）+ `algorithms`（16 数据结构 × 7 字段 = 112 键，type 定义 `AlgorithmGlossaryEntry`） |
+| **新增 Hook** | `src/hooks/useAlgorithmGlossary.ts`（16 项术语条目） |
+| **新增组件** | `src/components/AlgorithmGlossaryCard.tsx`（默认折叠避免 DOM 过大） |
+| **集成页面** | Home（在 LearningPath 之后） |
+| **测试** | 20 个（i18n 完整性 8 + hook 5 + component 6 + Home 集成 1） |
+| **范围外** | 全项目 100+ 硬编码中文字符串（多为 `hooks.*` 内部日志 + `learningConfig.step.*` 教学文案，不属于用户可见 UI 字符串） |
+| **验证** | lint 0/0 / 2699 测试全绿 / build 通过 / bundle check 通过 |
+| **实施真源** | [docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md](./docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md) |
+
+---
+
+## 动画导出功能（2026-06-22 完成，SortPage 已集成）
+
+| 维度 | 内容 |
+|------|------|
+| **状态** | ✅ 完成（SortPage 试点） |
+| **新增工具** | `src/utils/animationExport.ts`（WebM / GIF / ZIP 三种导出） |
+| **新增组件** | `src/components/AnimationExportButton.tsx`（下拉式菜单） |
+| **新增类型** | `src/types/gifenc.d.ts`（gifenc 1.0.3） |
+| **新增依赖** | gifenc@1.0.3 + jszip@3.10.1（合计 < 35KB gzipped） |
+| **i18n** | `exportAnimation` 命名空间（10 键，中英双文） |
+| **测试** | 21 个（12 utils + 9 component） |
+| **集成页面** | SortPage（其余 16 个页面可后续独立集成） |
+| **验证** | lint 0/0 / 2679 测试全绿 / build 通过 / bundle check 通过 |
 
 ---
 
@@ -65,17 +98,41 @@
 
 ---
 
-## 下一阶段：v16+ 工程化
+## 下一阶段：v16 设计统一化（已制定，待启动）
 
-详见 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第四阶段。
+详见 [设计统一化计划](./docs/superpowers/plans/2026-06-22-design-unification-v16.md)。
 
-| 阶段 | 主题 | 说明 |
-|------|------|------|
-| **ENG-1** | Playwright 迁移 | E2E 测试全面迁移到 Playwright |
-| **ENG-2** | 覆盖率 >80% | 单元测试覆盖率提升 |
-| **ENG-3** | lint 警告清理 | 67 个 warnings 清零 |
-| **ENH-1** | 导出增强 | GIF/MP4 动画导出 |
-| **ENH-2** | i18n 完善 | 补齐缺失翻译 |
+| 启动条件 | 状态 |
+|----------|------|
+| 用户确认主参考品牌 | ⏳ 待确认 |
+| 用户授权读取 `design-md/` | ⏳ 待授权 |
+
+> 按 `§16.1` 规则，`design-md/` 默认禁读；按 `§16.2` 规则，`DESIGN.md` 不存在时不擅自拍板。
+
+---
+
+## v16+ 工程化（已完成）
+
+详见 [长线路图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第四阶段。
+
+| 阶段 | 主题 | 状态 | 关键产出 | Commit |
+|------|------|------|----------|--------|
+| **ENG-1** | Playwright 迁移 | ✅ 已完成 | 7 个 `test-*.js` → `*.spec.ts`；`scripts/run-e2e.mjs` | `23913a7` |
+| **ENG-2** | 覆盖率 >80% | ✅ 已完成 | statements 77.92% → **80.05%**（+62 tests） | `7da029b` |
+| **ENG-3** | lint 警告清理 | ✅ 已完成 | 67 → 0（react-hooks 补全 + 6 个 pre-existing 测试修复） | `6d32435` / `0fb5a2f` |
+| **ENH-1** | 动画导出 | ✅ 已完成 | WebM/GIF/帧序列 ZIP；SortPage 集成；`gifenc` + `jszip` | `8a81ff8` |
+| **ENH-2** | i18n 完善 | ✅ 已完成 | 125 键术语表；`AlgorithmGlossaryCard` | `99b5b0e` |
+
+### v16.0.0 GA 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 单元测试 | **2699 passed**（147 文件） |
+| ESLint | **0 errors / 0 warnings** |
+| TypeScript strict | 0 错误 |
+| 生产构建 | 成功；bundle 全部 < budget（index 77.93KB / vendor-react 231.35KB / vendor-d3 52.54KB） |
+| 测试覆盖率 | statements **80.05%** / lines 84.02% / branches 67.23% / functions 81.03% |
+| E2E | core/edge/v5-features 三组 spec 全绿（chromium + firefox） |
 
 ---
 

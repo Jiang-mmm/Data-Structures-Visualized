@@ -1,8 +1,8 @@
 # 数据结构学习助手 — Architecture 文档
 
-> **版本:** v15.0.0 GA（E1 PWA + E2 大数据性能 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞 全部完成）
+> **版本:** v16.0.0 GA（ENG-1 E2E 迁移 + ENG-2 覆盖率 80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善 全部完成）
 > **更新日期:** 2026-06-22
-> **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa
+> **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa + gifenc + jszip
 
 ---
 
@@ -173,6 +173,7 @@ v13 起，每个重大版本（v14+）都应采用 **双模型互盲 + 集中仲
 | | `Toast.tsx` | 全局 Toast 通知系统（发布-订阅模式） |
 | | `UndoPreviewButton.tsx` | 撤销/重做按钮，悬停显示状态预览 |
 | | `ShareButton.tsx` | Base64 编码数据分享到 URL |
+| | `AnimationExportButton.tsx` | 算法动画导出菜单（WebM/GIF/帧序列 ZIP），与 SortPage 集成 |
 | | `KeyboardHelp.tsx` | 快捷键帮助弹窗（路由感知动态显示） |
 | | `EmptyState.tsx` | 空状态引导覆盖层 |
 | | `NetworkStatus.tsx` | 网络在线/离线状态提示 |
@@ -206,6 +207,7 @@ v13 起，每个重大版本（v14+）都应采用 **双模型互盲 + 集中仲
 | **Utils** | `animationEngine.ts` | 动画时序控制、性能模式、缓动函数、FPS 监控、动画预设、delayStart 延迟启动 |
 | | `validate.ts` | 输入验证（XSS 净化、数值范围、导入数据校验） |
 | | `dataExport.ts` | JSON/CSV 序列化、版本校验、文件下载 |
+| | `animationExport.ts` | 算法动画 WebM/GIF/ZIP 导出；`isAnimationExportSupported()` 特征检测 + `loadSvgImage()` SVG→Image 注入 |
 | | `debounce.ts` | 防抖工具 |
 | | `timeslicing.ts` | 时间分片工具 |
 | | `themeColors.ts` | 颜色系统 + 渐变定义 + 暗色检测 + 4 套主题 |

@@ -4,6 +4,48 @@
 
 ---
 
+## [v16.0.0 GA] - 2026-06-22
+
+**主题**：工程深化与功能增强（生产级项目）
+
+### 新增（Features）
+
+| 子任务 | 描述 | 关键文件 | Commit |
+|--------|------|----------|--------|
+| **ENG-1** | E2E 框架迁移至 Playwright Test | `e2e/*.spec.ts` (7) + `scripts/run-e2e.mjs` | `23913a7` |
+| **ENG-2** | 测试覆盖率提升至 80.05% | 新增 6 个测试文件 + 扩充 4 个 | `7da029b` |
+| **ENH-1** | 算法动画导出（WebM/GIF/帧序列 ZIP） | `src/utils/animationExport.ts` + `AnimationExportButton` | `8a81ff8` |
+| **ENH-2** | i18n 完善（算法术语对照表） | `complexity` + `algorithms` 命名空间（125 键） | `99b5b0e` |
+
+### 改进（Improvements）
+
+| 子任务 | 描述 | 关键文件 | Commit |
+|--------|------|----------|--------|
+| **ENG-3** | lint warnings 归零（67→0） | 26 个源文件（react-hooks deps 补全） | `6d32435` |
+
+### 修复（Bug Fixes）
+
+| 描述 | 关键文件 | Commit |
+|------|----------|--------|
+| 6 个 pre-existing 测试失败 | `src/components/Visualizer.tsx` + 3 个 snapshot 文件 | `0fb5a2f` |
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| ESLint | 0 errors / 0 warnings |
+| TypeScript strict | 0 错误 |
+| 单元测试 | 2699 passed（147 文件） |
+| 测试覆盖率 | statements 80.05% / lines 84.02% / branches 67.23% / functions 81.03% |
+| 生产构建 | 成功；bundle：index 77.93KB / vendor-react 231.35KB / vendor-d3 52.54KB |
+| E2E | core/edge/v5-features 三组 spec 全绿（chromium + firefox） |
+
+### 里程碑
+
+v16.0.0 GA — 工程深化完成，达到生产级质量标准
+
+---
+
 ## [v15.0.0 GA] - 2026-06-22
 
 ### E1 — PWA 离线增强

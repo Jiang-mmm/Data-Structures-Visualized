@@ -1,10 +1,11 @@
 # 数据结构学习助手
 
-> **版本:** v15.0.0 GA
+> **版本:** v16.0.0 GA
 > **更新日期:** 2026-06-22
-> **v15 起点:** v14 GA 基础上完成体验打磨 — E1 PWA 离线 + E2 大数据可视化 + E3 移动端手势 + E4 KeyboardHelp 模糊搜索 + U2 响应式操作面板 + U3 跨页面布局一致性 + U4 SVG 图标系统 + U5 条件禁用按钮原因 + ISSUE-007 排序撤销阻塞
+> **v16 起点:** v15 GA 基础上完成工程深化与功能增强 — ENG-1 E2E 框架迁移至 Playwright Test + ENG-2 测试覆盖率 >80% + ENG-3 lint warnings 归零 + ENH-1 算法动画导出（WebM/GIF/帧序列 ZIP）+ ENH-2 i18n 完善（算法术语对照表）
+> **v15 GA:** 已完成（2026-06-22）— 体验打磨（E1 PWA + E2 大数据 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞）
 > **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1 图算法测试 + G1 B-Tree + G2 Segment Tree + G3 双向链表 + F2 算法接入指南）
-> **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright
+> **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 
 一款面向大学生的 Web 端数据结构可视化教学工具，通过交互式动画演示，帮助学习者直观理解核心数据结构的原理与操作过程。
@@ -45,6 +46,7 @@
 - **导入/导出** — 数据持久化，支持 JSON/CSV 格式导入导出，含版本校验
 - **数据持久化** — 17 种数据结构自动保存/恢复，页面刷新后数据不丢失（localStorage）
 - **分享功能** — Base64 编码数据到 URL，一键复制分享链接
+- **动画导出** — 算法运行过程导出为 WebM / GIF / 帧序列 ZIP（SortPage 已集成）
 - **国际化（i18n）** — 中英文切换，轻量级翻译系统，无第三方依赖
 - **全局搜索** — Ctrl/Cmd+K 快捷键唤起，支持数据结构/算法/页面快速跳转，键盘上下导航 + Enter 选中
 - **算法对比模式** — 12 种排序算法并行对比，实时进度追踪
@@ -228,6 +230,7 @@ src/
 │   ├── animationEngine.ts
 │   ├── d3Imports.ts
 │   ├── dataExport.ts
+│   ├── animationExport.ts
 │   ├── debounce.ts
 │   ├── errorHandler.ts
 │   ├── learningRecommender.ts

@@ -25,6 +25,7 @@ This file provides guidance to MiMo Code (claude.ai/code) when working with code
 | 计划 | 路径 | 状态 | 启动条件 |
 |------|------|------|----------|
 | **v16 设计统一化** | [docs/superpowers/plans/2026-06-22-design-unification-v16.md](docs/superpowers/plans/2026-06-22-design-unification-v16.md) | ⏳ Phase A 待启动 | 用户先确认主参考品牌与是否授权读取 `design-md/` |
+| **v15.x ENH-2 i18n 完善** | [docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md](docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md) | ✅ 已完成 | 新增 `complexity` + `algorithms` 命名空间 + `useAlgorithmGlossary` + `AlgorithmGlossaryCard`（Home 集成）|
 
 ## Project Overview
 
@@ -62,7 +63,7 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 
 **Data persistence:** All 15 data structures auto-save/restore via localStorage.
 
-**i18n:** Custom lightweight implementation (Chinese + English) — `src/i18n/locales.ts` + `src/i18n/useI18n.ts`. No external i18n library.
+**i18n:** Custom lightweight implementation (Chinese + English) — `src/i18n/locales.ts` + `src/i18n/useI18n.ts`. No external i18n library. Namespaces include `complexity` (13 keys for best/avg/worst/space/title) and `algorithms` (16 data structures × 7 fields via `AlgorithmGlossaryEntry` type) for the algorithm glossary; `useAlgorithmGlossary()` hook + `AlgorithmGlossaryCard` component available.
 
 **Global search:** `src/components/GlobalSearch.tsx` mounted in `Layout.tsx`, triggered by Ctrl/Cmd+K. Data source is `src/data/searchIndex.ts`, which aggregates data structure/algorithm/page metadata. Reuses `STRUCTURE_KEYS` exported from `Sidebar.tsx` for navigation consistency.
 
@@ -78,14 +79,15 @@ Six-layer structure: **Entry (main.tsx → App.tsx) → Pages → Components →
 
 ## Testing
 
-- **Unit tests:** Vitest + React Testing Library. 3480 tests across 203 files in `src/__tests__/`. Test files mirror source: `useArrayState.test.ts`, `arrayVisualizer.test.ts`, etc.
-- **Known failures:** 0 unit test failures. All 3480 pass.
+- **Unit tests:** Vitest + React Testing Library. 2699 tests across 147 files in `src/__tests__/`. Test files mirror source: `useArrayState.test.ts`, `arrayVisualizer.test.ts`, etc.
+- **Known failures:** 0 unit test failures. All 2699 pass.
 - **Test setup:** `src/__tests__/setup.js` (jsdom environment, jest-dom matchers, SVG mocks).
-- **E2E:** Playwright in `e2e/` directory. Run with `node e2e/run-all-tests.js` (requires dev server at `http://localhost:3000/Data-Structures-Visualized/`). Uses `domcontentloaded` wait strategy.
-- **Cross-browser:** E2E supports `BROWSER=firefox` env var. Run with `BROWSER=firefox node e2e/test-home.js`.
-- **Comprehensive suites:** `test-comprehensive.js` (all 15 data structures), `test-interactions.js` (cross-module), `test-persistence.js` (localStorage + boundaries). Run after core E2E.
-- **Screenshot assertions:** `verifyScreenshot()` helper in `test-helpers.js` checks file existence + 5KB minimum size.
-- **A11y testing:** `test-a11y.js` uses `@axe-core/playwright` to scan all 17 pages for WCAG 2 AA violations. Run with `node e2e/test-a11y.js` (requires dev server).
+- **E2E:** Playwright in `e2e/` directory. Run with `node scripts/run-e2e.mjs` (requires dev server at `http://localhost:3000/Data-Structures-Visualized/`). Uses `domcontentloaded` wait strategy. 7 migrated spec files + 2 pre-existing (`home.spec.ts` / `a11y.spec.ts`).
+- **E2E scripts:** `npm run test:e2e` (orchestrator), `npm run test:e2e:run` (raw), `npm run test:e2e:list` (list), `npm run test:e2e:firefox` (firefox).
+- **Cross-browser:** E2E supports `BROWSER=firefox` env var.
+- **Comprehensive suite:** `comprehensive.spec.ts` covers 11 data structures (timeout 600s).
+- **Screenshot assertions:** Each spec generates screenshots under `e2e/screenshots/`.
+- **A11y testing:** `a11y.spec.ts` uses `@axe-core/playwright` to scan all 17 pages for WCAG 2 AA violations. Run with `npx playwright test e2e/a11y.spec.ts` (requires dev server).
 
 ## Conventions
 

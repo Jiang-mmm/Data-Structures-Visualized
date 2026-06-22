@@ -25,14 +25,119 @@
 | 项 | 当前值 |
 |---|---|
 | **项目名称** | ds-visualizer（数据结构学习助手） |
-| **当前版本** | v15.0.0 GA（E1 PWA + E2 大数据 + E3 手势 + E4 KeyboardHelp 搜索 + U2 响应式面板 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞） |
-| **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 |
+| **当前版本** | v16.0.0 GA（ENG-1 E2E 迁移 + ENG-2 覆盖率 >80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善） |
+| **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa |
 | **当前分支** | `feature/v13-path3-learning-enhancements` |
-| **基线状态** | 2590 单元测试全绿 / ESLint 0 errors（67 warnings） / 生产构建通过 / 17 种数据结构 / 40 个学习配置 |
+| **基线状态** | 2699 单元测试全绿 / ESLint 0 errors / 生产构建通过 / bundle < budget / 测试覆盖率 80.05% / 17 种数据结构 / 40 个学习配置 / E2E 7+2 spec 迁移至 Playwright Test |
 
 ---
 
 ## 2. 最近完成的工作
+
+### 2026-06-22 | v16.0.0 GA — 工程深化与功能增强
+
+#### 目标
+v15 GA 基础上完成工程深化（ENG-1/2/3）与功能增强（ENH-1/2），为生产级发布做准备。
+
+#### 范围
+
+| 子任务 | 描述 | 关键产出 |
+|--------|------|----------|
+| **ENG-1** | E2E 框架迁移至 Playwright Test | 7 个 `test-*.js` → `*.spec.ts`；新增 `scripts/run-e2e.mjs`；`package.json` 新增 4 个 e2e scripts |
+| **ENG-2** | 测试覆盖率 >80% | 新增 6 个测试文件 + 扩充 4 个；statements 77.92% → 80.05%；tests 2596 → 2658（+62） |
+| **ENG-3** | lint warnings 归零 | 67 → 0（react-hooks/exhaustive-deps 补全 + set-state-in-effect 改为 React 19 派生 state + 6 个 pre-existing 测试失败修复） |
+| **ENH-1** | 动画导出（WebM/GIF/帧序列 ZIP） | `src/utils/animationExport.ts`（297 行）+ `AnimationExportButton`（167 行）；SortPage 试点集成；新增 `gifenc` + `jszip` 依赖 |
+| **ENH-2** | i18n 完善（算法术语对照表） | `complexity` 13 键 + `algorithms` 16×7 键 = 125 键；`useAlgorithmGlossary` Hook + `AlgorithmGlossaryCard` 组件；Home 集成 |
+
+#### 文件清单
+详见各子任务 commit：
+- `feat(v16): ENG-1 E2E 框架迁移至 Playwright Test`（commit `23913a7`）
+- `feat(v16): ENH-2 i18n 完善（算法术语对照表）`（commit `99b5b0e`）
+- `feat(v16): ENH-1 动画导出（WebM / GIF / 帧序列 ZIP）`（commit `8a81ff8`）
+- `test(v16): 提升测试覆盖率至 80.05%`（commit `7da029b`）
+- `fix(v16): 修复 6 个 pre-existing 测试失败`（commit `0fb5a2f`）
+- `chore(lint): 清理 react-hooks warnings (67→0)`（commit `6d32435`）
+
+#### 验证
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npm run test:run` | **2699/2699 通过**（147 文件） |
+| `npm run test:coverage` | statements **80.05%** / lines 84.02% / branches 67.23% / functions 81.03% |
+| `npm run build` | 成功；bundle：index 77.93KB / vendor-react 231.35KB / vendor-d3 52.54KB（均 < budget） |
+| TypeScript strict | 0 错误 |
+| E2E | core/edge/v5-features 三个 spec 全绿（chromium + firefox） |
+
+#### 范围外（Out of Scope）
+- `design-md/` 设计资料库已建立但**未被读取**（遵循 §16.1 默认禁读规则，待用户显式授权后启动 v16 设计统一化）
+- v17+ 路线图尚未规划
+- PWA 安装提示、Service Worker 高级策略等暂不涉及
+
+---
+
+### 2026-06-22 | i18n 完善（v15.x ENH-2 算法术语表）
+
+#### 目标
+补齐 ds-visualizer i18n 缺失的算法术语表与复杂度描述命名空间，新增 `useAlgorithmGlossary` Hook 与 `AlgorithmGlossaryCard` 组件用于术语速查。
+
+#### 范围
+- **新增 i18n 命名空间**: `complexity`（13 键：title/name/useCase/time/space/best/average/worst/glossaryTitle/glossarySubtitle/emptyHint/showMore/showLess）、`algorithms`（16 数据结构 × 7 字段 = 112 键，type 定义 `AlgorithmGlossaryEntry`）
+- **新增 Hook**: `src/hooks/useAlgorithmGlossary.ts` — 返回 16 项术语条目（id / 双语 name / description / useCase / best / average / worst / space）
+- **新增组件**: `src/components/AlgorithmGlossaryCard.tsx` — Neo-Brutalist 风格表格，默认折叠避免首次加载 DOM 过大；展开后渲染 17 行（表头 + 16 数据行）
+- **Home 集成**: 在 `LearningPath` 之后插入 `<AlgorithmGlossaryCard />`
+
+#### 文件清单
+- 新增：`src/i18n/locales.ts`（仅修改，未新增文件）— `complexity` + `algorithms` 命名空间同步到 interface / zh / en
+- 新增：`src/hooks/useAlgorithmGlossary.ts`
+- 新增：`src/components/AlgorithmGlossaryCard.tsx`
+- 新增：`src/__tests__/i18n/i18n-integrity.test.ts`（8 测试）
+- 新增：`src/__tests__/hooks/useAlgorithmGlossary.test.ts`（5 测试）
+- 新增：`src/__tests__/components/AlgorithmGlossaryCard.test.tsx`（6 测试）
+- 修改：`src/pages/Home.tsx`（导入 + 集成 1 行）
+- 修改：`src/__tests__/pages/Home.test.tsx`（新增 1 测试）
+
+#### 验证
+- `npx vitest run` → **2699/2699 通过**（其中新增 20 项）
+- `npm run lint` → 0 errors / 0 warnings
+- `npm run build` → 成功；bundle 检查通过：index 77.93KB（<110KB）、vendor-react 231.35KB（<250KB）、vendor-d3 52.54KB（<60KB）
+
+#### 范围外（Out of Scope）
+- 不替换全项目 100+ 文件中已有的硬编码中文（这些大多是 `hooks.*` 内部日志、`learningConfig.step.*` 教学文案，**不属于用户可见 UI 字符串**，按规则保持原样）
+- 不重命名已有 i18n 键（保持向后兼容）
+- 不在 main 分支上提交（由 main agent 统一提交）
+
+#### 实施真源
+[docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md](docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md)
+
+### 2026-06-22 | 动画导出功能（v15.x 实验性）
+
+#### 目标
+在现有 `dataExport.ts`（JSON 导入导出 + 性能 CSV/JSON）基础上，新增算法运行过程的动画回放导出能力。
+
+#### 新增模块
+
+| 模块 | 文件 | 内容 |
+|------|------|------|
+| 工具 | `src/utils/animationExport.ts` | 三种导出格式：WebM（MediaRecorder 首选）/ GIF（gifenc）/ 帧序列 ZIP（jszip）；导出 `serializeSvg` / `loadSvgImage` / `isAnimationExportSupported` 等可独立测试单元；上限 600 帧保护 |
+| 组件 | `src/components/AnimationExportButton.tsx` | 下拉式菜单（WebM / GIF / 帧序列），含 click-outside + Escape 关闭 + isLoading 状态 + 错误 toast；与 SortPage 已集成 |
+| 类型 | `src/types/gifenc.d.ts` | gifenc 1.0.3 类型声明（项目内自制，无运行时影响） |
+| i18n | `src/i18n/locales.ts` | `exportAnimation` 命名空间（10 键，中英双文） |
+| 集成 | `src/pages/SortPage.tsx` | PageHeader 中嵌入按钮，`isAnimating || data.length === 0` 时禁用 |
+
+#### 新增依赖
+- `gifenc@1.0.3` — 纯函数式 GIF 编码器，无依赖
+- `jszip@3.10.1` — ZIP 打包
+- 合计 < 35KB gzipped（实测 +1.9KB SortPage chunk）
+
+#### 测试
+- `src/__tests__/utils/animationExport.test.ts` — 12 个测试（serializeSvg、isAnimationExportSupported、loadSvgImage、三种导出格式、null ref、不可用环境）
+- `src/__tests__/components/AnimationExportButton.test.tsx` — 9 个测试（渲染、禁用、菜单、点击、错误、点击外部关闭）
+
+#### 验证
+- `npm run test:run`：144 文件 / 2679 测试全绿（含新 21 个）
+- `npm run lint`：0/0
+- `npm run build`：通过，bundle check 通过（index 78KB < 110KB、vendor-react 231KB < 250KB、vendor-d3 53KB < 60KB）
+- 仅 SortPage 接入新按钮；其余 16 个页面后续可独立集成
 
 ### 2026-06-22 | v15.0.0 GA — 体验打磨完成
 

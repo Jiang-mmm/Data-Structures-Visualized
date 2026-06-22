@@ -31,3 +31,5 @@ Managed by Trellis. Edits outside this block are preserved; edits inside may be 
 ## 当前活跃计划（2026-06-22）
 
 - **v16 设计统一化**：[`docs/superpowers/plans/2026-06-22-design-unification-v16.md`](docs/superpowers/plans/2026-06-22-design-unification-v16.md) — Phase A 待启动（需用户确认主参考品牌与 `design-md/` 读取授权）。
+- **v16+ 工程化（已完成）**：ENG-1 E2E 迁移 + ENG-2 覆盖率 80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善。详见 [长线路线图](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) 第四阶段。
+- **v15.x ENH-2 i18n 完善**：[`docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md`](docs/superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md) — ✅ 已完成（2026-06-22）：新增 `complexity` + `algorithms` 命名空间 + `useAlgorithmGlossary` Hook + `AlgorithmGlossaryCard` 组件 + Home 集成 + 20 项测试。

@@ -1,8 +1,8 @@
 # 数据结构学习助手 — Code Wiki
 
-> **版本:** v15.0.0 GA（E1 PWA + E2 大数据性能 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞 全部完成）
+> **版本:** v16.0.0 GA（ENG-1 E2E 迁移 + ENG-2 覆盖率 80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善 全部完成）
 > **日期:** 2026-06-22
-> **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa
+> **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa + gifenc + jszip
 > **部署:** GitHub Pages（base path `/Data-Structures-Visualized/`）
 
 ---
@@ -374,6 +374,7 @@ src/
 | `validate.ts` | **输入验证**。`sanitizeInput`（XSS 过滤）、`validateNumericInput`、`getValidationError`、`validateImportData` |
 | `themeColors.ts` | **主题颜色系统**。4 套调色板 × light/dark，`getColors()`/`detectDarkMode()`/`ensureGradientDefs()`/`gradUrl()`，基于外部 store + `useSyncExternalStore` |
 | `dataExport.ts` | 数据导出/导入 JSON 文件 |
+| `animationExport.ts` | 算法动画导出：WebM（MediaRecorder）/ GIF（gifenc）/ 帧序列 ZIP（jszip）；`serializeSvg` + `loadSvgImage(svg, w, h, imageFactory?)` + `isAnimationExportSupported()` |
 | `shareUtils.ts` | URL 数据编解码（`btoa(encodeURIComponent(json))`，限 4000 字符） |
 | `debounce.ts` | 防抖工具（带 `cancel` 方法） |
 | `timeslicing.ts` | 时间切片：`yieldToMain()`（rAF + setTimeout）、`runWithTimeSlicing()` |
