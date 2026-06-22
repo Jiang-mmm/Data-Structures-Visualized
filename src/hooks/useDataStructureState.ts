@@ -65,7 +65,7 @@ export function useDataStructureState<T>(initialData: T, options: DataStructureS
     return storedData !== null ? storedData : initialData
   })
 
-  const { state: data, push: basePush, undo, redo, reset: resetHistory, canUndo, canRedo, getHistory, getCurrentIndex, getUndoPreview, getRedoPreview } = useHistory<T>(effectiveInitial)
+  const { state: data, push: basePush, undo, redo, reset: resetHistory, canUndo, canRedo, setUndoBlock, getHistory, getCurrentIndex, getUndoPreview, getRedoPreview } = useHistory<T>(effectiveInitial)
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [isAnimating, setIsAnimatingRaw] = useState<boolean>(false)
   const animTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -214,6 +214,7 @@ export function useDataStructureState<T>(initialData: T, options: DataStructureS
     redo: handleRedo,
     canUndo,
     canRedo,
+    setUndoBlock,
     getHistory,
     getCurrentIndex,
     getUndoPreview,

@@ -20,7 +20,7 @@ export function useSortState(abortAnimation?: () => void) {
   const {
     data, logs, isAnimating, setIsAnimating,
     push, addLog, reset: baseReset, loadData,
-    undo, redo, canUndo, canRedo,
+    undo, redo, canUndo, canRedo, setUndoBlock,
     getUndoPreview, getRedoPreview,
   } = useDataStructureState<number[]>(INITIAL_DATA, { storageKey: 'sort', abortAnimation })
 
@@ -82,6 +82,9 @@ export function useSortState(abortAnimation?: () => void) {
     const animation = anim || { isAborted: () => false, abort: () => {} }
     animRef.current = animation
 
+    // 排序过程中阻塞撤销/重做，避免破坏中间状态
+    setUndoBlock(true)
+
     let lastStep = 0
 
     try {
@@ -110,8 +113,9 @@ export function useSortState(abortAnimation?: () => void) {
     } finally {
       setIsAnimating(false)
       animRef.current = null
+      setUndoBlock(false)
     }
-  }, [data, push, addLog, setIsAnimating])
+  }, [data, push, addLog, setIsAnimating, setUndoBlock])
 
   const bubbleSort = useCallback((a: SortAnimationFns, b: React.RefObject<SVGSVGElement | null>, c: { width: number; height: number }, d?: { isAborted: () => boolean; abort: () => void }) => runAlgorithm('bubble', a, b, c, d), [runAlgorithm])
   const selectionSort = useCallback((a: SortAnimationFns, b: React.RefObject<SVGSVGElement | null>, c: { width: number; height: number }, d?: { isAborted: () => boolean; abort: () => void }) => runAlgorithm('selection', a, b, c, d), [runAlgorithm])

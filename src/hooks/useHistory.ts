@@ -18,6 +18,12 @@ export function useHistory<T>(initialState: T) {
   const indexRef = useRef<number>(0)
   const canUndoRef = useRef<boolean>(false)
   const canRedoRef = useRef<boolean>(false)
+  // 动画进行中时阻塞撤销/重做，避免破坏中间状态
+  const undoBlockedRef = useRef<boolean>(false)
+
+  const setUndoBlock = useCallback((blocked: boolean) => {
+    undoBlockedRef.current = blocked
+  }, [])
 
   const push = useCallback((newState: T) => {
     const nextIndex = indexRef.current + 1
@@ -35,6 +41,7 @@ export function useHistory<T>(initialState: T) {
   }, [])
 
   const undo = useCallback((): T | null => {
+    if (undoBlockedRef.current) return null
     if (indexRef.current <= 0) return null
     indexRef.current -= 1
     const prevState = historyRef.current[indexRef.current]
@@ -45,6 +52,7 @@ export function useHistory<T>(initialState: T) {
   }, [])
 
   const redo = useCallback((): T | null => {
+    if (undoBlockedRef.current) return null
     if (indexRef.current >= historyRef.current.length - 1) return null
     indexRef.current += 1
     const nextState = historyRef.current[indexRef.current]
@@ -75,8 +83,8 @@ export function useHistory<T>(initialState: T) {
     return historyRef.current[indexRef.current + 1]
   }, [])
 
-  const canUndo = useCallback((): boolean => canUndoRef.current, [])
-  const canRedo = useCallback((): boolean => canRedoRef.current, [])
+  const canUndo = useCallback((): boolean => !undoBlockedRef.current && canUndoRef.current, [])
+  const canRedo = useCallback((): boolean => !undoBlockedRef.current && canRedoRef.current, [])
 
   return {
     state,
@@ -87,6 +95,7 @@ export function useHistory<T>(initialState: T) {
     reset,
     canUndo,
     canRedo,
+    setUndoBlock,
     getHistory,
     getCurrentIndex,
     getUndoPreview,
