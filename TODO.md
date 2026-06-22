@@ -13,11 +13,11 @@
 
 ---
 
-## v17 UI/UX 迭代（2026-06-22 完成，待合并 main）
+## v17 UI/UX 迭代（2026-06-22 完成，已 merge main）
 
 | 维度 | 内容 |
 |------|------|
-| **状态** | ✅ 完成（待合并 main） |
+| **状态** | ✅ 完成（已 merge main，commit `b991566`） |
 | **基线** | v16.0.0 GA（merge `b8d0b03`） |
 | **执行分支** | `feature/v17-ui-ux-iterations` |
 | **R1 首页精简** | 4 辅助区块折叠为「学习中心」可展开面板（默认收起） |
@@ -29,6 +29,18 @@
 | **R7 Sort 日志深度** | onCompare/onSwap callback 每步写 addLog('code', ...)，>50 元素按 5 步降频 |
 | **验收** | 1440p 浏览器 + Playwright DOM 断言 7/7 PASS；lint 0 / 2699 测试全绿 / build OK / bundle OK |
 | **实施真源** | [docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md](./docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md) |
+
+---
+
+## v18 i18n 全量替换（2026-06-22 计划 → 已封存）
+
+| 维度 | 内容 |
+|------|------|
+| **状态** | 📦 **已封存**（M0 决策保留为项目记忆；feature/v18-i18n-foundation 分支 + 10 份 M1 清单已清理） |
+| **封存原因** | 用户重新评估后决定暂不启动；M2 启动条件未达 |
+| **M0 决策摘要** | D1=B（UI + learning config）/ D2=C（按语言拆 `locales/{zh,en}/`）/ D3=B（AI + 人工校对）/ D4=简化（逐步提交 + 立即生效）/ D5=C（namespace + flat keys） |
+| **历史快照** | v18 分支 commit `774025a` 包含完整计划（646 行）+ 5 份文档同步；分支删除前可按需 cherry-pick 还原 |
+| **重启条件** | ① 用户明确指令重启；② 基于 M0 决策摘要重新编制实施真源；③ 独立 feature 分支（如 `feature/v18-i18n-foundation`） |
 
 ---
 
