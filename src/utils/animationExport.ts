@@ -231,7 +231,7 @@ export async function exportAnimationGIF(
       if (!ctx) throw new Error('Canvas 2D context unavailable')
       const imageData = ctx.getImageData(0, 0, width, height)
       const palette = quantize(imageData.data, 256, { format: 'rgb565' })
-      const index = applyPalette(imageData.data, palette, 'rgb565')
+      const index = applyPalette(imageData.data, palette, { format: 'rgb565' })
       gif.writeFrame(index, width, height, {
         palette,
         delay: Math.round(frameInterval),
@@ -239,7 +239,7 @@ export async function exportAnimationGIF(
     }
     gif.finish()
     const bytes = gif.bytes()
-    const blob = new Blob([bytes], { type: 'image/gif' })
+    const blob = new Blob([bytes as BlobPart], { type: 'image/gif' })
     triggerDownload(blob, filename)
     showToast({ type: 'success', message: tStatic('exportAnimation.success') + ' ✓' })
   } catch (error) {
