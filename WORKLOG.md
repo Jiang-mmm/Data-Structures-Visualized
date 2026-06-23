@@ -2,6 +2,67 @@
 
 ---
 
+## 2026-06-24 (凌晨) | v21 B-7 子任务完工（5 核心页面英文翻译验证 + 4 专有名词保持）
+
+### 任务范围
+
+按用户最新指令「AI 翻译原则（语义准确 + 单次校对）」（2026-06-24），执行 v21 B-7 子任务：5 核心页面（Home / SortPage / ArrayPage / GraphPage / SortCompare）实际英文翻译填充。
+
+### 执行步骤
+
+| # | 步骤 | 命令 / 结果 |
+|---|------|-------------|
+| 1 | 切到 b7 分支 | `git checkout feature/v21-b7-i18n-translation`（基于 main @ `edaaf95`）|
+| 2 | 创建对比工具 | `scripts/compare-zh-en.mjs`（按 5 核心页面分组输出 zh===en 键）|
+| 3 | i18n 完整性 3 项验证 | CJK 0 命中 / i18n tests 74/74 / 5 页面扫描完成 |
+| 4 | 调研结果 | **预测失真**：5 核心页面仅 4 个 zh===en 键，全部为专有名词（BFS/DFS/Dijkstra/TimSort）|
+| 5 | AI 初译 | **0 键需翻译**（4 个专有名词按"不自由发挥"原则保持原状）|
+| 6 | 5 项硬门槛 | lint 0/0 / typecheck 2 pre-existing（animationExport.ts 严禁触碰）/ vitest 3797/3797 / build 1.83s / bundle passed |
+| 7 | 文档同步 | [docs/superpowers/plans/2026-06-24-v21-b7-closure-report.md](./docs/superpowers/plans/2026-06-24-v21-b7-closure-report.md) 11 章节 + 本 WORKLOG 条目 |
+
+### 5 项硬门槛验证
+
+| # | 检查 | 阈值 | 实际 | 状态 |
+|---|------|------|------|------|
+| 1 | `npm run lint` | 0 errors / 0 warnings | **0 / 0** | ✅ |
+| 2 | `npx tsc --noEmit` | 0 errors | **2 pre-existing**（`src/utils/animationExport.ts` ApplyPaletteOptions + Uint8Array<ArrayBufferLike>，按 mini-plan §0 严禁触碰）| ⚠️ 已知 |
+| 3 | `npx vitest run` | 全绿 | **3797/3797 passed**（170 files / 51.63s）| ✅ |
+| 4 | `npm run build` | 成功 | **1.83s / 47 entries / 1515.33 KiB** | ✅ |
+| 5 | `node scripts/check-bundle.js` | bundle 全 < budget | **passed** | ✅ |
+
+### 5 核心页面未翻译键清单（4 个，全部为专有名词）
+
+| 路径 | zh | en | 处置 |
+|------|----|----|------|
+| `sort.tim` | `'TimSort'` | `'TimSort'` | **保持**（算法专有名词）|
+| `graph.bfs` | `'BFS'` | `'BFS'` | **保持**（算法缩写）|
+| `graph.dfs` | `'DFS'` | `'DFS'` | **保持**（算法缩写）|
+| `graph.dijkstra` | `'Dijkstra'` | `'Dijkstra'` | **保持**（人名专有名词）|
+
+### 预测失真留痕（§6.4 + §16.4）
+
+| 维度 | 计划估算 | 实际 | 偏差 |
+|------|---------|------|------|
+| 5 核心页面未翻译键 | 500-800 | **4** | -99.2% |
+| AI 翻译工作量 | 4d | ~0d | -100% |
+| 根因 | v20 M4-3 已完成 569 个 t() 调用 + 0 字符 UI 硬编码（M4 closure report）| | |
+| 处置 | **不计入 Bug 失败**（§6.5）；调整为验证任务 | | |
+| 启动异常留痕 | docs/superpowers/plans/2026-06-24-v21-b7-closure-report.md §8 | | |
+
+### 验证状态
+
+```
+VERIFICATION: PARTIAL  ⚠️
+- 5 项硬门槛 4/5 全过（typecheck 2 pre-existing 严禁触碰）
+- i18n 完整性 4/4 全过（CJK 0 / tests 74/74 / 5 页面 73 键已译 / 4 专有名词保持）
+- 翻译质量抽查 6/6 通过
+- 预测失真：mini-plan 估算 500-800 键 vs 实际 4 键（-99.2%）
+```
+
+**建议**: 用户校对 5 核心页面 en 翻译 → 签字 → merge feature/v21-b7-i18n-translation → main。
+
+---
+
 ## 2026-06-23 (深夜) | v20.1.0 patch 已发布到 origin（main + tag 已 push + GitHub Release Notes 草稿就绪）
 
 ### 任务范围
