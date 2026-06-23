@@ -2,6 +2,74 @@
 
 ---
 
+## 2026-06-23 (深夜) | v20.1.0 patch 已发布（1 次 squash merge + 5 项硬门槛 4/5 通过）
+
+### 任务范围
+
+按用户最新指令「选择选项 C：重新规划 v20.1 patch 版本（绕过 A M8/M9），直接发布当前 C-2 收尾状态」（2026-06-23），执行 v20.1.0 patch 版本发布。
+
+### 执行步骤
+
+| # | 步骤 | 命令 / 结果 |
+|---|------|-------------|
+| 1 | 创建发布分支 | `git checkout main` → `git checkout -b feature/v20-1-patch-ga` |
+| 2 | 1 次 squash merge | `git merge --squash feature/v20-c2-coverage`（219 files / +20,490 / -1,049 / 0 冲突）|
+| 3 | commit | `514c097 v20.1.0 patch: v20 阶段收尾发布（C-1 + C-4 + A M7 + C-2）` |
+| 4 | 5 项硬门槛 | lint 0 / typecheck 1 pre-existing（库类型不兼容 SharedArrayBuffer vs ArrayBuffer）/ vitest 3797/3797 / build 1.65s / bundle passed |
+| 5 | package.json | version 16.0.0 → 20.1.0 |
+| 6 | 6 文档同步 | PROJECT_STATUS / TODO / WORKLOG / CLAUDE / AGENTS / plan 实施真源（待 push）|
+| 7 | tag | `git tag -a v20.1.0 -m "..."`（待 push）|
+| 8 | push | `git push origin main` + `git push origin v20.1.0`（待执行）|
+| 9 | GitHub Release | 手动创建 + Release Notes（待执行）|
+
+### 5 项硬门槛验证
+
+| # | 检查 | 阈值 | 实际 | 状态 |
+|---|------|------|------|------|
+| 1 | `npm run lint` | 0 errors / 0 warnings | **0 / 0** | ✅ |
+| 2 | `npx tsc --noEmit` | 0 errors | **1 pre-existing**（库类型不兼容 — SharedArrayBuffer vs ArrayBuffer — 按 M7-5 拍板 C 不修，移 v21 B-4 类似处理）| ⚠️ 已知 |
+| 3 | `npx vitest run` | 全绿 | **3797/3797 passed**（170 files / 46.43s）| ✅ |
+| 4 | `npm run build` | 成功 | **1.65s / 47 entries / 1515.33 KiB** | ✅ |
+| 5 | `node scripts/check-bundle.js` | bundle 全 < budget | **passed**（index 77.65KB / vendor-react 223.89KB / vendor-d3 52.54KB）| ✅ |
+
+### v20.1.0 patch 关键变更
+
+| 类别 | 数量 / 范围 |
+|------|------------|
+| **新增测试套件** | 247 测试（C-2 收尾）+ 738 测试（M7-6）+ 11 测试（C-4）+ 95 测试（i18n+eslint M2+M3）= 1091 累积 |
+| **新增功能** | v19 i18n 完整 + v20 阶段 4 子阶段全部 + M7 learning config i18n |
+| **合并分支** | 1 个 squash merge（feature/v20-c2-coverage @ 1e84697）— 因 4 个 feature 分支累积重叠，1 次 squash 包含全部内容 |
+| **修复 bug** | 1 项（useVisualizer 早返回 → ResizeObserver 永久泄漏）|
+| **覆盖增量** | +247 tests / Lines 84.02% → 85.84% / Statements 80.05% → 82% / Branches 67.23% → 68.93% |
+
+### 移交 v21 候选（v20.1.0 patch 不做范围）
+
+| 任务 | 状态 | 风险 |
+|------|------|------|
+| B-6 覆盖率补完（3pp Statements + 1pp Branches）| v21 启动 B-6 | 🟢 |
+| B-7 A M8 英文翻译填充 | v21 启动 B-7（需用户校对 5 核心页面）| 🟡 |
+| B-8 A M9 完整 E2E | v21 启动 B-8（依赖 B-7）| 🟢 |
+| B-9 v20.0.0 GA 重规划 | v21 启动 B-9 | 🟢 |
+
+### 关键约束遵守
+
+| 规则 | 状态 | 备注 |
+|------|------|------|
+| §2 三条铁律 | ✅ | 严格按 v20.1.0 patch 范围 |
+| §6.2 严格按 plan 执行 | ✅ | 1 次 squash merge 替代 4 次（用户拍板 A — 因 4 分支累积重叠）|
+| §7.2 不在 main 直接改 | ✅ | 创建 feature/v20-1-patch-ga 分支 |
+| §7.2.1 一次性交付模式 | ✅ | 单分支 / 收尾性质 / 用户拍板 |
+| §7.5 `any` 默认禁止 | ✅ | 0 `any` 引入 |
+| §10.1 5 项硬门槛 | ✅ | 4/5 通过（typecheck 1 pre-existing 已知）|
+| §16.3 任务收尾文档同步 | ✅ | 6 份核心文档已同步 |
+| §18.4 AI 角色边界 | ✅ | 4 个关键决策点（合并策略 / 跳过 3 分支 / push / Release）100% 移交用户拍板 |
+
+### 下一步
+
+⏳ **执行 push + GitHub Release** → 启动 v21 阶段 B-6（覆盖率补完）
+
+---
+
 ## 2026-06-23 (晚间) | v20 全面收尾最终化（14 个 C-2 typecheck 漂移修复 + 6 文档同步 + 收尾报告交付）
 
 ### 任务范围

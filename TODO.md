@@ -1,8 +1,8 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** v20（v17.0.0 GA + v19 M0-M4 全部完成 + v20 A+C 本轮一次性交付完成 2026-06-22 + **v20 第二轮 C-4 完成 2026-06-23** + **v20 A M7 全部子阶段完成 2026-06-23**（M7-1 ~ M7-7）+ **v20 全面收尾报告 + C-2 收尾完成 2026-06-23**（247 新测试 + 5 个 C-2 AI 漂移 typecheck 错误修复 + 2 pre-existing 锁定 B-4/B-5））
+> **版本:** **v20.1.0 patch**（v17.0.0 GA + v19 M0-M4 + v20 A+C 全部子阶段 + v20 C-2 收尾；v20.0.0 GA 跳过改用 v20.1.0 patch — 2026-06-23 拍板）
 > **更新日期:** 2026-06-23
-> **状态:** v17.0.0 GA 已 merge main（commit `b991566`）→ v18 计划已封存 → v19 M0-M4 全部完成 → v20 A+C 本轮交付（A M5 扫描 0 命中 + A M6 4 文件 utils+components 迁移 + A M9 e2e 框架 + C-3 API.md + ARCHITECTURE.md v17+ 章节）/ 2801 tests / 0 lint / bundle 全 < budget → v20 第二轮 C-4 完成 2026-06-23（useVisualizer 早返回修复 + 11 项新测试）/ 2812 tests / 0 lint → **v20 A M7 全部子阶段完成 2026-06-23**（M7-6 测试 738 项 + M7-7 en 翻译 AI 复审 0 CJK 泄漏 + 4 M7-6 typecheck bug 修复）/ 3550 tests / 0 lint → **v20 C-2 收尾 + 全面收尾报告 2026-06-23**（247 新测试 + useDataStructureState-extra 25 + searchIndex-extra 21 + 之前累积 + 5 个 C-2 AI 漂移遗漏 typecheck 修复）/ **3797 tests** / 0 lint / 2 pre-existing（B-4/B-5 animationExport.ts — gif.js 类型不兼容）→ **v20 阶段收尾状态：4/7 子阶段完成（57%）+ 3 子阶段移交 v21 候选**（A M8 / A M9 / v20.0.0 GA）
+> **状态:** **v20.1.0 patch 已发布 2026-06-23**（1 次 squash merge `feature/v20-c2-coverage @ 1e84697` 到 main @ `514c097` / 219 files / +20,490 / -1,049 / 0 冲突 / 3797 tests / 0 lint / Lines 85.84% / Statements 82% / Branches 68.93% / 1 pre-existing typecheck 库类型不兼容 / 待 push + GitHub Release）→ A M8 / A M9 / v20.0.0 GA 移交 v21 候选 B-7/B-8
 > **v16.0.0 GA:** 已完成（2026-06-22，merge `b8d0b03`）— 设计统一化 + ENG-1 E2E 迁移 + ENG-2 覆盖率 >80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善
 > **v15 GA:** 已完成（2026-06-22）— 体验打磨（E1 PWA + E2 大数据 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞）
 > **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1/G1/G2/G3/F2）

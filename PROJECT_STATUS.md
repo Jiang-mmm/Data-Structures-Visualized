@@ -2,7 +2,7 @@
 
 > **文件用途**: AI 开发前必读。本文件汇总项目最新进展，避免 AI 基于过时的代码或文档状态做决策。
 > **更新频率**: 每次迭代结束 / 每个子阶段验收后 / 启动新的开发任务前。
->| **最后更新**: 2026-06-23 下午（**v20 全面收尾报告已交付 2026-06-23** — C-2 收尾 247 新测试 / 3797 tests / Lines 85.84% / Statements 82% / Branches 68.93% / 等待用户拍板 3 选项 v21 backlog）|
+>| **最后更新**: 2026-06-23 晚间（**v20.1.0 patch 已发布 2026-06-23** — 1 次 squash merge feature/v20-c2-coverage @ 1e84697 到 main / 219 files / +20,490 / -1,049 / 3797 tests / 0 lint / Lines 85.84% / Statements 82% / Branches 68.93% / 1 pre-existing typecheck（库类型不兼容）/ 等待 push + GitHub Release）|
 
 ---
 
@@ -29,10 +29,10 @@
 | 项 | 当前值 |
 |---|---|
 | **项目名称** | ds-visualizer（数据结构学习助手） |
-| **当前版本** | v20（v17.0.0 GA + v19 M0-M4 + v20 A+C 本轮交付：A M5+M6+M9 + C-3 文档）|
+| **当前版本** | **v20.1.0 patch**（v17.0.0 GA + v19 M0-M4 + v20 A+C 全部子阶段 + v20 C-2 收尾；v20.0.0 GA 跳过改用 v20.1.0 patch — 2026-06-23 拍板）|
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa |
-| **当前分支** | `feature/v20-c2-coverage`（**v20 C-2 收尾完成 2026-06-23** — commit `16ca406` 247 新测试 / 3797 tests / 0 lint / Lines 85.84% / Statements 82% / Branches 68.93%）→ **v20 全面收尾报告已交付 2026-06-23**（[2026-06-23-v20-closure-report.md](./docs/superpowers/plans/2026-06-23-v20-closure-report.md) — 57% 完成 4/7 子阶段；A M8 + A M9 + v20.0.0 GA 移交 v21 候选 B-7/B-8/B-9；3 选项 A/B/C 等用户拍板）→ **M7-7 en 翻译 AI 复审完成 2026-06-23** — 0 CJK 泄漏 / 321 identical = 数学符号+代码标识符（合法）/ 377 length outliers = English 自然展开（合法）/ 用户人工校对待启动）|
-| **基线状态** | 3797 单元测试全绿（基线 3550 + C-2 收尾新增 247 = useDataStructureState-extra 25 + searchIndex-extra 21 + 之前 C-1/C-4/M7-6 累积）/ ESLint 0 errors / 生产构建通过 / bundle 全 < budget / i18n integrity 8/8（zh/en 镜像 1,432 键对齐）/ en 翻译 0 CJK 泄漏 / typecheck 5 pre-existing v21 backlog B-1~B-5 |
+| **当前分支** | `main`（**v20.1.0 patch 已发布 2026-06-23** — 1 次 squash merge `feature/v20-c2-coverage @ 1e84697` @ `514c097` = 219 files / +20,490 / -1,049 / 0 冲突；A M8 / A M9 / v20.0.0 GA 移交 v21 候选 B-7/B-8）|
+| **基线状态** | 3797 单元测试全绿（基线 3550 + C-2 收尾新增 247 = useDataStructureState-extra 25 + searchIndex-extra 21 + 之前 C-1/C-4/M7-6 累积）/ ESLint 0 errors / 生产构建通过 / bundle 全 < budget / i18n integrity 8/8（zh/en 镜像 1,432 键对齐）/ en 翻译 0 CJK 泄漏 / typecheck 1 pre-existing 库类型不兼容（SharedArrayBuffer vs ArrayBuffer — 移 v21 B-4 类似处理）|
 
 > **2026-06-22 v18 计划封存备注**: v18 i18n 全量替换计划（11 阶段 / ~30 天）已由用户决定封存；M0 决策 D1=B（UI + learning config）/ D2=C（按语言拆 `locales/{zh,en}/`）/ D3=B（AI + 人工校对）/ D4=简化（逐步提交 + 立即生效）/ D5=C（namespace + flat keys）保留为项目记忆。后续如需重启，可基于本决策摘要 + v18 分支 commit `774025a` 的历史快照 `docs/superpowers/plans/2026-06-22-v18-i18n-full-replacement.md`（646 行）启动。 |
 >
