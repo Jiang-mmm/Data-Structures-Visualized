@@ -1,10 +1,13 @@
 # 数据结构学习助手
 
-> **版本:** v16.0.0 GA
-> **更新日期:** 2026-06-22
-> **v16 起点:** v15 GA 基础上完成工程深化与功能增强 — ENG-1 E2E 框架迁移至 Playwright Test + ENG-2 测试覆盖率 >80% + ENG-3 lint warnings 归零 + ENH-1 算法动画导出（WebM/GIF/帧序列 ZIP）+ ENH-2 i18n 完善（算法术语对照表）
+> **版本:** v20.1.0 patch（v17.0.0 GA + v19 M0-M4 + v20 A+C 全部子阶段 + v20 C-2 收尾；v20.0.0 GA 跳过改用 v20.1.0 patch — 2026-06-23 拍板）
+> **更新日期:** 2026-06-23
+> **v20.1.0 patch 状态:** ✅ **已发布到 origin**（main @ `e3bae56` + tag `v20.1.0 @ f419c7e` 已 push；[详细发布报告](./docs/superpowers/plans/2026-06-23-v20-1-release-report.md) / GitHub Release Notes 草稿就绪待用户 UI 创建）
+> **v20 起点:** v17.0.0 GA 基础上完成 i18n 完整化（v19 M0-M4）+ v20 阶段 4/7 子阶段（C-1 react-hooks + C-4 useVisualizer 内存修复 + A M7 learning config i18n + C-2 覆盖率 80→85.84% Lines / 247 新测试）
+> **v17 GA:** 已完成（2026-06-22，merge `b991566`）— UI/UX 迭代 R1-R7（首页精简 + LogPanel 深色 + 布局调整 + 树连接线 + 排序日志深度 + 测验扩充）
+> **v16 GA:** 已完成（2026-06-22，merge `b8d0b03`）— 设计统一化 + ENG-1 E2E 迁移 + ENG-2 覆盖率 >80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善
 > **v15 GA:** 已完成（2026-06-22）— 体验打磨（E1 PWA + E2 大数据 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞）
-> **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1 图算法测试 + G1 B-Tree + G2 Segment Tree + G3 双向链表 + F2 算法接入指南）
+> **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1/G1/G2/G3/F2）
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa
 > **在线体验:** https://jiang-mmm.github.io/Data-Structures-Visualized/
 

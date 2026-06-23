@@ -2,7 +2,7 @@
 
 ---
 
-## 2026-06-23 (深夜) | v20.1.0 patch 已发布（1 次 squash merge + 5 项硬门槛 4/5 通过）
+## 2026-06-23 (深夜) | v20.1.0 patch 已发布到 origin（main + tag 已 push + GitHub Release Notes 草稿就绪）
 
 ### 任务范围
 
@@ -14,13 +14,18 @@
 |---|------|-------------|
 | 1 | 创建发布分支 | `git checkout main` → `git checkout -b feature/v20-1-patch-ga` |
 | 2 | 1 次 squash merge | `git merge --squash feature/v20-c2-coverage`（219 files / +20,490 / -1,049 / 0 冲突）|
-| 3 | commit | `514c097 v20.1.0 patch: v20 阶段收尾发布（C-1 + C-4 + A M7 + C-2）` |
-| 4 | 5 项硬门槛 | lint 0 / typecheck 1 pre-existing（库类型不兼容 SharedArrayBuffer vs ArrayBuffer）/ vitest 3797/3797 / build 1.65s / bundle passed |
-| 5 | package.json | version 16.0.0 → 20.1.0 |
-| 6 | 6 文档同步 | PROJECT_STATUS / TODO / WORKLOG / CLAUDE / AGENTS / plan 实施真源（待 push）|
-| 7 | tag | `git tag -a v20.1.0 -m "..."`（待 push）|
-| 8 | push | `git push origin main` + `git push origin v20.1.0`（待执行）|
-| 9 | GitHub Release | 手动创建 + Release Notes（待执行）|
+| 3 | squash commit | `514c097 v20.1.0 patch: v20 阶段收尾发布（C-1 + C-4 + A M7 + C-2）` |
+| 4 | 5 项硬门槛 | lint 0 / typecheck 2 pre-existing（gif.js ApplyPaletteOptions + Uint8Array<ArrayBufferLike>）/ vitest 3797/3797 / build 1.65s / bundle passed |
+| 5 | package.json + 6 文档 | version 16.0.0 → 20.1.0；PROJECT_STATUS / TODO / WORKLOG / CLAUDE / AGENTS / plan 同步 |
+| 6 | docs commit | `e3bae56 docs(v20.1): 文档同步 v20.1.0 patch 状态 + 实施真源文档落地`（5 files / 430 insertions / 7 deletions）|
+| 7 | ff merge main | `git checkout main && git merge --ff-only feature/v20-1-patch-ga`（221 files / +20,914 / -1,050）|
+| 8 | 5 项硬门槛重跑 | lint 0 / typecheck 2 pre-existing / vitest 3797/3797 (48.61s) / build 1.80s / bundle passed |
+| 9 | git tag | `git tag -a v20.1.0 -F msg.txt`（annotated tag `f419c7e` 指向 `e3bae56`）|
+| 10 | push main | `git push origin main` → `37478cf..e3bae56 main -> main`（GitHub Dependabot 提示 6 vulnerabilities 列入 v21 B-10）|
+| 11 | push tag | `git push origin v20.1.0` → `[new tag] v20.1.0 -> v20.1.0` |
+| 12 | 验证 | `git ls-remote origin` → `refs/heads/main = e3bae56` + `refs/tags/v20.1.0 = f419c7e`（dereferenced = e3bae56）|
+| 13 | release report | [docs/superpowers/plans/2026-06-23-v20-1-release-report.md](./docs/superpowers/plans/2026-06-23-v20-1-release-report.md) 11 章节 / Release Notes 草稿就绪 |
+| 14 | GitHub Release | 用户在 GitHub UI 手动创建（tag v20.1.0 已存在；复制 §8 Release Notes 草稿即可）|
 
 ### 5 项硬门槛验证
 
@@ -66,7 +71,11 @@
 
 ### 下一步
 
-⏳ **执行 push + GitHub Release** → 启动 v21 阶段 B-6（覆盖率补完）
+⏳ **用户在 GitHub UI 创建 Release**（tag v20.1.0 已 push；复制 release report §8 Release Notes 草稿即可）→ 启动 v21 阶段 B-6（覆盖率补完 2-3d）
+
+### 详细发布报告
+
+[v20.1.0 release report](./../docs/superpowers/plans/2026-06-23-v20-1-release-report.md) — 11 章节 / 质量门 / 变更统计 / 移交 v21 候选（B-6 / B-7 / B-8 / B-9 / B-10 Dependabot）/ Release Notes 草稿
 
 ---
 
