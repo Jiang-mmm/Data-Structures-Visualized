@@ -34,6 +34,9 @@ docs/数据结构学习助手-设计推荐.md
 
 # Coverage and test artifacts
 coverage/
+coverage-detail.txt
+coverage-full.txt
+coverage-output.txt
 e2e/screenshots/
 e2e/check-*.png
 e2e/test-report.txt
@@ -43,3 +46,10 @@ e2e/test-comprehensive-result-*.json
 test-output.txt
 test-results/
 playwright-report/
+
+# v20 C-2 ad-hoc analysis artifacts（已归档至 scripts/_archive/_coverage-rank.cjs）
+coverage-rank.cjs
+
+# v20 M7 临时产物（dump-zh-learning.mjs 输出，供 AI 翻译输入使用，可重新生成）
+.zh-learning.json
+.zh-learning-*.json

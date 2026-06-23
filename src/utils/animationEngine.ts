@@ -199,11 +199,11 @@ export interface AnimationPreset {
 }
 
 export const ANIMATION_PRESETS: Record<string, AnimationPreset> = {
-  default: { name: '标准', nameKey: 'speedControl.presetDefault', icon: '▶', speed: 1, easing: easeCubicOut },
-  gentle: { name: '柔和', nameKey: 'speedControl.presetGentle', icon: '〰', speed: 0.5, easing: easeQuadInOut },
-  snappy: { name: '快速', nameKey: 'speedControl.presetSnappy', icon: '▹', speed: 2, easing: easeCubicOut },
-  dramatic: { name: '戏剧', nameKey: 'speedControl.presetDramatic', icon: '✦', speed: 1, easing: easeElasticOut.amplitude(1).period(0.3) },
-  instant: { name: '瞬时', nameKey: 'speedControl.presetInstant', icon: '⏭', speed: 4, easing: easeLinear, skip: true },
+  default: { name: tStatic('speedControl.presetDefault'), nameKey: 'speedControl.presetDefault', icon: '▶', speed: 1, easing: easeCubicOut },
+  gentle: { name: tStatic('speedControl.presetGentle'), nameKey: 'speedControl.presetGentle', icon: '〰', speed: 0.5, easing: easeQuadInOut },
+  snappy: { name: tStatic('speedControl.presetSnappy'), nameKey: 'speedControl.presetSnappy', icon: '▹', speed: 2, easing: easeCubicOut },
+  dramatic: { name: tStatic('speedControl.presetDramatic'), nameKey: 'speedControl.presetDramatic', icon: '✦', speed: 1, easing: easeElasticOut.amplitude(1).period(0.3) },
+  instant: { name: tStatic('speedControl.presetInstant'), nameKey: 'speedControl.presetInstant', icon: '⏭', speed: 4, easing: easeLinear, skip: true },
 }
 
 let currentPreset = 'default'

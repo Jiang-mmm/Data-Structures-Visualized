@@ -1,12 +1,13 @@
 import type { LearningModeConfig } from './types'
+import { tStatic } from '../../i18n/useI18n'
 
 export const heapStructureConfig: LearningModeConfig = {
   algorithmKey: 'heapStructure',
   steps: [
     {
       id: 'structure',
-      title: '堆结构',
-      description: '堆是完全二叉树，用数组存储：父节点 i 的左子为 2i+1，右子为 2i+2，最大堆中父节点 ≥ 子节点',
+      title: tStatic('learningSteps.heapStructure.steps.structure.title'),
+      description: tStatic('learningSteps.heapStructure.steps.structure.description'),
       codeSnippet: `// 最大堆：父节点 ≥ 子节点
 //       50
 //      /  \\
@@ -17,14 +18,14 @@ export const heapStructureConfig: LearningModeConfig = {
 // 数组: [50, 30, 40, 10, 20]
 // 父节点: (i-1)/2  左子: 2i+1  右子: 2i+2`,
       highlightedLine: 2,
-      highlightTerms: ['完全二叉树', '≥'],
-      tips: ['堆用数组存储完全二叉树，不需要指针，空间利用率高且缓存友好'],
-      complexity: { time: '插入/提取 O(log n)，查看 O(1)', space: 'O(n)' },
+      highlightTerms: tStatic('learningSteps.heapStructure.steps.structure.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.heapStructure.steps.structure.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.heapStructure.steps.structure.complexityTime'), space: tStatic('learningSteps.heapStructure.steps.structure.complexitySpace') },
     },
     {
       id: 'insert',
-      title: '插入（上浮）',
-      description: '新元素先放到数组末尾，然后与父节点比较，若大于父节点则交换上浮，直到满足堆性质',
+      title: tStatic('learningSteps.heapStructure.steps.insert.title'),
+      description: tStatic('learningSteps.heapStructure.steps.insert.description'),
       codeSnippet: `function insert(heap, value) {
   heap.push(value)
   let i = heap.length - 1
@@ -36,13 +37,13 @@ export const heapStructureConfig: LearningModeConfig = {
   }
 }`,
       highlightedLine: 6,
-      highlightTerms: ['上浮', 'swap'],
-      tips: ['上浮操作最多比较 log n 次（树的高度），因此插入复杂度 O(log n)'],
+      highlightTerms: tStatic('learningSteps.heapStructure.steps.insert.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.heapStructure.steps.insert.tips').split('|'),
     },
     {
       id: 'extract',
-      title: '提取堆顶（下沉）',
-      description: '将堆顶与末尾交换并移除，然后从堆顶开始与较大子节点比较下沉，直到满足堆性质',
+      title: tStatic('learningSteps.heapStructure.steps.extract.title'),
+      description: tStatic('learningSteps.heapStructure.steps.extract.description'),
       codeSnippet: `function extractMax(heap) {
   const max = heap[0]
   heap[0] = heap[heap.length - 1]
@@ -62,20 +63,20 @@ export const heapStructureConfig: LearningModeConfig = {
   return max
 }`,
       highlightedLine: 12,
-      highlightTerms: ['下沉', 'largest'],
-      tips: ['下沉时需要与较大的子节点交换，否则会破坏堆性质'],
+      highlightTerms: tStatic('learningSteps.heapStructure.steps.extract.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.heapStructure.steps.extract.tips').split('|'),
     },
     {
       id: 'peek',
-      title: '查看堆顶',
-      description: '直接返回数组首元素，即最大值，时间复杂度 O(1)',
+      title: tStatic('learningSteps.heapStructure.steps.peek.title'),
+      description: tStatic('learningSteps.heapStructure.steps.peek.description'),
       codeSnippet: `function peek(heap) {
   if (heap.length === 0) throw '堆空'
   return heap[0]  // 最大值始终在堆顶
 }`,
       highlightedLine: 3,
-      highlightTerms: ['heap[0]', 'O(1)'],
-      tips: ['堆的典型应用：优先队列、堆排序、Top-K 问题、中位数维护、Dijkstra 优化'],
+      highlightTerms: tStatic('learningSteps.heapStructure.steps.peek.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.heapStructure.steps.peek.tips').split('|'),
     },
   ],
 }

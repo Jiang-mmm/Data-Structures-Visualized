@@ -1,4 +1,5 @@
 import { useState, memo } from 'react'
+import { tStatic } from '../i18n/useI18n'
 
 interface AlgorithmInfoProps {
   algorithmKey: string
@@ -10,44 +11,44 @@ interface AlgorithmInfoProps {
 
 const ALGORITHM_INFO: Record<string, { description: string; characteristics: string[] }> = {
   bubble: {
-    description: '重复遍历数组，比较相邻元素并交换顺序不对的对。',
-    characteristics: ['稳定排序', '原地排序', '适合小规模或近乎有序的数据'],
+    description: tStatic('algorithmInfo.bubble.description'),
+    characteristics: tStatic('algorithmInfo.bubble.characteristics').split('|'),
   },
   quick: {
-    description: '选择基准元素分区，递归排序左右子数组。',
-    characteristics: ['不稳定排序', '原地排序', '平均性能最优的比较排序'],
+    description: tStatic('algorithmInfo.quick.description'),
+    characteristics: tStatic('algorithmInfo.quick.characteristics').split('|'),
   },
   merge: {
-    description: '递归拆分数组至单元素，再有序合并。',
-    characteristics: ['稳定排序', '需要额外 O(n) 空间', '适合链表和外部排序'],
+    description: tStatic('algorithmInfo.merge.description'),
+    characteristics: tStatic('algorithmInfo.merge.characteristics').split('|'),
   },
   heap: {
-    description: '利用最大堆性质，逐步取出堆顶放到末尾。',
-    characteristics: ['不稳定排序', '原地排序', '最坏情况仍为 O(n log n)'],
+    description: tStatic('algorithmInfo.heap.description'),
+    characteristics: tStatic('algorithmInfo.heap.characteristics').split('|'),
   },
   selection: {
-    description: '每轮选出最小元素放到已排序区间末尾。',
-    characteristics: ['不稳定排序', '原地排序', '交换次数最少（最多 n-1 次）'],
+    description: tStatic('algorithmInfo.selection.description'),
+    characteristics: tStatic('algorithmInfo.selection.characteristics').split('|'),
   },
   insertion: {
-    description: '将每个元素插入到前面已排序部分的正确位置。',
-    characteristics: ['稳定排序', '原地排序', '对近乎有序的数据效率极高'],
+    description: tStatic('algorithmInfo.insertion.description'),
+    characteristics: tStatic('algorithmInfo.insertion.characteristics').split('|'),
   },
   counting: {
-    description: '统计每个值出现次数，按序输出。',
-    characteristics: ['稳定排序', '非比较排序', '适用于值域较小的整数数据'],
+    description: tStatic('algorithmInfo.counting.description'),
+    characteristics: tStatic('algorithmInfo.counting.characteristics').split('|'),
   },
   shell: {
-    description: '按递减间隔序列对子序列做插入排序。',
-    characteristics: ['不稳定排序', '原地排序', '插入排序的高效泛化'],
+    description: tStatic('algorithmInfo.shell.description'),
+    characteristics: tStatic('algorithmInfo.shell.characteristics').split('|'),
   },
   radix: {
-    description: '按位（个十百千…）依次排序，使用稳定排序作为子过程。',
-    characteristics: ['稳定排序', '非比较排序', '适用于固定位数的整数'],
+    description: tStatic('algorithmInfo.radix.description'),
+    characteristics: tStatic('algorithmInfo.radix.characteristics').split('|'),
   },
   bucket: {
-    description: '将数据分配到多个桶中，桶内排序后合并。',
-    characteristics: ['稳定（取决于桶内排序）', '非比较排序', '适用于均匀分布的数据'],
+    description: tStatic('algorithmInfo.bucket.description'),
+    characteristics: tStatic('algorithmInfo.bucket.characteristics').split('|'),
   },
 }
 

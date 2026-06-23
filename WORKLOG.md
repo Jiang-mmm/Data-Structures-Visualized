@@ -2,6 +2,1132 @@
 
 ---
 
+## 2026-06-23 (晚间) | v20 全面收尾最终化（14 个 C-2 typecheck 漂移修复 + 6 文档同步 + 收尾报告交付）
+
+### 任务范围
+
+按用户指令「确认当前阶段的所有长线任务是否已完成」+「暂停对后续阶段任务的规划与执行」+「对当前阶段的所有任务进行全面收尾工作」（2026-06-23），最终化 v20 全面收尾报告，修复 C-2 工作中 14 个 typecheck AI 漂移遗漏，同步 6 份核心文档。
+
+### 14 个 C-2 typecheck 漂移修复
+
+| # | 文件 | 行 | 错误 | 修复 |
+|---|------|---|------|------|
+| 1 | `src/__tests__/utils/sentry.test.ts` | 36 | vi.stubEnv('PROD', 'true') boolean 不匹配 | 改 `true` |
+| 2 | `src/__tests__/utils/sentry.test.ts` | 44 | 同上 | 改 `true` |
+| 3 | `src/__tests__/utils/sentry.test.ts` | 56 | 同上 | 改 `true` |
+| 4 | `src/__tests__/utils/sentry.test.ts` | 66 | 同上 | 改 `true` |
+| 5 | `src/__tests__/utils/sentry.test.ts` | 76 | 同上 | 改 `true` |
+| 6 | `src/__tests__/utils/sentry.test.ts` | 86 | 同上 | 改 `true` |
+| 7 | `src/__tests__/utils/sentry.test.ts` | 148 | 同上 | 改 `true` |
+| 8 | `src/__tests__/utils/animationExport-extra.test.ts` | 42 | `x, y` unused | 改 `_x, _y` |
+| 9 | `src/__tests__/utils/animationExport.test.ts` | 59 | `x, y` unused | 改 `_x, _y` |
+| 10 | `src/__tests__/components/Visualizer.test.tsx` | 263 | TouchList 类型不匹配 | 改用 defineProperty fallback |
+| 11 | `src/__tests__/components/Visualizer.test.tsx` | 277 | 同上 | 同上 |
+| 12 | `src/__tests__/components/Visualizer.test.tsx` | 284 | 同上 | 同上 |
+| 13 | `src/__tests__/performanceLogger.test.ts` | 277 | log('info', ...) type error | 改 `function` (valid type) |
+| 14 | `src/__tests__/useColorTheme.test.ts` | 35 | themes[0]?.value 不存在 | mock + 测试改 `key` |
+| 15 | `src/__tests__/components/QuizPanel.test.tsx` | 1 | afterEach 缺 import | 补 import |
+
+合计 15 处（3 个 B-1~B-3 已锁；12 个新 C-2 漂移修复）。
+
+### 5 项硬门槛最终验证
+
+| 检查项 | 阈值 | 实际 | 状态 |
+|--------|------|------|------|
+| `npm run lint` | 0 errors / 0 warnings | **0 / 0** | ✅ |
+| `npx tsc --noEmit` | 0 errors | **2 pre-existing**（B-4 + B-5 animationExport.ts — gif.js 类型不兼容）| ⚠️ 与 closure 报告对齐 |
+| `npx vitest run` | 全绿 | **3797/3797** | ✅ |
+| `npm run build` | 成功 | **成功**（1.66s；47 entries / 1515.33 KiB）| ✅ |
+| `node scripts/check-bundle.js` | bundle 全 < budget | **passed** | ✅ |
+
+### 6 份核心文档同步
+
+| # | 文档 | 关键更新 |
+|---|------|---------|
+| 1 | `PROJECT_STATUS.md` | v20 阶段 57% 完成 4/7 + 3 子阶段移交 v21 + 5 项硬门槛 4/5 通过 |
+| 2 | `TODO.md` | v20 状态行 / v20 第二轮执行计划表 / v21 待办 Backlog（B-1~B-3 修 + B-4/B-5 剩）/ v21 候选 Backlog（9 项）|
+| 3 | `WORKLOG.md` | 本条条目 |
+| 4 | `CLAUDE.md` | （无需更新 — 主表 v20 计划指针仍然准确）|
+| 5 | `AGENTS.md` | （无需更新 — 主表 v20 计划指针仍然准确）|
+| 6 | `docs/superpowers/plans/2026-06-23-v20-closure-report.md` | 已交付（本轮工作产出）|
+
+### v20 阶段 7 子阶段最终状态
+
+| 子阶段 | 状态 | 完成日期 | 移交 |
+|--------|------|----------|------|
+| C-1 react-hooks 扫描 | ✅ 完成 | 2026-06-23 | — |
+| C-4 useVisualizer 修复 | ✅ 完成 | 2026-06-23 | — |
+| A M7-1~M7-7 learning config | ✅ 完成 | 2026-06-23 | — |
+| **C-2 覆盖率** | 🟡 **部分完成** | 2026-06-23 | v21 B-6（补 3pp Statements + 1pp Branches）|
+| A M8 翻译填充 | ⏳ 未启动 | — | v21 B-7（需用户校对 5 核心页面）|
+| A M9 E2E + pseudoLocale | ⏳ 未启动 | — | v21 B-8（依赖 M8）|
+| v20.0.0 GA 收尾 | ⏳ 未启动 | — | v21 B-9（依赖 M8+M9）|
+
+**总完成度**: 4/7 子阶段（57%）
+
+### 3 项待用户拍板（v20 closure 选项）
+
+| 选项 | 描述 | 工时 | 推荐度 |
+|------|------|------|--------|
+| **A**（推荐）| 接受 v20 收尾（57% 完成），跳过 v20.0.0 GA；启动 v21 阶段先做 B-6（覆盖率补完 3pp）| v21 B-6: 2-3d | ⭐⭐⭐ |
+| B | 接受 v20 收尾；启动 v21 阶段先做 B-7（A M8 翻译，需用户校对 5 核心页面）| v21 B-7: 5d | ⭐⭐ |
+| C | 重新规划 v20.1 patch 版本（绕过 A M8/M9），直接发布当前 C-2 收尾状态 | 0.5d | ⭐⭐ |
+
+### 下一步
+
+⏳ **等待用户拍板 3 选项**（v20 closure）→ 启动 v21 阶段对应子任务 → 后续 v20.0.0 GA 收尾
+
+---
+
+## 2026-06-23 (下午) | v20 M7 收尾（5 未跟踪文件清理 + inventory 报告 + gitignore 同步）
+
+### 任务范围
+
+按用户指令「完成 M7 的后续所有任务」+「Address and resolve identified technical debt within current scope」，对 M7 工作期间累积的 5 个未跟踪文件做决策、清理与文档同步。
+
+### 5 个未跟踪文件决策
+
+| 文件 | 性质 | 决策 | 理由 |
+|------|------|------|------|
+| `.zh-learning.json` (82KB) | `dump-zh-learning.mjs` 输出（AI 翻译输入中间产物）| **加 .gitignore + 删除本地** | 可重新生成；非仓库资产；M7-3 已完成无需保留 |
+| `project_rules.md` (根目录) | 与 `.trae/rules/project_rules.md` 内容重复 | **删除根目录副本** | 规则正源在 `.trae/rules/`（.trae/ 已在 .gitignore，**故意不被版本控制**）；根目录副本是误拷贝 |
+| `scripts/migrate-configs-to-i18n.mjs` | M7-5 40 config 迁移主工具 | **提交** | M7 plan §3 M7-5 范围产物；可重复运行（dry-run 模式）|
+| `scripts/count-rules.ps1` | 规则文档统计工具 | **提交** | 有用的规则统计工具（与 v3.8.1 同步）|
+| `scripts/_archive/_fix-learning-to-learningsteps.mjs` | M7-5 路径修复脚本 | **提交** | 用户 M7-5 拍板 A："保留修复脚本以备后续参考（已归档 scripts/_archive/）"|
+| `scripts/_archive/_fix-missing-tstatic-import.mjs` | M7-5 tStatic import 修复 | **提交** | 同上（用户拍板保留）|
+
+### 新增文档
+
+- `docs/superpowers/i18n-inventory/08-m7-learning-config-migration.md` — M7 完成报告（~350 行 10 章节），与 M4 收尾报告（`06-m4-closure-report.md`）格式一致
+
+### .gitignore 新增
+
+```
+# v20 M7 临时产物（dump-zh-learning.mjs 输出，供 AI 翻译输入使用，可重新生成）
+.zh-learning.json
+.zh-learning-*.json
+```
+
+### 验证
+
+| 检查项 | 阈值 | 实际 | 状态 |
+|--------|------|------|------|
+| `npm run lint` | 0 errors / 0 warnings | **0 / 0** | ✅ |
+| `npx tsc --noEmit` | 0 errors | **5 pre-existing**（v21 backlog）| ⚠️ 按 M7-5 拍板 |
+| `npx vitest run` | 全绿 | **3550 / 3550** | ✅ |
+| `npm run build` | 成功 | **成功** | ✅ |
+| `node scripts/check-bundle.js` | bundle 全 < budget | **passed** | ✅ |
+| `node scripts/check-en-cjk.mjs` | 0 CJK 泄漏 | **0 / 2,032 行** | ✅ |
+| `node scripts/check-en-translations.mjs` | 翻译质量 | **1022 value / 0 短 / 321 identical（合法）/ 377 length outliers（合法）** | ✅ |
+
+### 下一步
+
+⏳ **M7 全部收尾** → 等待用户拍板 v20 A 方向下一阶段（en 校对 / A M8 / C-2 / v20.0.0 GA 收尾）
+
+---
+
+## 2026-06-23 (下午) | v20 M7-7 完成（en 翻译 AI 复审 0 CJK 泄漏 + 翻译质量脚本）
+
+### 任务范围
+
+按 v20 M7 plan §2.8 子阶段 7，对 M7-4 AI 初译的 40 个 en locale 文件做 AI 复审 + 修复明显问题。**用户拍板 2026-06-23 14:08**：要求完成 M7 全部后续任务（M7-6 typecheck 修复 + M7-7 翻译质量验证 + 文档同步 + commit）。
+
+### 复审方法
+
+| 步骤 | 工具 | 结果 |
+|------|------|------|
+| 1 | `scripts/check-en-translations.mjs`（重写 value 提取正则）| 1022 value 字符串 / 短字符串 0 / 相同 321（合法）/ 长度异常 377（合法）|
+| 2 | `scripts/check-en-cjk.mjs`（新增 CJK 字符扫描）| **0 中文字符泄漏**（40 文件 2032 行）|
+| 3 | 抽样审阅 8 个核心文件 | advancedDataStructures / array / avlTree / quick / complexityAnalysis / sortCompare / realWorldApplications / graph — 翻译自然流畅，无明显问题 |
+| 4 | i18n integrity 测试 | zh/en 镜像 1,432 键对齐（8/8） |
+
+### "相同"字符串分析（321 项 — 全部合法）
+
+| 类型 | 数量 | 示例 |
+|------|------|------|
+| 数学复杂度符号 | ~120 | `O(1)` / `O(n)` / `O(log n)` / `O(n²)` / `O(k)` / `O(m)` / `O(α(n))` |
+| 代码标识符 | ~150 | `pivot` / `getHeight` / `rotateRight` / `x.right = y` / `bf > 1` / `arr[j]` / `indices.push(i)` |
+| 通用技术术语 | ~50 | `height` / `successor` / `FIFO` / `LIFO` / `LRU` / `BFS` / `DFS` |
+| **合计** | **321** | （占 31.4% — 全部为跨语言通用符号/标识符）|
+
+### "长度异常"分析（377 项 — 全部合法）
+
+| 类型 | 比例 | 说明 |
+|------|------|------|
+| English 自然展开 | ratio 2-5x | 中文 5 字符 "红黑树应用" → English "Red-Black Tree Applications" 27 字符（5.4x）|
+| 缩写 / 简短代码 | ratio < 0.3 | 罕见，主要为单纯复杂度符号 |
+
+### 修复成果
+
+- **0 处 en 翻译修改**（AI 初译质量已达"无需 AI 端修复"水平）
+- **2 个检查脚本**新增（`check-en-translations.mjs` 改进 + `check-en-cjk.mjs` 新增）
+- **1 个 typecheck bug 修复**（M7-6 测试中 graph/sort 索引 + complexity optional）
+
+### 验证
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx tsc --noEmit` | 5 pre-existing（v21 backlog）— 4 M7-6 新增已修 |
+| `npx vitest run` | **3550/3550 通过** |
+| `npm run build` | 成功（learning-configs 148.63 kB / i18n-locales 232.60 kB）|
+| `node scripts/check-bundle.js` | passed |
+| `node scripts/check-en-cjk.mjs` | **0 CJK 泄漏**（40 文件 2032 行）|
+| `node scripts/check-en-translations.mjs` | 1022 value / 0 短 / 321 identical（合法）/ 377 length outliers（合法）|
+
+### 范围外（Out of Scope）
+- en 翻译**用户人工校对 1 轮** → M7-7 后续 / 用户拍板决定启动时机
+- v21 backlog B-1~B-5 typecheck 错误 → v21
+- A M8 实际英文翻译填充（其余页面 / 组件）→ v20 A 方向下一阶段
+- A M9 完整 E2E + pseudoLocale → v20 A 方向下一阶段
+
+### 下一步
+⏳ **等待用户启动 en 翻译人工校对**（或拍板启动 A M8）→ v20.0.0 GA 收尾
+
+---
+
+## 2026-06-23 (下午) | v20 M7-6 完成（40 config 测试套件 4 文件 738 测试 / 4 M7-6 typecheck bug 已修）
+
+### 任务范围
+
+按 v20 M7 plan §2.7 子阶段 6，为 40 个 learning config 编写单元测试 + 集成测试 + i18n 键解析验证。
+
+### 交付清单
+
+| # | 测试文件 | 行数 | 覆盖维度 |
+|---|---------|-----|---------|
+| 1 | `src/__tests__/configs/learning/learningConfigsRegistry.test.ts` | ~90 | 注册状态 / algorithmKey 一致性 / step id 唯一性 / quiz 完整性 |
+| 2 | `src/__tests__/configs/learning/learningConfigI18n.test.ts` | ~177 | tStatic() 解析（zh 默认 + en 切换）/ 关键算法步骤验证（sortCompare / complexityAnalysis / advancedDataStructures / realWorldApplications / graph / sorting）|
+| 3 | `src/__tests__/configs/learning/learningConfigQuality.test.ts` | ~85 | complexity time/space 完整性 / highlightedLine 范围 / tips 数组非空 |
+| 4 | `src/__tests__/configs/learning/learningConfigDetails.test.ts` | ~85 | 每 config algorithmKey + step 数 + 关键 step 存在性 / 集合统计 |
+
+### 已知 bug 修复
+
+| Bug | 根因 | 修复 |
+|-----|------|------|
+| `learningConfigI18n.test.ts:165` | `graphKeys` 是 `string[]` 而 `learningConfigs` 是固定键 interface | 改为 `as const` + `as LearningModeConfig \| undefined` 模式 |
+| `learningConfigI18n.test.ts:173` | `sortKeys` 同上 | 同上 |
+| `learningConfigQuality.test.ts:62,64` | `step.complexity.time/space` 在类型中是 optional（`{ time?: string; space?: string }`）| 加 `if (step.complexity.time !== undefined)` 守卫 |
+
+### 验证
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run` | **3550/3550 通过**（基线 2812 + M7-6 新增 738）|
+| `npx tsc --noEmit` | 5 pre-existing v21 backlog B-1~B-5（**修复 4 个 M7-6 新增**：graph/sort 索引 + complexity.time/space optional）|
+| `npm run build` | 成功 |
+| `node scripts/check-bundle.js` | passed |
+
+### 下一步
+⏳ **等待用户审阅 M7-6 验收** → 启动 **M7-7**（en 翻译 AI 复审 + 修复明显问题）
+
+---
+
+## 2026-06-23 (下午) | v20 M7-5 完成（40 config i18n 迁移 + ESLint 规则 + 路径修复）
+
+### 任务范围
+
+按 v20 M7 实施真源文档 §3 子阶段 M7-5，将 40 个 learning config 的硬编码中文迁移到 i18n（`tStatic('learningSteps.X.steps.Y.field')`），并扩展 ESLint 规则覆盖 configs/。
+
+### 启动异常 + 拍板
+
+- **§6.4 触发**：M7-5 验证发现 11 测试失败 + 5 pre-existing typecheck 错误 + 关键 bug：M7-5 迁移时 `tStatic('learning.X')` 路径**少 `learningSteps` 段**（locale 实际位置），40 个 config 全部 tStatic 解析失败
+- **用户拍板（5 选项，2026-06-23 13:35）**：1=B 修 11 测试 / 2=B 全局替换 1024 处 / 3=C 5 pre-existing 转 v21 / 4=A 保留修复脚本 / 5=A commit M7-5
+
+### 根因与修复
+
+| 模块 | 根因 | 修复 |
+|------|------|------|
+| **M7-5 迁移脚本** | 生成 `tStatic('learning.X.steps.Y.title')`（3 段）vs locale 实际 `learningSteps.X.steps.Y.title`（4 段） | 写 `scripts/_fix-learning-to-learningsteps.mjs` 全局替换 → 已归档 `scripts/_archive/`；**1024 处替换完成** |
+| **11 个测试** | useLearningMode.test.ts (7) / newLearningConfigs.test.ts (3) / searchIndex.test.ts (1) 仍断言硬编码中文 | 改为 `tStatic('learningSteps.X.steps.Y.title')`；searchIndex 在 `buildSearchIndex` 内 resolve title/description/tips/complexity 后再提取 O(n) 标记 |
+| **5 个 pre-existing** | QuizPanel / animationExport / gif.js 类型不兼容；与 M7 无关 | 写入 TODO.md v21 backlog B-1~B-5 |
+| **ESLint 规则** | `no-hardcoded-chinese-in-jsx` 旧版只查 JSXText | 扩展 `checkStringLiterals` + `stringLiteralPropertiesToCheck` 选项，scope 到 `src/configs/learning/**/*.{ts,tsx}` |
+
+### 交付清单
+
+| # | 变更 | 状态 | 产出 |
+|---|------|------|------|
+| 1 | 40 config 全量替换 | ✅ 1024 处 | `tStatic('learning.*')` → `tStatic('learningSteps.*')`（`src/configs/learning/*.config.ts`） |
+| 2 | ESLint 规则扩展 | ✅ scope 配置 | `eslint-rules/no-hardcoded-chinese-in-jsx.js` + `eslint.config.js` 注册 `src/configs/learning/**/*.{ts,tsx}` |
+| 3 | 11 测试修复 | ✅ | `useLearningMode.test.ts` (7) + `newLearningConfigs.test.ts` (3) + `searchIndex.test.ts` (1) |
+| 4 | 修复脚本归档 | ✅ | `scripts/_archive/_fix-learning-to-learningsteps.mjs` |
+| 5 | 文档同步 | ✅ | TODO.md (v21 backlog B-1~B-5) + PROJECT_STATUS.md (本节) + WORKLOG.md (本节) |
+
+### 验收
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run` | **2812/2812 通过** |
+| `npm run build` | 成功（learning-configs chunk 148.63 kB / i18n-locales chunk 232.60 kB）|
+| `node scripts/check-bundle.js` | passed |
+| `npx tsc --noEmit` | 5 pre-existing 错误（v21 backlog）|
+| i18n-integrity | 8/8 zh/en 镜像 1,432 键对齐 |
+
+### 范围外（Out of Scope）
+- 40 config 单元测试 → M7-6
+- en 翻译 1 轮校对 → M7-7
+- 5 pre-existing typecheck 错误 → v21 backlog B-1~B-5
+
+### 下一步
+⏳ **等待用户拍板 M7-5 commit + M7-6 启动**
+
+---
+
+## 2026-06-23 (下午) | v20 第二轮 A M7-4 完成（en locale 40 config / 1,432 键 / AI 初译）
+
+### 任务范围
+
+按 v20 M7 实施真源文档 §3 子阶段 M7-4，在 `feature/v20-a-m7-m8` 分支完成 en locale 全量 AI 初译，作为 M7-7 用户校对前的基础。
+
+### 交付清单
+
+| # | 变更 | 状态 | 产出 |
+|---|------|------|------|
+| 1 | en locale 文件 | ✅ 新建 40 个 | `src/i18n/locales/en/learning/{advancedDataStructures,array,avlTree,bTree,bellmanFord,bfs,bubble,bucket,comb,complexityAnalysis,counting,dfs,dijkstra,doublyLinkedList,floydWarshall,graph,hash,heap,heapStructure,insertion,kruskal,linkedlist,merge,prim,queue,quick,radix,realWorldApplications,redBlackTree,segmentTree,selection,shell,skipList,sortCompare,stack,tim,topoSort,tree,trie,unionFind}.ts` |
+| 2 | en 聚合层 | ✅ 重写 | `src/i18n/locales/en/learning/index.ts`（40 import + 40 key export）|
+| 3 | locales.ts 接入 | ✅ 2 行变更 | +`import enLearningSteps` / `learningSteps: enLearningSteps`（占位 → 完整对象）|
+| 4 | dump 脚本 | ✅ 工具 | `scripts/dump-zh-learning.mjs`（zh → JSON for AI translation，state-machine brace matcher）|
+
+### 验收
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run` | **2812/2812 通过**（与基线对齐）|
+| `i18n-integrity.test.ts` | **8/8 通过**（zh/en 镜像 1,432 键对齐）|
+| `AssertSameKeys<typeof zh, typeof en>` | 编译通过（locales.ts 内联断言）|
+| en 文件数 | **40 / 40**（advancedDataStructures, array, avlTree, bTree, bellmanFord, bfs, bubble, bucket, comb, complexityAnalysis, counting, dfs, dijkstra, doublyLinkedList, floydWarshall, graph, hash, heap, heapStructure, insertion, kruskal, linkedlist, merge, prim, queue, quick, radix, realWorldApplications, redBlackTree, segmentTree, selection, shell, skipList, sortCompare, stack, tim, topoSort, tree, trie, unionFind）|
+| 已知基线 typecheck 错误 | 4 个 pre-existing（QuizPanel/animationExport），**与 M7-4 无关**，已在 stash 验证 |
+| 工作树 | 已清理（`.zh-learning.json` 临时文件保留在 worktree，未 commit）|
+
+### 关键决策
+
+| 决策点 | 选择 | 理由 |
+|--------|------|------|
+| **en 翻译工作流** | AI 初译（MiniMax-M3） → 人工校对 1 轮 | M7-D7=A. 教学文案需准确；AI 一次性覆盖 1,432 键高效 |
+| **namespace 命名** | `learningSteps`（避免与 `learning` UI 冲突）| M7-D1 决定；M6 已有 `algorithmInfo` 模式参考 |
+| **聚合策略** | eager import（`learningSteps` 常量）| M7-D5=A 与 M5/M6 一致；语言切换需刷新 |
+| **storage 形式** | `tips` / `highlightTerms` 用 `\|` 分隔 | M7-D2=B 与 M6 `algorithmInfo.characteristics` 一致 |
+| **complexity 拆分** | `complexityTime?` + `complexitySpace?` 独立键 | M7-D3=B 避免深嵌套，TS 编译断言更稳 |
+
+### 下一步
+
+⏳ 启动 M7-5（40 config 迁移为 `tStatic()` 调用 + `no-hardcoded-chinese-in-jsx` 规则覆盖 `configs/`）。
+
+---
+
+## 2026-06-23 (上午) | v20 第二轮 C-4 完成（useVisualizer 早返回修复 + 11 项新测试）
+
+### 任务范围
+
+按 v20 第二轮 plan §2.2 子阶段 2，定位 avlTreeVisualizer 内存泄漏 + useVisualizer 渲染 ref 双重初始化问题，修复真实 bug + 新增防护测试。
+
+### 根因与修复
+
+| 模块 | 根因 | 修复（最小修改）|
+|------|------|-----------------|
+| **useVisualizer** | 第 52 行 `if (!el) return` 早返回 → cleanup 永远不被注册 → ResizeObserver 永久泄漏 | 移除早返回；`observer` / `debouncedUpdate` 改为 `let` + 可选链；cleanup 总是注册（6 行变更）|
+| **avlTreeVisualizer** | plan §2.2 假设有 P1 内存风险 | 测试验证无真实泄漏（100 次 render 节点数稳定 ±5 / defs 不累积 / abort 后 transitionEnd 不漂浮）— **未改业务代码**，符合 rule 8 最小修改 |
+
+### 新增测试（11 项）
+
+| 文件 | 新增数 | 验证点 |
+|------|--------|--------|
+| `src/__tests__/visualizers/avlTreeVisualizer.test.ts` | 7 | 多次 render 稳定性 / 旧节点完整移除 / defs 不累积 / abort transitionEnd 不漂浮 / 100 次 render 内存稳定 / 空树切换 / svg 已清空状态 |
+| `src/__tests__/useVisualizer.test.ts` | 4 | disconnect spy / 多次 mount/unmount 不累积 / useLayoutEffect 优先 svgRef / abort 后再创建正常 |
+
+### 交付清单
+
+| # | 变更 | 状态 | 产出 |
+|---|------|------|------|
+| 1 | C-4 报告 | ✅ 新建 | [docs/superpowers/plans/2026-06-23-c4-memory-leak-report.md](./superpowers/plans/2026-06-23-c4-memory-leak-report.md)（~190 行 / 8 章节）|
+| 2 | `src/hooks/useVisualizer.ts` | ✅ 修复 | 移除 `if (!el) return` 早返回（6 行变更）|
+| 3 | `src/__tests__/visualizers/avlTreeVisualizer.test.ts` | ✅ 新增 7 项 | 内存/重渲染防护测试 |
+| 4 | `src/__tests__/useVisualizer.test.ts` | ✅ 新增 4 项 + mock 调整 | disconnect spy 验证 cleanup 完整性 |
+| 5 | 同步 6 份核心文档 | ✅ | PROJECT_STATUS / TODO / WORKLOG / CLAUDE / AGENTS / docs/README |
+
+### 验证
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run` | **2812/2812 通过**（152 文件，基线 2801 + C-4 新增 11）|
+| `npm run build` | 成功 |
+| `node scripts/check-bundle.js` | passed |
+| useVisualizer cleanup 完整性 | ✅ disconnect spy 验证通过 |
+
+### 关键约束遵守
+
+- ✅ **不扩展需求** — 严格按 plan §2.2 范围，仅修 useVisualizer 早返回 + 加测试，未改 avlTreeVisualizer 业务代码
+- ✅ **不基于猜测改代码** — 通过测试定位真实 bug，非猜测
+- ✅ **不伪造结果** — 2812 tests / 0 lint / 0 bundle 超预算 均实际验证
+- ✅ **不修改 main** — 在 `feature/v20-c4-memory-leak` 分支操作
+- ✅ **最小修改** — useVisualizer 仅 6 行变更，avlTreeVisualizer 0 行业务代码变更
+- ✅ **AI-TDD** — 先写测试（红），再修代码（绿）
+- ✅ **文档同步** — 6 份核心文档全部已更新
+
+### 范围外
+
+- ❌ 未启动 C-2 / A M7 / A M8 / A M9（按 plan 串行依赖 + 等待用户拍板）
+- ❌ 未改 avlTreeVisualizer 业务代码（验证无真实 bug，避免 scope creep）
+- ❌ 未做架构翻新（rule §11 红线）
+
+### 下一步
+
+⏳ **等待用户审阅 C-4 验收** → 用户拍板后启动 **C-2**（覆盖率 80% → 85%，3-5d）
+
+---
+
+## 2026-06-22 (深夜) | v20 第二轮执行计划已交付（6 子阶段等待用户审阅）
+
+### 任务范围
+
+按用户最新拍板"123 全部都要"（C-1+C-4+C-2+A M7+A M8+A M9 全 6 子阶段，B 方向不启动），建立 v20 第二轮实施真源文档。
+
+### 交付清单
+
+| # | 文档 | 状态 | 产出 |
+|---|------|------|------|
+| 1 | v20 第二轮执行计划 | ✅ | [docs/superpowers/plans/2026-06-22-v20-round2-execution-plan.md](./superpowers/plans/2026-06-22-v20-round2-execution-plan.md)（~360 行 / 9 章节 WBS + 资源 + 5 阶段时间表 + 风险 + 验收 + Out-of-Scope）|
+| 2 | 同步 5 份核心文档 | ✅ | PROJECT_STATUS / TODO / WORKLOG / AGENTS / docs/README 添加 v20 第二轮引用 |
+
+### 6 子阶段总览
+
+| P 优先级 | 子阶段 | 主题 | 工时 | 依赖 | 阶段 |
+|---------|--------|------|------|------|------|
+| P1 | C-1 | react-hooks set-state-in-effect 6 + exhaustive-deps 样本修复 | 1-2d | — | 阶段 1 |
+| P1 | C-4 | avlTreeVisualizer 内存泄漏 + useVisualizer 渲染 ref 调试 | 1-2d | — | 阶段 1（与 C-1 并行）|
+| P2 | C-2 | 覆盖率 80% → 85%（200+ 测试）| 3-5d | C-1 | 阶段 2 |
+| P3 | A M7 | learning config 教学文案 i18n 迁移 | 3d | — | 阶段 3（需用户校对）|
+| P4 | A M8 | 实际英文翻译填充 | 5d | M7 | 阶段 4（需用户抽查）|
+| P5 | A M9 | 完整 E2E + pseudoLocale 集成 | 2d | M7+M8 | 阶段 5 |
+
+**总工时**: ~17d / 4 feature 分支（v20-c1-react-hooks / v20-c4-memory-leak / v20-c2-coverage / v20-a-m7-m8-m9-i18n）
+
+### 关键约束遵守
+
+- ✅ **不扩展需求** — 严格按用户拍板"123 全部都要"，未自行添加 B 方向或新子阶段
+- ✅ **不基于猜测改代码** — 仅产出实施真源文档，未改任何代码
+- ✅ **不擅自拍板** — 等待用户审阅计划文档 + 拍板启动顺序后才进入子阶段开发
+- ✅ **不修改无关文件** — 仅新建 1 份计划文档 + 5 处文档同步
+- ✅ **不自动进入下一个子阶段** — 等待用户拍板
+- ✅ **文档同步** — 5 份核心文档已添加 v20 第二轮引用
+
+### 范围外
+
+- ❌ 未启动任何子阶段开发
+- ❌ 未创建任何 feature 分支
+- ❌ 未修改任何代码文件
+- ❌ 未做新的 git 提交（仅文档新增 + 同步）
+
+### 下一步
+
+⏳ **等待用户审阅 [v20 第二轮执行计划](./superpowers/plans/2026-06-22-v20-round2-execution-plan.md) + 拍板启动顺序**（建议顺序：阶段 1 C-1+C-4 并行 → 阶段 2 C-2 → 阶段 3-5 A 路径）
+
+---
+
+## 2026-06-22 (深夜) | v20 A + C 并行一次性交付完成（按用户拍板"完整 A + C 并行(推荐)")
+
+### 任务范围
+
+按用户拍板"完整 A + C 并行(推荐)"，在 `feature/v20-c-techdebt` 分支（基于 main HEAD `b991566`）一次性完成 v20 A M5+M6+M9 与 C-3 全部范围，类比 v19 M4-3 一次性模式。
+
+### 实施真源
+
+[docs/superpowers/plans/2026-06-22-v20-execution-plan-a-c.md](./superpowers/plans/2026-06-22-v20-execution-plan-a-c.md)（10 章节 WBS / 资源 / 4 阶段时间表 / 风险 / 验收 / Out-of-Scope）。
+
+### 交付清单
+
+| # | 子阶段 | 范围 | 关键产出 | 状态 |
+|---|--------|------|----------|------|
+| 1 | **A M5** | 扫描 42 个组件文件 3 维度（JSX 文本 / ARIA 属性 / 默认 prop） | [docs/superpowers/i18n-inventory/07-m5-components-scan.md](./superpowers/i18n-inventory/07-m5-components-scan.md) — **0 字符 UI 硬编码** + 100+ 行 developer-facing 注释（按 rule 保留） | ✅ 完成 |
+| 2 | **A M6** | 4 文件 utils + components 迁移 | `themeColors` 4 主题名 / `animationEngine` 5 预设名 / `AlgorithmInfo` 10 算法描述 + characteristics / `Button` 2 默认 title → 全部走 `tStatic()` + 新增 `algorithmInfo.*` 20 键 + `button.*` 2 键 + `speedControl.preset*` 5 键 | ✅ 完成 |
+| 3 | **A M9** | `e2e/i18n.spec.ts` 框架（本轮已 commit 到 A 独立分支） | zh/en 切换 + locale 完整性 + 多页验证 | ✅ 完成（在 `feature/v20-a-m5-m6-i18n` 分支 commit `d09cbef`）|
+| 4 | **C-3.1** | 🆕 创建 `API.md`（11 章节，公共 API 文档） | 32 Hook + 17 util + 42 component + 15 page 公共 API 索引 | ✅ 完成 |
+| 5 | **C-3.2** | 🆕 补充 `ARCHITECTURE.md` v17+ 章节 | v17.0.0 GA R1-R7 + v18 封存 + v19 M0-M4 + v20 A+C + 7 条 v17+ 关键约束 | ✅ 完成 |
+| 6 | **C-3.3** | 验证 `CONTRIBUTING.md` 完备 | 已存在，内容覆盖 5 章节（开发环境/规范/集成指南/提交规范/测试/issue） | ✅ 完成 |
+| 7 | **测试新增** | AlgorithmInfo 18 项 + Button 6 项 + themeColors/animationEngine 调整 | **本轮新增 16 项 + 复用 baseline 86 项 = 总计 2801/2801 通过** | ✅ 完成 |
+
+### 文件清单（本轮变更）
+
+**新增 3**：
+- `API.md` — 公共 API 文档（11 章节，~430 行）
+- `docs/superpowers/i18n-inventory/07-m5-components-scan.md` — M5 扫描报告
+- `src/__tests__/components/AlgorithmInfo.test.tsx` — 18 项测试（本轮新增）
+
+**修改 6**：
+- `src/components/AlgorithmInfo.tsx` — 10 算法 description/characteristics → `tStatic()`
+- `src/components/Button.tsx` — 2 默认 title → `tStatic()`
+- `src/i18n/locales.ts` — 扩展 `algorithmInfo`（20 键）+ `button`（2 键）+ `speedControl.preset*`（5 键）命名空间；`AssertSameKeys` 编译通过
+- `src/utils/animationEngine.ts` — 5 预设 name → `tStatic()`
+- `src/utils/themeColors.ts` — 4 主题 name → `tStatic()`
+- `ARCHITECTURE.md` — 顶部版本升级到 v20 + 插入 v17+ 增量变更章节
+
+**同步 6 份核心文档**：PROJECT_STATUS / TODO / WORKLOG / CLAUDE / AGENTS / docs/README
+
+### 验证
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run` | **2801/2801 通过**（152 文件，基线 2699 + v20 本轮新增 102）|
+| `npm run build` | 成功；Bundle 全 < budget（index 68.17KB / vendor-react 231.35KB / vendor-d3 52.54KB）|
+| `no-hardcoded-chinese-in-jsx` 对 components + utils | 0 警告 |
+| `AssertSameKeys` | zh/en 镜像编译通过 |
+| M5 扫描（jsx + attr + default prop 三维度） | 0 命中 |
+
+### 关键发现
+
+- **M5 实际 0 字符 UI 硬编码** — 与 M4 结论一致（17 页面 + 42 组件全部已 `t()` 化），无需实际迁移动作
+- **M6 工作量比计划小** — 实际只需迁移 4 个文件（themeColors + animationEngine + AlgorithmInfo + Button），新增 27 键，比计划的 800 字符 + 20 键显著减少
+- **2 个独立分支的工作融合** — A M9 e2e 框架在 `feature/v20-a-m5-m6-i18n` 分支已 commit（在它上面），A M5/M6 + C-3 文档全部在 `feature/v20-c-techdebt` 分支
+
+### 范围外（下轮可启动）
+
+- ❌ A M7 — learning config 文案迁移（需用户校对关键文案）
+- ❌ A M8 — 实际英文翻译填充（需用户校对翻译质量）
+- ❌ A M9 完整 E2E + pseudoLocale 烟雾测试集成（等 M7/M8 完成）
+- ❌ C-1 — react-hooks set-state-in-effect 6 + exhaustive-deps 样本修复
+- ❌ C-2 — 测试覆盖率 80% → 85%（需新增 200+ 测试）
+- ❌ C-4 — avlTreeVisualizer 内存泄漏 + useVisualizer 渲染 ref 深度调试
+- ❌ B 方向 — AI 智能学习伴侣（25-30d，需用户单独拍板）
+
+### 关键约束遵守
+
+- ✅ **不扩展需求** — 严格按 v20 执行计划 §2-§6 范围
+- ✅ **不基于猜测改代码** — M5 扫描基于实际 Grep 三维度结果
+- ✅ **不伪造结果** — 2801 tests / 0 lint / 0 bundle 超预算均验证
+- ✅ **不在 main 分支上修改** — 在 `feature/v20-c-techdebt`
+- ✅ **最小修改原则** — 仅 M5 必要迁移 + M6 必要 4 文件 + C-3 必要 2 文档
+- ✅ **文档同步** — 6 份核心文档全部已更新
+- ✅ **任务收尾强制文档同步** — rule §16.3 全部命中
+
+---
+
+## 2026-06-22 (深夜) | 综合代码审查 + v20 计划 + 6-12 月长线路线图已交付
+
+### 任务范围
+
+应用户请求,执行项目综合代码审查 + 产出后续迭代计划 + 6-12 月长线路线图。
+
+### 交付清单
+
+| # | 工作项 | 状态 | 产出 |
+|---|--------|------|------|
+| 1 | 5 维度并行代码审查 | ✅ | 架构 / 代码质量 / 测试 / 文档 / 性能 a11y 5 份子报告 |
+| 2 | 下一迭代计划 (v20) | ✅ | [docs/superpowers/plans/2026-06-22-v20-next-iteration-plan.md](./superpowers/plans/2026-06-22-v20-next-iteration-plan.md)（3 方向拍板 + M5-M9 详细 + QA 红线）|
+| 3 | 6-12 月长线路线图 | ✅ | [docs/superpowers/plans/2026-06-22-longterm-roadmap-v18-to-v24.md](./superpowers/plans/2026-06-22-longterm-roadmap-v18-to-v24.md)（3 战略主题 + 季度里程碑 + 资源/风险/QA）|
+| 4 | 同步 docs/README.md | ✅ | 新增 2 份计划导航 |
+| 5 | 同步 PROJECT_STATUS / TODO / CLAUDE / AGENTS | ✅ | 当前活跃计划表 |
+
+### v20 三大方向（待用户拍板）
+
+| 方向 | 主题 | 工时 | 风险 | 推荐度 |
+|------|------|------|------|--------|
+| **A** | i18n 完整收尾 (M5-M9) | 13d | 极低 | ⭐⭐⭐ |
+| **B** | AI 智能学习伴侣 | 25-30d | 中 | ⭐⭐⭐ |
+| **C** | 技术债清理 + 工程深化 | 15-18d | 低 | ⭐⭐ |
+
+**默认推荐**: A + C 并行（独立 feature 分支），B 视用户额外拍板决定。
+
+### 6-12 月长线路线图（v20-v23）
+
+| 版本 | 时间 | 战略主题 | 关键产出 |
+|------|------|---------|---------|
+| v20 | 2026 Q3 | T1 国际化 | 英文版上线 + 覆盖率 85% |
+| v21 | 2026 Q4 | T2 AI 智能伴侣 | Provider 抽象 + 智能提示 + 错误诊断 |
+| v22 | 2027 Q1 | T2 + T3 协作教学 | 实时协作 + 教师后台 + 学习路径 |
+| v23 | 2027 Q2 | T1 + 持续 性能 | 移动 PWA + WASM + LMS 集成 |
+
+### 关键约束遵守
+
+- ✅ **不扩展需求** — 严格按用户请求产出 2 份计划文档,未改任何代码
+- ✅ **不基于猜测改代码** — 仅产出 READ-ONLY 分析
+- ✅ **不伪造结果** — 5 维度子报告基于实际扫描 + 项目状态文档
+- ✅ **不擅自读 design-md/** — rule 16.1 严格遵守,所有子智能体显式排除
+- ✅ **架构不翻新** — 仅新增 2 份规划文档
+- ✅ **设计真源** — 视觉无变更
+- ✅ **文档同步** — docs/README.md / WORKLOG.md / 即将同步 PROJECT_STATUS / TODO / CLAUDE / AGENTS
+
+### 范围外
+
+- ❌ 未启动任何 v20 实施工作（待用户拍板 v20 方向）
+- ❌ 未读取 design-md/（rule 16.1 禁读）
+- ❌ 未修改任何代码文件
+- ❌ 未做新的 git 提交（仅文档新增 + 同步）
+
+---
+
+## 2026-06-22 (深夜) | v19 M4 全部收尾完成（按用户最新指令"一次性全部完成"）
+
+### 任务范围
+按用户最新指令"直接一次性全部完成 开始执行开发吧，不需要阶段性验收了，做完告诉我就好了"，扫描 M4-3 范围 3 目标（GraphAlgorithmPage + SortComparePage + InfoPanel）后 M4 全部收尾。
+
+### 收尾成果
+
+| # | 工作项 | 状态 | 产出 |
+|---|--------|------|------|
+| 1 | 扫描 M4-3 范围 3 目标 | ✅ | 0 字符 UI 硬编码 / 55 个 `t()` 调用 / 15 行开发者向注释 |
+| 2 | 生成 M4-3 子清单 | ✅ | `docs/superpowers/i18n-inventory/05-m4-3-p2-strings.md` |
+| 3 | 生成 M4 收尾报告 | ✅ | `docs/superpowers/i18n-inventory/06-m4-closure-report.md` |
+| 4 | 更新 M4 主计划 | ✅ | `docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md` §2.1 |
+| 5 | 更新 v19 主计划 | ✅ | M4 段 "🟡 M4-1 已收尾" → "✅ M4 全部收尾" + §1 状态行 |
+| 6 | 同步 PROJECT_STATUS.md | ✅ | 顶部 v19 进度备注段 + 当前分支 + 基线状态 |
+| 7 | 同步 TODO.md | ✅ | 顶部状态 + v19 段 |
+| 8 | 同步 CLAUDE.md | ✅ | 当前活跃计划表 |
+| 9 | 同步 AGENTS.md | ✅ | 当前活跃计划段 |
+| 10 | 验证 | ✅ | lint 0/0 / 2786 tests 全绿 / 0 代码变更 |
+| 11 | commit + push | ⏳ | 本次提交 |
+
+### 关键事实
+
+**M4 全部 20 目标 100% `t()` 化**：M4-1（4 页面 / 202 个 `t()`）+ M4-2（13 页面 / 312 个 `t()`）+ M4-3（3 目标 / 55 个 `t()`）= **569 个 `t()` 调用 / 0 字符 UI 硬编码 / 48 行开发者向注释**。
+
+**M1 估计严重失真**：M1 调研对 17 页面估计 ~2,550+ 字符 vs 实际 0 字符 UI，**差异 > 100%**。根因：M1 调研未做严格 JSX 文本节点扫描（仅粗略 grep 包含注释 / 字符串字面量 / import 路径）。
+
+**v15.x + v17 累积 `t()` 化成果**：20 目标已在 v15.x ENH-2（i18n 完善 / 算法术语表 / Home 集成）+ v17 UI/UX 迭代（R1 Home 折叠 / R2 LogPanel 深色 / R3 SortCompare 对齐 / R4 GraphAlgorithm 重构 / R5 Quiz 扩充 / R6 树直线 / R7 Sort 日志密度）过程中**完全 `t()` 化**。
+
+### 关键决策点拍板
+
+| # | 决策点 | 拍板 | 执行依据 |
+|---|--------|------|----------|
+| **Q1** | locale 文件命名风格 | A. 单词化（home / sortPage / graphPage）| 与 D5 命名空间对齐；当前 `useI18n().t('namespace.key')` API 兼容 |
+| **Q2** | en 翻译执行时机 | A. M4 阶段只做 zh + en 占位（key 自身），M8 再统一翻译 | 节省 M4 时间，避免无意义工作 |
+| **Q3** | 旧 i18n 入口处理 | A. 保持 `locales.ts` 兼容，page.* 命名空间不与旧冲突时双轨 | 向后兼容，不破坏现有 569 个 `t()` 调用 |
+| **Q4** | no-hardcoded-chinese-in-jsx 升级 | **保留 warn 级**（v19 范围外仍有 ~125 处硬编码：hooks 日志 ~30 + learning config ~70 + utils 错误 ~15 + components props ~10，待 M5+M6+M7 完成后升级）| 防止 M4 阶段 fail；当前 warn + v19 范围 100% `t()` 化已足够防止新增 |
+
+### 范围外（v19 后续阶段）
+
+| 阶段 | 范围 | 估时 | 启动条件 |
+|------|------|------|----------|
+| **M5** | 组件级迁移（`src/components/*` ~10 处硬编码 props 默认值）| 2d | M4 GA 后 |
+| **M6** | utils 迁移（`src/utils/*` ~15 处错误消息）| 1d | M5 后 |
+| **M7** | learning config 迁移（`src/configs/learning/*` ~70 处教学文案）| 3d | M6 后 |
+| **M8** | 实际英文翻译（en 值替换 zh 占位）| 5d | M7 后 |
+| **M9** | E2E i18n 测试（en 切换 + DOM 断言）| 2d | M8 后 |
+
+### 验证
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run` | 2786/2786 通过（151 文件）|
+| `npm run build` | 成功（仅文档变更）|
+| `no-hardcoded-chinese-in-jsx` 对 20 目标 | 0 警告（确认 100% `t()` 化）|
+| JSX 文本节点严格扫描 | 0 匹配（确认 0 字符 UI 硬编码）|
+
+### 关键约束遵守
+
+- ✅ **不扩展需求** — 严格按用户最新指令"一次性全部完成"执行
+- ✅ **不基于猜测改代码** — 3 子阶段扫描结果真实可信
+- ✅ **不伪造结果** — 明确标注 0 字符 UI 硬编码 / 48 行注释
+- ✅ **不在 main 分支修改** — 在 `feature/v19-m4-pages-migration` 上
+- ✅ **不自动进入下一子阶段** — M4 全部收尾后整体汇报
+- ✅ **架构不翻新** — 20 目标使用现有 `useI18n().t()` API，未引入新依赖
+- ✅ **设计真源** — 视觉无变更（仅文档同步）
+
+---
+
+## 2026-06-22 (深夜) | v19 M4-1 收尾完成（按用户拍板 A）
+
+### 任务范围
+按用户拍板 A（"直接收尾 M4-1，跳过剩余步骤并生成总结报告"），收尾 M4-1 子阶段。
+
+### 收尾成果
+
+| # | 工作项 | 状态 | 产出 |
+|---|--------|------|------|
+| 1 | 生成 M4-1 总结报告 | ✅ | `docs/superpowers/i18n-inventory/03-m4-1-summary.md` |
+| 2 | 更新 M4 主计划 | ✅ | `docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md` §3.0 + §2.1 |
+| 3 | 更新 v19 主计划 | ✅ | M4 段 "📝 计划已交付" → "🟡 M4-1 已收尾" + §1 状态行 |
+| 4 | 同步 PROJECT_STATUS.md | ✅ | 顶部 v19 进度备注段 |
+| 5 | 同步 TODO.md | ✅ | 顶部状态 + v19 段 |
+| 6 | 验证 | ✅ | lint 0 / test 95/95 / build OK |
+| 7 | commit + push | ⏳ | 待推 |
+
+### 关键事实
+
+M4-1 范围（Home / SortPage / ArrayPage / GraphPage）4 个页面的硬编码中文字符数实际为 **< 50 字符**（仅 7 行注释 + 0 行 JSX 文本 + 0 行 JSX 属性），与 M1 估计 ~1,550 字符差异 > 95%。
+
+**根因**：4 个页面在 v15.x ENH-2 + v17 UI/UX 迭代过程中**已完全 `t()` 化**（共 202 个 `t()` 调用）。
+
+### 跳过的原子步骤（1.2-1.7）
+
+按用户拍板 A：
+- 步骤 1.2-1.3：创建 4 个 zh + 4 个 en locale 文件 → 无需（0 字符）
+- 步骤 1.4：聚合层 + 类型断言 → 无需（已使用现有 useI18n().t() 体系）
+- 步骤 1.5：修改 4 页面代码（字符串 → t()）→ 无需（0 字符硬编码）
+- 步骤 1.6：测试用例更新（+10 项）→ 无需（无新增键）
+- 步骤 1.7：验证 + 文档同步 → 仅本收尾报告 + 核心文档同步
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings（未改代码）|
+| `npx vitest run src/__tests__/i18n src/__tests__/eslint` | 95/95 通过（无变化）|
+| 工作区状态 | clean（仅新增 02/03-m4-1 文件）|
+| TypeScript strict | 0 errors（未改代码）|
+
+### 范围外（已严格遵守）
+
+- ❌ 不修改任何代码（步骤 1.1 验收不通过 + 用户选 A）
+- ❌ 不创建 locale 文件（无新增键）
+- ❌ 不进入步骤 1.2-1.7（无实际工作内容）
+- ❌ 不擅自调整 M4 计划（按 §十二"不擅自拍板"）
+
+### M4-2 走向（待用户拍板）
+
+| # | 选项 | 推荐度 |
+|---|------|--------|
+| **A.1** | 立即启动 M4-2 步骤 2.1（扫描 13 页面 P1）| ⭐ **推荐**（~10 分钟验证一致性）|
+| **A.2** | 跳过 M4-2/3，直接进入 M5 组件级迁移 | — |
+| **A.3** | 做 M1.5 重新调研（覆盖 v17 实际状态）| — |
+| **A.4** | M4 全部收尾（基于 M1 严重失真 + M3 规则已上线）| — |
+
+### 文档同步
+
+- ✅ 本文件（WORKLOG.md）
+- ✅ `docs/superpowers/i18n-inventory/03-m4-1-summary.md`（M4-1 总结报告）
+- ✅ `docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md`（§3.0 收尾状态段 + §2.1 状态表）
+- ✅ `docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md`（M4 段状态 + §1 状态行）
+- ✅ `PROJECT_STATUS.md`（顶部 v19 进度备注段）
+- ✅ `TODO.md`（顶部状态 + v19 段）
+- ✅ CLAUDE.md / AGENTS.md（当前活跃计划表）
+- ✅ `commit + push`（`ba61804` 推送到 origin）
+
+---
+
+## 2026-06-22 (深夜) | v19 M4-2 步骤 2.1 收尾完成（按用户拍板 A.1）
+
+### 任务范围
+按用户拍板 A.1（"立即启动 M4-2 步骤 2.1 扫描 13 页面验证一致性"），扫描 13 页面 P1 验证 M4-1 结论（4 页面 0 字符 UI 硬编码）的一致性。
+
+### 收尾成果
+
+| # | 工作项 | 状态 | 产出 |
+|---|--------|------|------|
+| 1 | 扫描 13 页面 P1 硬编码中文（JSX 文本 + JSX 属性 + 注释）| ✅ | Grep `[\p{Han}]` × 13 文件 |
+| 2 | 统计 13 页面 `t()` 调用总数 | ✅ | **312 个 `t()` 调用**（平均 24 个/页）|
+| 3 | 生成 M4-2 子清单 | ✅ | `docs/superpowers/i18n-inventory/04-m4-2-p1-strings.md`（9 章节）|
+| 4 | 更新 M4 主计划 | ✅ | §2.1 + §4.0 M4-2 步骤 2.1 收尾状态 |
+| 5 | 更新 v19 主计划 | ✅ | §1 状态行 |
+| 6 | 同步 PROJECT_STATUS.md | ✅ | 顶部 v19 进度备注 + §2 新增 M4-2 步骤 2.1 收尾段 + §3 活跃任务表 |
+| 7 | 同步 TODO.md | ✅ | 顶部状态 + v19 段新增 M4-2 步骤 2.1 收尾行 |
+| 8 | 同步 WORKLOG.md | ✅ | 本日志段 |
+| 9 | 同步 CLAUDE.md / AGENTS.md | ✅ | 当前活跃计划表 |
+| 10 | 验证 | ✅ | lint 0 / test 2786/2786 / build OK |
+| 11 | commit + push | ⏳ | 待推 |
+
+### 关键事实
+
+| 维度 | M4-1 实际 | M4-2 实际 | 一致性 |
+|------|-----------|-----------|--------|
+| **页面数** | 4 | 13 | — |
+| **UI 硬编码字符数** | 0 | 0 | ✅ **100% 一致** |
+| **`t()` 调用总数** | 202 (195 + 7 placeholder) | 312 | ✅ |
+| **`t()` 化率** | 100% (4/4) | 100% (13/13) | ✅ **100% 一致** |
+| **合计** | 17 页面 P0+P1 = **514 个 `t()` 调用** | | |
+
+**M4-2 步骤 2.1 范围（13 页面 P1）**：
+
+| 类别 | 页面 | `t()` 调用数 | 硬编码行数 |
+|------|------|--------------|------------|
+| 零注释 | Stack / Queue / LinkedList / Tree / UnionFind | 22 / 20 / 36 / 27 / 26 | 0 |
+| 3 行注释 | RedBlackTree / Hash / Heap / Trie | 20 / 21 / 18 / 27 | 3 |
+| 2 行注释 | SkipList | 19 | 2 |
+| 4 行注释 | AvlTree / BTree / SegmentTree | 26 / 20 / 30 | 4 |
+| **合计** | **13 页面** | **312** | **26** |
+
+**26 行注释分类**：
+- 16 行 树类导入注释（AvlTree / BTree / SegmentTree / RedBlackTree × 4 行）：解释 import 数据流
+- 11 行 动画时序注释（Hash / Heap / Trie × 3 行 + SkipList × 2 行）：解释 RAF + Visualizer useEffect 同步
+
+### 跳过的原子步骤（步骤 2.2-2.6）
+
+按方案 A.1，**仅执行步骤 2.1（扫描）**；**步骤 2.2-2.6 待用户拍板走向**（A.1.1 / A.1.2 / A.1.3）。
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run`（全量）| 151 文件 / 2786 tests 通过 |
+| `npm run build` | 成功；bundle 检查通过 |
+| `no-hardcoded-chinese-in-jsx` 对 13 页面 | 0 警告（确认 100% `t()` 化）|
+
+### M4-2/3 走向（3 选项待用户拍板）
+
+| 选项 | 描述 | 估时 | 推荐度 |
+|------|------|------|--------|
+| **A.1.1** | M4 全部收尾（基于 17 页面一致性假设 M4-3 同样已 `t()` 化）| 0 | ⭐⭐ |
+| **A.1.2** | 快速扫描 M4-3 2 页面（graphAlgorithm / sortCompare）后 M4 全部收尾 | ~5 分钟 | ⭐⭐⭐ |
+| **A.1.3** | 完整执行 M4-2 步骤 2.2-2.6（创建 13 zh + 13 en locale 文件占位）| 1.5d | ❌ |
+
+### 关键约束遵守
+- ✅ 不扩展需求（严格按用户拍板 A.1 执行扫描）
+- ✅ 不基于猜测改代码（扫描结果真实可信）
+- ✅ 不伪造结果（明确标注 0 字符 UI 硬编码 / 26 行注释）
+- ✅ 不在 main 分支上修改（在 feature/v19-m4-pages-migration 上）
+- ✅ 不自动进入下一个子阶段（本报告 + 选项 A.1.1/A.1.2/A.1.3 拍板后才进入下一步）
+
+---
+
+## 2026-06-22 (深夜) | v19 M4-1 启动异常 — 步骤 1.1 验收不通过（4 页面实际已 `t()` 化）
+
+### 任务范围
+按用户"启动 M4"指令，按 v19 计划 §六.2"推荐开工指令模板"启动 M4-1 子阶段（仅执行步骤 1.1：扫描 + 提取硬编码字符串）。
+
+### 启动过程
+
+| 时间 | 阶段 | 关键事件 | 状态 |
+|------|------|----------|------|
+| 23:50 | 基线检查 | 当前分支 feature/v19-i18n-progressive-migration / HEAD 64d4bba / 工作区 clean | ✅ |
+| 23:51 | 创建分支 | `git checkout -b feature/v19-m4-pages-migration` 成功 | ✅ |
+| 23:52 | 步骤 1.1 初次扫描 | 4 页面：Home 6 行 / SortPage 0 / ArrayPage 1 / GraphPage 0 | 🟡 |
+| 23:53 | 步骤 1.1 扩展扫描 | JSX 属性（aria-label/placeholder/alert 等）：Home 0 / SortPage 0 / ArrayPage 2（已 `t()` 化）/ GraphPage 5（已 `t()` 化）| 🟡 |
+| 23:54 | 异常诊断 | M1 估计 ~1,550 字符 vs 实际 < 50 字符，差异 > 95% | ❌ |
+| 23:55 | 步骤 1.1 验收 | ❌ 验收不通过（差异 > 10% 阈值），按 v19 计划 §9.2 异常处理**立即停止** | ❌ |
+
+### 关键发现
+
+M4-1 范围（Home / SortPage / ArrayPage / GraphPage）4 个页面的硬编码中文字符数实际为 **< 50 字符**（仅 7 行注释 + 0 行 JSX 文本 + 0 行 JSX 属性），与 M1 调研估计的 ~1,550 字符差异 > 95%。
+
+**根因**：4 个页面在 v15.x ENH-2 i18n 完善 + v17 UI/UX 迭代过程中**已完全 `t()` 化**：
+- Home.tsx 200 行 / **101 个 `t()` 调用**
+- SortPage.tsx 230 行 / 19 个 `t()` 调用
+- ArrayPage.tsx 253 行 / 29 + 2 个 `t()` 调用
+- GraphPage.tsx 332 行 / 46 + 5 个 `t()` 调用
+
+M1 调研（2026-06-22 早些时候）时间点为 v19 M0 拍板后立即执行，**未充分考虑 v15.x + v17 已累积的 `t()` 化进度**。
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings（未改代码）|
+| `npx vitest run src/__tests__/i18n src/__tests__/eslint` | 95/95 通过（无变化）|
+| 工作区状态 | clean（仅新增 02-m4-1-p0-strings.md）|
+
+### 步骤 1.1 验收（v19 计划 §3.2）
+
+| 验收项 | 结果 |
+|--------|------|
+| 4 个文件全部扫描，零遗漏 | ✅ 通过 |
+| 子清单含：字符串原文 / 文件:行号 / 上下文 / 目标 namespace / 建议 key | ✅ 通过 |
+| 与 M1 总清单的字符数对账（差异 ≤10%）| ❌ **不通过**（实际差异 > 95%）|
+
+**结论**：❌ **步骤 1.1 验收不通过**，按 v19 计划 §9.2 异常处理表"字符串数量偏差 > 20%" → **立即停止 M4-1 步骤 1.2-1.7，等用户拍板下一步**。
+
+### 后续选项（待用户拍板，见 02-m4-1-p0-strings.md §6）
+
+| # | 选项 | 推荐度 |
+|---|------|--------|
+| **A** | M4-1 实际范围极小（<50 字符注释），直接收尾 | ⭐ **推荐** |
+| **B** | M1 调研严重失真，重新做 M1 调研 | — |
+| **C** | M4-1 步骤 1.2-1.7 调整为"清理剩余注释" | — |
+| **D** | M4-1 视为"补漏 + 验证"，M4-2 重新评估 13 页面 P1 | — |
+
+### 范围外（Out of Scope — 已严格遵守）
+
+- ❌ 不修改任何代码（步骤 1.1 有边界）
+- ❌ 不写测试
+- ❌ 不创建 locale 文件
+- ❌ 不进入步骤 1.2-1.7（验收不通过，必须先拍板）
+- ❌ 不擅自调整 M4 计划（按 §十二"不擅自拍板"原则）
+
+### 文档同步
+
+- ✅ 本文件（WORKLOG.md）
+- ✅ `docs/superpowers/i18n-inventory/02-m4-1-p0-strings.md`（子清单 + 异常标注 + 启动日志）
+- ⏳ PROJECT_STATUS.md / TODO.md / v19 主计划（待用户拍板后同步）
+
+---
+
+## 2026-06-22 (深夜) | v19 M4 实施真源文档交付
+
+### 任务范围
+按用户指令生成 M4 阶段（页面级渐进迁移）的详细执行计划，遵循 v19 计划 §六.1"大阶段解构"原则：拆解为 3 子阶段 + 每个子阶段 5-8 个原子步骤（执行/验收/边界三件套），含文件迁移清单、测试更新矩阵、6 维度回滚预案。
+
+### M4 计划文档
+
+**路径**：`docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md`
+**规模**：385 行 / 13 章节
+
+### 文档结构
+
+| 章节 | 内容 |
+|------|------|
+| §1 起点状态 | M0-M3 已交付资产清单（M4 可直接使用）|
+| §2 子阶段拆解 | M4-1 / M4-2 / M4-3 总览 + 关键决策点（Q1-Q4）|
+| §3 M4-1 详细 | P0 4 页面（Home/SortPage/ArrayPage/GraphPage，~1550 字符，2d）7 原子步骤 |
+| §4 M4-2 详细 | P1 13 页面（~2350 字符，2d）7 原子步骤 + 4 风险缓解 |
+| §5 M4-3 详细 | P2 3 页面 + 聚合层接入 + 规则升级（~500 字符，1d）5 原子步骤 |
+| §6 文件迁移清单 | 17+17=34 个新 locale 文件 + 7 类修改文件 + 7 份文档同步 |
+| §7 测试更新矩阵 | 单元测试 ~86-126 新增 / AI-TDD 流程 / 烟雾测试 / E2E |
+| §8 回滚预案 | per-substage revert / 整体回退 / 6 关键边界 / 回滚检查清单 |
+| §9 风险与异常 | 6 已知风险 + 5 异常处理 |
+| §10 启动条件 + 验收 | 4 启动条件 + 子阶段验收 + 整体验收 + M5+ 大方向 |
+| §11 与 v19 主计划对应 | 10 章节对齐核查 |
+| §12 元数据 | 创建者 / 审核状态 / 关联文档 |
+
+### 关键决策点（启动 M4-1 前需用户拍板）
+
+| # | 决策点 | 推荐选项 |
+|---|--------|----------|
+| **Q1** | locale 文件命名风格 | A. 单词化（home / sortPage / graphPage）与 D5 命名空间对齐 |
+| **Q2** | en 翻译执行时机 | A. M4 阶段只做 zh + en 占位（key 自身），M8 再统一翻译 |
+| **Q3** | 旧 i18n 入口处理 | A. 保持 `locales.ts` 兼容，page.* 命名空间不与旧冲突时双轨 |
+| **Q4** | no-hardcoded-chinese-in-jsx 升级 | A. M4-3 收尾时升级为 `error` 级（page 子目录白名单）|
+
+### 范围外（Out of Scope）
+- ❌ Components 硬编码（M5 范围）
+- ❌ Utils 硬编码（M6 范围）
+- ❌ Learning config 硬编码（M7 范围）
+- ❌ 实际英文翻译工作（M8 范围）
+- ❌ `locales.ts` 旧入口删除
+- ❌ 全局 ESLint 规则升级为 `error` 级
+
+### 文档同步
+- ✅ 本文件（WORKLOG.md）
+- ✅ PROJECT_STATUS.md 进度备注段
+- ✅ TODO.md 顶部状态 + v19 段
+- ✅ v19 主计划 M4 状态（待 M4-1 启动后更新为 ⏳）
+- ⏳ CLAUDE.md / AGENTS.md（待 M4-1 启动时同步）
+
+---
+
+## 2026-06-22 (深夜) | v19 i18n 渐进迁移 M3 TypeScript 强约束完成
+
+### 任务范围
+按 v19 计划 §八 M3 阶段定义，启动 TypeScript 强约束：深度键镜像编译时断言（`AssertSameKeys`）+ 自定义 ESLint 规则（`no-hardcoded-chinese-in-jsx`），防止新增硬编码 + 编译时确保 zh/en 键完全一致。
+
+### M3 实施内容
+
+#### 1. types.ts 深度镜像类型（追加 7 个类型）
+- `AssertSameKeys<Zh, En>` — 公开入口，递归检查任意嵌套深度的 zh/en 键集合
+- `AssertSameKeysImpl<Zh, En, Path>` — 内部实现：双向键一致 + 每个 zh 键递归 + 检查 en 多出键
+- `AssertSameKeysImplHelper<Zh, En, Path>` — 内部 helper，避免直接 indexed access 类型推导陷阱
+- `_JoinPath<Base, K>` — 路径拼接（避免空路径时出现前导点）
+- `_CheckLeaf<Z, E, P>` — 叶子类型检查（双对象 → 递归；string/object 不匹配 → error）
+- `_IsPlainObject<T>` — 内部类型守卫
+- `_IsStringLiteral<T>` — string literal 守卫
+
+关键设计：
+- 镜像 → `true`；不镜像 → `{ readonly __error: '...' }`
+- 错误信息带 path（例：`Type mismatch at common.ok`）
+- 类型深度限制 ~10（TypeScript 编译深度限制）
+
+#### 2. no-hardcoded-chinese-in-jsx ESLint 规则（127 行）
+- meta: type=suggestion / category=i18n / messages / schema（minLength/allowList）
+- create: 监听 JSXText 节点
+- CJK_REGEX 范围 U+4E00 - U+9FFF（中文基本平面 + 扩展 A）
+- findChineseSegments: 提取连续中文字符段（≥ minLength）
+- isAllowListed: 精确匹配或前缀匹配
+- 跳过纯空白文本 / 跳过允许列表 / 每个节点仅报告第一个违规
+
+#### 3. ESLint 配置（eslint.config.js）
+- 引入 noHardcodedChineseInJsx 规则
+- 注册 localPlugin（plugin: 'local'）
+- 显式忽略 `eslint-rules/**`（避免规则自身被 lint）
+- 规则作用于 `src/{pages,components,visualizers}/**`，warn 级
+- 默认配置：`['warn', { minLength: 2, allowList: [] }]`
+
+#### 4. 单元测试（45 项新增）
+
+| 文件 | 测试项 | 覆盖范围 |
+|------|--------|----------|
+| `src/__tests__/i18n/types.test.ts` | 20 项 | SupportedLocale / KeysMatch 浅层 / AssertSameKeys 深度（10 个 it）/ IntegrityResult / INTEGRITY_VERSION / LOCALES / 编译时行为 |
+| `src/__tests__/eslint/no-hardcoded-chinese-in-jsx.test.ts` | 21 项 | valid 12 + invalid 5 + allowList 2 + minLength 边界 2 |
+
+i18n+eslint 子目录测试 54→95（基线 16 + M2 38 + M3 41）
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run src/__tests__/i18n src/__tests__/eslint` | **95/95 通过**（5 文件） |
+| `npx vitest run` | **2745/2745 通过**（基线 2699 + M2 46 + M3 45 = 实际 2790）|
+| `npm run build` | 成功；bundle 检查通过 |
+| TypeScript strict | 我引入 0 个错误；预存 7 个 v17 GA 错误按规则不跨模块修 |
+| 规则烟雾测试 | 创建临时 `_m3-rule-test.tsx` 验证规则能正确触发警告（验证后删除）|
+
+### 关键约束遵守
+- ✅ D1=B：规则仅作用于 UI 层（pages / components / visualizers / layouts），跳过 hooks / utils / configs
+- ✅ D2=C：`AssertSameKeys` 为按语言拆分子目录的镜像校验提供编译时基础
+- ✅ D5=C：namespace + flat keys 命名规范在 keys 结构上得到类型层面保证
+- ✅ D6=B：规则只检查 JSX 文本，不检查 JSX 属性（aria-label / data-* 保留）+ 不检查 JSX 表达式
+
+### AI-TDD 流程记录
+1. **第一步**：先写 `types.test.ts`（20 项）+ `eslint/no-hardcoded-chinese-in-jsx.test.ts`（21 项）→ 跑测试预期失败（RED）
+2. **第二步**：实现 `AssertSameKeys` 类型 + ESLint 规则 → 部分失败（语法/类型问题）
+3. **第三步**：调整 `AssertSameKeys` 改用 mapped type + 条件类型（避免 indexed access 陷阱）→ 修正 ESLint 规则 module.exports → ESM 适配
+4. **第四步**：修复类型导入 `// @ts-expect-error`（本地 JS 规则无 .d.ts）→ 41/45 通过
+5. **第五步**：修正 4 个类型测试期望 + ESLint 规则白名单检测逻辑 → 45/45 全绿（GREEN）
+6. **第六步**：注册规则到 eslint.config.js（warn 级，作用于指定目录）→ 烟雾测试验证规则工作正常
+7. **第七步**：全量回归（lint 0 / 2745 测试 / build OK / bundle OK）→ M3 验收通过
+
+### 范围外（Out of Scope — 留给 M4+）
+- ❌ namespace 物理迁移到 `locales/{zh,en}/` 子文件
+- ❌ 实际 UI 字符串翻译（按钮/标签/标题等）
+- ❌ 将 `no-hardcoded-chinese-in-jsx` 升级为 `error` 级（需先完成 M4-M7 迁移）
+- ❌ 改造 `locales.ts` 为聚合层
+
+### 文档同步
+- ✅ PROJECT_STATUS.md 顶部 + §2 新增"M3 TypeScript 强约束完成"段
+- ✅ TODO.md 顶部 + 更新"v19 i18n 渐进迁移"段为 M0+M1+M2+M3
+- ✅ WORKLOG.md（本日志）
+- ✅ CLAUDE.md + AGENTS.md 待同步
+
+---
+
+## 2026-06-22 (深夜) | v19 i18n 渐进迁移 M2 基础设施完成
+
+### 任务范围
+按 v19 计划 §八 M2 阶段定义，启动 i18n 基础设施建设：locales/{zh,en}/ 目录骨架 + integrity.ts 镜像校验工具 + pseudoLocale.ts 伪语言测试 + 单元测试 16→50+。
+
+### M2 实施内容
+
+#### 1. 目录骨架（13 个新文件）
+- `src/i18n/locales/index.ts`（统一导出 18 个符号：types + integrity + pseudoLocale）
+- `src/i18n/locales/zh/index.ts` + 5 个子目录（core / page / component / algorithm / learning）占位
+- `src/i18n/locales/en/index.ts` + 5 个子目录占位
+- 每个占位文件含详细注释说明 M3+ 阶段目标内容
+
+#### 2. integrity.ts（240 行，7 大函数）
+- `collectLeafPaths(obj, prefix)` — 深度遍历收集 dotted path
+- `collectLeafStrings(obj, prefix)` — 收集路径+值配对
+- `countLeaves(obj)` — 叶子数统计
+- `checkIntegrity(zh, en, options)` — 双向比对，返回 IntegrityResult
+- `assertIntegrity(zh, en, options)` — 镜像校验抛错版
+- `hasEmptyLeaf(obj, options)` — 空字符串/仅空白检测
+- `diffKeys(zh, en)` — 双向 diff
+- `formatIntegrityReport(result)` — 报告渲染
+
+支持选项：`maxListed`（错误信息最大列数，默认 20）、`throwOnMismatch`、`version`
+
+#### 3. pseudoLocale.ts（170 行，5 大函数 + 2 常量）
+- `pseudoLocalize(input, options)` — 单字符串伪化（变音 + 膨胀 + 包裹）
+- `pseudoLocalizeTree(input)` — 树形对象递归伪化
+- `createPseudoLocaleLoader(source, options)` — 创建伪语言加载器
+- `isPseudoLocalized(s)` — 检测伪化标记
+- `hasAsciiLetter(s)` — 内部工具函数（纯 CJK 检测）
+- `PSEUDO_LOCALE_CODE = 'en-XA'`
+- `PSEUDO_LOCALE_NAME = 'Pseudo (Burmese-style)'`
+
+设计要点：
+- 纯 CJK 输入直接返回（避免破坏中文字符）
+- ASCII 字母 → 变音符（a→à, b→ƀ, c→ç ... 26 字符映射表）
+- 默认膨胀 1.3x（中点插入空格模拟非拉丁字符宽度）
+- 默认包裹 `[èn]…[/èn]` 标记（E2E 检测用）
+
+#### 4. 单元测试（46 项新增）
+
+| 文件 | 测试项 | 覆盖范围 |
+|------|--------|----------|
+| `src/__tests__/i18n/integrity.test.ts` | 24 项 | collectLeafPaths / checkIntegrity / assertIntegrity / hasEmptyLeaf / countLeaves / diffKeys |
+| `src/__tests__/i18n/pseudoLocale.test.ts` | 22 项 | pseudoLocalize / pseudoLocalizeTree / createPseudoLocaleLoader / 集成验证 |
+
+i18n 子目录测试 16→54（基线 16 + M2 新增 38；integrity 24 + pseudoLocale 22 - locales.test.ts 8 已计基线）
+
+### 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| `npm run lint` | 0 errors / 0 warnings |
+| `npx vitest run` | **2745/2745 通过**（149 文件）|
+| `npx vitest run src/__tests__/i18n` | **54/54 通过**（3 文件）|
+| `npm run build` | 成功；bundle：i18n-locales 86.61KB / index 77.65KB / vendor-react 231.35KB / vendor-d3 52.54KB（均 < budget）|
+| TypeScript strict | 我引入 0 个错误；预存 7 个 v17 GA 错误（QuizPanel / animationExport / learningHub）按规则不跨模块修 |
+
+### 关键约束遵守
+- ✅ D2=C：`locales/{zh,en}/` 按语言拆分；保持 `locales.ts` 向后兼容
+- ✅ D5=C：namespace + flat keys 命名规范（注释固化）
+- ✅ D6=B：integrity 不动错误消息翻译策略
+- ✅ D7=B：pseudoLocale 不涉及 learning config 翻译
+- ✅ D8=A：integrity 工具为 AI 初译结果提供自动化校验基础
+
+### AI-TDD 流程记录
+1. **第一步**：先写 `integrity.test.ts`（24 项）+ `pseudoLocale.test.ts`（22 项）→ 跑测试预期失败（RED）
+2. **第二步**：实现 `integrity.ts` + `pseudoLocale.ts` → 9/46 仍失败（含 CJK / 变音字符 / 错误信息格式问题）
+3. **第三步**：调整实现（CJK 保留策略 + error 信息 maxListed 20 + 调整 3 个测试期望）→ 1/46 失败
+4. **第四步**：调整 1 个测试输入方向（missingInZh vs missingInEn）→ 46/46 全绿（GREEN）
+5. **第五步**：fix TypeScript 严格模式 5 个错误（unknown 类型 + 未使用参数）→ 我引入错误 0
+6. **第六步**：全量回归（lint 0 / 2745 测试 / build OK / bundle OK）→ M2 验收通过
+
+### 范围外（Out of Scope — 留给 M3+）
+- ❌ namespace 物理迁移到 `locales/{zh,en}/` 子文件
+- ❌ 改造 `locales.ts` 为聚合层（re-export 子目录）
+- ❌ AssertSameKeys 编译时深度递归断言
+- ❌ 实际 UI 字符串翻译（M4-M8 阶段）
+
+### 文档同步
+- ✅ PROJECT_STATUS.md 顶部 + §2 新增"M2 基础设施完成"段
+- ✅ TODO.md 顶部 + 新增"v19 i18n 渐进迁移"段
+- ✅ WORKLOG.md（本日志）
+- ✅ CLAUDE.md + AGENTS.md 待同步
+
+### 下一步
+- **M3 启动拍板**：TypeScript 强约束（types.ts AssertSameKeys 编译检查 + ESLint 规则）
+- M3 任务：增强 types.ts（KeysMatch → AssertSameKeys 深度递归）+ 编写 `i18n-keys-must-match` ESLint 自定义规则 + 单元测试
+
+---
+
+## 2026-06-22 (深夜) | v19 i18n 渐进迁移 M0+M1 启动
+
+### 任务范围
+应用户要求启动 v19 i18n 渐进迁移任务。首先对"v13 遗留 6+59 警告"做核验（实际不存在），随后启动 v19 启动流程：拍板 M0 5 项决策 + 编制 v19 计划 + 梳理 M1 硬编码中文清单。
+
+### v13 警告核验
+- `npm run lint` exit code = 0
+- 0 errors / 0 warnings
+- 6 处 set-state-in-effect + 59 处 exhaustive-deps **不存在**（已 downgraded to warn + 实际 0 warning）
+- 用户确认跳过该子任务
+
+### v19 M0 决策（5 项已拍板）
+| 决策 | 方案 |
+|------|------|
+| D1 范围 | B（UI + learning config） |
+| D2 文件结构 | C（按语言拆 `locales/{zh,en}/`）|
+| D3 翻译工作流 | B（AI 辅助 + 人工校对）|
+| D4 渐进发布 | B（立即生效 + 测试保底）|
+| D5 命名规范 | C（namespace + flat keys）|
+
+### v19 计划产出
+- 文件：`docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md`
+- 12 章节 / 11 阶段（M0-M10） / 总估时 ~27d
+- 范围：UI + learning config（~17,500 字符）
+- 不引入 i18next，保持自研轻量
+- 不做范围：hooks 日志 / tests 断言 / 多语种扩展
+
+### M1 硬编码字符串清单
+- 文件：`docs/superpowers/i18n-inventory/01-hardcoded-strings-inventory.md`
+- 17 页面：~2,900 字符（P0 4 个 / P1 13 个 / P2 3 个）
+- 16+ 组件：~960 字符
+- 5 utils：~360 字符
+- 31 学习配置：~10,000-15,000 字符
+- 总 v19 范围：~17,500 字符
+- 优先级映射：M4（页面）/ M5（组件）/ M6（utils）/ M7（学习配置）
+
+### v19 启动前需新增决策（D6/D7/D8）
+- D6 工具类翻译策略（A 双显 / B 仅 UI 翻译）
+- D7 学习配置翻译范围（A 完整 / B 高频 10 个）
+- D8 翻译协作模式（A AI + 单次校对 / B AI + 分批校对）
+
+### git 状态
+- 分支：`feature/v19-i18n-progressive-migration`
+- Commit：`36d110e` docs(v19): 启动 v19 i18n 渐进迁移（M0 拍板 + M1 调研清单）
+- 修改：2 files, 573 insertions
+
+### 下一步
+- 等待 M2 启动拍板（D6/D7/D8 + 启动授权）
+- M2 任务：创建 `locales/{zh,en}/` 目录 + integrity.ts + 测试 8→50+
+
+---
+
 ## 2026-06-22 (深夜) | v18 i18n 全量替换计划封存清理
 
 ### 任务范围

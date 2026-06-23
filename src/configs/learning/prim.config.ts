@@ -1,4 +1,5 @@
 import type { LearningModeConfig } from './types'
+import { tStatic } from '../../i18n/useI18n'
 
 /**
  * Prim 算法学习配置
@@ -8,21 +9,21 @@ export const primConfig: LearningModeConfig = {
   steps: [
     {
       id: 'init',
-      title: '初始化',
-      description: '从任意节点开始，将其加入最小生成树（MST）集合',
+      title: tStatic('learningSteps.prim.steps.init.title'),
+      description: tStatic('learningSteps.prim.steps.init.description'),
       codeSnippet: `function prim(graph, start) {
   const inMST = new Set([start])
   const mst = []
 }`,
       highlightedLine: 3,
-      highlightTerms: ['inMST', 'start'],
-      tips: ['Prim 算法从一个节点出发逐步扩展 MST', '适用于稠密图'],
-      complexity: { time: 'O(V²)', space: 'O(V)' },
+      highlightTerms: tStatic('learningSteps.prim.steps.init.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.prim.steps.init.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.prim.steps.init.complexityTime'), space: tStatic('learningSteps.prim.steps.init.complexitySpace') },
     },
     {
       id: 'select',
-      title: '选择最小边',
-      description: '在所有连接 MST 内部和外部的边中，选择权重最小的边',
+      title: tStatic('learningSteps.prim.steps.select.title'),
+      description: tStatic('learningSteps.prim.steps.select.description'),
       codeSnippet: `  while (inMST.size < V) {
     let minEdge = null
     for (const u of inMST) {
@@ -33,13 +34,13 @@ export const primConfig: LearningModeConfig = {
       }
     }`,
       highlightedLine: 6,
-      highlightTerms: ['!inMST.has(v)', 'w < minEdge.w'],
-      tips: ['这条边必须一端在 MST 内、一端在 MST 外', '使用优先队列可以优化到 O(E log V)'],
+      highlightTerms: tStatic('learningSteps.prim.steps.select.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.prim.steps.select.tips').split('|'),
     },
     {
       id: 'add',
-      title: '加入 MST',
-      description: '将最小边对应的节点加入 MST，边加入结果集',
+      title: tStatic('learningSteps.prim.steps.add.title'),
+      description: tStatic('learningSteps.prim.steps.add.description'),
       codeSnippet: `    if (minEdge) {
       inMST.add(minEdge.v)
       mst.push(minEdge)
@@ -48,19 +49,19 @@ export const primConfig: LearningModeConfig = {
     }
   }`,
       highlightedLine: 3,
-      highlightTerms: ['inMST.add', 'mst.push'],
-      tips: ['如果找不到最小边说明图不连通，无法生成完整 MST'],
+      highlightTerms: tStatic('learningSteps.prim.steps.add.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.prim.steps.add.tips').split('|'),
     },
     {
       id: 'complete',
-      title: '算法完成',
-      description: 'MST 包含 V-1 条边，连接所有节点且总权重最小',
+      title: tStatic('learningSteps.prim.steps.complete.title'),
+      description: tStatic('learningSteps.prim.steps.complete.description'),
       codeSnippet: `  // mst 包含 V-1 条边
   // totalWeight = mst.reduce((s, e) => s + e.w, 0)`,
       highlightedLine: 2,
-      highlightTerms: ['V-1', 'totalWeight'],
-      tips: ['最小生成树一定有 V-1 条边', 'Prim 适合稠密图，Kruskal 适合稀疏图'],
-      complexity: { time: 'O(V²)', space: 'O(V)' },
+      highlightTerms: tStatic('learningSteps.prim.steps.complete.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.prim.steps.complete.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.prim.steps.complete.complexityTime'), space: tStatic('learningSteps.prim.steps.complete.complexitySpace') },
     },
   ],
 }

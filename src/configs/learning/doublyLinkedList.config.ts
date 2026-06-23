@@ -1,12 +1,13 @@
 import type { LearningModeConfig } from './types'
+import { tStatic } from '../../i18n/useI18n'
 
 export const doublyLinkedListConfig: LearningModeConfig = {
   algorithmKey: 'doublyLinkedList',
   steps: [
     {
       id: 'structure',
-      title: '双向链表结构',
-      description: '每个节点包含数据、指向前驱的 prev 指针和指向后继的 next 指针',
+      title: tStatic('learningSteps.doublyLinkedList.steps.structure.title'),
+      description: tStatic('learningSteps.doublyLinkedList.steps.structure.description'),
       codeSnippet: `class DoublyNode {
   constructor(value) {
     this.value = value
@@ -15,14 +16,14 @@ export const doublyLinkedListConfig: LearningModeConfig = {
   }
 }`,
       highlightedLine: 4,
-      highlightTerms: ['prev', 'next'],
-      tips: ['双向链表比单链表多一个指针，但支持反向遍历和 O(1) 删除已知节点'],
-      complexity: { time: '访问 O(n)，插入/删除 O(1)', space: 'O(n)' },
+      highlightTerms: tStatic('learningSteps.doublyLinkedList.steps.structure.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.doublyLinkedList.steps.structure.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.doublyLinkedList.steps.structure.complexityTime'), space: tStatic('learningSteps.doublyLinkedList.steps.structure.complexitySpace') },
     },
     {
       id: 'insert-head',
-      title: '头插法',
-      description: '新节点的 next 指向原头节点，原头节点的 prev 指向新节点，然后更新头指针',
+      title: tStatic('learningSteps.doublyLinkedList.steps.insert-head.title'),
+      description: tStatic('learningSteps.doublyLinkedList.steps.insert-head.description'),
       codeSnippet: `function insertHead(value) {
   const node = new DoublyNode(value)
   node.next = this.head
@@ -32,13 +33,13 @@ export const doublyLinkedListConfig: LearningModeConfig = {
   this.head = node
 }`,
       highlightedLine: 4,
-      highlightTerms: ['this.head.prev', 'node'],
-      tips: ['头插法需要处理链表为空的特殊情况（head 为 null）'],
+      highlightTerms: tStatic('learningSteps.doublyLinkedList.steps.insert-head.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.doublyLinkedList.steps.insert-head.tips').split('|'),
     },
     {
       id: 'insert-tail',
-      title: '尾插法',
-      description: '遍历到链表末尾，将新节点连接到尾部，并建立双向指针关系',
+      title: tStatic('learningSteps.doublyLinkedList.steps.insert-tail.title'),
+      description: tStatic('learningSteps.doublyLinkedList.steps.insert-tail.description'),
       codeSnippet: `function insertTail(value) {
   const node = new DoublyNode(value)
   let curr = this.head
@@ -49,13 +50,13 @@ export const doublyLinkedListConfig: LearningModeConfig = {
   node.prev = curr
 }`,
       highlightedLine: 6,
-      highlightTerms: ['node.prev', 'curr'],
-      tips: ['维护 tail 指针可以将尾插法优化到 O(1)，双向链表更容易维护'],
+      highlightTerms: tStatic('learningSteps.doublyLinkedList.steps.insert-tail.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.doublyLinkedList.steps.insert-tail.tips').split('|'),
     },
     {
       id: 'delete',
-      title: '删除节点',
-      description: '找到目标节点，将其前驱的 next 指向后继，后继的 prev 指向前驱',
+      title: tStatic('learningSteps.doublyLinkedList.steps.delete.title'),
+      description: tStatic('learningSteps.doublyLinkedList.steps.delete.description'),
       codeSnippet: `function deleteNode(value) {
   let curr = this.head
   while (curr && curr.value !== value) {
@@ -67,13 +68,13 @@ export const doublyLinkedListConfig: LearningModeConfig = {
   if (curr === this.head) this.head = curr.next
 }`,
       highlightedLine: 6,
-      highlightTerms: ['curr.prev.next', 'curr.next.prev'],
-      tips: ['双向链表删除不需要找前驱节点，因为节点自带 prev 指针'],
+      highlightTerms: tStatic('learningSteps.doublyLinkedList.steps.delete.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.doublyLinkedList.steps.delete.tips').split('|'),
     },
     {
       id: 'insert-at',
-      title: '按位置插入',
-      description: '遍历到目标位置，建立新节点与前驱、后继的双向指针关系',
+      title: tStatic('learningSteps.doublyLinkedList.steps.insert-at.title'),
+      description: tStatic('learningSteps.doublyLinkedList.steps.insert-at.description'),
       codeSnippet: `function insertAt(index, value) {
   if (index === 0) return insertHead(value)
   const node = new DoublyNode(value)
@@ -87,13 +88,13 @@ export const doublyLinkedListConfig: LearningModeConfig = {
   curr.next = node
 }`,
       highlightedLine: 8,
-      highlightTerms: ['node.prev', 'curr.next.prev'],
-      tips: ['双向链表插入需要维护 4 个指针（2 个方向 × 2 个节点），比单链表多 2 个'],
+      highlightTerms: tStatic('learningSteps.doublyLinkedList.steps.insert-at.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.doublyLinkedList.steps.insert-at.tips').split('|'),
     },
     {
       id: 'search',
-      title: '查找节点',
-      description: '从头节点遍历，逐个比较节点值。双向链表也可从尾部反向查找',
+      title: tStatic('learningSteps.doublyLinkedList.steps.search.title'),
+      description: tStatic('learningSteps.doublyLinkedList.steps.search.description'),
       codeSnippet: `function search(value) {
   let curr = this.head
   let index = 0
@@ -105,13 +106,13 @@ export const doublyLinkedListConfig: LearningModeConfig = {
   return -1
 }`,
       highlightedLine: 5,
-      highlightTerms: ['curr.value === value', 'while'],
-      tips: ['双向链表查找复杂度与单链表相同 O(n)，但支持双向遍历'],
+      highlightTerms: tStatic('learningSteps.doublyLinkedList.steps.search.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.doublyLinkedList.steps.search.tips').split('|'),
     },
     {
       id: 'reverse',
-      title: '反转双向链表',
-      description: '交换每个节点的 prev 和 next 指针，最后更新头指针',
+      title: tStatic('learningSteps.doublyLinkedList.steps.reverse.title'),
+      description: tStatic('learningSteps.doublyLinkedList.steps.reverse.description'),
       codeSnippet: `function reverse() {
   let curr = this.head
   let temp = null
@@ -124,17 +125,14 @@ export const doublyLinkedListConfig: LearningModeConfig = {
   if (temp) this.head = temp.prev
 }`,
       highlightedLine: 5,
-      highlightTerms: ['curr.prev', 'curr.next'],
-      tips: [
-        '双向链表反转比单链表简单：直接交换每个节点的 prev/next',
-        '注意遍历方向：交换后 curr.next 变成了原 prev，所以用 curr.prev 前进',
-      ],
-      complexity: { time: 'O(n)', space: 'O(1)' },
+      highlightTerms: tStatic('learningSteps.doublyLinkedList.steps.reverse.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.doublyLinkedList.steps.reverse.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.doublyLinkedList.steps.reverse.complexityTime'), space: tStatic('learningSteps.doublyLinkedList.steps.reverse.complexitySpace') },
     },
     {
       id: 'detect-cycle',
-      title: '环检测',
-      description: 'Floyd 龟兔算法同样适用于双向链表，快慢指针相遇即存在环',
+      title: tStatic('learningSteps.doublyLinkedList.steps.detect-cycle.title'),
+      description: tStatic('learningSteps.doublyLinkedList.steps.detect-cycle.description'),
       codeSnippet: `function hasCycle() {
   let slow = this.head
   let fast = this.head
@@ -146,9 +144,9 @@ export const doublyLinkedListConfig: LearningModeConfig = {
   return false
 }`,
       highlightedLine: 6,
-      highlightTerms: ['slow === fast', 'fast.next.next'],
-      tips: ['环检测算法与单链表完全一致，因为环只涉及 next 指针'],
-      complexity: { time: 'O(n)', space: 'O(1)' },
+      highlightTerms: tStatic('learningSteps.doublyLinkedList.steps.detect-cycle.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.doublyLinkedList.steps.detect-cycle.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.doublyLinkedList.steps.detect-cycle.complexityTime'), space: tStatic('learningSteps.doublyLinkedList.steps.detect-cycle.complexitySpace') },
     },
   ],
 }

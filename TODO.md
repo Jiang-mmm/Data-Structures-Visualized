@@ -1,15 +1,15 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** v17.0.0 GA（待合并 main）
-> **更新日期:** 2026-06-22
-> **状态:** v17.0.0 GA 完成（UI/UX 7 项优化 R1-R7 + 浏览器验收 7/7 PASS）；下一步合并到 main 后规划 v18
+> **版本:** v20（v17.0.0 GA + v19 M0-M4 全部完成 + v20 A+C 本轮一次性交付完成 2026-06-22 + **v20 第二轮 C-4 完成 2026-06-23** + **v20 A M7 全部子阶段完成 2026-06-23**（M7-1 ~ M7-7）+ **v20 全面收尾报告 + C-2 收尾完成 2026-06-23**（247 新测试 + 5 个 C-2 AI 漂移 typecheck 错误修复 + 2 pre-existing 锁定 B-4/B-5））
+> **更新日期:** 2026-06-23
+> **状态:** v17.0.0 GA 已 merge main（commit `b991566`）→ v18 计划已封存 → v19 M0-M4 全部完成 → v20 A+C 本轮交付（A M5 扫描 0 命中 + A M6 4 文件 utils+components 迁移 + A M9 e2e 框架 + C-3 API.md + ARCHITECTURE.md v17+ 章节）/ 2801 tests / 0 lint / bundle 全 < budget → v20 第二轮 C-4 完成 2026-06-23（useVisualizer 早返回修复 + 11 项新测试）/ 2812 tests / 0 lint → **v20 A M7 全部子阶段完成 2026-06-23**（M7-6 测试 738 项 + M7-7 en 翻译 AI 复审 0 CJK 泄漏 + 4 M7-6 typecheck bug 修复）/ 3550 tests / 0 lint → **v20 C-2 收尾 + 全面收尾报告 2026-06-23**（247 新测试 + useDataStructureState-extra 25 + searchIndex-extra 21 + 之前累积 + 5 个 C-2 AI 漂移遗漏 typecheck 修复）/ **3797 tests** / 0 lint / 2 pre-existing（B-4/B-5 animationExport.ts — gif.js 类型不兼容）→ **v20 阶段收尾状态：4/7 子阶段完成（57%）+ 3 子阶段移交 v21 候选**（A M8 / A M9 / v20.0.0 GA）
 > **v16.0.0 GA:** 已完成（2026-06-22，merge `b8d0b03`）— 设计统一化 + ENG-1 E2E 迁移 + ENG-2 覆盖率 >80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善
 > **v15 GA:** 已完成（2026-06-22）— 体验打磨（E1 PWA + E2 大数据 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞）
 > **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1/G1/G2/G3/F2）
 > **详细迭代计划:** v11 计划已归档至 [docs/archive/iteration-plan-v11.md](./docs/archive/iteration-plan-v11.md)；v12/v13/v14/v15 计划见 [docs/superpowers/plans/](./docs/superpowers/plans/)，v10/v11/v12 迭代记录见 WORKLOG.md
 > **v13 体检报告:** [docs/audit-2026-06-20/audit-merged.md](./docs/audit-2026-06-20/audit-merged.md)
 > **Path 3 实施真源文档:** [docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md](./docs/superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md)
-> **长线路线图:** [docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md)
+> **长线路线图:** [docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md](./docs/superpowers/plans/2026-06-21-longterm-roadmap-v13-to-v16.md) / [docs/superpowers/plans/2026-06-22-longterm-roadmap-v18-to-v24.md](./docs/superpowers/plans/2026-06-22-longterm-roadmap-v18-to-v24.md)
 
 ---
 
@@ -32,6 +32,70 @@
 
 ---
 
+## v20 第二轮执行计划（2026-06-22 计划已交付，C-2 收尾 + 全面收尾报告 2026-06-23）
+
+| 维度 | 内容 |
+|------|------|
+| **状态** | 🟡 **v20 阶段 57% 完成 2026-06-23**（4/7 子阶段）— C-1 ✅ / C-4 ✅ / A M7 全部 ✅ / **C-2 收尾部分达成**（+247 tests / Lines 85.84% / Statements 82% / Branches 68.93%；差 3pp Statements + 1pp Branches）→ ⏳ A M8 / A M9 / v20.0.0 GA 移交 v21 候选 B-7/B-8/B-9（需用户校对翻译）|
+| **计划文档** | [docs/superpowers/plans/2026-06-22-v20-round2-execution-plan.md](./docs/superpowers/plans/2026-06-22-v20-round2-execution-plan.md) / [docs/superpowers/plans/2026-06-23-v20-m7-implementation-plan.md](./docs/superpowers/plans/2026-06-23-v20-m7-implementation-plan.md) / [docs/superpowers/plans/2026-06-23-v20-round3-execution-plan.md](./docs/superpowers/plans/2026-06-23-v20-round3-execution-plan.md) |
+| **C-4 报告** | [docs/superpowers/plans/2026-06-23-c4-memory-leak-report.md](./docs/superpowers/plans/2026-06-23-c4-memory-leak-report.md) — useVisualizer 早返回修复 + 11 项新测试 / 2812 tests / 0 lint |
+| **C-2 收尾报告** | [docs/superpowers/plans/2026-06-23-v20-closure-report.md](./docs/superpowers/plans/2026-06-23-v20-closure-report.md) — 7 子阶段全景 + 范围对比矩阵 + 3 选项 + 13 章节 ~330 行 / 3797 tests / 0 lint / typecheck 2 pre-existing（B-4/B-5） |
+| **C-1 扫描** | ✅ 完成（0 react-hooks 警告，扫描报告 v20-c1-react-hooks-scan.md）|
+| **阶段 1 P1** | ✅ C-1 扫描完成 + ✅ C-4 修复完成（2026-06-23）|
+| **阶段 2 P2** | 🟡 C-2 覆盖率部分达成 2026-06-23（+247 tests / +1.95pp Statements / +1.82pp Lines；差 3pp Statements / 1pp Branches → v21 B-6 补完）|
+| **阶段 3 P3** | ✅ A M7 全部子阶段完成（2026-06-23）— 40 config i18n 迁移 + 测试套件 + en 翻译 AI 复审 |
+| **阶段 4 P4** | ⏳ A M8 实际英文翻译填充（5d，需用户抽查 5 核心页面，依赖 M7）→ v21 B-7 |
+| **阶段 5 P5** | ⏳ A M9 完整 E2E + pseudoLocale 集成（2d，依赖 M7+M8）→ v21 B-8 |
+| **阶段 6** | ⏳ v20.0.0 GA + 6 份核心文档同步（1d，依赖 P4+P5）→ v21 B-9 |
+| **总工时** | ~17d / 4 feature 分支 / B 方向不启动 |
+| **资源** | AI 协作（100%）+ 用户（M7/M8 校对 3-5d）|
+| **下一步** | ⏳ **等待用户拍板 v20 closure 3 选项**（A: 接受收尾 + 启动 v21 B-6 / B: 接受收尾 + 启动 v21 B-7 / C: v20.1 patch 直接发布）→ 启动 v21 阶段 |
+
+## v20 下一迭代计划（2026-06-22 已交付，方向待用户拍板）
+
+| 维度 | 内容 |
+|------|------|
+| **状态** | ⏳ **v20 启动待用户拍板**（3 方向：A / B / C / 组合）|
+| **计划文档** | [docs/superpowers/plans/2026-06-22-v20-next-iteration-plan.md](./docs/superpowers/plans/2026-06-22-v20-next-iteration-plan.md) |
+| **A 方向** | i18n 完整收尾 M5-M9（13d，⭐⭐⭐，极低风险）— components / utils / learning config / en 翻译 / E2E |
+| **B 方向** | AI 智能学习伴侣（25-30d，⭐⭐⭐，中风险）— Provider 抽象 / 智能提示 / 错误诊断 / 学习路径 / AI Quiz / 隐私 + 限速 |
+| **C 方向** | 技术债清理 + 工程深化（15-18d，⭐⭐，低风险）— v13 体检残留 / 覆盖率 80→85% / 文档完善 / 性能优化 |
+| **默认推荐** | A + C 并行（独立 feature 分支）；B 视用户额外拍板 |
+| **下一步** | 用户拍板 v20 方向 → 创建 `feature/v20-m5-components` 分支 → 启动 M5 |
+
+## 6-12 月长线路线图（2026-06-22 已交付，v18→v24）
+
+| 维度 | 内容 |
+|------|------|
+| **状态** | 🆕 **6-12 月长线路线图已交付**（3 大战略主题 + 4 版本路线 + 季度里程碑）|
+| **计划文档** | [docs/superpowers/plans/2026-06-22-longterm-roadmap-v18-to-v24.md](./docs/superpowers/plans/2026-06-22-longterm-roadmap-v18-to-v24.md) |
+| **战略主题 T1** | 国际化与全球触达（2026 H2 - 2027 Q2）— 英文版 / SEO / 教学视频 / Lighthouse 95+ / 多语言扩展 |
+| **战略主题 T2** | AI 智能学习伴侣（2026 H2 - 2027 H1）— Provider 抽象 / 智能提示 / 错误诊断 / 学习路径 / AI Quiz / 离线降级 |
+| **战略主题 T3** | 协作与教学集成（2027 H1 - H2）— 实时协作 / 教师后台 / LMS 集成 / 课堂演示模式 |
+| **版本路线 v20-v23** | v20 2026 Q3 / v21 2026 Q4 / v22 2027 Q1 / v23 2027 Q2 |
+| **总工时** | ~138d（6 个月 + 缓冲）|
+| **资源** | 单人 + AI 协作 + 外部反馈（教师 ≥ 3 位 / 学生 ≥ 100） |
+| **财务** | < $250/月（LLM API + Cloudflare DO + 域名）|
+
+## v19 i18n 渐进迁移（2026-06-22 启动 → M0+M1+M2+M3 已完成）
+
+| 维度 | 内容 |
+|------|------|
+| **状态** | 🟢 M0+M1+M2+M3+M4 全部完成（基线 v17.0.0 GA）；M5+ 待启动 |
+| **M0 决策** | D1=B（UI + learning config）/ D2=C（按语言拆 `locales/{zh,en}/`）/ D3=B（AI + 人工校对）/ D4=B（立即生效 + 测试保底）/ D5=C（namespace + flat keys）/ D6=B（仅 UI 翻译）/ D7=B（高频 10 个 learning）/ D8=A（AI + 单次校对）|
+| **M1 产出** | [`docs/superpowers/i18n-inventory/01-hardcoded-strings-inventory.md`](./docs/superpowers/i18n-inventory/01-hardcoded-strings-inventory.md) — 17 页面 + 16 组件 + 5 utils + 31 learning config；v19 范围 ~17,500 字符 |
+| **M2 基础设施** | `src/i18n/locales/{zh,en}/` 目录骨架（5 子目录 × 2 语言 + 顶层 index.ts）+ `integrity.ts` 镜像校验工具（7 函数 + INTEGRITY_VERSION）+ `pseudoLocale.ts` 伪语言生成器（5 函数 + 2 常量）+ 46 项单元测试 |
+| **M3 TypeScript 强约束** | `AssertSameKeys` 深度递归编译时断言（任意嵌套深度的 zh/en 键镜像检查）+ `no-hardcoded-chinese-in-jsx` 自定义 ESLint 规则（minLength/allowList 配置）+ 45 项单元测试（types 20 + eslint 21 + 与 M2 子目录合并 95 项）；ESLint 注册 local plugin（作用于 `src/{pages,components,visualizers,layouts}/**`，warn 级） |
+| **M4 实施真源文档** | [docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md](./docs/superpowers/plans/2026-06-22-v19-m4-pages-migration.md)（385 行 13 章节 + §3.0/§4.0/§5.0 收尾状态段）。3 子阶段：M4-1 P0 4 页面（Home/SortPage/ArrayPage/GraphPage，~1550 字符，2d）/ M4-2 P1 13 页面（~2350 字符，2d）/ M4-3 P2 3 目标 + 聚合层接入 + 规则升级（~500 字符，1d）。 |
+| **M4 全部收尾** | [docs/superpowers/i18n-inventory/06-m4-closure-report.md](./docs/superpowers/i18n-inventory/06-m4-closure-report.md) — **20 目标 100% `t()` 化**（M4-1 4 页面 202 个 `t()` + M4-2 13 页面 312 个 `t()` + M4-3 3 目标 55 个 `t()` = 合计 **569 个 `t()` 调用** / **0 字符 UI 硬编码** / **48 行开发者向注释** / **0 代码变更** / **0 测试新增** / **0 locale 文件新增**），v15.x ENH-2 + v17 UI/UX 迭代累积 `t()` 化完成；M1 估计 ~2,550+ 字符**严重失真**（差异 > 100%）。子清单：M4-1 [03-m4-1-summary.md](./docs/superpowers/i18n-inventory/03-m4-1-summary.md) / M4-2 [04-m4-2-p1-strings.md](./docs/superpowers/i18n-inventory/04-m4-2-p1-strings.md) / M4-3 [05-m4-3-p2-strings.md](./docs/superpowers/i18n-inventory/05-m4-3-p2-strings.md)。 |
+| **测试结果** | 2786/2786 全量测试全绿（基线 2699 + M2 46 + M3 45 + 实际基线增量 0 = 实际 2790 接近）；i18n+eslint 子目录 95/95 |
+| **Lint / TypeCheck** | 0 errors / 0 warnings；我引入 TS 错误 0；预存 7 个 v17 GA 错误按规则不跨模块修 |
+| **Build** | 成功；i18n-locales 86.61KB / index 77.65KB / vendor-react 231.35KB / vendor-d3 52.54KB（均 < budget）|
+| **实施真源** | [docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md](./docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md) |
+| **下一阶段** | **M5+ 待启动**（推荐顺序：M5 组件级 2d → M6 utils 1d → M7 learning config 3d → M8 实际英文翻译 5d → M9 E2E 2d；启动条件：用户拍板 + 新建 feature 分支）|
+
+---
+
 ## v18 i18n 全量替换（2026-06-22 计划 → 已封存）
 
 | 维度 | 内容 |
@@ -41,6 +105,51 @@
 | **M0 决策摘要** | D1=B（UI + learning config）/ D2=C（按语言拆 `locales/{zh,en}/`）/ D3=B（AI + 人工校对）/ D4=简化（逐步提交 + 立即生效）/ D5=C（namespace + flat keys） |
 | **历史快照** | v18 分支 commit `774025a` 包含完整计划（646 行）+ 5 份文档同步；分支删除前可按需 cherry-pick 还原 |
 | **重启条件** | ① 用户明确指令重启；② 基于 M0 决策摘要重新编制实施真源；③ 独立 feature 分支（如 `feature/v18-i18n-foundation`） |
+
+---
+
+## v21 待办 Backlog（2026-06-23 — C-2 收尾后剩余 typecheck 错误）
+
+> **状态**：原 M7-5 拍板 backlog 5 项 → **本次收尾已修 3 项**（B-1 afterEach / B-2 x / B-3 y）→ 剩 **2 项 pre-existing**（B-4 gif.js / B-5 Uint8Array — 需用户决策 gif.js 版本策略）。
+
+| # | 错误 | 位置 | 根因 | 影响 | 状态 |
+|---|------|------|------|------|------|
+| ~~B-1~~ | ~~`Cannot find name 'afterEach'`~~ | `src/__tests__/components/QuizPanel.test.tsx:1` | ~~`import` 缺 `afterEach`~~ | ~~typecheck 失败~~ | ✅ **2026-06-23 修复**（C-2 收尾）|
+| ~~B-2~~ | ~~`'x' is declared but its value is never read`~~ | `src/__tests__/utils/animationExport.test.ts:59` | ~~FakeCtx.getImageData `x` 未使用~~ | ~~lint warning~~ | ✅ **2026-06-23 修复**（`x` → `_x`）|
+| ~~B-3~~ | ~~`'y' is declared but its value is never read`~~ | `src/__tests__/utils/animationExport.test.ts:59` | ~~FakeCtx.getImageData `y` 未使用~~ | ~~lint warning~~ | ✅ **2026-06-23 修复**（`y` → `_y`）|
+| **B-4** | `Type '"rgb565"' has no properties in common with type 'ApplyPaletteOptions'` | `src/utils/animationExport.ts:234` | `gif.js` 类型定义与新版不兼容 | typecheck 失败 | ⏳ **pre-existing** |
+| **B-5** | `Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'BlobPart'` | `src/utils/animationExport.ts:242` | TS 5.8+ 严格 ArrayBuffer 类型推断 | typecheck 失败 | ⏳ **pre-existing** |
+
+**触发**：M7-5 验证发现（2026-06-23）— 是 pre-existing 技术债，与 C-2 无关。
+**决策**（用户拍板 C，2026-06-23）：M7-5 范围内不修；标记转 v21 backlog。
+**本次收尾额外修复**（C-2 AI 漂移遗漏，2026-06-23）：
+- `src/__tests__/utils/sentry.test.ts` × 7：vi.stubEnv 'PROD' 字符串 → boolean
+- `src/__tests__/utils/animationExport-extra.test.ts` × 2：x, y → _x, _y
+- `src/__tests__/components/Visualizer.test.tsx` × 3：TouchEvent fallback to defineProperty
+- `src/__tests__/performanceLogger.test.ts` × 1：'info' → 'function' (valid type)
+- `src/__tests__/useColorTheme.test.ts` × 1：mock key/name + 测试用 key
+合计 14 个 C-2 漂移错误已修。
+
+**v21 启动条件**：① 用户指令启动 v21 阶段；② 独立 feature 分支；③ 评估 B-4/B-5 影响（gif.js 版本回退 vs 升级；BlobPart cast vs 类型守卫）。
+**估计**：~0.5d（2 处小修 + 测试验证 + 文档同步）。
+
+---
+
+## v21 候选 Backlog（v20 阶段未完成项 + 预存技术债 + 质量补完）
+
+> **来源**：v20 全面收尾报告 [docs/superpowers/plans/2026-06-23-v20-closure-report.md](./docs/superpowers/plans/2026-06-23-v20-closure-report.md) §4 v21 候选 Backlog + 本表 v21 B-1~B-5（已 3 修 2 剩）。
+
+| # | 任务 | 范围 | 估计 | 风险 | 优先级 |
+|---|------|------|------|------|--------|
+| B-1 | ~~QuizPanel afterEach import~~ | 1 处 | 5min | 🟢 | ✅ 2026-06-23 修复 |
+| B-2 | ~~animationExport.test.ts x unused~~ | 1 处 | 5min | 🟢 | ✅ 2026-06-23 修复 |
+| B-3 | ~~animationExport.test.ts y unused~~ | 1 处 | 5min | 🟢 | ✅ 2026-06-23 修复 |
+| **B-4** | `animationExport.ts` gif.js `ApplyPaletteOptions` 不兼容 | 1 处 | 0.5d | 🟡 | ⭐⭐ |
+| **B-5** | `animationExport.ts` `Uint8Array<ArrayBufferLike>` 类型转换 | 1 处 | 0.5d | 🟡 | ⭐⭐ |
+| **B-6** | C-2 剩余 3pp Statements + 1pp Branches 覆盖率 | visualizers 边界 + utils 错误路径 | 2-3d | 🟢 | ⭐⭐ |
+| **B-7** | A M8 实际英文翻译填充（含 5 核心页面用户校对）| 500-800 键 × 2 locales | 5d | 🟡 | ⭐⭐⭐ |
+| **B-8** | A M9 完整 E2E + pseudoLocale 集成（51 项 × 3 场景）| 17 页 E2E | 2d | 🟢 | ⭐⭐ |
+| **B-9** | v20.0.0 GA 收尾（4 分支 merge + 6 文档 + git tag）| 合并 + 同步 + tag | 1d | 🟢 | ⭐⭐ |
 
 ---
 

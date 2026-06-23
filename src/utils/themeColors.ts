@@ -3,6 +3,8 @@
  * 颜色系统 + 渐变定义 + 暗色模式检测 + 多主题
  */
 
+import { tStatic } from '../i18n/useI18n'
+
 const STORAGE_KEY = 'ds-visualizer-color-theme'
 
 export interface ThemeColors {
@@ -556,10 +558,10 @@ const surfacePalettes: Record<string, { light: ThemeSurfaceTokens; dark: ThemeSu
 }
 
 const availableThemes = [
-  { key: 'default', name: '默认', nameKey: 'sidebar.themeDefault', icon: '◉' },
-  { key: 'forest', name: '森林', nameKey: 'sidebar.themeForest', icon: '◈' },
-  { key: 'warm', name: '暖色', nameKey: 'sidebar.themeWarm', icon: '◎' },
-  { key: 'royal', name: '皇家', nameKey: 'sidebar.themeRoyal', icon: '◇' },
+  { key: 'default', name: tStatic('sidebar.themeDefault'), nameKey: 'sidebar.themeDefault', icon: '◉' },
+  { key: 'forest', name: tStatic('sidebar.themeForest'), nameKey: 'sidebar.themeForest', icon: '◈' },
+  { key: 'warm', name: tStatic('sidebar.themeWarm'), nameKey: 'sidebar.themeWarm', icon: '◎' },
+  { key: 'royal', name: tStatic('sidebar.themeRoyal'), nameKey: 'sidebar.themeRoyal', icon: '◇' },
 ]
 
 const THEME_CSS_MAP: Record<string, Record<string, string>> = {

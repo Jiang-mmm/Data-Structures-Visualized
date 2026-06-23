@@ -1,12 +1,13 @@
 import type { LearningModeConfig } from './types'
+import { tStatic } from '../../i18n/useI18n'
 
 export const complexityAnalysisConfig: LearningModeConfig = {
   algorithmKey: 'complexityAnalysis',
   steps: [
     {
       id: 'concept',
-      title: '时间复杂度概念',
-      description: '时间复杂度衡量算法运行时间随输入规模增长的趋势，而非具体执行时间，便于横向比较算法效率',
+      title: tStatic('learningSteps.complexityAnalysis.steps.concept.title'),
+      description: tStatic('learningSteps.complexityAnalysis.steps.concept.description'),
       codeSnippet: `// 时间复杂度：操作次数与输入规模 n 的关系
 // 关注趋势，忽略常数和低阶项
 // 例：3n² + 5n + 100 → O(n²)
@@ -19,14 +20,14 @@ function sum(n) {
 }
 // 总操作次数: 2n + 2 → O(n)`,
       highlightedLine: 8,
-      highlightTerms: ['O(n)', '趋势', '输入规模'],
-      tips: ['时间复杂度是"增长趋势"而非"实际耗时"，O(n) 的算法在 n 小时可能比 O(log n) 还慢（常数项影响）'],
-      complexity: { time: '分析框架', space: 'O(1)' },
+      highlightTerms: tStatic('learningSteps.complexityAnalysis.steps.concept.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.complexityAnalysis.steps.concept.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.complexityAnalysis.steps.concept.complexityTime'), space: tStatic('learningSteps.complexityAnalysis.steps.concept.complexitySpace') },
     },
     {
       id: 'bigO',
-      title: '大O表示法',
-      description: '大O表示法描述算法上界，常见复杂度从优到劣：O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ) < O(n!)',
+      title: tStatic('learningSteps.complexityAnalysis.steps.bigO.title'),
+      description: tStatic('learningSteps.complexityAnalysis.steps.bigO.description'),
       codeSnippet: `// 常见时间复杂度示例
 // O(1) - 常数
 function access(arr, i) { return arr[i] }
@@ -52,13 +53,13 @@ function bubbleSort(arr) {
       if (arr[j] > arr[j+1]) [arr[j], arr[j+1]] = [arr[j+1], arr[j]]
 }`,
       highlightedLine: 3,
-      highlightTerms: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
-      tips: ['O(log n) 意味着每轮把问题规模减半，2³² 个元素只需 32 次操作即可定位'],
+      highlightTerms: tStatic('learningSteps.complexityAnalysis.steps.bigO.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.complexityAnalysis.steps.bigO.tips').split('|'),
     },
     {
       id: 'space',
-      title: '空间复杂度',
-      description: '空间复杂度衡量算法运行过程中额外占用的内存随输入规模增长的趋势，包括辅助变量、递归栈、动态分配的结构',
+      title: tStatic('learningSteps.complexityAnalysis.steps.space.title'),
+      description: tStatic('learningSteps.complexityAnalysis.steps.space.description'),
       codeSnippet: `// 空间复杂度示例
 // O(1) 空间 - 原地操作
 function reverse(arr) {
@@ -85,13 +86,13 @@ function quickSort(arr, lo, hi) {
   quickSort(arr, p + 1, hi)
 }`,
       highlightedLine: 15,
-      highlightTerms: ['O(1)', 'O(n)', 'O(log n)', '递归栈'],
-      tips: ['递归算法的空间复杂度要算上调用栈，深度为 d 的递归占用 O(d) 空间'],
+      highlightTerms: tStatic('learningSteps.complexityAnalysis.steps.space.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.complexityAnalysis.steps.space.tips').split('|'),
     },
     {
       id: 'cases',
-      title: '最好/最坏/平均情况',
-      description: '同一算法在不同输入下表现不同。快速排序最坏 O(n²)（已排序输入），平均 O(n log n)；查找最好 O(1)（首元素命中），最坏 O(n)',
+      title: tStatic('learningSteps.complexityAnalysis.steps.cases.title'),
+      description: tStatic('learningSteps.complexityAnalysis.steps.cases.description'),
       codeSnippet: `// 以数组查找为例分析三种情况
 function linearSearch(arr, target) {
   for (let i = 0; i < arr.length; i++) {
@@ -109,13 +110,13 @@ function linearSearch(arr, target) {
 // 最坏：每次 pivot 为极值 → O(n²)
 // 平均：随机 pivot → O(n log n)`,
       highlightedLine: 9,
-      highlightTerms: ['最好情况', '最坏情况', '平均情况'],
-      tips: ['工程实践中更关注平均情况，因为最坏情况往往需要特殊构造的输入；但实时系统需考虑最坏情况'],
+      highlightTerms: tStatic('learningSteps.complexityAnalysis.steps.cases.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.complexityAnalysis.steps.cases.tips').split('|'),
     },
     {
       id: 'amortized',
-      title: '均摊分析',
-      description: '均摊分析评估一系列操作的总代价除以操作次数。动态数组扩容单次 O(n)，但 n 次插入均摊 O(1)，因为扩容频率随规模递减',
+      title: tStatic('learningSteps.complexityAnalysis.steps.amortized.title'),
+      description: tStatic('learningSteps.complexityAnalysis.steps.amortized.description'),
       codeSnippet: `// 动态数组扩容的均摊分析
 class DynamicArray {
   constructor() { this.arr = new Array(1); this.size = 0 }
@@ -133,9 +134,9 @@ class DynamicArray {
 // n 次 push 总代价 = n (普通) + (1+2+4+...+n) (扩容) < 3n
 // 均摊每次 push → O(1)`,
       highlightedLine: 14,
-      highlightTerms: ['均摊', 'O(1)', '扩容'],
-      tips: ['均摊分析的三种方法：聚合法（求和平均）、记账法（预存代价）、势能法（势能函数）'],
-      complexity: { time: '均摊 O(1)', space: 'O(n)' },
+      highlightTerms: tStatic('learningSteps.complexityAnalysis.steps.amortized.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.complexityAnalysis.steps.amortized.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.complexityAnalysis.steps.amortized.complexityTime'), space: tStatic('learningSteps.complexityAnalysis.steps.amortized.complexitySpace') },
     },
   ],
 }

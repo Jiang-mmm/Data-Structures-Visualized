@@ -56,7 +56,7 @@ class FakeCtx {
   drawImage = vi.fn()
   fillRect = vi.fn()
   clearRect = vi.fn()
-  getImageData = vi.fn((x: number, y: number, w: number, h: number) => {
+  getImageData = vi.fn((_x: number, _y: number, w: number, h: number) => {
     return { data: new Uint8ClampedArray(w * h * 4), width: w, height: h }
   })
   putImageData = vi.fn()

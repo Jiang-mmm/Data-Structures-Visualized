@@ -148,16 +148,42 @@ export function buildSearchIndex(): SearchItem[] {
     const path = getPathByAlgorithmKey(algorithmKey)
 
     for (const step of config.steps) {
-      const complexity = collectComplexity(step)
+      // M7-5 后：step.title/description/tips/complexity 已迁移到 i18n（路径 learningSteps.*），
+      // 先 resolve 出真实文本再提取复杂度
+      const resolvedTitle = step.title.startsWith('learningSteps.') ? tStatic(step.title) : step.title
+      const resolvedDescription = step.description.startsWith('learningSteps.')
+        ? tStatic(step.description)
+        : step.description
+      const resolvedTips = (step.tips ?? []).map(tip =>
+        tip.startsWith('learningSteps.') ? tStatic(tip) : tip
+      )
+      const resolvedComplexity = step.complexity
+        ? {
+            time:
+              step.complexity.time && step.complexity.time.startsWith('learningSteps.')
+                ? tStatic(step.complexity.time)
+                : step.complexity.time,
+            space:
+              step.complexity.space && step.complexity.space.startsWith('learningSteps.')
+                ? tStatic(step.complexity.space)
+                : step.complexity.space,
+          }
+        : undefined
+      const complexity = collectComplexity({
+        complexity: resolvedComplexity,
+        description: resolvedDescription,
+        codeSnippet: step.codeSnippet,
+        tips: resolvedTips,
+      })
       items.push({
         id: `learning-${algorithmKey}-${step.id}`,
-        title: step.title,
+        title: resolvedTitle,
         subtitle,
         path,
         keywords: [
-          step.title,
+          resolvedTitle,
           algorithmKey,
-          step.description.slice(0, 30),
+          resolvedDescription.slice(0, 30),
           ...(step.highlightTerms ?? []),
         ],
         category: 'learning',

@@ -1,4 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { tStatic } from '../i18n/useI18n'
 
 type ButtonVariant =
   | 'primary'
@@ -104,7 +105,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   ref
 ) {
   const isBusyOrLoading = isLoading || isBusy
-  const title = titleProp || (isBusyOrLoading ? '加载中，请稍候' : disabled ? '当前不可用' : undefined)
+  const title = titleProp || (isBusyOrLoading ? tStatic('button.loading') : disabled ? tStatic('button.unavailable') : undefined)
 
   return (
     <button

@@ -1,12 +1,14 @@
 import type { LearningModeConfig } from './types'
+import { tStatic } from '../../i18n/useI18n'
+
 
 export const bTreeConfig: LearningModeConfig = {
   algorithmKey: 'bTree',
   steps: [
     {
       id: 'concept',
-      title: 'B 树概念',
-      description: '多路自平衡搜索树，每个节点可存储多个 key，所有叶子位于同一层',
+      title: tStatic('learningSteps.bTree.steps.concept.title'),
+      description: tStatic('learningSteps.bTree.steps.concept.description'),
       codeSnippet: `class BTreeNode {
   constructor() {
     this.keys = []      // 存储 key 的数组
@@ -15,14 +17,14 @@ export const bTreeConfig: LearningModeConfig = {
   }
 }`,
       highlightedLine: 4,
-      highlightTerms: ['keys', 'children', 'leaf'],
-      tips: ['B 树由 Bayer 和 McCreight 于 1972 年提出', '每个节点最多 order 个子节点，order-1 个 key', '所有叶子节点位于同一层，保证平衡'],
-      complexity: { time: 'O(log n)', space: 'O(n)' },
+      highlightTerms: tStatic('learningSteps.bTree.steps.concept.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.bTree.steps.concept.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.bTree.steps.concept.complexityTime'), space: tStatic('learningSteps.bTree.steps.concept.complexitySpace') },
     },
     {
       id: 'node-structure',
-      title: '节点结构',
-      description: '阶数为 order 的 B 树：每个节点最多 order-1 个 key，order 个子节点；非根节点最少 ⌈order/2⌉-1 个 key',
+      title: tStatic('learningSteps.bTree.steps.node-structure.title'),
+      description: tStatic('learningSteps.bTree.steps.node-structure.description'),
       codeSnippet: `// order = 3 的 B 树（2-3 树）
 // 每个节点最多 2 个 key，3 个子节点
 // 非根节点最少 1 个 key，2 个子节点
@@ -32,13 +34,13 @@ export const bTreeConfig: LearningModeConfig = {
 //     /    |    \\
 //  [5]  [12,15]  [25,30]`,
       highlightedLine: 2,
-      highlightTerms: ['order', '2-3 树'],
-      tips: ['阶数 order 决定每个节点的最大子节点数', '2-3 树是最简单的 B 树（order=3）', 'B+ 树是 B 树的变体，常用于数据库索引'],
+      highlightTerms: tStatic('learningSteps.bTree.steps.node-structure.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.bTree.steps.node-structure.tips').split('|'),
     },
     {
       id: 'insert',
-      title: '插入操作',
-      description: '从根节点开始，找到合适的叶子节点插入 key。若节点已满则触发分裂',
+      title: tStatic('learningSteps.bTree.steps.insert.title'),
+      description: tStatic('learningSteps.bTree.steps.insert.description'),
       codeSnippet: `function insert(root, key) {
   if (!root) return new LeafNode([key])
 
@@ -53,13 +55,13 @@ export const bTreeConfig: LearningModeConfig = {
   return root
 }`,
       highlightedLine: 6,
-      highlightTerms: ['insertNonFull', 'splitChild'],
-      tips: ['插入总是发生在叶子节点', '插入前检查节点是否已满', '满节点需要分裂才能继续插入'],
+      highlightTerms: tStatic('learningSteps.bTree.steps.insert.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.bTree.steps.insert.tips').split('|'),
     },
     {
       id: 'split',
-      title: '分裂机制',
-      description: '当节点 key 数量超过 maxKeys 时，将中间 key 上移到父节点，原节点分裂为左右两部分',
+      title: tStatic('learningSteps.bTree.steps.split.title'),
+      description: tStatic('learningSteps.bTree.steps.split.description'),
       codeSnippet: `function splitChild(parent, index) {
   const child = parent.children[index]
   const midIndex = Math.floor(child.keys.length / 2)
@@ -79,13 +81,13 @@ export const bTreeConfig: LearningModeConfig = {
   parent.children.splice(index + 1, 0, right)
 }`,
       highlightedLine: 4,
-      highlightTerms: ['midKey', 'slice', 'splice'],
-      tips: ['分裂是 B 树保持平衡的核心操作', '中间 key 上移到父节点', '分裂可能向上传播，直到根节点'],
+      highlightTerms: tStatic('learningSteps.bTree.steps.split.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.bTree.steps.split.tips').split('|'),
     },
     {
       id: 'search',
-      title: '搜索操作',
-      description: '从根节点开始，在 keys 中找到合适的位置，递归或循环进入对应子节点',
+      title: tStatic('learningSteps.bTree.steps.search.title'),
+      description: tStatic('learningSteps.bTree.steps.search.description'),
       codeSnippet: `function search(node, key) {
   let i = 0
   while (i < node.keys.length && key > node.keys[i]) {
@@ -98,13 +100,13 @@ export const bTreeConfig: LearningModeConfig = {
   return search(node.children[i], key)  // 递归搜索子节点
 }`,
       highlightedLine: 6,
-      highlightTerms: ['key === node.keys[i]', 'node.children[i]'],
-      tips: ['搜索时间复杂度为 O(log n)', '每个节点的 keys 是有序的，可用二分查找加速', '搜索路径从根到叶，长度等于树高'],
+      highlightTerms: tStatic('learningSteps.bTree.steps.search.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.bTree.steps.search.tips').split('|'),
     },
     {
       id: 'balance',
-      title: '平衡特性',
-      description: 'B 树通过分裂机制保证所有叶子节点位于同一层，树高始终为 O(log n)',
+      title: tStatic('learningSteps.bTree.steps.balance.title'),
+      description: tStatic('learningSteps.bTree.steps.balance.description'),
       codeSnippet: `// B 树性质保证：
 // 1. 每个节点最多 order 个子节点
 // 2. 非根非叶节点最少 ⌈order/2⌉ 个子节点
@@ -118,13 +120,13 @@ export const bTreeConfig: LearningModeConfig = {
 // 对于 order=3 的 2-3 树：
 // h ≤ log_2(n)`,
       highlightedLine: 3,
-      highlightTerms: ['同一层', 'log'],
-      tips: ['B 树的平衡是天然的——分裂保证叶子同层', '与 AVL/红黑树不同，B 树不需要旋转操作', '更大的阶数意味着更矮的树，适合磁盘 I/O'],
+      highlightTerms: tStatic('learningSteps.bTree.steps.balance.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.bTree.steps.balance.tips').split('|'),
     },
     {
       id: 'applications',
-      title: '应用场景',
-      description: 'B 树广泛应用于数据库索引和文件系统，其多路特性减少磁盘 I/O 次数',
+      title: tStatic('learningSteps.bTree.steps.applications.title'),
+      description: tStatic('learningSteps.bTree.steps.applications.description'),
       codeSnippet: `// 典型应用：
 // 1. MySQL InnoDB 索引（使用 B+ 树）
 // 2. 文件系统目录结构
@@ -141,9 +143,9 @@ export const bTreeConfig: LearningModeConfig = {
 // - 一次 I/O 读取一个节点（多个 key）
 // - 树高较低，I/O 次数少`,
       highlightedLine: 3,
-      highlightTerms: ['B+ 树', '磁盘 I/O'],
-      tips: ['B+ 树是数据库索引的首选结构', '节点大小通常匹配磁盘块大小（4KB-16KB）', 'B 树 vs B+ 树：B+ 树叶子间有链表，范围查询更高效'],
-      complexity: { time: 'O(log n)', space: 'O(n)' },
+      highlightTerms: tStatic('learningSteps.bTree.steps.applications.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.bTree.steps.applications.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.bTree.steps.applications.complexityTime'), space: tStatic('learningSteps.bTree.steps.applications.complexitySpace') },
     },
   ],
 }

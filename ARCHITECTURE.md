@@ -1,8 +1,9 @@
 # 数据结构学习助手 — Architecture 文档
 
-> **版本:** v16.0.0 GA（ENG-1 E2E 迁移 + ENG-2 覆盖率 80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善 全部完成）
+> **版本:** v20（v17.0.0 GA + v18 封存 + v19 i18n M0-M4 全部完成 + v20 A/C 并行执行中）
 > **更新日期:** 2026-06-22
 > **技术栈:** React 19 + Vite 8 + TypeScript 5.8（strict 模式） + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa + gifenc + jszip
+> **配套文档:** [API.md](./API.md) 公共 API 参考 / [CODE_WIKI.md](./CODE_WIKI.md) 核心函数详解 / [CONTRIBUTING.md](./CONTRIBUTING.md) 贡献指南
 
 ---
 
@@ -691,6 +692,137 @@ main.tsx
 | XSS 净化 | `sanitizeInput()` 清理用户输入 | 防止脚本注入 |
 | 导入数据校验 | `validateImportData()` 版本和结构校验 | 防止格式错误崩溃 |
 | Base64 URL-safe | 分享数据使用 URL-safe Base64 | 避免 URL 编码问题 |
+
+---
+
+## v17+ 增量变更记录(2026-06-22)
+
+> 本节补充 v16 之后的版本演进。**v13 体检方法论与 v16 设计统一化详情见 §0**;本节聚焦 v17 UI/UX + v19 i18n + v20 A/C。
+
+### v17.0.0 GA — UI/UX 迭代 R1-R7(merge `b991566`)
+
+| ID | 模块 | 变更 | 受益页面 |
+|----|------|------|---------|
+| **R1** | `Home.tsx` | 新增学习中心折叠面板(默认收起),首屏从 1.8 屏压缩到 1.0 屏 | Home |
+| **R2** | `LogPanel.tsx` | 深色模式新增 4 类型 bright accent + 深背景,WCAG AA 对比度 ≥ 4.5:1 | 全部 17 页 |
+| **R3** | `SortComparePage.tsx` | `PerformanceChart` 移入主内容列 + `onCompare`/`onSwap` 写 code 日志 | SortComparePage |
+| **R4** | `GraphAlgorithmPage.tsx` | `ComplexityChart` 移至右侧 InfoPanel 同级区 | GraphAlgorithmPage |
+| **R5** | 5 个 learning config | 核心 config 扩充到 5-8 题 + `QuizPanel` Fisher-Yates 洗牌 | ArrayPage / SortPage / TreePage |
+| **R6** | 7 个 tree visualizer | 曲线连接 → SVG `<line>` 直线(heap/trie 风格) | B-Tree / AVL / 红黑树 / 线段树 |
+| **R7** | `SortComparePage` | `onCompare`/`onSwap` callback 内每步写 `addLog('code', ...)` | SortComparePage |
+
+**实施文件**: 23 个(Home / LogPanel / InfoPanel / QuizPanel / SortComparePage / GraphAlgorithmPage / 5 个 learning config / 4 个 tree visualizer / locales)
+
+**验证**: lint 0 / 2699 测试 / build OK / bundle OK / 7/7 浏览器 1440p 截图通过
+
+详见 [v17 UI/UX 迭代计划](./docs/superpowers/plans/2026-06-22-v17-ui-ux-iterations.md)。
+
+### v18 i18n 全量替换 — 📦 封存(2026-06-22)
+
+- v18 计划(11 阶段 / ~30 天)由用户拍板**封存**,M0 决策保留为项目记忆(D1=B / D2=C / D3=B / D4=简化 / D5=C)
+- 历史快照: commit `774025a` + 计划文档(v18 i18n full replacement,已封存)
+
+### v19 i18n 渐进迁移 — M0-M4 全部完成(2026-06-22)
+
+基线 v17.0.0 GA,采用**渐进迁移**策略替代 v18 全量替换:
+
+| 阶段 | 范围 | 关键产出 |
+|------|------|---------|
+| **M0** | 8 项决策拍板 | D1=B(UI 层)/ D2=C(按语言拆子目录)/ D3=B(AI + 人工校对)/ D4=B(逐步提交)/ D5=C(namespace + flat keys)/ D6=B(JSX 文本)/ D7=B(高频 10 个 learning config)/ D8=A(AI 初译 + 单次校对) |
+| **M1** | 硬编码字符串调研清单 | [01-hardcoded-strings-inventory.md](./docs/superpowers/i18n-inventory/01-hardcoded-strings-inventory.md)(17,500 字符) |
+| **M2** | 基础设施 | `locales/{zh,en}/` 目录骨架 + `integrity.ts`(240 行,8 函数)+ `pseudoLocale.ts`(170 行,4 函数)+ 46 项测试 |
+| **M3** | TypeScript 强约束 | `AssertSameKeys` 深度递归类型断言 + `no-hardcoded-chinese-in-jsx` 自定义 ESLint 规则(warn 级,作用域 pages/components/visualizers/layouts) + 45 项测试 |
+| **M4-1** | P0 4 页面迁移 | Home / SortPage / ArrayPage / GraphPage,0 字符 UI 硬编码,按用户拍板"一次性收尾" |
+| **M4-2** | P1 13 页面迁移 | Stack / Queue / LinkedList / Tree / AvlTree / RedBlackTree / BTree / SegmentTree / Hash / Heap / Trie / SkipList / UnionFind,0 字符 UI 硬编码 + 312 个 `t()` 调用 + 26 行注释 |
+| **M4-3** | P2 2 页面 | graphAlgorithm / sortCompare,按用户最新指令"一次性全部完成" |
+| **M4 收尾** | 全部 17 页面 | 569 个 `t()` 调用 / 0 字符 UI 硬编码 / AssertSameKeys 编译时镜像成立 / 自定义 ESLint 规则 0 警告 |
+
+详见 [v19 i18n 渐进迁移](./docs/superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md) + [M4 收尾报告](./docs/superpowers/i18n-inventory/06-m4-closure-report.md)。
+
+### v20 A + C 并行执行 — 一次性交付(2026-06-22,本轮)
+
+[v20 执行计划](./docs/superpowers/plans/2026-06-22-v20-execution-plan-a-c.md) — 一次性完成模式(类比 v19 M4-3):
+
+**Option A — i18n M5+M6+M9(本轮完成)**:
+- **M5 组件扫描**: [07-m5-components-scan.md](./docs/superpowers/i18n-inventory/07-m5-components-scan.md) — 42 个组件文件三维度(D1 JSX 文本 / D2 ARIA 属性 / D3 默认 prop)全 0 命中
+- **M6 utils + 组件迁移**: themeColors 主题名 / animationEngine 预设名 / AlgorithmInfo 算法描述 / Button 默认 title 全部迁移到 i18n(`algorithmInfo.*` 20 键 + `button.*` 2 键 + `speedControl.preset*` 5 键)
+- **M9 E2E 框架**: `e2e/i18n.spec.ts` 骨架(zh/en 切换 + locale 完整性)
+
+**Option C — 技术债(本轮完成 C-3)**:
+- **C-3 文档完善**:
+  - 🆕 [API.md](./API.md) 公共 API 文档(本轮新建,11 章节)
+  - 🆕 ARCHITECTURE.md 本节 v17+ 增量变更记录(本节)
+  - ✅ CONTRIBUTING.md 已存在(2026-06-22 验证内容完备)
+- **C-3 范围外**: C-1 react-hooks 修复 / C-2 覆盖率 80→85% / C-4 性能优化(avlTreeVisualizer / useVisualizer)
+
+**本轮基线指标**: lint 0 / 2801 tests / 80.05% 覆盖 / bundle 全 < budget / M5 0 字符硬编码
+
+### v20 第二轮 — A 方向 M7 learning config 教学文案 i18n(2026-06-23 完成)
+
+[v20 M7 实施真源文档](./docs/superpowers/plans/2026-06-23-v20-m7-implementation-plan.md) — 7 子阶段全部完成:
+
+**M7 范围**: 40 个 learning config(17 数据结构 + 8 图算法 + 12 排序 + 3 综合)`title` / `description` / `tips` / `highlightTerms` / `complexity` 字段 100% i18n 化,合计 1,432 键(×2 locales = 2,864 字符串)。
+
+**M7 子阶段交付**:
+- **M7-1** 扫描 40 configs 实际 i18n 键数(1,432 键,~17,296 字符含 codeSnippet 中文注释 ~2,945 字符保留)
+- **M7-2** Locale 类型扩展 + `learningSteps` namespace 骨架(2,864 字符串编译时镜像)
+- **M7-3** zh 值自动提取(从 40 config 反向生成 zh locale 40 文件)
+- **M7-4** en 值 AI 翻译生成(1,432 键 × 2 locales,`src/i18n/locales/en/learning/`)
+- **M7-5** 40 config 迁移(1,024 处 `tStatic('learningSteps.*')` 替换,1024 处 `learning.` → `learningSteps.` 路径修复,ESLint 规则扩展)
+- **M7-6** 40 config 测试套件(4 文件 / 738 测试 / 4 typecheck bug 修复)
+- **M7-7** en 翻译 AI 复审(0 CJK 泄漏 / 1022 value 字符串 / 翻译质量检查脚本 2 个)
+
+**M7 决策点**:
+- **D1** namespace 粒度:A. 单 `learning` 大对象(选择 — 与 M6 `algorithmInfo` 模式一致)
+- **D2** 数组字段序列化:B. `|` 分隔字符串(运行时 `.split('|')`,与 M6 模式一致)
+- **D3** complexity 字段拆分:B. 拆为 `complexityTime` + `complexitySpace` 独立键(扁平键风格)
+- **D4** codeSnippet i18n 范围:B. 仅 UI 字段,codeSnippet 保留中文(代码面向开发者,注释按 rule 业务逻辑用中文)
+- **D5** 加载时序:A. eager `tStatic()`(与 M5/M6 兼容,语言切换需刷新)
+- **D6** ESLint 规则覆盖:A. 启用 `no-hardcoded-chinese-in-jsx` 覆盖 configs/(防止回归)
+- **D7** en 翻译生成:A. AI 初译 → 用户校对 1 轮(D3=B 翻译工作流)
+- **D8** 测试范围:A. 每 config 1 个测试文件(便于定位失败)
+
+**M7 新增文件**:
+```
+src/i18n/locales/{zh,en}/learning/  # 80 个文件(40 × 2 locales)
+src/i18n/locales/{zh,en}/learning/index.ts  # 聚合层
+src/__tests__/configs/learning/learningConfigsRegistry.test.ts  # 90 行
+src/__tests__/configs/learning/learningConfigI18n.test.ts  # 177 行
+src/__tests__/configs/learning/learningConfigQuality.test.ts  # 85 行
+src/__tests__/configs/learning/learningConfigDetails.test.ts  # 85 行
+scripts/check-en-translations.mjs  # 翻译质量检查(value 提取 + 长度分析)
+scripts/check-en-cjk.mjs  # CJK 字符扫描
+scripts/_archive/_fix-learning-to-learningsteps.mjs  # M7-5 路径修复脚本(归档)
+```
+
+**M7 关键约束遵守**:
+- 8 项决策全部遵守 SSOT 原则,变更前先更新 plan 文档
+- 启动异常(§6.4 触发)3 次:M7-5 路径 bug / M7-5 11 测试失败 / M7-6 4 typecheck bug — 全部按 SOP 立即停止 + 完整汇报 + 用户拍板 + 修复
+- M5/M6 残留 11 个 console.log 隔离到 stash(避免误提交)
+- 5 pre-existing typecheck 错误(QuizPanel / animationExport / gif.js)按用户拍板转 v21 backlog B-1~B-5
+
+**M7 验收**: lint 0 / 3550 tests / build OK / bundle OK / i18n integrity 8/8 / 0 CJK 泄漏 / 5 pre-existing v21 backlog
+
+**M7 已知约束**:
+- en 翻译为 AI 初译,待 M7-7 后续用户人工校对 1 轮
+- 5 pre-existing typecheck 错误转 v21 backlog
+
+**M7 范围外**: A M8 实际英文翻译填充(其余页面 / 组件)/ A M9 完整 E2E + pseudoLocale → v20 A 方向下一阶段
+
+### 关键约束 — v17+ 新增
+
+| 约束 | 来源 | 说明 |
+|------|------|------|
+| **InfoPanel 统一右栏** | v17 R4 | 13 页面统一使用 InfoPanel(桌面右侧 / 移动底部抽屉) + `flex-col lg:flex-row` 布局 |
+| **LogPanel 双模式** | v17 R2 | `variant="embedded"`(InfoPanel 内,卡片式时间线) / `variant="standalone"`(向后兼容独立面板) |
+| **i18n 严格 `t()` 化** | v19 M4 | 17 页面 + 42 组件 + 14 utils 0 字符 UI 硬编码;新增 key 须同步 zh/en |
+| **AssertSameKeys 编译时镜像** | v19 M3 | zh/en 键必须完全一致,否则编译失败 |
+| **自定义 ESLint 规则** | v19 M3 | `no-hardcoded-chinese-in-jsx` 作用于 UI 层 + v20 M7-6 扩展至 configs/learning/ |
+| **autoPlay 派生 state** | v17 R5 | QuizPanel / StepExplainer 在 effect 中检测状态变化,避免直接 ref 触发 |
+| **i18n 测试 tStatic** | v20 M6 | 静态字符串走 `tStatic(key)`(模块顶层 / 工具函数用),响应式 UI 走 `useI18n().t(key)` |
+| **learningSteps namespace** | v20 M7 | 40 config 教学文案走 `tStatic('learningSteps.X.steps.Y.field')`,tips/highlightTerms 消费时 `.split('|')` |
+| **复杂度独立键** | v20 M7 | `complexityTime` / `complexitySpace` 拆为独立键(避免深度嵌套,AssertSameKeys TS 深度 10 限制) |
+| **配置聚合层** | v20 M7 | `src/i18n/locales/{zh,en}/learning/index.ts` 聚合 40 文件,导出 `learningStepsLearning*` 常量 |
 
 ---
 

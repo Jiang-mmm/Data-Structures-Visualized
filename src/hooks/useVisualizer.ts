@@ -49,29 +49,33 @@ export function useVisualizer() {
   useEffect(() => {
     updateDimensions()
     const el = containerRef.current
-    if (!el) return
     const svg = svgRef.current
 
-    registerApplyPresetAbortCallback(abortAnimation)
+    // 即使 el 为 null 也要注册 cleanup（避免在 ref 还未 attach 的边界情况下泄漏）
+    let observer: ResizeObserver | null = null
+    let debouncedUpdate: ReturnType<typeof debounce> | null = null
+    if (el) {
+      registerApplyPresetAbortCallback(abortAnimation)
 
-    const debouncedUpdate = debounce(() => {
-      if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current)
-      rafIdRef.current = requestAnimationFrame(updateDimensions)
-    }, 100)
+      debouncedUpdate = debounce(() => {
+        if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current)
+        rafIdRef.current = requestAnimationFrame(updateDimensions)
+      }, 100)
 
-    const observer = new ResizeObserver(() => {
-      debouncedUpdate()
-    })
+      observer = new ResizeObserver(() => {
+        debouncedUpdate!()
+      })
 
-    observer.observe(el)
+      observer.observe(el)
+    }
 
     return () => {
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current)
         rafIdRef.current = null
       }
-      debouncedUpdate.cancel()
-      observer.disconnect()
+      debouncedUpdate?.cancel()
+      observer?.disconnect()
       abortAnimation()
       unregisterApplyPresetAbortCallback()
       if (svg) clearGraphSimulation(svg)

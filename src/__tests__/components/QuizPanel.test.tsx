@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { screen, fireEvent } from '@testing-library/react'
 import QuizPanel from '../../components/QuizPanel'
 import type { QuizQuestion } from '../../types/learning'

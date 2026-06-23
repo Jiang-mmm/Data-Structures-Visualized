@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useLearningMode } from '../hooks/useLearningMode'
+import { tStatic } from '../i18n/useI18n'
 
 describe('useLearningMode', () => {
   it('应该初始化学习模式', () => {
@@ -156,22 +157,22 @@ describe('useLearningMode', () => {
 
   it('冒泡排序学习步骤包含正确的标题', () => {
     const { result } = renderHook(() => useLearningMode('bubble'))
-    expect(result.current.steps[0].title).toBe('初始化')
+    expect(result.current.steps[0].title).toBe(tStatic('learningSteps.bubble.steps.init.title'))
   })
 
   it('快速排序学习步骤包含正确的标题', () => {
     const { result } = renderHook(() => useLearningMode('quick'))
-    expect(result.current.steps[0].title).toBe('选择基准')
+    expect(result.current.steps[0].title).toBe(tStatic('learningSteps.quick.steps.init.title'))
   })
 
   it('归并排序学习步骤包含正确的标题', () => {
     const { result } = renderHook(() => useLearningMode('merge'))
-    expect(result.current.steps[0].title).toBe('初始化')
+    expect(result.current.steps[0].title).toBe(tStatic('learningSteps.merge.steps.init.title'))
   })
 
   it('堆排序学习步骤包含正确的标题', () => {
     const { result } = renderHook(() => useLearningMode('heap'))
-    expect(result.current.steps[0].title).toBe('建堆')
+    expect(result.current.steps[0].title).toBe(tStatic('learningSteps.heap.steps.init.title'))
   })
 
   it('未知算法返回无步骤', () => {
@@ -218,17 +219,17 @@ describe('useLearningMode', () => {
 
   it('链表学习步骤包含正确的标题', () => {
     const { result } = renderHook(() => useLearningMode('linkedlist'))
-    expect(result.current.steps[0].title).toBe('链表结构')
+    expect(result.current.steps[0].title).toBe(tStatic('learningSteps.linkedlist.steps.init.title'))
   })
 
   it('树学习步骤包含正确的标题', () => {
     const { result } = renderHook(() => useLearningMode('tree'))
-    expect(result.current.steps[0].title).toBe('二叉树结构')
+    expect(result.current.steps[0].title).toBe(tStatic('learningSteps.tree.steps.init.title'))
   })
 
   it('哈希表学习步骤包含正确的标题', () => {
     const { result } = renderHook(() => useLearningMode('hash'))
-    expect(result.current.steps[0].title).toBe('哈希函数')
+    expect(result.current.steps[0].title).toBe(tStatic('learningSteps.hash.steps.init.title'))
   })
 
   it('链表步骤支持导航', () => {

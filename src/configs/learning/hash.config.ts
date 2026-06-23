@@ -1,12 +1,14 @@
 import type { LearningModeConfig } from './types'
+import { tStatic } from '../../i18n/useI18n'
+
 
 export const hashConfig: LearningModeConfig = {
   algorithmKey: 'hash',
   steps: [
     {
       id: 'init',
-      title: '哈希函数',
-      description: '将键通过哈希函数映射到数组索引，实现 O(1) 平均访问',
+      title: tStatic('learningSteps.hash.steps.init.title'),
+      description: tStatic('learningSteps.hash.steps.init.description'),
       codeSnippet: `function hash(key, size) {
   let hash = 0
   for (let i = 0; i < key.length; i++) {
@@ -15,26 +17,26 @@ export const hashConfig: LearningModeConfig = {
   return hash % size
 }`,
       highlightedLine: 6,
-      highlightTerms: ['hash % size'],
-      tips: ['好的哈希函数应均匀分布，减少冲突。常见的有乘法哈希、MurmurHash 等'],
-      complexity: { time: '平均 O(1)，最坏 O(n)', space: 'O(n)' },
+      highlightTerms: tStatic('learningSteps.hash.steps.init.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.hash.steps.init.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.hash.steps.init.complexityTime'), space: tStatic('learningSteps.hash.steps.init.complexitySpace') },
     },
     {
       id: 'insert',
-      title: '插入键值对',
-      description: '计算哈希值确定桶位置，将键值对存入对应桶中',
+      title: tStatic('learningSteps.hash.steps.insert.title'),
+      description: tStatic('learningSteps.hash.steps.insert.description'),
       codeSnippet: `function insert(key, value) {
   const index = hash(key, this.size)
   this.buckets[index].push({ key, value })
 }`,
       highlightedLine: 2,
-      highlightTerms: ['hash(key)', 'push'],
-      tips: ['当负载因子（元素数/桶数）超过 0.75 时，通常需要扩容并重新哈希'],
+      highlightTerms: tStatic('learningSteps.hash.steps.insert.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.hash.steps.insert.tips').split('|'),
     },
     {
       id: 'collision',
-      title: '冲突处理',
-      description: '当多个键映射到同一索引时，使用链地址法在桶中存储多个元素',
+      title: tStatic('learningSteps.hash.steps.collision.title'),
+      description: tStatic('learningSteps.hash.steps.collision.description'),
       codeSnippet: `// 桶内链式存储
 // bucket[2] -> (key1, val1) -> (key2, val2)
 // 遍历链表找到目标键
@@ -44,13 +46,13 @@ function get(key) {
     .find(item => item.key === key)
 }`,
       highlightedLine: 6,
-      highlightTerms: ['find', 'item.key'],
-      tips: ['冲突处理的两种主要方式：链地址法（本例）和开放寻址法'],
+      highlightTerms: tStatic('learningSteps.hash.steps.collision.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.hash.steps.collision.tips').split('|'),
     },
     {
       id: 'search',
-      title: '查找操作',
-      description: '计算哈希值定位桶，遍历桶内链表找到匹配的键',
+      title: tStatic('learningSteps.hash.steps.search.title'),
+      description: tStatic('learningSteps.hash.steps.search.description'),
       codeSnippet: `function search(key) {
   const index = hash(key, this.size)
   const bucket = this.buckets[index]
@@ -60,13 +62,13 @@ function get(key) {
   return undefined
 }`,
       highlightedLine: 5,
-      highlightTerms: ['item.key === key'],
-      tips: ['哈希表是 JavaScript 对象/Map 的底层实现，是最重要的数据结构之一'],
+      highlightTerms: tStatic('learningSteps.hash.steps.search.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.hash.steps.search.tips').split('|'),
     },
     {
       id: 'remove',
-      title: '删除键值对 Remove',
-      description: '根据 key 计算哈希定位桶，在桶内查找并删除对应键值对。链地址法需处理链表节点删除。',
+      title: tStatic('learningSteps.hash.steps.remove.title'),
+      description: tStatic('learningSteps.hash.steps.remove.description'),
       codeSnippet: `function remove(key) {
   const index = hash(key, this.size)
   const bucket = this.buckets[index]
@@ -76,9 +78,9 @@ function get(key) {
   return true
 }`,
       highlightedLine: 6,
-      highlightTerms: ['splice', 'findIndex', 'remove'],
-      tips: ['删除前需检查 key 是否存在', '链地址法删除链表节点需维护前驱指针', '开放寻址法删除需标记"已删除"而非真正移除（避免中断探测链）'],
-      complexity: { time: '平均 O(1)，最坏 O(n)', space: 'O(1)' },
+      highlightTerms: tStatic('learningSteps.hash.steps.remove.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.hash.steps.remove.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.hash.steps.remove.complexityTime'), space: tStatic('learningSteps.hash.steps.remove.complexitySpace') },
     },
   ],
   quiz: [

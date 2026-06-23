@@ -276,6 +276,8 @@ export interface Locale {
     selectStructure: string
     enterModule: string
     modules: string
+    learningHub: string
+    learningHubHint: string
   }
   settings: {
     animationSpeed: string
@@ -973,6 +975,61 @@ export interface Locale {
     unionFind: AlgorithmGlossaryEntry
     sort: AlgorithmGlossaryEntry
   }
+  algorithmInfo: {
+    bubble: AlgorithmInfoEntry
+    quick: AlgorithmInfoEntry
+    merge: AlgorithmInfoEntry
+    heap: AlgorithmInfoEntry
+    selection: AlgorithmInfoEntry
+    insertion: AlgorithmInfoEntry
+    counting: AlgorithmInfoEntry
+    shell: AlgorithmInfoEntry
+    radix: AlgorithmInfoEntry
+    bucket: AlgorithmInfoEntry
+  }
+  button: {
+    loading: string
+    unavailable: string
+  }
+  /**
+   * v20 M7 — 学习配置教学文案命名空间
+   *
+   * ⚠️ 命名冲突说明：项目已存在 `learning: { open, close, title }` 用于学习模式 UI 按钮，
+   * 本 namespace 采用更精确的 `learningSteps`（每个 step 教学文案）避免冲突。
+   *
+   * 结构：learningSteps.{configKey}.steps.{stepId}.{title|description|tips|highlightTerms|complexityTime|complexitySpace}
+   *
+   * - configKey 来自 src/configs/learning/*.config.ts 的 algorithmKey 字段
+   * - stepId 来自每个 step 的 id 字段
+   * - tips / highlightTerms 多行用 `|` 分隔（运行时 `.split('|')` 还原为数组）
+   * - complexityTime / complexitySpace 为可选键（部分 step 无 complexity）
+   *
+   * 物理位置：每个 configKey 一文件，存于 src/i18n/locales/{zh,en}/learning/{configKey}.ts
+   * 聚合：src/i18n/locales/{zh,en}/learning/index.ts
+   * 镜像校验：AssertSameKeys<typeof zh, typeof en> 编译时 + integrity.ts 运行时
+   */
+  learningSteps: {
+    [configKey: string]: {
+      steps: {
+        [stepId: string]: {
+          title: string
+          description: string
+          /** tips joined with '|' (consumed as tips.split('|')) */
+          tips: string
+          /** highlightTerms joined with '|' */
+          highlightTerms: string
+          complexityTime?: string
+          complexitySpace?: string
+        }
+      }
+    }
+  }
+}
+
+interface AlgorithmInfoEntry {
+  description: string
+  /** 多行特点用 | 分隔，运行时 split 还原为数组 */
+  characteristics: string
 }
 
 interface AlgorithmGlossaryEntry {
@@ -995,6 +1052,11 @@ interface ContentTierStructure {
   advancedComparison: string
   advancedEngineering: string
 }
+
+// v20 M7 — learning config 教学文案聚合（zh 侧 40 config 完整数据）
+import { learningSteps as zhLearningSteps } from './locales/zh/learning'
+// v20 M7 — learning config 教学文案聚合（en 侧 40 config 完整数据，AI 初译待 M7-7 用户校对）
+import { learningSteps as enLearningSteps } from './locales/en/learning'
 
 export const zh: Locale = {
   common: {
@@ -2155,6 +2217,54 @@ export const zh: Locale = {
       space: 'O(1)',
     },
   },
+  algorithmInfo: {
+    bubble: {
+      description: '重复遍历数组，比较相邻元素并交换顺序不对的对。',
+      characteristics: '稳定排序|原地排序|适合小规模或近乎有序的数据',
+    },
+    quick: {
+      description: '选择基准元素分区，递归排序左右子数组。',
+      characteristics: '不稳定排序|原地排序|平均性能最优的比较排序',
+    },
+    merge: {
+      description: '递归拆分数组至单元素，再有序合并。',
+      characteristics: '稳定排序|需要额外 O(n) 空间|适合链表和外部排序',
+    },
+    heap: {
+      description: '利用最大堆性质，逐步取出堆顶放到末尾。',
+      characteristics: '不稳定排序|原地排序|最坏情况仍为 O(n log n)',
+    },
+    selection: {
+      description: '每轮选出最小元素放到已排序区间末尾。',
+      characteristics: '不稳定排序|原地排序|交换次数最少（最多 n-1 次）',
+    },
+    insertion: {
+      description: '将每个元素插入到前面已排序部分的正确位置。',
+      characteristics: '稳定排序|原地排序|对近乎有序的数据效率极高',
+    },
+    counting: {
+      description: '统计每个值出现次数，按序输出。',
+      characteristics: '稳定排序|非比较排序|适用于值域较小的整数数据',
+    },
+    shell: {
+      description: '按递减间隔序列对子序列做插入排序。',
+      characteristics: '不稳定排序|原地排序|插入排序的高效泛化',
+    },
+    radix: {
+      description: '按位（个十百千…）依次排序，使用稳定排序作为子过程。',
+      characteristics: '稳定排序|非比较排序|适用于固定位数的整数',
+    },
+    bucket: {
+      description: '将数据分配到多个桶中，桶内排序后合并。',
+      characteristics: '稳定（取决于桶内排序）|非比较排序|适用于均匀分布的数据',
+    },
+  },
+  button: {
+    loading: '加载中，请稍候',
+    unavailable: '当前不可用',
+  },
+  // v20 M7: learningSteps namespace 由 src/i18n/locales/zh/learning/ 聚合（40 config）
+  learningSteps: zhLearningSteps,
 }
 
 export const en: Locale = {
@@ -3316,4 +3426,52 @@ export const en: Locale = {
       space: 'O(1)',
     },
   },
+  algorithmInfo: {
+    bubble: {
+      description: 'Repeatedly traverse the array, compare adjacent elements and swap pairs in wrong order.',
+      characteristics: 'Stable|In-place|Suitable for small or nearly sorted data',
+    },
+    quick: {
+      description: 'Select a pivot, partition the array, then recursively sort subarrays.',
+      characteristics: 'Unstable|In-place|Fastest average comparison-based sort',
+    },
+    merge: {
+      description: 'Recursively divide the array to singletons, then merge back in order.',
+      characteristics: 'Stable|Requires O(n) extra space|Suitable for linked lists and external sort',
+    },
+    heap: {
+      description: 'Use max-heap property: repeatedly extract the root to the end.',
+      characteristics: 'Unstable|In-place|Worst case still O(n log n)',
+    },
+    selection: {
+      description: 'Each pass selects the minimum element to the end of the sorted region.',
+      characteristics: 'Unstable|In-place|Minimum number of swaps (at most n-1)',
+    },
+    insertion: {
+      description: 'Insert each element into its correct position in the previously sorted region.',
+      characteristics: 'Stable|In-place|Highly efficient on nearly sorted data',
+    },
+    counting: {
+      description: 'Count occurrences of each value, then output in order.',
+      characteristics: 'Stable|Non-comparison|Suitable for integers with small value range',
+    },
+    shell: {
+      description: 'Sort subsequences with a decreasing gap sequence using insertion sort.',
+      characteristics: 'Unstable|In-place|Efficient generalization of insertion sort',
+    },
+    radix: {
+      description: 'Sort digit by digit (ones, tens, hundreds...) using a stable subroutine.',
+      characteristics: 'Stable|Non-comparison|Suitable for fixed-width integers',
+    },
+    bucket: {
+      description: 'Distribute data into multiple buckets, sort within each bucket, then merge.',
+      characteristics: 'Stable (depends on inner sort)|Non-comparison|Suitable for uniformly distributed data',
+    },
+  },
+  button: {
+    loading: 'Loading, please wait',
+    unavailable: 'Currently unavailable',
+  },
+  // v20 M7: learningSteps namespace 由 src/i18n/locales/en/learning/ 聚合（40 config，AI 初译）
+  learningSteps: enLearningSteps,
 }

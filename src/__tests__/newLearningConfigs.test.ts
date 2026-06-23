@@ -4,6 +4,7 @@ import { complexityAnalysisConfig } from '../configs/learning/complexityAnalysis
 import { advancedDataStructuresConfig } from '../configs/learning/advancedDataStructures.config'
 import { realWorldApplicationsConfig } from '../configs/learning/realWorldApplications.config'
 import type { LearningModeConfig, LearningStep } from '../types/learning'
+import { tStatic } from '../i18n/useI18n'
 
 /**
  * 新增高级学习模块配置单元测试
@@ -91,9 +92,18 @@ describe('新增高级学习模块配置', () => {
     })
 
     it('应包含复杂度分析核心主题步骤', () => {
-      const titles = complexityAnalysisConfig.steps.map(s => s.title)
-      expect(titles).toEqual(expect.arrayContaining(['时间复杂度概念', '大O表示法', '空间复杂度']))
-      expect(titles).toEqual(expect.arrayContaining(['最好/最坏/平均情况', '均摊分析']))
+      const titles = complexityAnalysisConfig.steps.map(s =>
+        s.title.startsWith('learningSteps.') ? tStatic(s.title) : s.title
+      )
+      expect(titles).toEqual(expect.arrayContaining([
+        tStatic('learningSteps.complexityAnalysis.steps.concept.title'),
+        tStatic('learningSteps.complexityAnalysis.steps.bigO.title'),
+        tStatic('learningSteps.complexityAnalysis.steps.space.title'),
+      ]))
+      expect(titles).toEqual(expect.arrayContaining([
+        tStatic('learningSteps.complexityAnalysis.steps.cases.title'),
+        tStatic('learningSteps.complexityAnalysis.steps.amortized.title'),
+      ]))
     })
 
     it('步骤 id 应覆盖核心知识点', () => {
@@ -112,14 +122,16 @@ describe('新增高级学习模块配置', () => {
     })
 
     it('应包含 5 个高级数据结构步骤', () => {
-      const titles = advancedDataStructuresConfig.steps.map(s => s.title)
+      const titles = advancedDataStructuresConfig.steps.map(s =>
+        s.title.startsWith('learningSteps.') ? tStatic(s.title) : s.title
+      )
       expect(titles).toEqual(
         expect.arrayContaining([
-          '红黑树应用',
-          'B树数据库索引',
-          '跳表 Redis 应用',
-          '布隆过滤器',
-          '并查集',
+          tStatic('learningSteps.advancedDataStructures.steps.redBlackTree.title'),
+          tStatic('learningSteps.advancedDataStructures.steps.bTree.title'),
+          tStatic('learningSteps.advancedDataStructures.steps.skipList.title'),
+          tStatic('learningSteps.advancedDataStructures.steps.bloomFilter.title'),
+          tStatic('learningSteps.advancedDataStructures.steps.unionFind.title'),
         ])
       )
     })
@@ -140,15 +152,17 @@ describe('新增高级学习模块配置', () => {
     })
 
     it('应包含 6 个实际应用场景步骤', () => {
-      const titles = realWorldApplicationsConfig.steps.map(s => s.title)
+      const titles = realWorldApplicationsConfig.steps.map(s =>
+        s.title.startsWith('learningSteps.') ? tStatic(s.title) : s.title
+      )
       expect(titles).toEqual(
         expect.arrayContaining([
-          '浏览器历史记录（栈）',
-          '任务队列（队列）',
-          '文件系统（树）',
-          '社交网络（图）',
-          '搜索引擎（字典树）',
-          '缓存（哈希表）',
+          tStatic('learningSteps.realWorldApplications.steps.browserHistory.title'),
+          tStatic('learningSteps.realWorldApplications.steps.taskQueue.title'),
+          tStatic('learningSteps.realWorldApplications.steps.fileSystem.title'),
+          tStatic('learningSteps.realWorldApplications.steps.socialNetwork.title'),
+          tStatic('learningSteps.realWorldApplications.steps.searchEngine.title'),
+          tStatic('learningSteps.realWorldApplications.steps.cache.title'),
         ])
       )
     })

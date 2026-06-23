@@ -1,12 +1,14 @@
 import type { LearningModeConfig } from './types'
+import { tStatic } from '../../i18n/useI18n'
+
 
 export const trieConfig: LearningModeConfig = {
   algorithmKey: 'trie',
   steps: [
     {
       id: 'structure',
-      title: '字典树结构',
-      description: 'Trie 是多叉树结构，每条边代表一个字符，从根到某节点的路径构成一个前缀',
+      title: tStatic('learningSteps.trie.steps.structure.title'),
+      description: tStatic('learningSteps.trie.steps.structure.description'),
       codeSnippet: `// Trie（前缀树）
 //        root
 //       / | \\
@@ -19,14 +21,14 @@ export const trieConfig: LearningModeConfig = {
 // * 标记单词结束 (isEnd)
 // 路径 "a→p→e" = 单词 "ape"`,
       highlightedLine: 2,
-      highlightTerms: ['前缀', 'isEnd'],
-      tips: ['Trie 的空间换时间：用 O(总字符数) 空间换取 O(单词长度) 的查找时间'],
-      complexity: { time: 'O(m)，m 为单词长度', space: 'O(总字符数)' },
+      highlightTerms: tStatic('learningSteps.trie.steps.structure.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.trie.steps.structure.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.trie.steps.structure.complexityTime'), space: tStatic('learningSteps.trie.steps.structure.complexitySpace') },
     },
     {
       id: 'insert',
-      title: '插入单词',
-      description: '逐字符沿路径向下，不存在则创建新节点，最后一个字符节点标记为单词结束',
+      title: tStatic('learningSteps.trie.steps.insert.title'),
+      description: tStatic('learningSteps.trie.steps.insert.description'),
       codeSnippet: `function insert(root, word) {
   let node = root
   for (const ch of word) {
@@ -37,13 +39,13 @@ export const trieConfig: LearningModeConfig = {
   node.isEnd = true  // 标记单词结束
 }`,
       highlightedLine: 8,
-      highlightTerms: ['isEnd', 'children[ch]'],
-      tips: ['共享前缀的单词会共用路径节点，这是 Trie 节省空间的关键'],
+      highlightTerms: tStatic('learningSteps.trie.steps.insert.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.trie.steps.insert.tips').split('|'),
     },
     {
       id: 'search',
-      title: '查找单词',
-      description: '逐字符沿路径查找，若路径中断则不存在，到达末尾时检查 isEnd 标记',
+      title: tStatic('learningSteps.trie.steps.search.title'),
+      description: tStatic('learningSteps.trie.steps.search.description'),
       codeSnippet: `function search(root, word) {
   let node = root
   for (const ch of word) {
@@ -54,13 +56,13 @@ export const trieConfig: LearningModeConfig = {
   return node.isEnd  // 必须是完整单词
 }`,
       highlightedLine: 4,
-      highlightTerms: ['路径中断', 'isEnd'],
-      tips: ['注意区分"查找单词"和"查找前缀"：前者需要检查 isEnd，后者不需要'],
+      highlightTerms: tStatic('learningSteps.trie.steps.search.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.trie.steps.search.tips').split('|'),
     },
     {
       id: 'prefix',
-      title: '前缀匹配',
-      description: '与查找类似，但不要求 isEnd 标记，只要路径存在即匹配成功，可用于自动补全',
+      title: tStatic('learningSteps.trie.steps.prefix.title'),
+      description: tStatic('learningSteps.trie.steps.prefix.description'),
       codeSnippet: `function startsWith(root, prefix) {
   let node = root
   for (const ch of prefix) {
@@ -72,13 +74,13 @@ export const trieConfig: LearningModeConfig = {
   // 可继续遍历子树获取所有匹配词
 }`,
       highlightedLine: 4,
-      highlightTerms: ['前缀不存在', '自动补全'],
-      tips: ['Trie 的典型应用：搜索引擎自动补全、拼写检查、IP 路由表、词频统计'],
+      highlightTerms: tStatic('learningSteps.trie.steps.prefix.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.trie.steps.prefix.tips').split('|'),
     },
     {
       id: 'remove',
-      title: '删除单词 Remove',
-      description: '递归查找单词路径，从叶子向上回溯删除节点。仅删除不影响其他单词的节点，保留共享前缀。',
+      title: tStatic('learningSteps.trie.steps.remove.title'),
+      description: tStatic('learningSteps.trie.steps.remove.description'),
       codeSnippet: `function remove(node, word, depth = 0) {
   if (depth === word.length) {
     node.isEnd = false
@@ -93,9 +95,9 @@ export const trieConfig: LearningModeConfig = {
   }
 }`,
       highlightedLine: 9,
-      highlightTerms: ['isEnd', 'delete', 'remove'],
-      tips: ['删除前需确认单词存在', '共享前缀节点不能删除（其他单词仍在用）', '仅将 isEnd 置 false 即可"软删除"'],
-      complexity: { time: 'O(m)，m 为单词长度', space: 'O(m) 递归栈' },
+      highlightTerms: tStatic('learningSteps.trie.steps.remove.highlightTerms').split('|'),
+      tips: tStatic('learningSteps.trie.steps.remove.tips').split('|'),
+      complexity: { time: tStatic('learningSteps.trie.steps.remove.complexityTime'), space: tStatic('learningSteps.trie.steps.remove.complexitySpace') },
     },
   ],
 }

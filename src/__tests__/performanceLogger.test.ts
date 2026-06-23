@@ -179,4 +179,135 @@ describe('performanceLogger', () => {
       expect(info === null || typeof info === 'object').toBe(true)
     })
   })
+
+  describe('recordFunction 详细', () => {
+    it('应正确处理多个函数', () => {
+      perfLogger.recordFunction('funcA', 5)
+      perfLogger.recordFunction('funcB', 15)
+      const stats = perfLogger.getFunctionStats()
+      expect(stats.has('funcA')).toBe(true)
+      expect(stats.has('funcB')).toBe(true)
+      expect(stats.get('funcA')!.callCount).toBe(1)
+      expect(stats.get('funcB')!.callCount).toBe(1)
+    })
+
+    it('应正确累计 callCount', () => {
+      perfLogger.recordFunction('accFunc', 5)
+      perfLogger.recordFunction('accFunc', 10)
+      perfLogger.recordFunction('accFunc', 15)
+      const stats = perfLogger.getFunctionStats()
+      expect(stats.get('accFunc')!.callCount).toBe(3)
+    })
+
+    it('应记录首次/末次调用时间', () => {
+      const before = Date.now()
+      perfLogger.recordFunction('timeFunc', 5)
+      const after = Date.now()
+      const stats = perfLogger.getFunctionStats()
+      const t = stats.get('timeFunc')!
+      expect(t.firstCallAt).toBeGreaterThanOrEqual(before)
+      expect(t.firstCallAt).toBeLessThanOrEqual(after)
+      expect(t.lastCallAt).toBeGreaterThanOrEqual(t.firstCallAt)
+    })
+
+    it('应限制函数记录数（>500 shift）', () => {
+      for (let i = 0; i < 510; i++) {
+        perfLogger.recordFunction('bigFunc', i % 100)
+      }
+      const stats = perfLogger.getFunctionStats()
+      // callCount 应该是 510，但 times 数组最多 500
+      expect(stats.get('bigFunc')!.callCount).toBe(510)
+    })
+
+    it('当首次与末次时间相同时 callsPerSecond 应为 0', () => {
+      perfLogger.recordFunction('sameTimeFunc', 5)
+      const stats = perfLogger.getFunctionStats()
+      // 单次调用时 firstCallAt === lastCallAt → elapsedSec = 0 → callsPerSecond = 0
+      expect(stats.get('sameTimeFunc')!.callsPerSecond).toBe(0)
+    })
+  })
+
+  describe('FPS stdDev', () => {
+    it('应计算 FPS 标准差', () => {
+      perfLogger.recordFPS(60, 16)
+      perfLogger.recordFPS(40, 25)
+      perfLogger.recordFPS(50, 20)
+      const stats = perfLogger.getFPSStats()
+      expect(stats.stdDevFPS).toBeGreaterThan(0)
+    })
+
+    it('应返回 avgFrameTime', () => {
+      perfLogger.recordFPS(60, 16)
+      perfLogger.recordFPS(30, 33)
+      const stats = perfLogger.getFPSStats()
+      expect(stats.avgFrameTime).toBe(24.5)
+    })
+  })
+
+  describe('log 类型分支', () => {
+    it('应记录 warning 类型日志', () => {
+      perfLogger.log('warning', 'warn message', { key: 'val' })
+      const entries = perfLogger.getLogEntries()
+      const warn = entries.find(e => e.type === 'warning')
+      expect(warn).toBeTruthy()
+      expect(warn?.data).toEqual({ key: 'val' })
+    })
+
+    it('应记录 fps 类型日志', () => {
+      perfLogger.log('fps', 'fps message')
+      const entries = perfLogger.getLogEntries()
+      const fps = entries.find(e => e.type === 'fps')
+      expect(fps).toBeTruthy()
+    })
+
+    it('应记录 function 类型日志', () => {
+      perfLogger.log('function', 'func message')
+      const entries = perfLogger.getLogEntries()
+      expect(entries.find(e => e.type === 'function')).toBeTruthy()
+    })
+
+    it('应记录 memory 类型日志', () => {
+      perfLogger.log('memory', 'mem message')
+      const entries = perfLogger.getLogEntries()
+      expect(entries.find(e => e.type === 'memory')).toBeTruthy()
+    })
+
+    it('应限制日志条数（>2000 shift）', () => {
+      for (let i = 0; i < 2010; i++) {
+        perfLogger.log('function', `msg ${i}`)
+      }
+      const entries = perfLogger.getLogEntries()
+      expect(entries.length).toBeLessThanOrEqual(2000)
+    })
+  })
+
+  describe('getSummary 完整路径', () => {
+    it('应包含函数调用统计', () => {
+      perfLogger.recordFunction('sumFunc', 10)
+      const summary = getPerfSummary()
+      expect(summary).toContain('sumFunc')
+      expect(summary).toContain('调用次数')
+    })
+
+    it('有 memory 时应包含 JS Heap 信息', () => {
+      // 模拟 performance.memory
+      const origMem = (performance as any).memory
+      ;(performance as any).memory = {
+        usedJSHeapSize: 1024 * 1024 * 50, // 50MB
+        totalJSHeapSize: 1024 * 1024 * 100, // 100MB
+        jsHeapSizeLimit: 1024 * 1024 * 1000, // 1000MB
+      }
+      const summary = getPerfSummary()
+      expect(summary).toContain('JS Heap')
+      ;(performance as any).memory = origMem
+    })
+
+    it('无 memory 时应不包含 JS Heap', () => {
+      const origMem = (performance as any).memory
+      delete (performance as any).memory
+      const summary = getPerfSummary()
+      expect(summary).not.toContain('JS Heap')
+      ;(performance as any).memory = origMem
+    })
+  })
 })

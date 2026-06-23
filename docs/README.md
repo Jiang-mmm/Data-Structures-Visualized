@@ -1,8 +1,8 @@
 # 文档目录（docs/）
 
-> **整理日期:** 2026-06-22（v16.0.0 GA）
+> **整理日期:** 2026-06-22（v20 A+C 并行一次性交付完成 / 长线路线图 v18→v24 已交付）
 > **目的:** 提供项目所有文档的统一入口，明确活跃文档与归档文档的导航规则。
-> **配套根目录文档:** README.md, CLAUDE.md, CHANGELOG.md, ARCHITECTURE.md, PROJECT_SUMMARY.md, CODE_WIKI.md, TODO.md, WORKLOG.md, CONTRIBUTING.md
+> **配套根目录文档:** README.md, CLAUDE.md, CHANGELOG.md, ARCHITECTURE.md, PROJECT_SUMMARY.md, CODE_WIKI.md, TODO.md, WORKLOG.md, CONTRIBUTING.md, API.md
 
 ---
 
@@ -72,7 +72,16 @@ docs/
 | [2026-06-19-unified-info-panel.md](./superpowers/plans/2026-06-19-unified-info-panel.md) | 2026-06-19 | ✅ 已完成 |
 | [2026-06-20-v12-advanced-data-structures-iteration-plan.md](./superpowers/plans/2026-06-20-v12-advanced-data-structures-iteration-plan.md) | 2026-06-20 | ✅ 已完成 |
 | [2026-06-20-v13-code-audit-plan.md](./superpowers/plans/2026-06-20-v13-code-audit-plan.md) | 2026-06-20 | ✅ 已完成（Phase A/B/C/D 全部结束） |
-| [2026-06-21-v13-phase-h-learning-enhancements.md](./superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md) | 2026-06-21 | ⏳ H2 已完成，H3/H1 待启动 |
+| [2026-06-21-v13-phase-h-learning-enhancements.md](./superpowers/plans/2026-06-21-v13-phase-h-learning-enhancements.md) | 2026-06-21 | ✅ 已完成（H1/H2/H3 全交付）|
+| [2026-06-22-design-unification-v16.md](./superpowers/plans/2026-06-22-design-unification-v16.md) | 2026-06-22 | ✅ 已完成 |
+| [2026-06-22-i18n-glossary-v15-enh2.md](./superpowers/plans/2026-06-22-i18n-glossary-v15-enh2.md) | 2026-06-22 | ✅ 已完成 |
+| [2026-06-22-v17-ui-ux-iterations.md](./superpowers/plans/2026-06-22-v17-ui-ux-iterations.md) | 2026-06-22 | ✅ 已完成 |
+| [2026-06-22-v19-i18n-progressive-migration.md](./superpowers/plans/2026-06-22-v19-i18n-progressive-migration.md) | 2026-06-22 | 🟢 M0-M4 已完成（基线 v17.0.0 GA）|
+| [2026-06-22-v19-m4-pages-migration.md](./superpowers/plans/2026-06-22-v19-m4-pages-migration.md) | 2026-06-22 | ✅ M4 全部收尾（20 目标 100% `t()` 化）|
+| [2026-06-22-v20-next-iteration-plan.md](./superpowers/plans/2026-06-22-v20-next-iteration-plan.md) | 2026-06-22 | ✅ v20 3 方向文档已交付（i18n M5-M9 + 技术债清理 + AI 伴侣）|
+| [2026-06-22-v20-execution-plan-a-c.md](./superpowers/plans/2026-06-22-v20-execution-plan-a-c.md) | 2026-06-22 | ✅ v20 A + C 并行一次性交付完成（A M5 扫描 0 命中 + A M6 4 文件迁移 + A M9 e2e 框架 + C-3 API.md + ARCHITECTURE.md v17+ 章节）|
+| [2026-06-22-v20-round2-execution-plan.md](./superpowers/plans/2026-06-22-v20-round2-execution-plan.md) | 2026-06-22 | ⏳ v20 第二轮等待用户审阅（C-1+C-4+C-2+A M7+M8+M9 共 6 子阶段，~17d，B 方向不启动）|
+| [2026-06-22-longterm-roadmap-v18-to-v24.md](./superpowers/plans/2026-06-22-longterm-roadmap-v18-to-v24.md) | 2026-06-22 | 🆕 6-12 月长线路线图（v20-v23，3 大战略主题）|
 
 ### audit-2026-06-20/ v13 全面代码体检
 
@@ -157,4 +166,4 @@ docs/
 
 ---
 
-> 最后更新: 2026-06-21
+> 最后更新: 2026-06-22（v20 A+C 并行一次性交付完成）

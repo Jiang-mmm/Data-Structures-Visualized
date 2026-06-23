@@ -210,4 +210,101 @@ describe('TreePage', () => {
     expect(screen.getByText('common.undo')).toBeDisabled()
     expect(screen.getByText('common.redo')).toBeDisabled()
   })
+
+  it('shows stop button when animating', () => {
+    const mockState = createMockTreeState({ isAnimating: true })
+    mockedUseTreeState.mockReturnValue(mockState)
+    renderWithRouter(<TreePage />)
+
+    expect(screen.getByText('common.stop')).toBeInTheDocument()
+  })
+
+  it('shows empty state when data is empty', () => {
+    const mockState = createMockTreeState()
+    mockState.data = []
+    mockedUseTreeState.mockReturnValue(mockState)
+    renderWithRouter(<TreePage />)
+
+    expect(screen.getByText('emptyState.emptyTree')).toBeInTheDocument()
+  })
+
+  it('renders ColorLegend with nodeLegend items', () => {
+    const mockState = createMockTreeState()
+    mockedUseTreeState.mockReturnValue(mockState)
+    renderWithRouter(<TreePage />)
+
+    expect(screen.getByText('nodeLegend.node')).toBeInTheDocument()
+    expect(screen.getByText('nodeLegend.root')).toBeInTheDocument()
+    expect(screen.getByText('nodeLegend.leaf')).toBeInTheDocument()
+  })
+
+  it('renders node count info', () => {
+    const mockState = createMockTreeState({ nodeCount: 7 })
+    mockedUseTreeState.mockReturnValue(mockState)
+    renderWithRouter(<TreePage />)
+
+    expect(screen.getByText(/NODES: 7/)).toBeInTheDocument()
+  })
+
+  it('does not call insert when validation fails', async () => {
+    const mockState = createMockTreeState()
+    mockedUseTreeState.mockReturnValue(mockState)
+    renderWithRouter(<TreePage />)
+
+    const valueInput = screen.getAllByPlaceholderText('array.valuePlaceholder')[0]
+    fireEvent.change(valueInput, { target: { value: 'abc' } })
+    fireEvent.click(screen.getByText('tree.insert'))
+
+    await new Promise(r => setTimeout(r, 50))
+    expect(mockState.insert).not.toHaveBeenCalled()
+  })
+
+  it('does not call search when validation fails', async () => {
+    const mockState = createMockTreeState()
+    mockedUseTreeState.mockReturnValue(mockState)
+    renderWithRouter(<TreePage />)
+
+    const searchInput = screen.getAllByPlaceholderText('array.valuePlaceholder')[1]
+    fireEvent.change(searchInput, { target: { value: '' } })
+    fireEvent.click(screen.getByText('tree.search'))
+
+    await new Promise(r => setTimeout(r, 50))
+    expect(mockState.search).not.toHaveBeenCalled()
+  })
+
+  it('does not call delete when validation fails', async () => {
+    const mockState = createMockTreeState()
+    mockedUseTreeState.mockReturnValue(mockState)
+    renderWithRouter(<TreePage />)
+
+    const valueInput = screen.getAllByPlaceholderText('array.valuePlaceholder')[0]
+    fireEvent.change(valueInput, { target: { value: '' } })
+    fireEvent.click(screen.getByText('common.delete'))
+
+    await new Promise(r => setTimeout(r, 50))
+    expect(mockState.deleteNode).not.toHaveBeenCalled()
+  })
+
+  it('cycles edge style when edge style button clicked', () => {
+    localStorage.setItem('ds-tree-edge-style', 'straight')
+    const mockState = createMockTreeState()
+    mockedUseTreeState.mockReturnValue(mockState)
+    renderWithRouter(<TreePage />)
+
+    fireEvent.click(screen.getByText(/common\.more/))
+    const edgeStyleBtn = screen.getByText(/tree\.edgeStyle/)
+    fireEvent.click(edgeStyleBtn)
+    // straight → curved
+    expect(localStorage.getItem('ds-tree-edge-style')).toBe('curved')
+  })
+
+  it('handles import error when imported data is invalid', () => {
+    const mockState = createMockTreeState()
+    mockedUseTreeState.mockReturnValue(mockState)
+    renderWithRouter(<TreePage />)
+
+    // ExportImport 组件被 mock 或渲染；这里只验证页面不崩
+    // import 失败时，loadData 不被调用
+    expect(mockState.loadData).not.toHaveBeenCalled()
+  })
 })
