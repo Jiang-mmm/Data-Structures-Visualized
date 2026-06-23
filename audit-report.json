@@ -1,0 +1,114 @@
+{
+  "auditReportVersion": 2,
+  "note": "B-10 Dependabot 6 vulnerabilities 升级成果（feature/v21-b10-deps）— 按用户拍板策略 A 仅升级高危 CVE ≥ 7（最小爆炸半径）",
+  "pre_upgrade": {
+    "registry": "https://registry.npmjs.org/",
+    "vulnerabilities_count_user_reported": 6,
+    "by_severity_user_reported": {
+      "high": 2,
+      "moderate": 2,
+      "low": 2
+    },
+    "vulnerabilities_count_npm_audit": 1,
+    "vulnerabilities_count_advisories_npm_audit": 7,
+    "package_undici_range": "7.0.0 - 7.27.2",
+    "package_undici_installed_pre": "7.26.0",
+    "package_origin": "transitive via jsdom@29.1.1 (devDependency)",
+    "advisories": [
+      {
+        "id": "GHSA-vmh5-mc38-953g",
+        "source": 1121187,
+        "title": "undici vulnerable to TLS certificate validation bypass via dropped requestTls in SOCKS5 ProxyAgent",
+        "severity": "high",
+        "cvss": 7.4,
+        "cwe": ["CWE-295"],
+        "fix_range": ">=7.23.0 <7.28.0"
+      },
+      {
+        "id": "GHSA-pr7r-676h-xcf6",
+        "source": 1121189,
+        "title": "undici vulnerable to cross-user information disclosure via shared cache whitespace bypass",
+        "severity": "moderate",
+        "cvss": 5.9,
+        "cwe": ["CWE-524"],
+        "fix_range": ">=7.0.0 <7.28.0"
+      },
+      {
+        "id": "GHSA-p88m-4jfj-68fv",
+        "source": 1121241,
+        "title": "undici vulnerable to HTTP header injection via Set-Cookie percent-decoding",
+        "severity": "moderate",
+        "cvss": 5.9,
+        "cwe": ["CWE-93"],
+        "fix_range": ">=7.0.0 <7.28.0"
+      },
+      {
+        "id": "GHSA-vxpw-j846-p89q",
+        "source": 1121244,
+        "title": "undici WebSocket client vulnerable to denial of service via fragment count bypass",
+        "severity": "high",
+        "cvss": 7.5,
+        "cwe": ["CWE-400", "CWE-770"],
+        "fix_range": ">=7.0.0 <7.28.0"
+      },
+      {
+        "id": "GHSA-hm92-r4w5-c3mj",
+        "source": 1121247,
+        "title": "undici vulnerable to cross-origin request routing via SOCKS5 proxy pool reuse",
+        "severity": "high",
+        "cvss": 7.5,
+        "cwe": ["CWE-346"],
+        "fix_range": ">=7.23.0 <7.28.0"
+      },
+      {
+        "id": "GHSA-35p6-xmwp-9g52",
+        "source": 1121249,
+        "title": "undici vulnerable to HTTP response queue poisoning via keep-alive socket reuse",
+        "severity": "low",
+        "cvss": 3.7,
+        "cwe": ["CWE-367"],
+        "fix_range": ">=7.0.0 <7.28.0"
+      },
+      {
+        "id": "GHSA-g8m3-5g58-fq7m",
+        "source": 1121254,
+        "title": "undici vulnerable to Set-Cookie SameSite attribute downgrade via permissive substring matching",
+        "severity": "low",
+        "cvss": 3.7,
+        "cwe": ["CWE-183"],
+        "fix_range": ">=7.0.0 <7.28.0"
+      }
+    ],
+    "high_advisories_count_actual": 3,
+    "high_advisories_count_user_reported": 2,
+    "note_high_count": "用户报告 2 high 但 npm audit 列出 3 个 high GHSA（GHSA-vmh5-mc38-953g 7.4 / GHSA-vxpw-j846-p89q 7.5 / GHSA-hm92-r4w5-c3mj 7.5）— 可能 GitHub Dependabot web UI 折叠同包漏洞。所有 3 个 high 均通过 undici 单一升级到 7.28+ 修复"
+  },
+  "post_upgrade": {
+    "registry": "https://registry.npmjs.org/",
+    "vulnerabilities_total": 0,
+    "vulnerabilities_by_severity": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "package_undici_installed_post": "7.28.0",
+    "advisories_fixed": 7,
+    "high_advisories_fixed": 3,
+    "moderate_advisories_fixed": 2,
+    "low_advisories_fixed": 2,
+    "dependencies_count": 715
+  },
+  "remediation": {
+    "strategy": "A — 仅高危 CVE ≥ 7（用户拍板，最小爆炸半径）",
+    "method": "package.json + overrides",
+    "package_json_diff": {
+      "added_field": "overrides",
+      "value": { "undici": "^7.28.0" }
+    },
+    "why_overrides": "undici 是 jsdom@29.1.1 (devDependency, ~29.1.1) 的 transitive dep；jsdom 29.x 最新 29.1.1 仍声明 undici@^7.25.0。npm overrides 强制整树使用 undici >= 7.28.0，不修改 jsdom 限定符（保持 §11 地基红线 #10 devDependencies ~ 限定）",
+    "version_bump": "undici 7.26.0 → 7.28.0（minor + patch，仅安全修复；无 major / breaking）",
+    "files_changed": ["package.json", "package-lock.json", "audit-report.json"]
+  }
+}
