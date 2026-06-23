@@ -1,8 +1,8 @@
 # 数据结构学习助手 - TODO 列表
 
-> **版本:** **v20.1.0 patch**（v17.0.0 GA + v19 M0-M4 + v20 A+C 全部子阶段 + v20 C-2 收尾；v20.0.0 GA 跳过改用 v20.1.0 patch — 2026-06-23 拍板）
-> **更新日期:** 2026-06-23
-> **状态:** **v20.1.0 patch 已发布到 origin 2026-06-23**（main @ `e3bae56` + tag `v20.1.0 @ f419c7e` 已 push / 221 files / +20,914 / -1,050 / 0 冲突 / 3797 tests / 0 lint / Lines 85.84% / Statements 82% / Branches 68.93% / 2 pre-existing typecheck（B-4 gif.js / B-5 Uint8Array — v21 backlog）→ GitHub Release Notes 草稿已就绪，待用户在 GitHub UI 创建 Release）→ A M8 / A M9 / v20.0.0 GA 移交 v21 候选 B-7/B-8/B-10（Dependabot 6 vulnerabilities）
+> **版本:** **v20.1.0 patch** + **v21 A3 typecheck 修复**（feature/v21-b4b5-typecheck @ `be33345` — 2026-06-24 启动 v21 阶段，A3 完工；v17.0.0 GA + v19 M0-M4 + v20 A+C 全部子阶段 + v20 C-2 收尾；v20.0.0 GA 跳过改用 v20.1.0 patch — 2026-06-23 拍板）
+> **更新日期:** 2026-06-24
+> **状态:** **v21 阶段 2026-06-24 启动**（按用户「ABC 全选（并行）」拍板）→ ✅ A3 typecheck 修复完工（`be33345` / 2 行 / typecheck 0 / 5 项硬门槛全过 / VERIFICATION: PASS）→ 🟡 A1 (B-6 覆盖率补完 2-3d) / A2 (B-10 Dependabot 0.5d) / B (B-7 翻译填充 5d) 待用户对关键决策点拍板 → ❌ C (design-md/ `.gitignore`) 用户拍板 C 先跳过保留悬而未决。**v20.1.0 patch 已发布到 origin 2026-06-23**（main @ `edaaf95` + tag `v20.1.0 @ e3bae56` 已 push / 221 files / +20,914 / -1,050 / 0 冲突 / 3797 tests / 0 lint / Lines 85.84% / Statements 82% / Branches 68.93% → GitHub Release Notes 草稿已就绪，待用户在 GitHub UI 创建 Release）
 > **v16.0.0 GA:** 已完成（2026-06-22，merge `b8d0b03`）— 设计统一化 + ENG-1 E2E 迁移 + ENG-2 覆盖率 >80% + ENG-3 lint 归零 + ENH-1 动画导出 + ENH-2 i18n 完善
 > **v15 GA:** 已完成（2026-06-22）— 体验打磨（E1 PWA + E2 大数据 + E3 手势 + E4 模糊搜索 + U2 响应式 + U3 布局一致性 + U4 SVG 图标 + U5 禁用原因 + ISSUE-007 排序撤销阻塞）
 > **v14 GA:** 已完成（2026-06-22）— 内容扩张（D1/G1/G2/G3/F2）

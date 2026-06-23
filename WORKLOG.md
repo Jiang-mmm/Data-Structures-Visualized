@@ -2,6 +2,58 @@
 
 ---
 
+## 2026-06-24 | v21 阶段启动 + A3 typecheck 修复完工（feature/v21-b4b5-typecheck @ `be33345`）
+
+### 任务范围
+
+按用户「ABC 全选（并行）」拍板（2026-06-24）：
+
+- **A1** (B-6 覆盖率补完, 2-3d) / **A2** (B-10 Dependabot, 0.5d) / **A3** (B-4+B-5 typecheck, 0.5d) / **B** (B-7 翻译填充, 5d) 4 子任务 B 并行（§7.2.1）
+- **C** (design-md/ `.gitignore`) 用户拍板 C **先跳过**，保留悬而未决
+
+### A3 完工详情
+
+- 分支：`feature/v21-b4b5-typecheck`（基于 main @ `edaaf95`）
+- 提交：`be33345` / 1 file / +2 -2
+- 修复：
+  - **B-4** `src/utils/animationExport.ts:234` — `applyPalette` 第三个参数误传 `'rgb565'` 字符串 → 修正为 `{ format: 'rgb565' }`（按 `ApplyPaletteOptions` 类型声明）
+  - **B-5** `src/utils/animationExport.ts:242` — `Uint8Array<ArrayBufferLike>` 不兼容 `BlobPart` → 修正为 `bytes as BlobPart` 类型断言
+- 5 项硬门槛全过：
+  - `npm run lint` → 0 errors / 0 warnings
+  - `npx tsc --noEmit` → **0 errors**（B-4/B-5 修复前 2 pre-existing → 修复后 0）
+  - `npx vitest run` → 3797/3797 全绿（170 文件 / 48.13s）
+  - `npm run build` → 成功（1.78s / 47 entries / 1515.34 KiB）
+  - `node scripts/check-bundle.js` → passed
+
+### VERIFICATION
+
+```
+VERIFICATION: PASS
+```
+
+- typecheck 0 pre-existing 消除（B-4 + B-5 2 行修复）
+- 现有 GIF 导出行为 22 测试覆盖（`animationExport.test.ts` + `animationExport-extra.test.ts`）全绿
+- 0 regressions / 0 测试新增 / 0 新依赖
+
+### 下一轮
+
+- **A1** 等用户对 Statements 目标（85% / 88% / 90%）+ Branches 目标（70% / 75%）拍板
+- **A2** 等用户对 Dependabot 升级策略（仅高危 / 全升 minor / 暂不处理）拍板
+- **B** 等用户校对 5 核心页面（Home / SortPage / ArrayPage / GraphPage / SortCompare）
+- A1/A2/B 开工前不创建 feature 分支（按 §6.2 边界，避免 §6.1 拆后面所有阶段）
+- A1/A2/B 详细 mini-plan 在用户拍板后单独写
+
+### 文档同步
+
+- ✅ WORKLOG.md（本条目）
+- ✅ PROJECT_STATUS.md（最后更新 + 当前版本 + 基线状态）
+- ✅ TODO.md（顶部版本/状态/活跃计划）
+- ✅ CLAUDE.md（活跃计划表加 v21 阶段行）
+- ✅ AGENTS.md（活跃计划加 v21 阶段行）
+- ✅ docs/superpowers/plans/2026-06-24-v21-execution-plan.md（v21 总 plan，untracked → tracked）
+
+---
+
 ## 2026-06-23 (深夜) | v20.1.0 patch 已发布到 origin（main + tag 已 push + GitHub Release Notes 草稿就绪）
 
 ### 任务范围

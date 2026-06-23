@@ -2,7 +2,7 @@
 
 > **文件用途**: AI 开发前必读。本文件汇总项目最新进展，避免 AI 基于过时的代码或文档状态做决策。
 > **更新频率**: 每次迭代结束 / 每个子阶段验收后 / 启动新的开发任务前。
->| **最后更新**: 2026-06-23 深夜（**v20.1.0 patch 已发布到 origin 2026-06-23** — main @ `e3bae56` + tag v20.1.0 @ `f419c7e` 已 push / 221 files / +20,914 / -1,050 / 3797 tests / 0 lint / Lines 85.84% / Statements 82% / Branches 68.93% / 2 pre-existing typecheck（B-4 gif.js / B-5 Uint8Array — v21 backlog）→ GitHub Release Notes 草稿已就绪，待用户在 GitHub UI 创建 Release）|
+>| **最后更新**: 2026-06-24（**v21 阶段启动 + A3 typecheck 修复完工** — feature/v21-b4b5-typecheck @ `be33345` 已 commit / 1 file / +2 -2 / typecheck 2 pre-existing → 0 / vitest 3797 / 5 项硬门槛全过 / VERIFICATION: PASS / A1 (B-6 覆盖率 2-3d) + A2 (B-10 Dependabot 0.5d) + B (B-7 翻译填充 5d) 4 子任务 B 并行 / C (design-md/ `.gitignore`) 用户拍板 C 先跳过保留悬而未决）|
 
 ---
 
@@ -32,7 +32,7 @@
 | **当前版本** | **v20.1.0 patch**（v17.0.0 GA + v19 M0-M4 + v20 A+C 全部子阶段 + v20 C-2 收尾；v20.0.0 GA 跳过改用 v20.1.0 patch — 2026-06-23 拍板）|
 | **技术栈** | React 19 + Vite 8 + TypeScript 5.8 + D3.js v7 + Tailwind CSS v4 + React Router v7 + Vitest + Playwright + vite-plugin-pwa |
 | **当前分支** | `main`（**v20.1.0 patch 已发布到 origin 2026-06-23** — 1 squash merge `feature/v20-c2-coverage @ 1e84697` + 1 docs commit `e3bae56` = 221 files / +20,914 / -1,050 / 0 冲突；tag `v20.1.0 @ f419c7e` annotated 已 push；A M8 / A M9 / v20.0.0 GA 移交 v21 候选 B-7/B-8）|
-| **基线状态** | 3797 单元测试全绿（基线 3550 + C-2 收尾新增 247 = useDataStructureState-extra 25 + searchIndex-extra 21 + 之前 C-1/C-4/M7-6 累积）/ ESLint 0 errors / 生产构建通过 / bundle 全 < budget / i18n integrity 8/8（zh/en 镜像 1,432 键对齐）/ en 翻译 0 CJK 泄漏 / typecheck 1 pre-existing 库类型不兼容（SharedArrayBuffer vs ArrayBuffer — 移 v21 B-4 类似处理）|
+| **基线状态** | 3797 单元测试全绿（基线 3550 + C-2 收尾新增 247 = useDataStructureState-extra 25 + searchIndex-extra 21 + 之前 C-1/C-4/M7-6 累积）/ ESLint 0 errors / 生产构建通过 / bundle 全 < budget / i18n integrity 8/8（zh/en 镜像 1,432 键对齐）/ en 翻译 0 CJK 泄漏 / typecheck **0 errors**（v21 A3 修复 B-4 `applyPalette` ApplyPaletteOptions + B-5 `Uint8Array<ArrayBufferLike>` BlobPart — 2 pre-existing 消除）|
 
 > **2026-06-22 v18 计划封存备注**: v18 i18n 全量替换计划（11 阶段 / ~30 天）已由用户决定封存；M0 决策 D1=B（UI + learning config）/ D2=C（按语言拆 `locales/{zh,en}/`）/ D3=B（AI + 人工校对）/ D4=简化（逐步提交 + 立即生效）/ D5=C（namespace + flat keys）保留为项目记忆。后续如需重启，可基于本决策摘要 + v18 分支 commit `774025a` 的历史快照 `docs/superpowers/plans/2026-06-22-v18-i18n-full-replacement.md`（646 行）启动。 |
 >
